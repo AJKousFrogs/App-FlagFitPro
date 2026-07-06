@@ -159,7 +159,6 @@ export class WellnessService {
     // Clear cached data
     this.clearCache();
     this.lastLoadedUserId = null;
-
   }
 
   private cleanupWellnessChannel(): void {
@@ -215,8 +214,7 @@ export class WellnessService {
             motivation: entry.motivation_level,
             mood: entry.mood,
             hydration: entry.hydration_level,
-            readinessScore:
-              entry.calculated_readiness ?? entry.readiness_score,
+            readinessScore: entry.calculated_readiness ?? entry.readiness_score,
             notes: entry.notes,
             travelHours: entry.travel_hours,
             timestamp: entry.created_at,
@@ -415,9 +413,14 @@ export class WellnessService {
             ? {
                 ...rowObj,
                 checkin_date:
-                  (rowObj as { checkin_date?: string; saved_checkin_date?: string })
-                    .checkin_date ??
-                  (rowObj as { saved_checkin_date?: string }).saved_checkin_date,
+                  (
+                    rowObj as {
+                      checkin_date?: string;
+                      saved_checkin_date?: string;
+                    }
+                  ).checkin_date ??
+                  (rowObj as { saved_checkin_date?: string })
+                    .saved_checkin_date,
               }
             : rowObj;
         return { success: true as const, data };
@@ -438,7 +441,10 @@ export class WellnessService {
                 mood: data.mood,
                 date: checkinDate,
               })
-              .subscribe({ error: (e) => this.logger.warn("wellness_coach_alert_failed", e) });
+              .subscribe({
+                error: (e) =>
+                  this.logger.warn("wellness_coach_alert_failed", e),
+              });
           }
 
           this.getWellnessData("30d")
@@ -534,12 +540,18 @@ export class WellnessService {
     const metrics = [
       data.sleep,
       data.energy,
-      data.stress !== undefined && data.stress !== null ? 10 - clamp(data.stress) : undefined,
-      data.soreness !== undefined && data.soreness !== null ? 10 - clamp(data.soreness) : undefined,
+      data.stress !== undefined && data.stress !== null
+        ? 10 - clamp(data.stress)
+        : undefined,
+      data.soreness !== undefined && data.soreness !== null
+        ? 10 - clamp(data.soreness)
+        : undefined,
       data.motivation,
       data.mood,
       data.hydration,
-    ].filter((m): m is number => m !== undefined && m !== null && !Number.isNaN(m));
+    ].filter(
+      (m): m is number => m !== undefined && m !== null && !Number.isNaN(m),
+    );
 
     if (metrics.length === 0) return 0;
 
@@ -591,19 +603,27 @@ export class WellnessService {
       recs.push("Prioritize sleep — aim for 7–9 hours tonight.");
     }
     if (entry.energy !== undefined && entry.energy < 5) {
-      recs.push("Low energy detected — consider rest and lighter activity today.");
+      recs.push(
+        "Low energy detected — consider rest and lighter activity today.",
+      );
     }
     if (entry.stress !== undefined && entry.stress > 7) {
-      recs.push("High stress levels — try breathing exercises or stress management techniques.");
+      recs.push(
+        "High stress levels — try breathing exercises or stress management techniques.",
+      );
     }
     if (entry.soreness !== undefined && entry.soreness > 7) {
-      recs.push("High soreness — prioritize recovery, foam rolling, and reduced intensity.");
+      recs.push(
+        "High soreness — prioritize recovery, foam rolling, and reduced intensity.",
+      );
     }
     if (entry.hydration !== undefined && entry.hydration < 5) {
       recs.push("Drink more water — target at least 2–3 litres today.");
     }
     if (entry.motivation !== undefined && entry.motivation < 5) {
-      recs.push("Motivation is low — vary your training or try a fun drill session.");
+      recs.push(
+        "Motivation is low — vary your training or try a fun drill session.",
+      );
     }
 
     if (recs.length === 0) {
@@ -613,7 +633,9 @@ export class WellnessService {
     return recs;
   }
 
-  getWellnessTrends(data: WellnessData[]): { metric: string; trend: "improving" | "declining" | "stable" }[] {
+  getWellnessTrends(
+    data: WellnessData[],
+  ): { metric: string; trend: "improving" | "declining" | "stable" }[] {
     if (data.length < 2) return [];
 
     const mid = Math.ceil(data.length / 2);
@@ -621,14 +643,27 @@ export class WellnessService {
     const older = data.slice(mid);
 
     const invertedMetrics = new Set(["stress", "soreness"]);
-    const metrics: (keyof WellnessData)[] = ["sleep", "energy", "stress", "soreness", "mood", "hydration", "motivation"];
+    const metrics: (keyof WellnessData)[] = [
+      "sleep",
+      "energy",
+      "stress",
+      "soreness",
+      "mood",
+      "hydration",
+      "motivation",
+    ];
 
     const avg = (entries: WellnessData[], key: keyof WellnessData) => {
-      const vals = entries.map((e) => e[key] as number | undefined).filter((v): v is number => v !== undefined);
+      const vals = entries
+        .map((e) => e[key] as number | undefined)
+        .filter((v): v is number => v !== undefined);
       return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
     };
 
-    const results: { metric: string; trend: "improving" | "declining" | "stable" }[] = [];
+    const results: {
+      metric: string;
+      trend: "improving" | "declining" | "stable";
+    }[] = [];
 
     for (const metric of metrics) {
       const recentAvg = avg(recent, metric);
@@ -680,7 +715,9 @@ export class WellnessService {
     this.wellnessChannel = this.supabaseService.client
       .channel(`wellness:${userId}`)
       .on("broadcast", { event: "wellness_change" }, (payload) => {
-        this.handleWellnessBroadcast(payload.payload as RealtimeBroadcastPayload);
+        this.handleWellnessBroadcast(
+          payload.payload as RealtimeBroadcastPayload,
+        );
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -752,7 +789,9 @@ export class WellnessService {
       id: Number(record["id"]),
       user_id: String(record["user_id"]),
       checkin_date: String(record["checkin_date"] ?? record["date"] ?? ""),
-      sleep_hours: Number(record["sleep_hours"] ?? record["sleep_quality"] ?? 0),
+      sleep_hours: Number(
+        record["sleep_hours"] ?? record["sleep_quality"] ?? 0,
+      ),
       sleep_quality: Number(record["sleep_quality"] ?? 0),
       energy_level: Number(record["energy_level"] ?? 0),
       stress_level: Number(record["stress_level"] ?? 0),

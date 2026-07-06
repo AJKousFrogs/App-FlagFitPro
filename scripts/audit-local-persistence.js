@@ -93,7 +93,9 @@ function main() {
     }
 
     const relative = path.relative(ROOT, filePath);
-    const allowed = ALLOWED_PATTERNS.find(({ pattern }) => pattern.test(relative));
+    const allowed = ALLOWED_PATTERNS.find(({ pattern }) =>
+      pattern.test(relative),
+    );
     findings.push({
       file: relative,
       allowed: Boolean(allowed),

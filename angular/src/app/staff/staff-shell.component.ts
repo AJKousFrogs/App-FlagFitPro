@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from "@angular/core";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
@@ -19,19 +24,39 @@ import { staffLaneFor } from "../core/guards/staff.guard";
   template: `
     <div class="app-shell">
       <router-outlet />
-      <nav class="tabbar" aria-label="Staff" [style.grid-template-columns]="'repeat(' + navCount() + ', 1fr)'">
-        <a routerLink="/staff/roster" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <nav
+        class="tabbar"
+        aria-label="Staff"
+        [style.grid-template-columns]="'repeat(' + navCount() + ', 1fr)'"
+      >
+        <a
+          routerLink="/staff/roster"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="users" />Roster
         </a>
         @if (lane() === "coach") {
-          <a routerLink="/staff/alerts" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <a
+            routerLink="/staff/alerts"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
             <lucide-icon name="bell" />Alerts
           </a>
-          <a routerLink="/staff/library" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <a
+            routerLink="/staff/library"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
             <lucide-icon name="video" />Library
           </a>
         }
-        <a routerLink="/staff/more" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <a
+          routerLink="/staff/more"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+        >
           <lucide-icon name="menu" />More
         </a>
       </nav>

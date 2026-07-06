@@ -17,8 +17,15 @@
  * @param {number} spacingHours - Minimum hours required between high-CNS sessions
  * @returns {string|null} completed_at timestamp of blocking session, or null if clear
  */
-export async function getLastHighCnsSession(supabase, userId, date, spacingHours) {
-  if (!userId) return null;
+export async function getLastHighCnsSession(
+  supabase,
+  userId,
+  date,
+  spacingHours,
+) {
+  if (!userId) {
+    return null;
+  }
   const since = new Date(
     new Date(`${date}T00:00:00Z`).getTime() - spacingHours * 3_600_000,
   ).toISOString();
@@ -32,6 +39,8 @@ export async function getLastHighCnsSession(supabase, userId, date, spacingHours
     .order("completed_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (error || !data) return null;
+  if (error || !data) {
+    return null;
+  }
   return data.completed_at;
 }

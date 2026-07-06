@@ -292,9 +292,11 @@ function getRateLimitStatus() {
   };
 }
 
-export { checkRateLimit,
+export {
+  checkRateLimit,
   applyRateLimit,
   getRateLimitType,
   getRateLimitHeaders,
   getRateLimitStatus,
-  RATE_LIMITS, };
+  RATE_LIMITS,
+};

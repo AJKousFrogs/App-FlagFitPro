@@ -1,7 +1,13 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -119,7 +125,8 @@ async function getCuratedExercises(params) {
 
   const parsedMinRelevance =
     parseBoundedInt(min_relevance, "min_relevance", { min: 0, max: 10 }) ?? 5;
-  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 50;
+  const parsedLimit =
+    parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 50;
   const parsedOffset =
     parseBoundedInt(offset, "offset", { min: 0, max: 1000000 }) ?? 0;
 
@@ -202,7 +209,8 @@ async function getFilterOptions() {
  */
 async function searchExerciseDB(params) {
   const { body_part, target, equipment, name, limit = 20 } = params;
-  const parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 20;
+  const parsedLimit =
+    parseBoundedInt(limit, "limit", { min: 1, max: 200 }) ?? 20;
 
   let exercises = [];
 
@@ -247,7 +255,9 @@ async function searchExerciseDB(params) {
     };
   } catch (error) {
     logger.error("exercisedb_search_failed", error, {});
-    throw new Error(`Failed to search ExerciseDB: ${error.message}`, { cause: error });
+    throw new Error(`Failed to search ExerciseDB: ${error.message}`, {
+      cause: error,
+    });
   }
 }
 

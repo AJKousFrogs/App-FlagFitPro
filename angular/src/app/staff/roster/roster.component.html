@@ -9,14 +9,32 @@
 <main class="screen">
   @if (isCoach()) {
     <div class="tab-bar">
-      <button class="tab-btn" [class.on]="tab() === 'roster'" (click)="switchTab('roster')">Athletes</button>
-      <button class="tab-btn" [class.on]="tab() === 'injuries'" (click)="switchTab('injuries')">Injuries</button>
-      <button class="tab-btn" [class.on]="tab() === 'cycle'" (click)="switchTab('cycle')">Training Cycle</button>
+      <button
+        class="tab-btn"
+        [class.on]="tab() === 'roster'"
+        (click)="switchTab('roster')"
+      >
+        Athletes
+      </button>
+      <button
+        class="tab-btn"
+        [class.on]="tab() === 'injuries'"
+        (click)="switchTab('injuries')"
+      >
+        Injuries
+      </button>
+      <button
+        class="tab-btn"
+        [class.on]="tab() === 'cycle'"
+        (click)="switchTab('cycle')"
+      >
+        Training Cycle
+      </button>
     </div>
   }
 
   <!-- Roster tab -->
-  @if (tab() === 'roster') {
+  @if (tab() === "roster") {
     @if (rows() === null) {
       <div class="empty">Loading roster…</div>
     } @else if (rows()!.length === 0) {
@@ -24,20 +42,40 @@
     } @else {
       <div class="card">
         @for (r of rows()!; track r.id) {
-          <a class="lrow" [routerLink]="['/staff/athlete', r.id]"
-             [state]="{ name: r.name, position: r.position, jersey: r.jersey, acwr: r.acwr, readiness: r.readiness, shared: r.shared }">
+          <a
+            class="lrow"
+            [routerLink]="['/staff/athlete', r.id]"
+            [state]="{
+              name: r.name,
+              position: r.position,
+              jersey: r.jersey,
+              acwr: r.acwr,
+              readiness: r.readiness,
+              shared: r.shared,
+            }"
+          >
             <span class="thumb-card">
               <span class="avatar">{{ initials(r.name) }}</span>
               <span>
-                <b>{{ r.name }}</b><br />
-                <small>@if (r.jersey !== null) { #{{ r.jersey }} · }{{ r.position || "—" }}</small>
+                <b>{{ r.name }}</b
+                ><br />
+                <small>
+                  @if (r.jersey !== null) {
+                    #{{ r.jersey }} ·
+                  }
+                  {{ r.position || "—" }}</small
+                >
               </span>
             </span>
             @if (isCoach()) {
               @if (r.shared) {
                 <span class="inline">
-                  @if (readyBand(r.readiness); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
-                  @if (acwrBand(r.acwr); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+                  @if (readyBand(r.readiness); as b) {
+                    <span class="band {{ b.cls }}">{{ b.label }}</span>
+                  }
+                  @if (acwrBand(r.acwr); as b) {
+                    <span class="band {{ b.cls }}">{{ b.label }}</span>
+                  }
                 </span>
               } @else {
                 <span class="band neutral">not shared</span>
@@ -48,12 +86,15 @@
           </a>
         }
       </div>
-      <p class="note">Per-athlete data is private by default — each athlete chooses what to share with staff.</p>
+      <p class="note">
+        Per-athlete data is private by default — each athlete chooses what to
+        share with staff.
+      </p>
     }
   }
 
   <!-- Injuries tab -->
-  @if (tab() === 'injuries') {
+  @if (tab() === "injuries") {
     @if (injuries() === null) {
       <div class="empty">Loading injury data…</div>
     } @else if (injuries()!.length === 0 && injurySummary() === null) {
@@ -61,12 +102,22 @@
     } @else {
       @if (injurySummary(); as s) {
         <div class="card card-mb">
-          <div class="section-label">Today's snapshot · {{ s.checkinDate }}</div>
+          <div class="section-label">
+            Today's snapshot · {{ s.checkinDate }}
+          </div>
           <div class="summary-chips">
-            <span class="band {{ s.total > 0 ? 'caution' : 'good' }}">{{ s.total }} flagged</span>
-            @if (s.severe > 0) { <span class="band danger">{{ s.severe }} severe</span> }
-            @if (s.moderate > 0) { <span class="band caution">{{ s.moderate }} moderate</span> }
-            @if (s.selfReports > 0) { <span class="band neutral">{{ s.selfReports }} self-reports</span> }
+            <span class="band {{ s.total > 0 ? 'caution' : 'good' }}"
+              >{{ s.total }} flagged</span
+            >
+            @if (s.severe > 0) {
+              <span class="band danger">{{ s.severe }} severe</span>
+            }
+            @if (s.moderate > 0) {
+              <span class="band caution">{{ s.moderate }} moderate</span>
+            }
+            @if (s.selfReports > 0) {
+              <span class="band neutral">{{ s.selfReports }} self-reports</span>
+            }
           </div>
         </div>
       }
@@ -78,13 +129,18 @@
             <div class="inj-row">
               <div class="inj-meta">
                 <b>{{ inj.athleteName }}</b>
-                <span class="band {{ gradeBand(inj.grade) }}">{{ gradeLabel(inj) }}</span>
-                @if (inj.status !== 'self_report') {
+                <span class="band {{ gradeBand(inj.grade) }}">{{
+                  gradeLabel(inj)
+                }}</span>
+                @if (inj.status !== "self_report") {
                   <span class="band neutral">{{ inj.status }}</span>
                 }
               </div>
               <div class="detail">
-                {{ inj.location }}@if (inj.mechanism) { · {{ inj.mechanism }} }
+                {{ inj.location }}
+                @if (inj.mechanism) {
+                  · {{ inj.mechanism }}
+                }
               </div>
               @if (inj.expectedReturn) {
                 <div class="sub">Expected return: {{ inj.expectedReturn }}</div>
@@ -95,12 +151,18 @@
               @if (inj.todaySoreness !== null || inj.todayReadiness !== null) {
                 <div class="inj-today">
                   @if (inj.todaySoreness !== null) {
-                    <span class="band {{ inj.todaySoreness >= 7 ? 'danger' : 'caution' }}">
+                    <span
+                      class="band {{
+                        inj.todaySoreness >= 7 ? 'danger' : 'caution'
+                      }}"
+                    >
                       Soreness {{ inj.todaySoreness }}/10
                     </span>
                   }
                   @if (readyBand(inj.todayReadiness); as b) {
-                    <span class="band {{ b.cls }}">Readiness {{ b.label }}</span>
+                    <span class="band {{ b.cls }}"
+                      >Readiness {{ b.label }}</span
+                    >
                   }
                 </div>
               }
@@ -112,7 +174,7 @@
   }
 
   <!-- Training Cycle tab -->
-  @if (tab() === 'cycle') {
+  @if (tab() === "cycle") {
     @if (cycleAthletes() === null) {
       <div class="empty">Loading training cycle data…</div>
     } @else {
@@ -122,8 +184,22 @@
           <div class="ev-body">
             <div class="inline">
               <b>{{ ev.name }}</b>
-              <span class="band {{ ev.daysAway <= 3 ? 'danger' : ev.daysAway <= 7 ? 'caution' : 'info' }}">
-                {{ ev.daysAway === 0 ? 'Today' : ev.daysAway === 1 ? 'Tomorrow' : 'In ' + ev.daysAway + ' days' }}
+              <span
+                class="band {{
+                  ev.daysAway <= 3
+                    ? 'danger'
+                    : ev.daysAway <= 7
+                      ? 'caution'
+                      : 'info'
+                }}"
+              >
+                {{
+                  ev.daysAway === 0
+                    ? "Today"
+                    : ev.daysAway === 1
+                      ? "Tomorrow"
+                      : "In " + ev.daysAway + " days"
+                }}
               </span>
             </div>
             <div class="sub ev-type">{{ ev.type }}</div>
@@ -140,7 +216,9 @@
                 <div class="bands">
                   <b>{{ a.athleteName }}</b>
                   @if (a.trainingFocus) {
-                    <span class="band {{ focusBand(a.trainingFocus) }}">{{ a.trainingFocus }}</span>
+                    <span class="band {{ focusBand(a.trainingFocus) }}">{{
+                      a.trainingFocus
+                    }}</span>
                   }
                 </div>
                 <div class="bands mt">
@@ -151,17 +229,20 @@
                     <span class="band {{ b.cls }}">ACWR {{ b.label }}</span>
                   }
                   @if (a.avgReadiness7d !== null) {
-                    <span class="sub">7d avg {{ a.avgReadiness7d | number:'1.0-0' }}</span>
+                    <span class="sub"
+                      >7d avg {{ a.avgReadiness7d | number: "1.0-0" }}</span
+                    >
                   }
                 </div>
               </div>
               @if (a.readinessTrend.length) {
                 <div class="trend" title="7-day readiness trend">
                   @for (score of a.readinessTrend; track $index) {
-                    <div class="trend-bar"
-                         [style.height]="barHeight(score)"
-                         [style.background]="barColor(score)">
-                    </div>
+                    <div
+                      class="trend-bar"
+                      [style.height]="barHeight(score)"
+                      [style.background]="barColor(score)"
+                    ></div>
                   }
                 </div>
               }

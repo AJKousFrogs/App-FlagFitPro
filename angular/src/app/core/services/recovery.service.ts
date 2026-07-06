@@ -40,7 +40,8 @@ export class RecoveryService {
       .get<{ availableEquipment?: string[] }>("/api/player-settings")
       .subscribe({
         next: (res) => {
-          const eq = (res?.data as { availableEquipment?: string[] })?.availableEquipment;
+          const eq = (res?.data as { availableEquipment?: string[] })
+            ?.availableEquipment;
           if (Array.isArray(eq)) this.ownedEquipment.set(eq.map(String));
         },
         error: (e) => this.logger.error("recovery_equipment_load_failed", e),
@@ -51,18 +52,30 @@ export class RecoveryService {
   readonly context = computed<RecoveryContext>(() => {
     const rx = this.periodization.today();
     const injuries = this.injury.active();
-    const sev = injuries.reduce<"minor" | "moderate" | "severe" | null>((max, i) => {
-      const rank = { minor: 1, moderate: 2, severe: 3 }[i.severity as string] ?? 0;
-      const maxRank = max ? { minor: 1, moderate: 2, severe: 3 }[max] : 0;
-      return rank > maxRank ? (i.severity as "minor" | "moderate" | "severe") : max;
-    }, null);
+    const sev = injuries.reduce<"minor" | "moderate" | "severe" | null>(
+      (max, i) => {
+        const rank =
+          { minor: 1, moderate: 2, severe: 3 }[i.severity as string] ?? 0;
+        const maxRank = max ? { minor: 1, moderate: 2, severe: 3 }[max] : 0;
+        return rank > maxRank
+          ? (i.severity as "minor" | "moderate" | "severe")
+          : max;
+      },
+      null,
+    );
     const density = this.schedule.density14d();
     const readinessScore = this.readiness.current()?.score ?? null;
     return {
-      highLoad: !!rx && (["sprint", "strength", "mixed"].includes(rx.intent) || (rx.targetRpe ?? 0) >= 6),
+      highLoad:
+        !!rx &&
+        (["sprint", "strength", "mixed"].includes(rx.intent) ||
+          (rx.targetRpe ?? 0) >= 6),
       acwrSpike: (rx?.acwrAtIssue ?? 0) > 1.3,
-      congestedFixtures: !!density && (density.totalGames >= 3 || density.hasPeakImportance),
-      tightnessRegions: [...new Set(injuries.map((i) => i.region).filter(Boolean))],
+      congestedFixtures:
+        !!density && (density.totalGames >= 3 || density.hasPeakImportance),
+      tightnessRegions: [
+        ...new Set(injuries.map((i) => i.region).filter(Boolean)),
+      ],
       severity: sev,
       lowReadiness: readinessScore != null && readinessScore < 55,
     };

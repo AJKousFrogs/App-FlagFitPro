@@ -163,7 +163,15 @@ function getGroqApiKey() {
 /**
  * Shared Groq request builder
  */
-function buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream }) {
+function buildGroqRequest({
+  prompt,
+  systemPrompt,
+  model,
+  temperature,
+  maxTokens,
+  messages,
+  stream,
+}) {
   const chatMessages = messages || [
     { role: "system", content: systemPrompt },
     { role: "user", content: prompt },
@@ -174,7 +182,13 @@ function buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens,
       Authorization: `Bearer ${getGroqApiKey()}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model, messages: chatMessages, temperature, max_tokens: maxTokens, stream }),
+    body: JSON.stringify({
+      model,
+      messages: chatMessages,
+      temperature,
+      max_tokens: maxTokens,
+      stream,
+    }),
   };
 }
 
@@ -201,7 +215,15 @@ async function chatCompletion({
   try {
     const response = await fetch(
       GROQ_API_URL,
-      buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream: false }),
+      buildGroqRequest({
+        prompt,
+        systemPrompt,
+        model,
+        temperature,
+        maxTokens,
+        messages,
+        stream: false,
+      }),
     );
 
     if (!response.ok) {
@@ -209,11 +231,18 @@ async function chatCompletion({
       const errorMessage = errorData.error?.message || response.statusText;
 
       if (response.status === 429) {
-        logger.error("groq_rate_limit_exceeded", undefined, { error_message: errorMessage });
-        throw new Error("AI service rate limit exceeded. Please try again in a moment.");
+        logger.error("groq_rate_limit_exceeded", undefined, {
+          error_message: errorMessage,
+        });
+        throw new Error(
+          "AI service rate limit exceeded. Please try again in a moment.",
+        );
       }
 
-      logger.error("groq_api_request_failed", undefined, { status_code: response.status, error_message: errorMessage });
+      logger.error("groq_api_request_failed", undefined, {
+        status_code: response.status,
+        error_message: errorMessage,
+      });
       throw new Error(`AI service error: ${errorMessage}`);
     }
 
@@ -253,14 +282,24 @@ async function* chatCompletionStream({
 }) {
   const response = await fetch(
     GROQ_API_URL,
-    buildGroqRequest({ prompt, systemPrompt, model, temperature, maxTokens, messages, stream: true }),
+    buildGroqRequest({
+      prompt,
+      systemPrompt,
+      model,
+      temperature,
+      maxTokens,
+      messages,
+      stream: true,
+    }),
   );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     const errorMessage = errorData.error?.message || response.statusText;
     if (response.status === 429) {
-      throw new Error("AI service rate limit exceeded. Please try again in a moment.");
+      throw new Error(
+        "AI service rate limit exceeded. Please try again in a moment.",
+      );
     }
     throw new Error(`AI service error: ${errorMessage}`);
   }
@@ -274,7 +313,9 @@ async function* chatCompletionStream({
   try {
     while (true) {
       const { done, value } = await reader.read();
-      if (done) {break;}
+      if (done) {
+        break;
+      }
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
@@ -282,16 +323,26 @@ async function* chatCompletionStream({
 
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed || !trimmed.startsWith("data: ")) {continue;}
+        if (!trimmed || !trimmed.startsWith("data: ")) {
+          continue;
+        }
         const json = trimmed.slice(6);
-        if (json === "[DONE]") {continue;}
+        if (json === "[DONE]") {
+          continue;
+        }
 
         try {
           const chunk = JSON.parse(json);
           const token = chunk.choices?.[0]?.delta?.content ?? "";
-          if (token) {yield token;}
-          if (chunk.model) {finalModel = chunk.model;}
-          if (chunk.usage) {finalUsage = chunk.usage;}
+          if (token) {
+            yield token;
+          }
+          if (chunk.model) {
+            finalModel = chunk.model;
+          }
+          if (chunk.usage) {
+            finalUsage = chunk.usage;
+          }
         } catch {
           // malformed chunk — skip
         }
@@ -553,10 +604,18 @@ function buildAthleteContext(userContext) {
   if (userContext.nutritionPlan) {
     const plan = userContext.nutritionPlan;
     const planParts = [];
-    if (plan.target_calories) {planParts.push(`${plan.target_calories} kcal`);}
-    if (plan.protein_g) {planParts.push(`${plan.protein_g}g protein`);}
-    if (plan.carbs_g) {planParts.push(`${plan.carbs_g}g carbs`);}
-    if (plan.fat_g) {planParts.push(`${plan.fat_g}g fat`);}
+    if (plan.target_calories) {
+      planParts.push(`${plan.target_calories} kcal`);
+    }
+    if (plan.protein_g) {
+      planParts.push(`${plan.protein_g}g protein`);
+    }
+    if (plan.carbs_g) {
+      planParts.push(`${plan.carbs_g}g carbs`);
+    }
+    if (plan.fat_g) {
+      planParts.push(`${plan.fat_g}g fat`);
+    }
     if (plan.hydration_goal_liters) {
       planParts.push(`${plan.hydration_goal_liters}L hydration`);
     }

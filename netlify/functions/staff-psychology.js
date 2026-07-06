@@ -1,8 +1,15 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ErrorType,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
 import { PSYCHOLOGY_ACCESS_ROLES } from "./utils/role-sets.js";
 
 // Netlify Function: Staff Psychology API
@@ -164,7 +171,10 @@ async function generateMentalWellnessReport(
 
   // Get mental performance data
   const mentalLogs = await getMentalPerformanceLogs(userId, days);
-  const wellness = await getWellnessTrends(userId, days, { requesterId, teamId });
+  const wellness = await getWellnessTrends(userId, days, {
+    requesterId,
+    teamId,
+  });
   const assessments = await getPsychologicalAssessments(userId);
 
   // Calculate averages
@@ -406,7 +416,9 @@ async function getTeamMentalOverview(teamId, requesterId) {
       context: AccessContext.COACH_TEAM_DATA,
       filters: { limit: 1 },
     });
-    const wellness = wellnessResult.success ? (wellnessResult.data || [])[0] : null;
+    const wellness = wellnessResult.success
+      ? (wellnessResult.data || [])[0]
+      : null;
 
     // Calculate overall mental wellness score
     const scores = [
@@ -554,37 +566,155 @@ function generateMentalRecommendations(metrics, patterns) {
 
 // Main handler
 async function handleRequest(event, _context, { userId }) {
-    const path = event.path.replace("/.netlify/functions/staff-psychology", "");
-    const method = event.httpMethod;
-    const params = event.queryStringParameters || {};
+  const path = event.path.replace("/.netlify/functions/staff-psychology", "");
+  const method = event.httpMethod;
+  const params = event.queryStringParameters || {};
 
-    let parsedBody = {};
-    if (["POST", "PUT", "PATCH"].includes(method) && event.body) {
-      try {
-        parsedBody = parseJsonObjectBody(event.body);
-      } catch (error) {
-        if (
-          error?.code === "INVALID_JSON_BODY" &&
-          error?.message === "Invalid JSON in request body"
-        ) {
-          return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
-        }
+  let parsedBody = {};
+  if (["POST", "PUT", "PATCH"].includes(method) && event.body) {
+    try {
+      parsedBody = parseJsonObjectBody(event.body);
+    } catch (error) {
+      if (
+        error?.code === "INVALID_JSON_BODY" &&
+        error?.message === "Invalid JSON in request body"
+      ) {
         return createErrorResponse(
-          "Request body must be an object",
+          "Invalid JSON in request body",
+          400,
+          "invalid_json",
+        );
+      }
+      return createErrorResponse(
+        "Request body must be an object",
+        422,
+        "validation_error",
+      );
+    }
+    if (
+      !parsedBody ||
+      typeof parsedBody !== "object" ||
+      Array.isArray(parsedBody)
+    ) {
+      return createErrorResponse(
+        "Invalid JSON in request body",
+        400,
+        "invalid_json",
+      );
+    }
+  }
+
+  const selfAccess = { access: "self", teamId: null };
+  const staffAccess = await verifyPsychologyAccess(userId);
+
+  // GET /my-data - Get own mental data (athlete self-service)
+  if (method === "GET" && path === "/my-data") {
+    const daysResult = parseDaysParam(params.days, 30);
+    if (!daysResult.valid) {
+      return createErrorResponse(
+        "days must be an integer between 1 and 365",
+        422,
+        "validation_error",
+      );
+    }
+    const days = daysResult.value;
+    const [mentalLogs, wellness, assessments] = await Promise.all([
+      getMentalPerformanceLogs(userId, days),
+      getWellnessTrends(userId, days, { requesterId: userId }),
+      getPsychologicalAssessments(userId),
+    ]);
+    return createSuccessResponse({ mentalLogs, wellness, assessments });
+  }
+
+  // POST /my-data/log - Log mental performance (athlete self-service)
+  if (method === "POST" && path === "/my-data/log") {
+    const log = await logMentalPerformance(userId, parsedBody);
+    return createSuccessResponse({ log });
+  }
+
+  // POST /reports/wellness - Generate wellness report
+  if (method === "POST" && path === "/reports/wellness") {
+    const reportUserId = parsedBody.athleteId || userId;
+    if (parsedBody.days !== undefined) {
+      const daysResult = parseDaysParam(parsedBody.days, 30);
+      if (!daysResult.valid) {
+        return createErrorResponse(
+          "days must be an integer between 1 and 365",
           422,
           "validation_error",
         );
       }
-      if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) {
-        return createErrorResponse("Invalid JSON in request body", 400, "invalid_json");
-      }
     }
 
-    const selfAccess = { access: "self", teamId: null };
-    const staffAccess = await verifyPsychologyAccess(userId);
+    // Verify access to target user's data
+    const canAccess = await verifyPsychologyAccess(userId, reportUserId);
+    if (!canAccess) {
+      return createErrorResponse(
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
+    }
 
-    // GET /my-data - Get own mental data (athlete self-service)
-    if (method === "GET" && path === "/my-data") {
+    const report = await generateMentalWellnessReport(
+      reportUserId,
+      parsedBody,
+      {
+        requesterId: userId,
+        teamId: canAccess.teamId || null,
+      },
+    );
+    return createSuccessResponse({ report });
+  }
+
+  // POST /reports/pre-competition - Generate pre-competition report
+  if (method === "POST" && path === "/reports/pre-competition") {
+    const reportUserId = parsedBody.athleteId || userId;
+    const gameDate =
+      parsedBody.gameDate || new Date().toISOString().split("T")[0];
+    if (!isValidIsoDate(gameDate)) {
+      return createErrorResponse(
+        "gameDate must be a valid date",
+        422,
+        "validation_error",
+      );
+    }
+
+    const canAccess = await verifyPsychologyAccess(userId, reportUserId);
+    if (!canAccess) {
+      return createErrorResponse(
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
+    }
+
+    const report = await generatePreCompetitionReport(reportUserId, gameDate, {
+      requesterId: userId,
+      teamId: canAccess.teamId || null,
+    });
+    return createSuccessResponse({ report });
+  }
+
+  // Staff-only routes
+  if (staffAccess?.access === "staff") {
+    // GET /team - Get team mental overview
+    if (method === "GET" && path === "/team") {
+      const overview = await getTeamMentalOverview(staffAccess.teamId, userId);
+      return createSuccessResponse({ athletes: overview });
+    }
+
+    // GET /athletes/:id - Get athlete mental data
+    if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
+      const athleteId = path.split("/")[2];
+      const canAccessAthlete = await verifyPsychologyAccess(userId, athleteId);
+      if (!canAccessAthlete) {
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
+      }
       const daysResult = parseDaysParam(params.days, 30);
       if (!daysResult.valid) {
         return createErrorResponse(
@@ -595,148 +725,50 @@ async function handleRequest(event, _context, { userId }) {
       }
       const days = daysResult.value;
       const [mentalLogs, wellness, assessments] = await Promise.all([
-        getMentalPerformanceLogs(userId, days),
-        getWellnessTrends(userId, days, { requesterId: userId }),
-        getPsychologicalAssessments(userId),
+        getMentalPerformanceLogs(athleteId, days),
+        getWellnessTrends(athleteId, days, {
+          requesterId: userId,
+          teamId: staffAccess.teamId,
+        }),
+        getPsychologicalAssessments(athleteId),
       ]);
       return createSuccessResponse({ mentalLogs, wellness, assessments });
     }
 
-    // POST /my-data/log - Log mental performance (athlete self-service)
-    if (method === "POST" && path === "/my-data/log") {
-      const log = await logMentalPerformance(userId, parsedBody);
-      return createSuccessResponse({ log });
-    }
-
-    // POST /reports/wellness - Generate wellness report
-    if (method === "POST" && path === "/reports/wellness") {
-      const reportUserId = parsedBody.athleteId || userId;
-      if (parsedBody.days !== undefined) {
-        const daysResult = parseDaysParam(parsedBody.days, 30);
-        if (!daysResult.valid) {
-          return createErrorResponse(
-            "days must be an integer between 1 and 365",
-            422,
-            "validation_error",
-          );
-        }
-      }
-
-      // Verify access to target user's data
-      const canAccess = await verifyPsychologyAccess(userId, reportUserId);
-      if (!canAccess) {
+    // POST /assessments - Create assessment
+    if (method === "POST" && path === "/assessments") {
+      if (!parsedBody.athleteId || !parsedBody.type) {
         return createErrorResponse(
-          "Access denied to athlete data",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-
-      const report = await generateMentalWellnessReport(reportUserId, parsedBody, {
-        requesterId: userId,
-        teamId: canAccess.teamId || null,
-      });
-      return createSuccessResponse({ report });
-    }
-
-    // POST /reports/pre-competition - Generate pre-competition report
-    if (method === "POST" && path === "/reports/pre-competition") {
-      const reportUserId = parsedBody.athleteId || userId;
-      const gameDate = parsedBody.gameDate || new Date().toISOString().split("T")[0];
-      if (!isValidIsoDate(gameDate)) {
-        return createErrorResponse(
-          "gameDate must be a valid date",
+          "athleteId and type are required",
           422,
           "validation_error",
         );
       }
-
-      const canAccess = await verifyPsychologyAccess(userId, reportUserId);
-      if (!canAccess) {
+      const canAccessAthlete = await verifyPsychologyAccess(
+        userId,
+        parsedBody.athleteId,
+      );
+      if (!canAccessAthlete) {
         return createErrorResponse(
           "Access denied to athlete data",
           403,
           ErrorType.AUTHORIZATION,
         );
       }
-
-      const report = await generatePreCompetitionReport(reportUserId, gameDate, {
-        requesterId: userId,
-        teamId: canAccess.teamId || null,
-      });
-      return createSuccessResponse({ report });
+      parsedBody.coachId = userId;
+      const assessment = await createAssessment(
+        parsedBody.athleteId,
+        parsedBody,
+      );
+      return createSuccessResponse({ assessment });
     }
+  }
 
-    // Staff-only routes
-    if (staffAccess?.access === "staff") {
-      // GET /team - Get team mental overview
-      if (method === "GET" && path === "/team") {
-        const overview = await getTeamMentalOverview(staffAccess.teamId, userId);
-        return createSuccessResponse({ athletes: overview });
-      }
+  if (selfAccess.access !== "self" && !staffAccess) {
+    return createErrorResponse("Access denied", 403, ErrorType.AUTHORIZATION);
+  }
 
-      // GET /athletes/:id - Get athlete mental data
-      if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
-        const athleteId = path.split("/")[2];
-        const canAccessAthlete = await verifyPsychologyAccess(userId, athleteId);
-        if (!canAccessAthlete) {
-          return createErrorResponse(
-            "Access denied to athlete data",
-            403,
-            ErrorType.AUTHORIZATION,
-          );
-        }
-        const daysResult = parseDaysParam(params.days, 30);
-        if (!daysResult.valid) {
-          return createErrorResponse(
-            "days must be an integer between 1 and 365",
-            422,
-            "validation_error",
-          );
-        }
-        const days = daysResult.value;
-        const [mentalLogs, wellness, assessments] = await Promise.all([
-          getMentalPerformanceLogs(athleteId, days),
-          getWellnessTrends(athleteId, days, {
-            requesterId: userId,
-            teamId: staffAccess.teamId,
-          }),
-          getPsychologicalAssessments(athleteId),
-        ]);
-        return createSuccessResponse({ mentalLogs, wellness, assessments });
-      }
-
-      // POST /assessments - Create assessment
-      if (method === "POST" && path === "/assessments") {
-        if (!parsedBody.athleteId || !parsedBody.type) {
-          return createErrorResponse(
-            "athleteId and type are required",
-            422,
-            "validation_error",
-          );
-        }
-        const canAccessAthlete = await verifyPsychologyAccess(
-          userId,
-          parsedBody.athleteId,
-        );
-        if (!canAccessAthlete) {
-          return createErrorResponse(
-            "Access denied to athlete data",
-            403,
-            ErrorType.AUTHORIZATION,
-          );
-        }
-        parsedBody.coachId = userId;
-        const assessment = await createAssessment(parsedBody.athleteId, parsedBody);
-        return createSuccessResponse({ assessment });
-      }
-    }
-
-    if (selfAccess.access !== "self" && !staffAccess) {
-      return createErrorResponse("Access denied", 403, ErrorType.AUTHORIZATION);
-    }
-
-    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
+  return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
 }
 
 const handler = async (event, context) => {

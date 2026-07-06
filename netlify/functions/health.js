@@ -12,11 +12,17 @@ import { handler as returnToPlayHandler } from "./return-to-play.js";
 import { getCorsHeaders as cors } from "./utils/cors.js";
 
 export default async (req) => {
-  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: cors(req) });}
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: cors(req) });
+  }
   const url = new URL(req.url);
   const path = url.pathname;
-  if (path.includes("/return-to-play")) {return dispatch(returnToPlayHandler, req, url);}
-  if (path.includes("/recovery")) {return dispatch(recoveryHandler, req, url);}
+  if (path.includes("/return-to-play")) {
+    return dispatch(returnToPlayHandler, req, url);
+  }
+  if (path.includes("/recovery")) {
+    return dispatch(recoveryHandler, req, url);
+  }
   // Default: health check
   return dispatch(healthCheckHandler, req, url);
 };

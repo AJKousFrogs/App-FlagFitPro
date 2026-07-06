@@ -97,10 +97,13 @@ const NORMAL_TRAINING_LOADS = buildTrainingLoads("2026-01-01", [
   { rpe: 6, durationMinutes: 60 },
 ]);
 
-const NORMAL_WEIGHTS = buildWeights("2026-01-15", [
-  80.0, 80.1, 80.0, 80.2, 80.1, 80.2, 80.1,
-  80.2, 80.3, 80.2, 80.3, 80.4, 80.3, 80.4,
-]);
+const NORMAL_WEIGHTS = buildWeights(
+  "2026-01-15",
+  [
+    80.0, 80.1, 80.0, 80.2, 80.1, 80.2, 80.1, 80.2, 80.3, 80.2, 80.3, 80.4,
+    80.3, 80.4,
+  ],
+);
 
 const NORMAL_WELLNESS = buildWellness("2026-01-15", [
   { sleep: 8, energy: 7, stress: 3, soreness: 3, mood: 7, hydration: 8 },
@@ -125,10 +128,13 @@ const SPIKE_TRAINING_LOADS = buildTrainingLoads("2026-01-01", [
   ...Array.from({ length: 7 }, () => ({ rpe: 8, durationMinutes: 75 })), // 600
 ]);
 
-const SPIKE_WEIGHTS = buildWeights("2026-01-15", [
-  82.0, 82.1, 82.0, 82.2, 82.1, 82.3, 82.2,
-  82.4, 82.6, 82.7, 82.8, 82.9, 83.0, 83.1,
-]);
+const SPIKE_WEIGHTS = buildWeights(
+  "2026-01-15",
+  [
+    82.0, 82.1, 82.0, 82.2, 82.1, 82.3, 82.2, 82.4, 82.6, 82.7, 82.8, 82.9,
+    83.0, 83.1,
+  ],
+);
 
 const SPIKE_WELLNESS = buildWellness("2026-01-15", [
   { sleep: 7, energy: 6, stress: 5, soreness: 5, mood: 6, hydration: 7 },
@@ -153,10 +159,13 @@ const RECOVERY_TRAINING_LOADS = buildTrainingLoads("2026-01-01", [
   ...Array.from({ length: 14 }, () => ({ rpe: 2, durationMinutes: 25 })), // 50
 ]);
 
-const RECOVERY_WEIGHTS = buildWeights("2026-01-15", [
-  78.5, 78.4, 78.4, 78.3, 78.3, 78.2, 78.2,
-  78.2, 78.1, 78.1, 78.1, 78.0, 78.0, 78.0,
-]);
+const RECOVERY_WEIGHTS = buildWeights(
+  "2026-01-15",
+  [
+    78.5, 78.4, 78.4, 78.3, 78.3, 78.2, 78.2, 78.2, 78.1, 78.1, 78.1, 78.0,
+    78.0, 78.0,
+  ],
+);
 
 const RECOVERY_WELLNESS = buildWellness("2026-01-15", [
   { sleep: 8, energy: 7, stress: 3, soreness: 4, mood: 7, hydration: 8 },

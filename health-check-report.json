@@ -48,9 +48,7 @@
     },
     "performance": {
       "score": 40,
-      "issues": [
-        "Large node_modules size may affect build performance"
-      ],
+      "issues": ["Large node_modules size may affect build performance"],
       "status": "critical",
       "metrics": {
         "nodeModulesSize": "664MB"
@@ -107,7 +105,5 @@
     "Sensitive file found: .env (ensure it's in .gitignore)",
     "Sensitive file found: .env.local (ensure it's in .gitignore)"
   ],
-  "recommendations": [
-    "🏆 Excellent: Production ready!"
-  ]
+  "recommendations": ["🏆 Excellent: Production ready!"]
 }

@@ -28,7 +28,10 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => {
   };
   return {
     baseHandler: async (event, context, options) =>
-      options.handler(event, context, { userId: "user-1", supabase: fakeSupabase }),
+      options.handler(event, context, {
+        userId: "user-1",
+        supabase: fakeSupabase,
+      }),
   };
 });
 
@@ -49,31 +52,49 @@ vi.mock("../../netlify/functions/utils/session-state-helper.js", () => ({
   }),
 }));
 
-vi.mock("../../netlify/functions/utils/input-validator.js", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    validateInput: (payload, schema) => {
-      const errors = [];
-      for (const [key, rule] of Object.entries(schema)) {
-        const val = payload[key];
-        if (rule.required && (val === undefined || val === null || val === "")) {
-          errors.push(`${key} is required`);
+vi.mock(
+  "../../netlify/functions/utils/input-validator.js",
+  async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+      ...actual,
+      validateInput: (payload, schema) => {
+        const errors = [];
+        for (const [key, rule] of Object.entries(schema)) {
+          const val = payload[key];
+          if (
+            rule.required &&
+            (val === undefined || val === null || val === "")
+          ) {
+            errors.push(`${key} is required`);
+          }
+          if (
+            val !== undefined &&
+            rule.type === "number" &&
+            typeof val !== "number"
+          ) {
+            errors.push(`${key} must be number`);
+          }
+          if (
+            val !== undefined &&
+            rule.type === "date" &&
+            Number.isNaN(new Date(val).getTime())
+          ) {
+            errors.push(`${key} must be date`);
+          }
+          if (
+            val !== undefined &&
+            rule.type === "enum" &&
+            !rule.values.includes(val)
+          ) {
+            errors.push(`${key} must be one of ${rule.values.join(", ")}`);
+          }
         }
-        if (val !== undefined && rule.type === "number" && typeof val !== "number") {
-          errors.push(`${key} must be number`);
-        }
-        if (val !== undefined && rule.type === "date" && Number.isNaN(new Date(val).getTime())) {
-          errors.push(`${key} must be date`);
-        }
-        if (val !== undefined && rule.type === "enum" && !rule.values.includes(val)) {
-          errors.push(`${key} must be one of ${rule.values.join(", ")}`);
-        }
-      }
-      return { valid: errors.length === 0, errors, cleaned: payload };
-    },
-  };
-});
+        return { valid: errors.length === 0, errors, cleaned: payload };
+      },
+    };
+  },
+);
 
 describe("training-sessions update validation hardening", () => {
   let handler;

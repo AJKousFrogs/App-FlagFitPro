@@ -1,11 +1,18 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { detectACWRTrigger } from "./utils/safety-override.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
-import { tryParseJsonObjectBody, isFiniteNumber } from "./utils/input-validator.js";
+import {
+  tryParseJsonObjectBody,
+  isFiniteNumber,
+} from "./utils/input-validator.js";
 import {
   buildRequestLogContext,
   createLogger,
@@ -97,7 +104,9 @@ function estimateGameLoads(events, startDate, endDate) {
     );
     const last = Number.isNaN(end.getTime())
       ? cur
-      : new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()));
+      : new Date(
+          Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()),
+        );
     let guard = 0;
     while (cur <= last && guard < 31) {
       const key = cur.toISOString().slice(0, 10);
@@ -532,11 +541,15 @@ const handler = async (event, context) => {
       );
 
       if (sessErr) {
-        requestLogger.error("readiness_training_sessions_fetch_failed", sessErr, {
-          athlete_id: athleteId,
-          start_date: startChronic.toISOString().slice(0, 10),
-          end_date: dayStr,
-        });
+        requestLogger.error(
+          "readiness_training_sessions_fetch_failed",
+          sessErr,
+          {
+            athlete_id: athleteId,
+            start_date: startChronic.toISOString().slice(0, 10),
+            end_date: dayStr,
+          },
+        );
         if (!isOptionalSchemaError(sessErr)) {
           return createErrorResponse(
             `Failed to fetch sessions: ${sessErr.message}`,
@@ -717,7 +730,10 @@ const handler = async (event, context) => {
       // Strong evidence base: sleep duration/quality strongly linked to readiness
       // (Halson 2014, Fullagar et al. 2015)
       let sleepScore = 100;
-      if (isFiniteNumber(wellness.sleep_quality) && wellness.sleep_quality <= 4) {
+      if (
+        isFiniteNumber(wellness.sleep_quality) &&
+        wellness.sleep_quality <= 4
+      ) {
         sleepScore -= 25;
       } else if (
         isFiniteNumber(wellness.sleep_quality) &&
@@ -805,7 +821,9 @@ const handler = async (event, context) => {
       try {
         const { data: injuryRows } = await supabaseAdmin
           .from("athlete_injuries")
-          .select("injury_grade, recovery_status, injury_mechanism, expected_return_date")
+          .select(
+            "injury_grade, recovery_status, injury_mechanism, expected_return_date",
+          )
           .eq("user_id", athleteId)
           .in("recovery_status", ["active", "recovering", "rehab"]);
         for (const inj of injuryRows || []) {
@@ -814,7 +832,9 @@ const handler = async (event, context) => {
             inj.injury_mechanism === "self_report" &&
             inj.expected_return_date &&
             inj.expected_return_date < dayStr
-          ) continue;
+          ) {
+            continue;
+          }
           const g = inj.injury_grade;
           if (g === "severe" || g === "Grade 3") {
             injuryPenalty = Math.max(injuryPenalty, 20);

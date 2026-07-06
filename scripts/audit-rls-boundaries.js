@@ -50,7 +50,8 @@ function analyze(filePath) {
   const manualAuth = hasManualAuth(source);
   const writes = hasWriteOps(source);
   const hasMixedRequireAuth =
-    source.includes("requireAuth: false") && source.includes("requireAuth: true");
+    source.includes("requireAuth: false") &&
+    source.includes("requireAuth: true");
 
   return {
     file: path.relative(ROOT, filePath),

@@ -7,10 +7,14 @@
 </header>
 
 <main class="screen">
-  <p class="note">Set each event's format so competition load is scored correctly — a
-    2×40 tournament counts its true spike, not a flat 40-min default.</p>
+  <p class="note">
+    Set each event's format so competition load is scored correctly — a 2×40
+    tournament counts its true spike, not a flat 40-min default.
+  </p>
 
-  @if (formatError(); as e) { <p class="note" style="color:var(--danger)" role="alert">{{ e }}</p> }
+  @if (formatError(); as e) {
+    <p class="note" style="color: var(--danger)" role="alert">{{ e }}</p>
+  }
 
   @if (events() === null) {
     <div class="empty">Loading…</div>
@@ -23,12 +27,23 @@
           <b class="inline"><lucide-icon name="flag" /> {{ e.name }}</b>
           <small>{{ date(e.startsAt) }} · {{ e.games ?? "—" }} games</small>
         </div>
-        <div class="inline" style="flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-3)">
+        <div
+          class="inline"
+          style="flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3)"
+        >
           @for (f of formats; track f.min) {
-            <button type="button" class="chip" [class.sel]="e.minutesPerGame === f.min"
-                    (click)="setFormat(e, f.min, f.label)">{{ f.label }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="e.minutesPerGame === f.min"
+              (click)="setFormat(e, f.min, f.label)"
+            >
+              {{ f.label }}
+            </button>
           }
-          @if (saved().has(e.id)) { <span class="band good">saved</span> }
+          @if (saved().has(e.id)) {
+            <span class="band good">saved</span>
+          }
         </div>
       </div>
     }

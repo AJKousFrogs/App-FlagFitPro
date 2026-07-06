@@ -17,7 +17,7 @@ const child = spawn(
     stdio: "inherit",
     env,
     shell: true,
-  }
+  },
 );
 
 child.on("exit", (code) => process.exit(code ?? 0));

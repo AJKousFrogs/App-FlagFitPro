@@ -793,9 +793,7 @@ class FeatureValidator {
   async countResearchStudies() {
     try {
       // Look for research data files and count actual studies
-      const researchFiles = [
-        "./database/research-studies.json",
-      ];
+      const researchFiles = ["./database/research-studies.json"];
       let count = 0;
 
       for (const file of researchFiles) {

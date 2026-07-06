@@ -1,4 +1,3 @@
-
 // Netlify Function: Health Check
 // Provides system health status for monitoring and debugging
 // Endpoint: /api/health
@@ -8,7 +7,10 @@
 import { supabase, supabaseAdmin } from "./supabase-client.js";
 import { lookup } from "node:dns/promises";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -35,8 +37,7 @@ function getSupabaseConfigStatus() {
       !!process.env.SUPABASE_SERVICE_KEY ||
       !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     hasAnonKey:
-      !!process.env.SUPABASE_ANON_KEY ||
-      !!process.env.VITE_SUPABASE_ANON_KEY,
+      !!process.env.SUPABASE_ANON_KEY || !!process.env.VITE_SUPABASE_ANON_KEY,
     hasAdminClient: !!supabaseAdmin,
     hasAnonClient: !!supabase,
   };

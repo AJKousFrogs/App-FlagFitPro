@@ -15,7 +15,9 @@ import { describe, it, expect, beforeAll } from "vitest";
 // (netlify dev on :8888). They skip unless a live target is configured, so they
 // stay green in environments without a server. Set RUN_LIVE_API_TESTS=1 (or API_URL)
 // to run them against a live stack.
-const RUN_LIVE_API = Boolean(process.env.RUN_LIVE_API_TESTS || process.env.API_URL);
+const RUN_LIVE_API = Boolean(
+  process.env.RUN_LIVE_API_TESTS || process.env.API_URL,
+);
 const describeLive = RUN_LIVE_API ? describe : describe.skip;
 
 // Mock fetch for testing

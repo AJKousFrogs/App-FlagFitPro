@@ -32,7 +32,10 @@ function createFakeSupabase() {
       return this;
     }
     insert() {
-      if (this.table === "community_poll_votes" && state.voteInsertErrorMessage) {
+      if (
+        this.table === "community_poll_votes" &&
+        state.voteInsertErrorMessage
+      ) {
         throw new Error(state.voteInsertErrorMessage);
       }
       return this;
@@ -60,10 +63,10 @@ function createFakeSupabase() {
     }
     then(resolve, reject) {
       if (this.table === "community_poll_options") {
-        return Promise.resolve({ data: [{ id: "option-1" }], error: null }).then(
-          resolve,
-          reject,
-        );
+        return Promise.resolve({
+          data: [{ id: "option-1" }],
+          error: null,
+        }).then(resolve, reject);
       }
       if (this.table === "community_poll_votes") {
         return Promise.resolve({ data: [], error: null }).then(resolve, reject);

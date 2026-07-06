@@ -25,7 +25,6 @@ function deterministicSort(seed, items) {
   );
 }
 
-
 export async function addMorningMobilityBlock({
   supabase,
   protocolExercises,
@@ -86,8 +85,9 @@ export async function addMorningMobilityBlock({
   }
 
   if (
-    protocolExercises.filter((exercise) => exercise.block_type === "morning_mobility")
-      .length === 0
+    protocolExercises.filter(
+      (exercise) => exercise.block_type === "morning_mobility",
+    ).length === 0
   ) {
     const { data: generalMobility } = await supabase
       .from("exercises")
@@ -114,13 +114,22 @@ export async function addMorningMobilityBlock({
   }
 }
 
-export async function addFoamRollBlock({ supabase, protocolExercises, userId = null, date = null, seed = null }) {
+export async function addFoamRollBlock({
+  supabase,
+  protocolExercises,
+  userId = null,
+  date = null,
+  seed = null,
+}) {
   // Skip foam rolling when a sports massage was completed in the past 24h.
   // Post-massage, the soft tissue is already mobilised — foam rolling adds no
   // value and can aggravate sensitised tissue. Replace with a light active-
   // recovery note (jogging / dynamic stretching to restore muscle tonus).
   if (userId) {
-    const since = new Date(new Date(date ?? new Date().toISOString().slice(0, 10)).getTime() - 86_400_000).toISOString();
+    const since = new Date(
+      new Date(date ?? new Date().toISOString().slice(0, 10)).getTime() -
+        86_400_000,
+    ).toISOString();
     const { data: massageSession } = await supabase
       .from("recovery_sessions")
       .select("id, recovery_protocols!inner(category)")
@@ -141,7 +150,8 @@ export async function addFoamRollBlock({ supabase, protocolExercises, userId = n
         prescribed_sets: 1,
         prescribed_duration_seconds: 600, // 10 min
         load_contribution_au: 0,
-        ai_note: "Sports massage received yesterday — skip foam rolling. Instead: 10 min light jog or brisk walk + dynamic leg swings and arm circles to restore muscle tonus. Foam rolling would aggravate sensitised tissue.",
+        ai_note:
+          "Sports massage received yesterday — skip foam rolling. Instead: 10 min light jog or brisk walk + dynamic leg swings and arm circles to restore muscle tonus. Foam rolling would aggravate sensitised tissue.",
       });
       return;
     }
@@ -158,12 +168,12 @@ export async function addFoamRollBlock({ supabase, protocolExercises, userId = n
     const foamSeed = seed ?? (userId ?? "") + (date ?? "");
     const shuffled = deterministicSort(foamSeed, foamRollExercises).slice(0, 5);
     shuffled.forEach((ex, idx) => {
-        protocolExercises.push({
-          exercise_id: ex.id,
-          exercise_name: ex.name,
-          block_type: "foam_roll",
-          sequence_order: idx + 1,
-          prescribed_sets: ex.default_sets || 1,
+      protocolExercises.push({
+        exercise_id: ex.id,
+        exercise_name: ex.name,
+        block_type: "foam_roll",
+        sequence_order: idx + 1,
+        prescribed_sets: ex.default_sets || 1,
         prescribed_reps: ex.default_reps,
         prescribed_hold_seconds: ex.default_hold_seconds,
         prescribed_duration_seconds: ex.default_duration_seconds,
@@ -215,7 +225,10 @@ export async function addWarmupBlock({
   );
 
   if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
-    logger.warn("daily_protocol_warmup_duration_mismatch", { actual: warmupTotalSeconds, target: WARMUP_TARGET_SECONDS });
+    logger.warn("daily_protocol_warmup_duration_mismatch", {
+      actual: warmupTotalSeconds,
+      target: WARMUP_TARGET_SECONDS,
+    });
   }
 
   warmupPlan.forEach((item, idx) => {
@@ -253,11 +266,15 @@ const REGION_KEYWORDS = {
 };
 
 function isExerciseSafeForInjuries(ex, injuredRegions) {
-  if (!injuredRegions || injuredRegions.length === 0) return true;
+  if (!injuredRegions || injuredRegions.length === 0) {
+    return true;
+  }
   const name = (ex.name || "").toLowerCase();
   const slug = (ex.slug || "").toLowerCase();
   for (const region of injuredRegions) {
-    const keywords = REGION_KEYWORDS[region.toLowerCase()] || [region.toLowerCase()];
+    const keywords = REGION_KEYWORDS[region.toLowerCase()] || [
+      region.toLowerCase(),
+    ];
     if (keywords.some((kw) => name.includes(kw) || slug.includes(kw))) {
       return false;
     }
@@ -317,7 +334,10 @@ export async function addRecoveryBlocks({
     .limit(15);
 
   if (recoveryExercises && recoveryExercises.length > 0) {
-    const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(0, recoveryCount);
+    const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(
+      0,
+      recoveryCount,
+    );
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         exercise_id: ex.id,
@@ -377,7 +397,9 @@ function getPositionMobilityConfigs({ context, normalizedPosition }) {
           supabase
             .from("exercises")
             .select("*")
-            .or("position_specific.cs.{center},position_specific.cs.{quarterback}")
+            .or(
+              "position_specific.cs.{center},position_specific.cs.{quarterback}",
+            )
             .eq("category", "mobility")
             .eq("active", true)
             .limit(5),

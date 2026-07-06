@@ -45,14 +45,10 @@ logger.info("migration_tool_invoked", {
 });
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  logger.error(
-    "migration_tool_missing_env",
-    undefined,
-    {
-      missingSupabaseUrl: !supabaseUrl,
-      missingServiceKey: !supabaseServiceKey,
-    },
-  );
+  logger.error("migration_tool_missing_env", undefined, {
+    missingSupabaseUrl: !supabaseUrl,
+    missingServiceKey: !supabaseServiceKey,
+  });
 
   console.error("❌ Error: Missing Supabase environment variables");
   console.error(
@@ -62,9 +58,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.log("📋 Manual Migration Instructions:");
   console.log("─".repeat(80));
   console.log("1. Go to Supabase Dashboard → SQL Editor");
-  console.log(
-    "2. Copy the SQL from the migration file path shown below",
-  );
+  console.log("2. Copy the SQL from the migration file path shown below");
   console.log("3. Paste and run the SQL in the editor");
   console.log("─".repeat(80));
   console.log("");
@@ -102,12 +96,9 @@ async function checkAndApplyMigration() {
 
     // We can't query information_schema directly with Supabase JS client
     // So we'll attempt to read from users table and catch errors
-    logger.warn(
-      "migration_tool_schema_check_limitation",
-      {
-        reason: "Supabase JS client cannot query information_schema",
-      },
-    );
+    logger.warn("migration_tool_schema_check_limitation", {
+      reason: "Supabase JS client cannot query information_schema",
+    });
     console.log(
       "⚠️  Note: Cannot check schema directly with Supabase JS client",
     );
@@ -132,13 +123,9 @@ async function checkAndApplyMigration() {
       "✅ This migration is safe to run multiple times (it checks before adding columns)",
     );
   } catch (error) {
-    logger.error(
-      "migration_tool_schema_check_failed",
-      error,
-      {
-        migrationPath,
-      },
-    );
+    logger.error("migration_tool_schema_check_failed", error, {
+      migrationPath,
+    });
   }
 }
 

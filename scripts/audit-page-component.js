@@ -104,8 +104,10 @@ function auditComponent(componentPath) {
 }
 
 // CLI - only run when executed directly (not when imported)
-const isMain = process.argv[1]?.endsWith("audit-page-component.js") ||
-  (process.argv[1] && path.resolve(process.cwd(), process.argv[1]) === __filename);
+const isMain =
+  process.argv[1]?.endsWith("audit-page-component.js") ||
+  (process.argv[1] &&
+    path.resolve(process.cwd(), process.argv[1]) === __filename);
 
 if (isMain) {
   const componentPath = process.argv[2];

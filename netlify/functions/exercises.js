@@ -22,18 +22,34 @@ import { handler as qbThrowingHandler } from "./qb-throwing.js";
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 const handleRequest = async (req) => {
-  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: corsHeaders(req) });}
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders(req) });
+  }
   const url = new URL(req.url);
   const path = url.pathname;
 
-  if (path.includes("/exercise-progression")) {return dispatch(exerciseProgressionHandler, req, url);}
-  if (path.includes("/isometrics")) {return dispatch(isometricsHandler, req, url);}
-  if (path.includes("/plyometrics")) {return dispatch(plyometricsHandler, req, url);}
-  if (path.includes("/qb-throwing")) {return dispatch(qbThrowingHandler, req, url);}
-  if (path.includes("/exercises")) {return dispatch(exercisesCoreHandler, req, url);}
+  if (path.includes("/exercise-progression")) {
+    return dispatch(exerciseProgressionHandler, req, url);
+  }
+  if (path.includes("/isometrics")) {
+    return dispatch(isometricsHandler, req, url);
+  }
+  if (path.includes("/plyometrics")) {
+    return dispatch(plyometricsHandler, req, url);
+  }
+  if (path.includes("/qb-throwing")) {
+    return dispatch(qbThrowingHandler, req, url);
+  }
+  if (path.includes("/exercises")) {
+    return dispatch(exercisesCoreHandler, req, url);
+  }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

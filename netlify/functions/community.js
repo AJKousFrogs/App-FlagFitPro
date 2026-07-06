@@ -1,9 +1,19 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody, sanitizeObject, parseBoundedInt } from "./utils/input-validator.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  parseJsonObjectBody,
+  sanitizeObject,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 // Netlify Function: Community API
 // Returns community feed, posts, and leaderboard data
@@ -44,7 +54,6 @@ const getCommunityUserAvatar = (user) =>
 // Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
   try {
-
     // SECURITY: Build query with privacy filters
     let query = supabaseAdmin
       .from("posts")
@@ -143,7 +152,9 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
       mediaType: post.media_type || null,
     }));
   } catch (error) {
-    logger.error("community_feed_fetch_failed", error, { viewer_user_id: userId });
+    logger.error("community_feed_fetch_failed", error, {
+      viewer_user_id: userId,
+    });
     // Return empty array on error
     return [];
   }
@@ -152,7 +163,6 @@ const getCommunityFeed = async (userId, limit = 20, offset = 0) => {
 // Get community leaderboard
 const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
   try {
-
     // Calculate leaderboard from posts and user engagement
     // This aggregates data from posts table
     const { data: leaderboardData, error } = await supabaseAdmin
@@ -220,7 +230,6 @@ const getCommunityLeaderboard = async (_category = "overall", limit = 10) => {
 // Create a new post with validation
 const createPost = async (userId, postData) => {
   try {
-
     // SECURITY: Sanitize input to prevent XSS
     const sanitizedData = sanitizeObject(postData);
 
@@ -317,7 +326,6 @@ const createPost = async (userId, postData) => {
 // Toggle like on a post
 const toggleLike = async (userId, postId) => {
   try {
-
     // Check if user already liked this post
     const { data: existingLike } = await supabaseAdmin
       .from("post_likes")
@@ -358,7 +366,6 @@ const toggleLike = async (userId, postId) => {
 // Toggle bookmark on a post
 const toggleBookmark = async (userId, postId) => {
   try {
-
     // Check if user already bookmarked this post
     const { data: existingBookmark } = await supabaseAdmin
       .from("post_bookmarks")
@@ -396,7 +403,6 @@ const toggleBookmark = async (userId, postId) => {
 // Get comments for a post
 const getPostComments = async (postId, userId = null) => {
   try {
-
     const { data: comments, error } = await supabaseAdmin
       .from("post_comments")
       .select(
@@ -451,7 +457,6 @@ const getPostComments = async (postId, userId = null) => {
 // Add a comment to a post
 const addComment = async (userId, postId, content) => {
   try {
-
     // SECURITY: Validate content
     if (!content || content.trim().length === 0) {
       throw new Error("Comment content is required");
@@ -507,7 +512,6 @@ const addComment = async (userId, postId, content) => {
 // Toggle like on a comment
 const toggleCommentLike = async (userId, commentId) => {
   try {
-
     // Check if user already liked this comment
     const { data: existingLike } = await supabaseAdmin
       .from("comment_likes")
@@ -555,7 +559,6 @@ const toggleCommentLike = async (userId, commentId) => {
 // Get trending topics
 const getTrendingTopics = async (limit = 5) => {
   try {
-
     const { data: topics, error } = await supabaseAdmin
       .from("trending_topics")
       .select("*")
@@ -616,7 +619,6 @@ const getRelativeTime = (date) => {
 // Create a poll for a post (exported for future use)
 const _createPoll = async (postId, pollData) => {
   try {
-
     const { question, options, endsAt } = pollData;
 
     // Validate
@@ -685,7 +687,6 @@ const votePoll = async (userId, optionId) => {
     "You have already voted on this poll",
   ]);
   try {
-
     // Check if user already voted on this poll
     const { data: option } = await supabaseAdmin
       .from("community_poll_options")
@@ -773,7 +774,6 @@ const votePoll = async (userId, optionId) => {
 // Get poll for a post
 const getPollForPost = async (postId, userId = null) => {
   try {
-
     const { data: poll, error } = await supabaseAdmin
       .from("community_polls")
       .select(
@@ -839,7 +839,11 @@ const handler = async (event, context) => {
       allowedMethods: ["GET", "POST", "DELETE"],
       rateLimitType,
       requireAuth: true,
-      handler: async (event, _context, { requestId, correlationId, userId }) => {
+      handler: async (
+        event,
+        _context,
+        { requestId, correlationId, userId },
+      ) => {
         const requestLogger = logger.child(
           buildRequestLogContext(event, {
             request_id: requestId,
@@ -873,114 +877,78 @@ const handler = async (event, context) => {
 };
 
 async function handleCommunityRequest(event, requestId, log = logger) {
-    try {
-      // SECURITY: Authentication (optional for GET, required for POST/DELETE)
-      let userId = null;
-      const headers = event.headers || {};
-      const authHeader = headers.authorization || headers.Authorization;
+  try {
+    // SECURITY: Authentication (optional for GET, required for POST/DELETE)
+    let userId = null;
+    const headers = event.headers || {};
+    const authHeader = headers.authorization || headers.Authorization;
 
-      // SECURITY FIX: Require auth header for POST/DELETE even before checking token
-      if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-          return createErrorResponse(
-            "Authentication required",
-            401,
-            "auth_required",
-            requestId,
-          );
-        }
-      }
-
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        const auth = await authenticateRequest(event);
-        if (auth.success) {
-          userId = auth.user.id;
-        } else if (
-          event.httpMethod === "POST" ||
-          event.httpMethod === "DELETE"
-        ) {
-          return createErrorResponse(
-            "Authentication required",
-            401,
-            "auth_required",
-            requestId,
-          );
-        }
-      }
-
-      const queryParams = event.queryStringParameters || {};
-      const {
-        feed,
-        leaderboard,
-        postId,
-        like,
-        bookmark,
-        comment,
-        commentId,
-        commentLike,
-        trending,
-        poll,
-        pollVote,
-        optionId,
-        limit,
-        offset,
-        category,
-      } = queryParams;
-
-      let parsedLimit;
-      let parsedOffset;
-      try {
-        parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 });
-        parsedOffset = parseBoundedInt(offset, "offset", { min: 0, max: 1000000 });
-      } catch (error) {
+    // SECURITY FIX: Require auth header for POST/DELETE even before checking token
+    if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return createErrorResponse(
-          error.message || "Invalid query parameter",
-          422,
-          "validation_error",
+          "Authentication required",
+          401,
+          "auth_required",
           requestId,
         );
       }
+    }
 
-      // Handle GET requests
-      if (event.httpMethod === "GET") {
-        // Get feed
-        if (feed === "true" || feed === true) {
-          const feedData = await getCommunityFeed(
-            userId,
-            parsedLimit ?? 20,
-            parsedOffset ?? 0,
-          );
-          return createSuccessResponse({ posts: feedData }, requestId);
-        }
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const auth = await authenticateRequest(event);
+      if (auth.success) {
+        userId = auth.user.id;
+      } else if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
+        return createErrorResponse(
+          "Authentication required",
+          401,
+          "auth_required",
+          requestId,
+        );
+      }
+    }
 
-        // Get leaderboard
-        if (leaderboard === "true" || leaderboard === true) {
-          const leaderboardData = await getCommunityLeaderboard(
-            category || "overall",
-            parsedLimit ?? 10,
-          );
-          return createSuccessResponse(leaderboardData, requestId);
-        }
+    const queryParams = event.queryStringParameters || {};
+    const {
+      feed,
+      leaderboard,
+      postId,
+      like,
+      bookmark,
+      comment,
+      commentId,
+      commentLike,
+      trending,
+      poll,
+      pollVote,
+      optionId,
+      limit,
+      offset,
+      category,
+    } = queryParams;
 
-        // Get trending topics
-        if (trending === "true" || trending === true) {
-          const topics = await getTrendingTopics(parsedLimit ?? 5);
-          return createSuccessResponse({ topics }, requestId);
-        }
+    let parsedLimit;
+    let parsedOffset;
+    try {
+      parsedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 200 });
+      parsedOffset = parseBoundedInt(offset, "offset", {
+        min: 0,
+        max: 1000000,
+      });
+    } catch (error) {
+      return createErrorResponse(
+        error.message || "Invalid query parameter",
+        422,
+        "validation_error",
+        requestId,
+      );
+    }
 
-        // Get comments for a post
-        if (postId && comment === "true") {
-          const comments = await getPostComments(postId, userId);
-          return createSuccessResponse({ comments }, requestId);
-        }
-
-        // Get poll for a post
-        if (postId && poll === "true") {
-          const pollData = await getPollForPost(postId, userId);
-          return createSuccessResponse({ poll: pollData }, requestId);
-        }
-
-        // Default: return feed
+    // Handle GET requests
+    if (event.httpMethod === "GET") {
+      // Get feed
+      if (feed === "true" || feed === true) {
         const feedData = await getCommunityFeed(
           userId,
           parsedLimit ?? 20,
@@ -989,103 +957,70 @@ async function handleCommunityRequest(event, requestId, log = logger) {
         return createSuccessResponse({ posts: feedData }, requestId);
       }
 
-      // Handle POST requests
-      if (event.httpMethod === "POST") {
-        if (!userId) {
-          return createErrorResponse(
-            "Authentication required",
-            401,
-            "auth_required",
-            requestId,
-          );
-        }
+      // Get leaderboard
+      if (leaderboard === "true" || leaderboard === true) {
+        const leaderboardData = await getCommunityLeaderboard(
+          category || "overall",
+          parsedLimit ?? 10,
+        );
+        return createSuccessResponse(leaderboardData, requestId);
+      }
 
-        // Toggle like on a post
-        if (postId && like === "true") {
-          const result = await toggleLike(userId, postId);
-          return createSuccessResponse(result, requestId);
-        }
+      // Get trending topics
+      if (trending === "true" || trending === true) {
+        const topics = await getTrendingTopics(parsedLimit ?? 5);
+        return createSuccessResponse({ topics }, requestId);
+      }
 
-        // Toggle bookmark on a post
-        if (postId && bookmark === "true") {
-          const result = await toggleBookmark(userId, postId);
-          return createSuccessResponse(result, requestId);
-        }
+      // Get comments for a post
+      if (postId && comment === "true") {
+        const comments = await getPostComments(postId, userId);
+        return createSuccessResponse({ comments }, requestId);
+      }
 
-        // Add comment to a post
-        if (postId && comment === "true") {
-          let body = {};
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            if (
-              error?.code === "INVALID_JSON_BODY" &&
-              error?.message === "Invalid JSON in request body"
-            ) {
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-                requestId,
-              );
-            }
-            return createErrorResponse(
-              error.message,
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
+      // Get poll for a post
+      if (postId && poll === "true") {
+        const pollData = await getPollForPost(postId, userId);
+        return createSuccessResponse({ poll: pollData }, requestId);
+      }
 
-          const newComment = await addComment(userId, postId, body.content);
-          return createSuccessResponse(
-            { ...newComment, message: "Comment added" },
-            requestId,
-            201,
-          );
-        }
+      // Default: return feed
+      const feedData = await getCommunityFeed(
+        userId,
+        parsedLimit ?? 20,
+        parsedOffset ?? 0,
+      );
+      return createSuccessResponse({ posts: feedData }, requestId);
+    }
 
-        // Toggle like on a comment
-        if (commentId && commentLike === "true") {
-          const result = await toggleCommentLike(userId, commentId);
-          return createSuccessResponse(result, requestId);
-        }
+    // Handle POST requests
+    if (event.httpMethod === "POST") {
+      if (!userId) {
+        return createErrorResponse(
+          "Authentication required",
+          401,
+          "auth_required",
+          requestId,
+        );
+      }
 
-        // Vote on a poll
-        if (optionId && pollVote === "true") {
-          try {
-            const result = await votePoll(userId, optionId);
-            return createSuccessResponse(result, requestId);
-          } catch (error) {
-            if (error.message === "Poll option not found") {
-              return createErrorResponse(
-                "Poll option not found",
-                404,
-                "not_found",
-                requestId,
-              );
-            }
-            if (error.message === "You have already voted on this poll") {
-              return createErrorResponse(
-                "You have already voted on this poll",
-                409,
-                "conflict",
-                requestId,
-              );
-            }
-            return createErrorResponse(
-              "Failed to vote",
-              500,
-              "server_error",
-              requestId,
-            );
-          }
-        }
+      // Toggle like on a post
+      if (postId && like === "true") {
+        const result = await toggleLike(userId, postId);
+        return createSuccessResponse(result, requestId);
+      }
 
-        // Create a new post
-        let postData = {};
+      // Toggle bookmark on a post
+      if (postId && bookmark === "true") {
+        const result = await toggleBookmark(userId, postId);
+        return createSuccessResponse(result, requestId);
+      }
+
+      // Add comment to a post
+      if (postId && comment === "true") {
+        let body = {};
         try {
-          postData = parseJsonObjectBody(event.body);
+          body = parseJsonObjectBody(event.body);
         } catch (error) {
           if (
             error?.code === "INVALID_JSON_BODY" &&
@@ -1106,31 +1041,100 @@ async function handleCommunityRequest(event, requestId, log = logger) {
           );
         }
 
-        const newPost = await createPost(userId, postData);
+        const newComment = await addComment(userId, postId, body.content);
         return createSuccessResponse(
-          { ...newPost, message: "Post created successfully" },
+          { ...newComment, message: "Comment added" },
           requestId,
           201,
         );
       }
 
-      return createErrorResponse(
-        "Method not allowed",
-        405,
-        "method_not_allowed",
+      // Toggle like on a comment
+      if (commentId && commentLike === "true") {
+        const result = await toggleCommentLike(userId, commentId);
+        return createSuccessResponse(result, requestId);
+      }
+
+      // Vote on a poll
+      if (optionId && pollVote === "true") {
+        try {
+          const result = await votePoll(userId, optionId);
+          return createSuccessResponse(result, requestId);
+        } catch (error) {
+          if (error.message === "Poll option not found") {
+            return createErrorResponse(
+              "Poll option not found",
+              404,
+              "not_found",
+              requestId,
+            );
+          }
+          if (error.message === "You have already voted on this poll") {
+            return createErrorResponse(
+              "You have already voted on this poll",
+              409,
+              "conflict",
+              requestId,
+            );
+          }
+          return createErrorResponse(
+            "Failed to vote",
+            500,
+            "server_error",
+            requestId,
+          );
+        }
+      }
+
+      // Create a new post
+      let postData = {};
+      try {
+        postData = parseJsonObjectBody(event.body);
+      } catch (error) {
+        if (
+          error?.code === "INVALID_JSON_BODY" &&
+          error?.message === "Invalid JSON in request body"
+        ) {
+          return createErrorResponse(
+            "Invalid JSON in request body",
+            400,
+            "invalid_json",
+            requestId,
+          );
+        }
+        return createErrorResponse(
+          error.message,
+          422,
+          "validation_error",
+          requestId,
+        );
+      }
+
+      const newPost = await createPost(userId, postData);
+      return createSuccessResponse(
+        { ...newPost, message: "Post created successfully" },
         requestId,
-      );
-    } catch (error) {
-      log.error("community_request_failed", error, {
-        http_method: event.httpMethod,
-      });
-      return createErrorResponse(
-        "Internal server error",
-        500,
-        "server_error",
-        requestId,
+        201,
       );
     }
+
+    return createErrorResponse(
+      "Method not allowed",
+      405,
+      "method_not_allowed",
+      requestId,
+    );
+  } catch (error) {
+    log.error("community_request_failed", error, {
+      http_method: event.httpMethod,
+    });
+    return createErrorResponse(
+      "Internal server error",
+      500,
+      "server_error",
+      requestId,
+    );
+  }
 }
 
 export const testHandler = handler;

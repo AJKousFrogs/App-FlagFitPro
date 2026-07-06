@@ -115,34 +115,115 @@ const FOCUS_CLS: Record<string, string> = {
   imports: [DecimalPipe, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster.component.html",
-  styles: [`
-    a.lrow { color: inherit; }
-    .tab-bar { display: flex; gap: var(--s-4); border-bottom: 1px solid var(--border-soft); margin-bottom: var(--s-4); }
-    .tab-btn { background: none; border: 0; cursor: pointer; padding: var(--s-2) 0;
-      color: var(--text-faint); font-weight: var(--fw-semi); font-size: var(--fs-sm);
-      font-family: var(--font-body); border-bottom: 2px solid transparent; }
-    .tab-btn.on { color: var(--text-strong); border-bottom-color: var(--accent); }
-    .card-mb { margin-bottom: var(--s-4); }
-    .section-label { font-size: var(--fs-xs); color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: .06em; margin-bottom: var(--s-2); }
-    .summary-chips { display: flex; flex-wrap: wrap; gap: var(--s-3); padding: var(--s-3) 0; }
-    .detail { font-size: var(--fs-sm); color: var(--text-body); }
-    .sub { font-size: var(--fs-xs); color: var(--text-faint); }
-    .inj-row { display: flex; flex-direction: column; gap: 2px; padding: var(--s-3) 0;
-      border-bottom: 1px solid var(--border-soft); }
-    .inj-row:last-child { border-bottom: 0; }
-    .inj-meta { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-    .inj-today { display: flex; gap: var(--s-2); margin-top: 2px; }
-    .cycle-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-2); padding: var(--s-3) 0;
-      border-bottom: 1px solid var(--border-soft); align-items: center; }
-    .cycle-row:last-child { border-bottom: 0; }
-    .bands { display: flex; gap: var(--s-2); align-items: center; }
-    .bands.mt { margin-top: 4px; }
-    .trend { display: flex; gap: 3px; align-items: flex-end; height: 24px; }
-    .trend-bar { width: 6px; border-radius: 2px; min-height: 3px; }
-    .ev-body { padding: var(--s-3) 0; }
-    .ev-type { margin-top: 2px; }
-  `],
+  styles: [
+    `
+      a.lrow {
+        color: inherit;
+      }
+      .tab-bar {
+        display: flex;
+        gap: var(--s-4);
+        border-bottom: 1px solid var(--border-soft);
+        margin-bottom: var(--s-4);
+      }
+      .tab-btn {
+        background: none;
+        border: 0;
+        cursor: pointer;
+        padding: var(--s-2) 0;
+        color: var(--text-faint);
+        font-weight: var(--fw-semi);
+        font-size: var(--fs-sm);
+        font-family: var(--font-body);
+        border-bottom: 2px solid transparent;
+      }
+      .tab-btn.on {
+        color: var(--text-strong);
+        border-bottom-color: var(--accent);
+      }
+      .card-mb {
+        margin-bottom: var(--s-4);
+      }
+      .section-label {
+        font-size: var(--fs-xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: var(--s-2);
+      }
+      .summary-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--s-3);
+        padding: var(--s-3) 0;
+      }
+      .detail {
+        font-size: var(--fs-sm);
+        color: var(--text-body);
+      }
+      .sub {
+        font-size: var(--fs-xs);
+        color: var(--text-faint);
+      }
+      .inj-row {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--s-3) 0;
+        border-bottom: 1px solid var(--border-soft);
+      }
+      .inj-row:last-child {
+        border-bottom: 0;
+      }
+      .inj-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--s-2);
+        align-items: center;
+      }
+      .inj-today {
+        display: flex;
+        gap: var(--s-2);
+        margin-top: 2px;
+      }
+      .cycle-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--s-2);
+        padding: var(--s-3) 0;
+        border-bottom: 1px solid var(--border-soft);
+        align-items: center;
+      }
+      .cycle-row:last-child {
+        border-bottom: 0;
+      }
+      .bands {
+        display: flex;
+        gap: var(--s-2);
+        align-items: center;
+      }
+      .bands.mt {
+        margin-top: 4px;
+      }
+      .trend {
+        display: flex;
+        gap: 3px;
+        align-items: flex-end;
+        height: 24px;
+      }
+      .trend-bar {
+        width: 6px;
+        border-radius: 2px;
+        min-height: 3px;
+      }
+      .ev-body {
+        padding: var(--s-3) 0;
+      }
+      .ev-type {
+        margin-top: 2px;
+      }
+    `,
+  ],
 })
 export class RosterComponent {
   private readonly api = inject(ApiService);
@@ -167,9 +248,10 @@ export class RosterComponent {
   constructor() {
     if (this.isCoach()) {
       this.api
-        .get<{ members?: CoachMember[]; consentInfo?: { blockedPlayerIds?: string[] } }>(
-          "/api/coach/team",
-        )
+        .get<{
+          members?: CoachMember[];
+          consentInfo?: { blockedPlayerIds?: string[] };
+        }>("/api/coach/team")
         .subscribe({
           next: (res) => {
             const d = res?.data ?? {};
@@ -182,7 +264,9 @@ export class RosterComponent {
                 jersey: null,
                 acwr: typeof m.acwr === "number" ? m.acwr : null,
                 readiness: typeof m.readiness === "number" ? m.readiness : null,
-                shared: !blocked.has(m.user_id ?? "") && (m.dataState ?? "") !== "NO_DATA",
+                shared:
+                  !blocked.has(m.user_id ?? "") &&
+                  (m.dataState ?? "") !== "NO_DATA",
               })),
             );
           },
@@ -190,10 +274,15 @@ export class RosterComponent {
         });
     } else {
       const teamId = this.membership.teamId();
-      const url = teamId ? `/api/roster/players?teamId=${teamId}` : "/api/roster/players";
+      const url = teamId
+        ? `/api/roster/players?teamId=${teamId}`
+        : "/api/roster/players";
       this.api.get<{ players?: Player[] } | Player[]>(url).subscribe({
         next: (res) => {
-          const raw = res?.data as { players?: Player[] } | Player[] | undefined;
+          const raw = res?.data as
+            | { players?: Player[] }
+            | Player[]
+            | undefined;
           const list = Array.isArray(raw) ? raw : (raw?.players ?? []);
           this.rows.set(
             list.map((p) => ({
@@ -220,9 +309,10 @@ export class RosterComponent {
     if (t === "injuries" && !this.injuriesLoaded) {
       this.injuriesLoaded = true;
       this.api
-        .get<{ injuries: InjuryRow[]; summary: InjurySummary }>(
-          API_ENDPOINTS.roster.injuries(teamId),
-        )
+        .get<{
+          injuries: InjuryRow[];
+          summary: InjurySummary;
+        }>(API_ENDPOINTS.roster.injuries(teamId))
         .subscribe({
           next: (res) => {
             this.injuries.set(res?.data?.injuries ?? []);
@@ -235,9 +325,10 @@ export class RosterComponent {
     if (t === "cycle" && !this.cycleLoaded) {
       this.cycleLoaded = true;
       this.api
-        .get<{ athletes: CycleAthlete[]; nextTeamEvent: NextTeamEvent | null }>(
-          API_ENDPOINTS.roster.trainingCycle(teamId),
-        )
+        .get<{
+          athletes: CycleAthlete[];
+          nextTeamEvent: NextTeamEvent | null;
+        }>(API_ENDPOINTS.roster.trainingCycle(teamId))
         .subscribe({
           next: (res) => {
             this.cycleAthletes.set(res?.data?.athletes ?? []);

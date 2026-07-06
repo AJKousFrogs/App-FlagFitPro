@@ -102,7 +102,9 @@ export class PlatformService {
    */
   setSessionStorage(key: string, value: string): boolean {
     this.sessionMemory.set(key, value);
-    this.logger.debug(`[PlatformService] Session value stored in memory only: ${key}`);
+    this.logger.debug(
+      `[PlatformService] Session value stored in memory only: ${key}`,
+    );
     return true;
   }
 

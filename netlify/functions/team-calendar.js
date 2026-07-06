@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -19,20 +22,34 @@ function isOptionalSchemaError(error) {
 
 function isoDate(value) {
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString().split("T")[0];
+  return Number.isNaN(parsed.getTime())
+    ? null
+    : parsed.toISOString().split("T")[0];
 }
 
 function toRsvpStatus(status) {
-  if (status === "present") {return "going";}
-  if (status === "absent") {return "not-going";}
-  if (status === "excused") {return "maybe";}
+  if (status === "present") {
+    return "going";
+  }
+  if (status === "absent") {
+    return "not-going";
+  }
+  if (status === "excused") {
+    return "maybe";
+  }
   return "pending";
 }
 
 function toAttendanceStatus(status) {
-  if (status === "going") {return "present";}
-  if (status === "not-going") {return "absent";}
-  if (status === "maybe") {return "excused";}
+  if (status === "going") {
+    return "present";
+  }
+  if (status === "not-going") {
+    return "absent";
+  }
+  if (status === "maybe") {
+    return "excused";
+  }
   return "pending";
 }
 
@@ -78,10 +95,14 @@ function mapAttendanceForEvent(records, eventId, userId) {
     myRsvp: toRsvpStatus(myRecord?.status),
     needsRide: myRecord?.needs_ride === true,
     rsvpStats: {
-      going: eventRecords.filter((record) => record.status === "present").length,
-      notGoing: eventRecords.filter((record) => record.status === "absent").length,
-      maybe: eventRecords.filter((record) => record.status === "excused").length,
-      pending: eventRecords.filter((record) => record.status === "pending").length,
+      going: eventRecords.filter((record) => record.status === "present")
+        .length,
+      notGoing: eventRecords.filter((record) => record.status === "absent")
+        .length,
+      maybe: eventRecords.filter((record) => record.status === "excused")
+        .length,
+      pending: eventRecords.filter((record) => record.status === "pending")
+        .length,
     },
   };
 }
@@ -92,21 +113,27 @@ async function listCalendarEvents(supabase, teamId, userId) {
       loadAttendanceMap(supabase, teamId),
       supabase
         .from("games")
-        .select("id, game_id, opponent_team_name, game_date, game_time, location")
+        .select(
+          "id, game_id, opponent_team_name, game_date, game_time, location",
+        )
         .eq("team_id", teamId)
         .gte("game_date", new Date().toISOString().split("T")[0])
         .order("game_date", { ascending: true })
         .limit(30),
       supabase
         .from("practice_plans")
-        .select("id, title, practice_date, start_time, end_time, location, focus")
+        .select(
+          "id, title, practice_date, start_time, end_time, location, focus",
+        )
         .eq("team_id", teamId)
         .gte("practice_date", new Date().toISOString().split("T")[0])
         .order("practice_date", { ascending: true })
         .limit(30),
       supabase
         .from("team_events")
-        .select("id, title, event_type, start_time, end_time, location, description")
+        .select(
+          "id, title, event_type, start_time, end_time, location, description",
+        )
         .eq("team_id", teamId)
         .gte("start_time", new Date().toISOString())
         .order("start_time", { ascending: true })
@@ -119,7 +146,10 @@ async function listCalendarEvents(supabase, teamId, userId) {
   if (plansResult.error) {
     throw plansResult.error;
   }
-  if (teamEventsResult.error && !isOptionalSchemaError(teamEventsResult.error)) {
+  if (
+    teamEventsResult.error &&
+    !isOptionalSchemaError(teamEventsResult.error)
+  ) {
     throw teamEventsResult.error;
   }
 
@@ -127,7 +157,11 @@ async function listCalendarEvents(supabase, teamId, userId) {
 
   for (const game of gamesResult.data || []) {
     const eventId = `game:${game.game_id || game.id}`;
-    const attendance = mapAttendanceForEvent(attendanceRecords, eventId, userId);
+    const attendance = mapAttendanceForEvent(
+      attendanceRecords,
+      eventId,
+      userId,
+    );
     events.push({
       id: eventId,
       title: game.opponent_team_name
@@ -146,7 +180,11 @@ async function listCalendarEvents(supabase, teamId, userId) {
 
   for (const plan of plansResult.data || []) {
     const eventId = `practice:${plan.id}`;
-    const attendance = mapAttendanceForEvent(attendanceRecords, eventId, userId);
+    const attendance = mapAttendanceForEvent(
+      attendanceRecords,
+      eventId,
+      userId,
+    );
     events.push({
       id: eventId,
       title: plan.title || "Team Practice",

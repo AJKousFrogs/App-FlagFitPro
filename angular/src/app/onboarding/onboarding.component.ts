@@ -29,17 +29,59 @@ import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
   templateUrl: "./onboarding.component.html",
   styles: [
     `
-      :host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
-      .dots { display: flex; gap: var(--s-2); }
-      .dots i { width: 8px; height: 8px; border-radius: var(--r-pill); background: var(--surface-2); display: inline-block; transition: width .15s; }
-      .dots i.on { background: var(--accent); width: 20px; }
-      .field { margin: var(--s-3) 0; }
-      .field label { font-size: var(--fs-sm); color: var(--text-muted); display: block; margin-bottom: var(--s-1); }
-      .input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); }
-      .chip.sel { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-      .seasonrow { display: flex; gap: var(--s-2); align-items: center; }
-      .seasonrow .input { padding: var(--s-2) var(--s-3); }
+      :host {
+        display: block;
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+      .dots {
+        display: flex;
+        gap: var(--s-2);
+      }
+      .dots i {
+        width: 8px;
+        height: 8px;
+        border-radius: var(--r-pill);
+        background: var(--surface-2);
+        display: inline-block;
+        transition: width 0.15s;
+      }
+      .dots i.on {
+        background: var(--accent);
+        width: 20px;
+      }
+      .field {
+        margin: var(--s-3) 0;
+      }
+      .field label {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        display: block;
+        margin-bottom: var(--s-1);
+      }
+      .input {
+        width: 100%;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-sm);
+        padding: var(--s-3) var(--s-3);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+      }
+      .chip.sel {
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .seasonrow {
+        display: flex;
+        gap: var(--s-2);
+        align-items: center;
+      }
+      .seasonrow .input {
+        padding: var(--s-2) var(--s-3);
+      }
     `,
   ],
 })
@@ -86,7 +128,12 @@ export class OnboardingComponent {
   };
 
   // step 4 — training prefs
-  readonly equipment = signal<Record<string, boolean>>({ Gym: true, Field: true, Sled: false, Bands: true });
+  readonly equipment = signal<Record<string, boolean>>({
+    Gym: true,
+    Field: true,
+    Sled: false,
+    Bands: true,
+  });
   readonly preferredTime = signal("evening");
 
   readonly saving = signal(false);
@@ -110,13 +157,21 @@ export class OnboardingComponent {
     this.season.update((s) => s.filter((_, idx) => idx !== i));
   }
   setPhase(i: number, phase: string): void {
-    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, phase: phase as SeasonPhase } : w)));
+    this.season.update((s) =>
+      s.map((w, idx) =>
+        idx === i ? { ...w, phase: phase as SeasonPhase } : w,
+      ),
+    );
   }
   setFrom(i: number, v: string): void {
-    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, from: v } : w)));
+    this.season.update((s) =>
+      s.map((w, idx) => (idx === i ? { ...w, from: v } : w)),
+    );
   }
   setTo(i: number, v: string): void {
-    this.season.update((s) => s.map((w, idx) => (idx === i ? { ...w, to: v } : w)));
+    this.season.update((s) =>
+      s.map((w, idx) => (idx === i ? { ...w, to: v } : w)),
+    );
   }
 
   private finish(): void {
@@ -130,7 +185,9 @@ export class OnboardingComponent {
         heightCm: this.heightCm(),
         weightKg: this.weightKg(),
         dateOfBirth: this.dob() || null,
-        equipment: Object.keys(this.equipment()).filter((k) => this.equipment()[k]),
+        equipment: Object.keys(this.equipment()).filter(
+          (k) => this.equipment()[k],
+        ),
         preferredTime: this.preferredTime(),
         seasonCalendar: this.season().filter((w) => w.from && w.to),
       })

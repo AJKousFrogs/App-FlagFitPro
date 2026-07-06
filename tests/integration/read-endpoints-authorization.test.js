@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const baseHandlerMock = async (event, context, options) =>
-  options.handler(event, context, { userId: "athlete-1", requestId: "req-test" });
+  options.handler(event, context, {
+    userId: "athlete-1",
+    requestId: "req-test",
+  });
 
 function createNoopSupabase() {
   return {
@@ -32,7 +35,10 @@ function createNoopSupabase() {
           return this;
         },
         then(resolve, reject) {
-          return Promise.resolve({ data: [], error: null }).then(resolve, reject);
+          return Promise.resolve({ data: [], error: null }).then(
+            resolve,
+            reject,
+          );
         },
       };
     },
@@ -93,15 +99,18 @@ describe("read endpoint authorization hardening", () => {
     vi.doMock("../../netlify/functions/supabase-client.js", () => ({
       supabaseAdmin: createNoopSupabase(),
     }));
-    vi.doMock("../../netlify/functions/utils/authorization-guard.js", async () => {
-      const actual = await vi.importActual(
-        "../../netlify/functions/utils/authorization-guard.js",
-      );
-      return {
-        ...actual,
-        getUserRole: vi.fn().mockResolvedValue("player"),
-      };
-    });
+    vi.doMock(
+      "../../netlify/functions/utils/authorization-guard.js",
+      async () => {
+        const actual = await vi.importActual(
+          "../../netlify/functions/utils/authorization-guard.js",
+        );
+        return {
+          ...actual,
+          getUserRole: vi.fn().mockResolvedValue("player"),
+        };
+      },
+    );
 
     const mod = await import("../../netlify/functions/wellness.js");
     const response = await mod.handler(
@@ -125,15 +134,18 @@ describe("read endpoint authorization hardening", () => {
     vi.doMock("../../netlify/functions/supabase-client.js", () => ({
       supabaseAdmin: createNoopSupabase(),
     }));
-    vi.doMock("../../netlify/functions/utils/authorization-guard.js", async () => {
-      const actual = await vi.importActual(
-        "../../netlify/functions/utils/authorization-guard.js",
-      );
-      return {
-        ...actual,
-        getUserRole: vi.fn().mockResolvedValue("player"),
-      };
-    });
+    vi.doMock(
+      "../../netlify/functions/utils/authorization-guard.js",
+      async () => {
+        const actual = await vi.importActual(
+          "../../netlify/functions/utils/authorization-guard.js",
+        );
+        return {
+          ...actual,
+          getUserRole: vi.fn().mockResolvedValue("player"),
+        };
+      },
+    );
 
     const mod = await import("../../netlify/functions/wellness.js");
     const response = await mod.handler(

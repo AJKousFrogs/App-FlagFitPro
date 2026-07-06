@@ -507,17 +507,23 @@ class MockSupabaseQuery {
 
   in(column, values) {
     const allowedValues = new Set(values);
-    this.filters.push((row) => allowedValues.has(row[this.normalizeColumn(column)]));
+    this.filters.push((row) =>
+      allowedValues.has(row[this.normalizeColumn(column)]),
+    );
     return this;
   }
 
   gte(column, value) {
-    this.filters.push((row) => String(row[this.normalizeColumn(column)]) >= String(value));
+    this.filters.push(
+      (row) => String(row[this.normalizeColumn(column)]) >= String(value),
+    );
     return this;
   }
 
   lte(column, value) {
-    this.filters.push((row) => String(row[this.normalizeColumn(column)]) <= String(value));
+    this.filters.push(
+      (row) => String(row[this.normalizeColumn(column)]) <= String(value),
+    );
     return this;
   }
 
@@ -545,10 +551,11 @@ class MockSupabaseQuery {
 
     if (this.orderConfig) {
       const direction = this.orderConfig.ascending ? 1 : -1;
-      data = [...data].sort((left, right) =>
-        String(left[this.orderConfig.column]).localeCompare(
-          String(right[this.orderConfig.column]),
-        ) * direction,
+      data = [...data].sort(
+        (left, right) =>
+          String(left[this.orderConfig.column]).localeCompare(
+            String(right[this.orderConfig.column]),
+          ) * direction,
       );
     }
 

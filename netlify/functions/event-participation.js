@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -80,7 +83,8 @@ const handler = async (event, context) =>
         );
       }
 
-      const competitionEventId = body.competitionEventId || body.competition_event_id;
+      const competitionEventId =
+        body.competitionEventId || body.competition_event_id;
       if (!isValidId(competitionEventId)) {
         return createErrorResponse(
           "competitionEventId is required",
@@ -99,13 +103,29 @@ const handler = async (event, context) =>
         );
       }
 
-      const games = parseGamesInt(body.gamesPlayed ?? body.games_played, "gamesPlayed");
+      const games = parseGamesInt(
+        body.gamesPlayed ?? body.games_played,
+        "gamesPlayed",
+      );
       if (games.error) {
-        return createErrorResponse(games.error, 422, "validation_error", requestId);
+        return createErrorResponse(
+          games.error,
+          422,
+          "validation_error",
+          requestId,
+        );
       }
-      const minutes = parseGamesInt(body.totalMinutes ?? body.total_minutes, "totalMinutes");
+      const minutes = parseGamesInt(
+        body.totalMinutes ?? body.total_minutes,
+        "totalMinutes",
+      );
       if (minutes.error) {
-        return createErrorResponse(minutes.error, 422, "validation_error", requestId);
+        return createErrorResponse(
+          minutes.error,
+          422,
+          "validation_error",
+          requestId,
+        );
       }
 
       let avgRpe = body.avgRpe ?? body.avg_rpe ?? null;
@@ -128,15 +148,19 @@ const handler = async (event, context) =>
       const targetUserId =
         body.userId && isValidId(body.userId) ? body.userId : userId;
 
-      const { data, error } = await supabaseAdmin.rpc("record_event_participation", {
-        p_user_id: targetUserId,
-        p_competition_event_id: competitionEventId,
-        p_attended: body.attended,
-        p_games_played: body.attended ? games.value ?? 0 : 0,
-        p_total_minutes: minutes.value,
-        p_avg_rpe: avgRpe,
-        p_notes: typeof body.notes === "string" ? body.notes.slice(0, 1000) : null,
-      });
+      const { data, error } = await supabaseAdmin.rpc(
+        "record_event_participation",
+        {
+          p_user_id: targetUserId,
+          p_competition_event_id: competitionEventId,
+          p_attended: body.attended,
+          p_games_played: body.attended ? (games.value ?? 0) : 0,
+          p_total_minutes: minutes.value,
+          p_avg_rpe: avgRpe,
+          p_notes:
+            typeof body.notes === "string" ? body.notes.slice(0, 1000) : null,
+        },
+      );
 
       if (error) {
         const status = /not authorized/i.test(error.message) ? 403 : 500;
@@ -146,14 +170,20 @@ const handler = async (event, context) =>
           target_user_id: targetUserId,
         });
         return createErrorResponse(
-          status === 403 ? "Not authorized to record participation for this athlete" : "Failed to record participation",
+          status === 403
+            ? "Not authorized to record participation for this athlete"
+            : "Failed to record participation",
           status,
           status === 403 ? "authorization_error" : "database_error",
           requestId,
         );
       }
 
-      return createSuccessResponse({ participationId: data }, 201, "Participation recorded");
+      return createSuccessResponse(
+        { participationId: data },
+        201,
+        "Participation recorded",
+      );
     },
   });
 

@@ -55,7 +55,11 @@ export class SupplementsComponent {
     if (!name) return;
     const dosage = this.newDose().trim();
     this.api
-      .post("/api/supplements/stack", { name, dosage: dosage || null, active: true })
+      .post("/api/supplements/stack", {
+        name,
+        dosage: dosage || null,
+        active: true,
+      })
       .subscribe({
         next: () => {
           this.added.update((a) => [...a, name]);
@@ -83,7 +87,10 @@ export class SupplementsComponent {
         const todayKey = new Date().toISOString().slice(0, 10);
         const takenToday = (re: RegExp): boolean =>
           logs.some(
-            (l) => l.date === todayKey && !!l.taken && re.test(l.supplement_name ?? ""),
+            (l) =>
+              l.date === todayKey &&
+              !!l.taken &&
+              re.test(l.supplement_name ?? ""),
           );
         this.creatine.set(takenToday(/creatine/i));
         this.caffeine.set(takenToday(/caffeine/i));
@@ -94,14 +101,23 @@ export class SupplementsComponent {
   }
 
   toggle(which: "creatine" | "caffeine" | "beta"): void {
-    const sig = { creatine: this.creatine, caffeine: this.caffeine, beta: this.beta }[which];
+    const sig = {
+      creatine: this.creatine,
+      caffeine: this.caffeine,
+      beta: this.beta,
+    }[which];
     const prev = sig();
     sig.set(!prev);
     this.api
       .post("/api/supplements", {
         supplements: [
           { name: "Creatine", taken: this.creatine(), dosage: "5 g" },
-          { name: "Caffeine", taken: this.caffeine(), dosage: "200 mg", timeOfDay: "pre-session" },
+          {
+            name: "Caffeine",
+            taken: this.caffeine(),
+            dosage: "200 mg",
+            timeOfDay: "pre-session",
+          },
           { name: "Beta-alanine", taken: this.beta(), dosage: "4 g" },
         ],
       })

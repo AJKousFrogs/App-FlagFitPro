@@ -85,14 +85,18 @@ describe("createSuccessResponse", () => {
     const res = parse(createSuccessResponse({}, 200, null, 60));
     expect(res.headers["Cache-Control"]).toContain("public");
     expect(res.headers["Cache-Control"]).toContain("max-age=60");
-    expect(res.headers["Cache-Control"]).toContain("stale-while-revalidate=300");
+    expect(res.headers["Cache-Control"]).toContain(
+      "stale-while-revalidate=300",
+    );
     expect(res.headers["CDN-Cache-Control"]).toContain("max-age=60");
   });
 });
 
 describe("createErrorResponse", () => {
   it("returns the requested status and serializes the message", () => {
-    const res = parse(createErrorResponse("Something broke", 500, ErrorType.UNKNOWN));
+    const res = parse(
+      createErrorResponse("Something broke", 500, ErrorType.UNKNOWN),
+    );
     expect(res.statusCode).toBe(500);
     expect(res.body.success).toBe(false);
     expect(res.body.error.message).toBe("Something broke");
@@ -102,7 +106,9 @@ describe("createErrorResponse", () => {
   });
 
   it("auto-promotes 400+VALIDATION to 422 (REST convention: unprocessable entity)", () => {
-    const res = parse(createErrorResponse("Bad input", 400, ErrorType.VALIDATION));
+    const res = parse(
+      createErrorResponse("Bad input", 400, ErrorType.VALIDATION),
+    );
     expect(res.statusCode).toBe(422);
   });
 
@@ -116,7 +122,9 @@ describe("createErrorResponse", () => {
   it("supports legacy positional call shape `(statusCode, message)`", () => {
     // Older code did `createErrorResponse(500, "msg", ErrorType.X)`.
     // The function detects the swapped types and recovers.
-    const res = parse(createErrorResponse(500, "Legacy message", ErrorType.UNKNOWN));
+    const res = parse(
+      createErrorResponse(500, "Legacy message", ErrorType.UNKNOWN),
+    );
     expect(res.statusCode).toBe(500);
     expect(res.body.error.message).toBe("Legacy message");
   });
@@ -160,7 +168,9 @@ describe("handleValidationError", () => {
   });
 
   it("joins an array of errors into a single message and preserves the detail list", () => {
-    const res = parse(handleValidationError(["email is required", "name too short"]));
+    const res = parse(
+      handleValidationError(["email is required", "name too short"]),
+    );
     expect(res.statusCode).toBe(422);
     expect(res.body.error.message).toBe("email is required, name too short");
     expect(res.body.error.details).toEqual([

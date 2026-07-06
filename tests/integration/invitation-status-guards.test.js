@@ -88,7 +88,9 @@ function createSupabase() {
       return new Query(table);
     },
     auth: {
-      getUser: async () => ({ data: { user: { email: "athlete@example.com" } } }),
+      getUser: async () => ({
+        data: { user: { email: "athlete@example.com" } },
+      }),
     },
   };
 }
@@ -114,7 +116,8 @@ describe("invitation status guards", () => {
 
   it("returns 409 when validating a cancelled invitation", async () => {
     state.invitationStatus = "cancelled";
-    const { handler } = await import("../../netlify/functions/validate-invitation.js");
+    const { handler } =
+      await import("../../netlify/functions/validate-invitation.js");
 
     const response = await handler(
       {
@@ -132,7 +135,8 @@ describe("invitation status guards", () => {
 
   it("returns 409 when accepting a cancelled invitation and does not create membership", async () => {
     state.invitationStatus = "cancelled";
-    const { handler } = await import("../../netlify/functions/accept-invitation.js");
+    const { handler } =
+      await import("../../netlify/functions/accept-invitation.js");
 
     const response = await handler(
       {

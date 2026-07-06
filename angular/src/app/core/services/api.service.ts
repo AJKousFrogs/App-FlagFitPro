@@ -49,7 +49,10 @@ export class ApiService {
    * When a second caller issues an identical GET before the first resolves,
    * they receive the same observable — only one network request is made.
    */
-  private readonly inflightGets = new Map<string, Observable<ApiResponse<unknown>>>();
+  private readonly inflightGets = new Map<
+    string,
+    Observable<ApiResponse<unknown>>
+  >();
 
   constructor() {
     this.logger.info(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
@@ -135,9 +138,7 @@ export class ApiService {
     return String(value);
   }
 
-  private buildHttpParams(
-    params?: QueryParams | HttpParams,
-  ): HttpParams {
+  private buildHttpParams(params?: QueryParams | HttpParams): HttpParams {
     if (!params) {
       return new HttpParams();
     }
@@ -233,14 +234,19 @@ export class ApiService {
       return existing as Observable<ApiResponse<T>>;
     }
 
-    const request$ = this.http.get<ApiResponse<T>>(url, { params: httpParams }).pipe(
-      map((response) => this.validateResponse(response, options)),
-      catchError(this.handleError),
-      share(),
-      finalize(() => this.inflightGets.delete(cacheKey)),
-    );
+    const request$ = this.http
+      .get<ApiResponse<T>>(url, { params: httpParams })
+      .pipe(
+        map((response) => this.validateResponse(response, options)),
+        catchError(this.handleError),
+        share(),
+        finalize(() => this.inflightGets.delete(cacheKey)),
+      );
 
-    this.inflightGets.set(cacheKey, request$ as Observable<ApiResponse<unknown>>);
+    this.inflightGets.set(
+      cacheKey,
+      request$ as Observable<ApiResponse<unknown>>,
+    );
     return request$;
   }
 
@@ -302,15 +308,12 @@ export class ApiService {
         params: this.buildHttpParams(options?.params),
       })
       .pipe(
-      map((response) => this.validateResponse(response, options)),
-      catchError(this.handleError),
-    );
+        map((response) => this.validateResponse(response, options)),
+        catchError(this.handleError),
+      );
   }
 
-  head(
-    endpoint: string,
-    requestOptions?: ApiHeadOptions,
-  ): Observable<unknown> {
+  head(endpoint: string, requestOptions?: ApiHeadOptions): Observable<unknown> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
@@ -329,8 +332,9 @@ export class ApiService {
       typeof errorLike?.status === "number" ? errorLike.status : undefined;
     const url = typeof errorLike?.url === "string" ? errorLike.url : undefined;
     const isExpectedApiFailure = Boolean(
-      status && [400, 401, 403, 404].includes(status) &&
-        (url?.includes("/api/") ?? true),
+      status &&
+      [400, 401, 403, 404].includes(status) &&
+      (url?.includes("/api/") ?? true),
     );
     const normalizedMessage =
       !message || message === "[object Object]"
@@ -339,8 +343,7 @@ export class ApiService {
 
     // Log with requestId if available
     const logContext = requestId ? `[${requestId}]` : "";
-    const logMessage =
-      `[ApiService]${logContext} API request failed: ${normalizedMessage}`;
+    const logMessage = `[ApiService]${logContext} API request failed: ${normalizedMessage}`;
     const logPayload = { errorType, requestId, status, url };
     if (isExpectedApiFailure) {
       this.logger.debug(logMessage, logPayload);
@@ -437,7 +440,8 @@ export const API_ENDPOINTS = {
     inbox: "/api/coach-inbox",
     inboxStats: "/api/coach-inbox/stats",
     inboxDetail: (itemId: string) => `/api/coach-inbox/${itemId}`,
-    inboxMarkViewed: (itemId: string) => `/api/coach-inbox/${itemId}/mark-viewed`,
+    inboxMarkViewed: (itemId: string) =>
+      `/api/coach-inbox/${itemId}/mark-viewed`,
     team: "/api/coach/team",
     trainingAnalytics: "/api/coach/training-analytics",
     createTrainingSession: "/api/coach/training-session",
@@ -450,7 +454,8 @@ export const API_ENDPOINTS = {
     eventsUpcoming: "/api/coach/events/upcoming",
     programs: "/api/coach/programs",
     programsDraft: "/api/coach/programs/draft",
-    programPublish: (programId: string) => `/api/coach/programs/${programId}/publish`,
+    programPublish: (programId: string) =>
+      `/api/coach/programs/${programId}/publish`,
     programDelete: (programId: string) => `/api/coach/programs/${programId}`,
     playbook: "/api/coach/playbook",
     film: "/api/coach/film",
@@ -599,7 +604,8 @@ export const API_ENDPOINTS = {
   roster: {
     players: "/api/roster/players",
     injuries: (teamId: string) => `/api/coach/roster/injuries?teamId=${teamId}`,
-    trainingCycle: (teamId: string) => `/api/coach/roster/training-cycle?teamId=${teamId}`,
+    trainingCycle: (teamId: string) =>
+      `/api/coach/roster/training-cycle?teamId=${teamId}`,
   },
   // Player Stats endpoints
   playerStats: {

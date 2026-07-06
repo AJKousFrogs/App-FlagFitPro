@@ -47,7 +47,10 @@ function formatViolation(v: {
   const impact = (v.impact ?? "unknown") as string;
   const nodes = v.nodes?.length ?? 0;
   const summary =
-    v.nodes?.[0]?.failureSummary?.replace(/^\s*Fix any of the following:\s*/i, "") ?? "";
+    v.nodes?.[0]?.failureSummary?.replace(
+      /^\s*Fix any of the following:\s*/i,
+      "",
+    ) ?? "";
   return [
     `  ${RED}[${impact.toUpperCase()}]${RESET} ${v.id}: ${v.help}`,
     `    ${DIM}${v.description}${RESET}`,
@@ -57,7 +60,9 @@ function formatViolation(v: {
     .join("\n");
 }
 
-async function waitForAppReady(page: import("@playwright/test").Page): Promise<void> {
+async function waitForAppReady(
+  page: import("@playwright/test").Page,
+): Promise<void> {
   // Wait for Angular to bootstrap
   await page.waitForSelector("app-root", { timeout: 15000 });
   await page.waitForLoadState("networkidle");
@@ -124,11 +129,15 @@ async function main(): Promise<void> {
     await browser.close();
 
     if (totalViolations > 0) {
-      console.log(`\n${RED}Total: ${totalViolations} accessibility violation(s)${RESET}\n`);
+      console.log(
+        `\n${RED}Total: ${totalViolations} accessibility violation(s)${RESET}\n`,
+      );
       process.exit(1);
     }
 
-    console.log(`\n${GREEN}✓ Audit passed — no accessibility violations${RESET}\n`);
+    console.log(
+      `\n${GREEN}✓ Audit passed — no accessibility violations${RESET}\n`,
+    );
   } catch (err) {
     await context?.close().catch(() => {});
     await browser.close();

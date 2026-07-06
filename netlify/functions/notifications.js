@@ -31,8 +31,15 @@ const logger = createLogger({ service: "netlify.notifications" });
 const MAX_MESSAGE_LENGTH = 2000;
 const VALID_PRIORITIES = new Set(["low", "normal", "high"]);
 const VALID_NOTIFICATION_TYPES = new Set([
-  "training", "achievement", "team", "wellness", "general",
-  "game", "tournament", "injury_risk", "weather",
+  "training",
+  "achievement",
+  "team",
+  "wellness",
+  "general",
+  "game",
+  "tournament",
+  "injury_risk",
+  "weather",
 ]);
 const VALID_CONFIG_KEYS = new Set(["muted", "pushEnabled", "inAppEnabled"]);
 
@@ -41,23 +48,35 @@ const VALID_CONFIG_KEYS = new Set(["muted", "pushEnabled", "inAppEnabled"]);
 import { getCorsHeaders as corsHeaders } from "./utils/cors.js";
 
 function ok(data, req, status = 200) {
-  return Response.json({ success: true, data }, { status, headers: corsHeaders(req) });
+  return Response.json(
+    { success: true, data },
+    { status, headers: corsHeaders(req) },
+  );
 }
 
 function err(message, req, status = 400, code = "error") {
-  return Response.json({ success: false, error: message, code }, { status, headers: corsHeaders(req) });
+  return Response.json(
+    { success: false, error: message, code },
+    { status, headers: corsHeaders(req) },
+  );
 }
 
 // ─── Validation helpers ──────────────────────────────────────────────────────
 
 function parseStrictPositiveInt(raw, field, { min = 1, max = Infinity } = {}) {
-  if (raw === undefined || raw === null || raw === "") {return null;}
-  if (!/^\d+$/.test(String(raw))) {throw new Error(`${field} must be a positive integer`);}
+  if (raw === undefined || raw === null || raw === "") {
+    return null;
+  }
+  if (!/^\d+$/.test(String(raw))) {
+    throw new Error(`${field} must be a positive integer`);
+  }
   const parsed = parseInt(String(raw), 10);
   if (!Number.isInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(Number.isFinite(max)
-      ? `${field} must be an integer between ${min} and ${max}`
-      : `${field} must be an integer >= ${min}`);
+    throw new Error(
+      Number.isFinite(max)
+        ? `${field} must be an integer between ${min} and ${max}`
+        : `${field} must be an integer >= ${min}`,
+    );
   }
   return parsed;
 }
@@ -66,13 +85,19 @@ function validateNotificationId(value, fieldName = "notificationId") {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${fieldName} must be a non-empty string`);
   }
-  if (value.trim().length > 200) {throw new Error(`${fieldName} is too long`);}
+  if (value.trim().length > 200) {
+    throw new Error(`${fieldName} is too long`);
+  }
   return value.trim();
 }
 
 function validatePreferencesPayload(preferences) {
   const errors = [];
-  if (!preferences || typeof preferences !== "object" || Array.isArray(preferences)) {
+  if (
+    !preferences ||
+    typeof preferences !== "object" ||
+    Array.isArray(preferences)
+  ) {
     return ["preferences must be an object"];
   }
   for (const [type, config] of Object.entries(preferences)) {
@@ -114,20 +139,39 @@ function checkRateLimit(req, userId, limitType) {
 
 async function handleList(req, userId, url) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
-  let limit = 20, page = 1, onlyUnread = false, lastOpenedAt = null;
+  let limit = 20,
+    page = 1,
+    onlyUnread = false,
+    lastOpenedAt = null;
   try {
-    limit = parseStrictPositiveInt(url.searchParams.get("limit"), "limit", { min: 1, max: 100 }) ?? 20;
-    page  = parseStrictPositiveInt(url.searchParams.get("page"), "page", { min: 1 }) ?? 1;
+    limit =
+      parseStrictPositiveInt(url.searchParams.get("limit"), "limit", {
+        min: 1,
+        max: 100,
+      }) ?? 20;
+    page =
+      parseStrictPositiveInt(url.searchParams.get("page"), "page", {
+        min: 1,
+      }) ?? 1;
     const unreadParam = url.searchParams.get("onlyUnread");
     if (unreadParam !== null) {
-      if (unreadParam !== "true" && unreadParam !== "false") {throw new Error("onlyUnread must be true or false");}
+      if (unreadParam !== "true" && unreadParam !== "false") {
+        throw new Error("onlyUnread must be true or false");
+      }
       onlyUnread = unreadParam === "true";
     }
     const laParam = url.searchParams.get("lastOpenedAt");
     if (laParam) {
-      if (isNaN(new Date(laParam).getTime())) {throw new Error("lastOpenedAt must be a valid date");}
+      if (isNaN(new Date(laParam).getTime())) {
+        throw new Error("lastOpenedAt must be a valid date");
+      }
       lastOpenedAt = laParam;
     }
   } catch (ve) {
@@ -135,7 +179,12 @@ async function handleList(req, userId, url) {
   }
 
   try {
-    const notifications = await db.notifications.getUserNotifications(userId, { limit, page, onlyUnread, lastOpenedAt });
+    const notifications = await db.notifications.getUserNotifications(userId, {
+      limit,
+      page,
+      onlyUnread,
+      lastOpenedAt,
+    });
     return ok(notifications, req);
   } catch (dbErr) {
     logger.error("notifications_list_query_failed", dbErr, { user_id: userId });
@@ -145,7 +194,12 @@ async function handleList(req, userId, url) {
 
 async function handleCount(req, userId) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   try {
     const [rawCount, rawLastOpened] = await Promise.all([
@@ -153,18 +207,33 @@ async function handleCount(req, userId) {
       db.notifications.getLastOpenedAt(userId),
     ]);
     const unreadCount = Math.max(0, Number.isInteger(rawCount) ? rawCount : 0);
-    const lastOpenedAt = typeof rawLastOpened === "string" && !isNaN(new Date(rawLastOpened).getTime())
-      ? rawLastOpened : null;
+    const lastOpenedAt =
+      typeof rawLastOpened === "string" &&
+      !isNaN(new Date(rawLastOpened).getTime())
+        ? rawLastOpened
+        : null;
     return ok({ unreadCount, lastOpenedAt }, req);
   } catch (dbErr) {
-    logger.error("notifications_count_query_failed", dbErr, { user_id: userId });
-    return err("Failed to retrieve notification count", req, 500, "database_error");
+    logger.error("notifications_count_query_failed", dbErr, {
+      user_id: userId,
+    });
+    return err(
+      "Failed to retrieve notification count",
+      req,
+      500,
+      "database_error",
+    );
   }
 }
 
 async function handleMarkRead(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   let body;
   try {
@@ -173,7 +242,12 @@ async function handleMarkRead(req, userId) {
     return err("Request body must be valid JSON", req, 400, "invalid_json");
   }
   if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return err("Request body must be a JSON object", req, 422, "validation_error");
+    return err(
+      "Request body must be a JSON object",
+      req,
+      422,
+      "validation_error",
+    );
   }
 
   const { notificationId, ids } = body;
@@ -184,52 +258,100 @@ async function handleMarkRead(req, userId) {
       return ok(null, req, 200);
     } catch (dbErr) {
       logger.error("notifications_mark_all_failed", dbErr, { user_id: userId });
-      return err("Failed to mark all notifications as read", req, 500, "database_error");
+      return err(
+        "Failed to mark all notifications as read",
+        req,
+        500,
+        "database_error",
+      );
     }
   }
 
   if (Array.isArray(ids) && ids.length > 0) {
     const normalized = [];
     for (const id of ids) {
-      try { normalized.push(validateNotificationId(id, "ids[]")); }
-      catch (ve) { return err(ve.message, req, 422, "validation_error"); }
+      try {
+        normalized.push(validateNotificationId(id, "ids[]"));
+      } catch (ve) {
+        return err(ve.message, req, 422, "validation_error");
+      }
     }
     const unique = [...new Set(normalized)];
-    if (unique.length === 0) {return err("ids must contain at least one non-empty notification id", req, 422, "validation_error");}
-    if (unique.length > 100) {return err("ids cannot contain more than 100 notification ids", req, 422, "validation_error");}
+    if (unique.length === 0) {
+      return err(
+        "ids must contain at least one non-empty notification id",
+        req,
+        422,
+        "validation_error",
+      );
+    }
+    if (unique.length > 100) {
+      return err(
+        "ids cannot contain more than 100 notification ids",
+        req,
+        422,
+        "validation_error",
+      );
+    }
     try {
       await db.notifications.markManyAsRead(userId, unique);
       return ok(null, req, 200);
     } catch (dbErr) {
-      logger.error("notifications_mark_many_failed", dbErr, { user_id: userId, count: unique.length });
-      return err("Failed to mark notifications as read", req, 500, "database_error");
+      logger.error("notifications_mark_many_failed", dbErr, {
+        user_id: userId,
+        count: unique.length,
+      });
+      return err(
+        "Failed to mark notifications as read",
+        req,
+        500,
+        "database_error",
+      );
     }
   }
 
   if (notificationId) {
     let nid;
-    try { nid = validateNotificationId(notificationId); }
-    catch (ve) { return err(ve.message, req, 422, "validation_error"); }
+    try {
+      nid = validateNotificationId(notificationId);
+    } catch (ve) {
+      return err(ve.message, req, 422, "validation_error");
+    }
     try {
       await db.notifications.markAsRead(userId, nid);
       return ok(null, req, 200);
     } catch (dbErr) {
-      logger.error("notifications_mark_one_failed", dbErr, { user_id: userId, notification_id: nid });
+      logger.error("notifications_mark_one_failed", dbErr, {
+        user_id: userId,
+        notification_id: nid,
+      });
       return err("Failed to update notification", req, 500, "database_error");
     }
   }
 
-  return err("notificationId or ids array is required", req, 422, "validation_error");
+  return err(
+    "notificationId or ids array is required",
+    req,
+    422,
+    "validation_error",
+  );
 }
 
 async function handleCreate(req, userId) {
   const rl = checkRateLimit(req, userId, "CREATE");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error();}
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      throw new Error();
+    }
   } catch {
     return err("Request body must be a JSON object", req, 400, "invalid_json");
   }
@@ -243,15 +365,29 @@ async function handleCreate(req, userId) {
     return err("message is required", req, 422, "validation_error");
   }
   if (message.length > MAX_MESSAGE_LENGTH) {
-    return err(`message must not exceed ${MAX_MESSAGE_LENGTH} characters`, req, 422, "validation_error");
+    return err(
+      `message must not exceed ${MAX_MESSAGE_LENGTH} characters`,
+      req,
+      422,
+      "validation_error",
+    );
   }
 
   // Normalize priority aliases
   let priority = rawPriority;
-  if (priority === "medium") {priority = "normal";}
-  if (priority === "critical") {priority = "urgent";}
+  if (priority === "medium") {
+    priority = "normal";
+  }
+  if (priority === "critical") {
+    priority = "urgent";
+  }
   if (priority !== undefined && !VALID_PRIORITIES.has(priority)) {
-    return err(`priority must be one of: ${[...VALID_PRIORITIES].join(", ")}`, req, 422, "validation_error");
+    return err(
+      `priority must be one of: ${[...VALID_PRIORITIES].join(", ")}`,
+      req,
+      422,
+      "validation_error",
+    );
   }
 
   try {
@@ -259,14 +395,33 @@ async function handleCreate(req, userId) {
     const prefs = await db.notifications.getUserPreferences(userId);
     const typePref = prefs?.[type.trim()];
     if (typePref?.muted === true) {
-      const muted = await db.notifications.createNotification(userId, { type: type.trim(), message: message.trim(), priority });
-      return ok({ ...muted, muted: true, mutedMessage: `Notifications of type "${type}" are muted in your preferences` }, req, 201);
+      const muted = await db.notifications.createNotification(userId, {
+        type: type.trim(),
+        message: message.trim(),
+        priority,
+      });
+      return ok(
+        {
+          ...muted,
+          muted: true,
+          mutedMessage: `Notifications of type "${type}" are muted in your preferences`,
+        },
+        req,
+        201,
+      );
     }
 
-    const notification = await db.notifications.createNotification(userId, { type: type.trim(), message: message.trim(), priority });
+    const notification = await db.notifications.createNotification(userId, {
+      type: type.trim(),
+      message: message.trim(),
+      priority,
+    });
     return ok(notification, req, 201);
   } catch (dbErr) {
-    logger.error("notifications_create_failed", dbErr, { user_id: userId, type });
+    logger.error("notifications_create_failed", dbErr, {
+      user_id: userId,
+      type,
+    });
     if (dbErr?.code === "23514" || dbErr?.message?.includes("validation")) {
       return err(dbErr.message, req, 422, "validation_error");
     }
@@ -276,7 +431,12 @@ async function handleCreate(req, userId) {
 
 async function handleUpdateLastOpened(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   // last-opened is derived server-side; still reject a malformed body if one was sent.
   const raw = await req.text();
@@ -288,7 +448,12 @@ async function handleUpdateLastOpened(req, userId) {
       return err("Request body must be valid JSON", req, 400, "invalid_json");
     }
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return err("Request body must be a JSON object", req, 422, "validation_error");
+      return err(
+        "Request body must be a JSON object",
+        req,
+        422,
+        "validation_error",
+      );
     }
   }
 
@@ -296,32 +461,56 @@ async function handleUpdateLastOpened(req, userId) {
     await db.notifications.updateLastOpenedAt(userId);
     return ok(null, req, 200);
   } catch (dbErr) {
-    logger.error("notifications_update_last_opened_failed", dbErr, { user_id: userId });
-    return err("Failed to update last opened timestamp", req, 500, "database_error");
+    logger.error("notifications_update_last_opened_failed", dbErr, {
+      user_id: userId,
+    });
+    return err(
+      "Failed to update last opened timestamp",
+      req,
+      500,
+      "database_error",
+    );
   }
 }
 
 async function handleGetPreferences(req, userId) {
   const rl = checkRateLimit(req, userId, "READ");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   try {
     const prefs = await db.notifications.getUserPreferences(userId);
     return ok(prefs, req);
   } catch (dbErr) {
     logger.error("notifications_get_prefs_failed", dbErr, { user_id: userId });
-    return err("Failed to retrieve notification preferences", req, 500, "database_error");
+    return err(
+      "Failed to retrieve notification preferences",
+      req,
+      500,
+      "database_error",
+    );
   }
 }
 
 async function handleUpdatePreferences(req, userId) {
   const rl = checkRateLimit(req, userId, "UPDATE");
-  if (rl) {return Response.json(JSON.parse(rl.body), { status: rl.statusCode, headers: corsHeaders(req) });}
+  if (rl) {
+    return Response.json(JSON.parse(rl.body), {
+      status: rl.statusCode,
+      headers: corsHeaders(req),
+    });
+  }
 
   let body;
   try {
     body = await req.json();
-    if (!body || typeof body !== "object" || Array.isArray(body)) {throw new Error();}
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      throw new Error();
+    }
   } catch {
     return err("Request body must be a JSON object", req, 400, "invalid_json");
   }
@@ -332,11 +521,21 @@ async function handleUpdatePreferences(req, userId) {
   }
 
   try {
-    const updated = await db.notifications.updateUserPreferences(userId, body.preferences);
+    const updated = await db.notifications.updateUserPreferences(
+      userId,
+      body.preferences,
+    );
     return ok(updated, req);
   } catch (dbErr) {
-    logger.error("notifications_update_prefs_failed", dbErr, { user_id: userId });
-    return err("Failed to update notification preferences", req, 500, "database_error");
+    logger.error("notifications_update_prefs_failed", dbErr, {
+      user_id: userId,
+    });
+    return err(
+      "Failed to update notification preferences",
+      req,
+      500,
+      "database_error",
+    );
   }
 }
 
@@ -353,11 +552,12 @@ const handleRequest = async (req) => {
   // Normalise path: strip Netlify function prefix and query string
   // Matches: /api/notifications, /api/notifications/count, etc.
   const rawPath = url.pathname;
-  const segment = rawPath
-    .replace(/^\/\.netlify\/functions\/notifications/, "")
-    .replace(/^\/api\/notifications/, "")
-    .replace(/\/$/, "") // trailing slash
-    || "";
+  const segment =
+    rawPath
+      .replace(/^\/\.netlify\/functions\/notifications/, "")
+      .replace(/^\/api\/notifications/, "")
+      .replace(/\/$/, "") || // trailing slash
+    "";
 
   // Auth (all routes require authentication)
   const authResult = await authenticate(req);
@@ -371,9 +571,15 @@ const handleRequest = async (req) => {
   // Route dispatch
   try {
     if (segment === "" || segment === "/") {
-      if (method === "GET")   {return handleList(req, userId, url);}
-      if (method === "POST")  {return handleMarkRead(req, userId);}
-      if (method === "PATCH") {return handleUpdateLastOpened(req, userId);}
+      if (method === "GET") {
+        return handleList(req, userId, url);
+      }
+      if (method === "POST") {
+        return handleMarkRead(req, userId);
+      }
+      if (method === "PATCH") {
+        return handleUpdateLastOpened(req, userId);
+      }
     }
 
     if (segment === "/count" && method === "GET") {
@@ -389,13 +595,26 @@ const handleRequest = async (req) => {
     }
 
     if (segment === "/preferences") {
-      if (method === "GET") {return handleGetPreferences(req, userId);}
-      if (method === "PUT" || method === "POST") {return handleUpdatePreferences(req, userId);}
+      if (method === "GET") {
+        return handleGetPreferences(req, userId);
+      }
+      if (method === "PUT" || method === "POST") {
+        return handleUpdatePreferences(req, userId);
+      }
     }
 
-    return err(`Not found: ${method} /api/notifications${segment}`, req, 404, "not_found");
+    return err(
+      `Not found: ${method} /api/notifications${segment}`,
+      req,
+      404,
+      "not_found",
+    );
   } catch (unhandled) {
-    logger.error("notifications_unhandled_error", unhandled, { user_id: userId, segment, method });
+    logger.error("notifications_unhandled_error", unhandled, {
+      user_id: userId,
+      segment,
+      method,
+    });
     return err("Internal server error", req, 500, "internal_error");
   }
 };

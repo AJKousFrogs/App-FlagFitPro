@@ -1,8 +1,14 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 // Netlify Function: Training Suggestions
 // Provides AI-powered training suggestions based on user history and performance
@@ -63,7 +69,10 @@ async function analyzeTrainingHistory(userId, log = logger) {
         table: "training_sessions",
       });
       // Return default structure with error info instead of throwing
-      return { ...defaultAnalysis, error: "Failed to analyze training history" };
+      return {
+        ...defaultAnalysis,
+        error: "Failed to analyze training history",
+      };
     }
 
     // Analyze session types
@@ -336,7 +345,11 @@ function generateSuggestions(analysis, params = {}) {
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId, requestId, correlationId }) {
+async function handleRequest(
+  event,
+  context,
+  { userId, requestId, correlationId },
+) {
   const requestLogger = logger.child(
     buildRequestLogContext(event, {
       user_id: userId,
@@ -424,7 +437,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "Training-Suggestions",
     allowedMethods: ["GET", "POST"],
-rateLimitType,
+    rateLimitType,
     requireAuth: true,
     handler: handleRequest,
   });

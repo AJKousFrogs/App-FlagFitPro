@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { validateRequestBody } from "./validation.js";
 import { emailService } from "./utils/email-service.js";
 import { supabaseAdmin } from "./supabase-client.js";
@@ -11,20 +14,31 @@ export const handler = async (event, context) =>
       const { valid, data } = validateRequestBody(evt.body);
 
       if (!valid) {
-        return createErrorResponse("Invalid request body", 422, "validation_error");
+        return createErrorResponse(
+          "Invalid request body",
+          422,
+          "validation_error",
+        );
       }
 
       const { action, token, email, newPassword } = data;
 
       if (action === "verify") {
         const result = emailService.verifyResetToken(token);
-        return createSuccessResponse({ verified: result.valid, email: result.email });
+        return createSuccessResponse({
+          verified: result.valid,
+          email: result.email,
+        });
       }
 
       if (action === "reset") {
         const verifyResult = emailService.verifyResetToken(token);
         if (!verifyResult.valid) {
-          return createErrorResponse("Invalid or expired token", 400, "invalid_token");
+          return createErrorResponse(
+            "Invalid or expired token",
+            400,
+            "invalid_token",
+          );
         }
         emailService.useResetToken();
         await supabaseAdmin.auth.admin.updateUserById(verifyResult.email, {

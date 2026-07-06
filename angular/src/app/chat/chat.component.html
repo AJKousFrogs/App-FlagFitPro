@@ -4,67 +4,141 @@
     <h1 class="inline"><lucide-icon name="sparkles" /> Merlin</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
 <main class="screen">
   <div class="thread" #thread>
     <div class="bubble ai">
-      Hi — I'm Merlin, your context-aware coach. I read your injuries, ACWR, today's
-      sessions, wellness and schedule to answer things like "should I sprint today?"
-      — and I can point you to the right screen to act.
+      Hi — I'm Merlin, your context-aware coach. I read your injuries, ACWR,
+      today's sessions, wellness and schedule to answer things like "should I
+      sprint today?" — and I can point you to the right screen to act.
     </div>
 
     @for (turn of turns(); track $index) {
-      <div class="bubble" [class.me]="turn.role === 'me'" [class.ai]="turn.role === 'ai'" [class.blocked]="turn.blocked">{{ turn.text }}</div>
-      @if (turn.disclaimer) { <div class="disc">{{ turn.disclaimer }}</div> }
+      <div
+        class="bubble"
+        [class.me]="turn.role === 'me'"
+        [class.ai]="turn.role === 'ai'"
+        [class.blocked]="turn.blocked"
+      >
+        {{ turn.text }}
+      </div>
+      @if (turn.disclaimer) {
+        <div class="disc">{{ turn.disclaimer }}</div>
+      }
       @if (turn.actions?.length) {
         <div class="acts">
           @for (a of turn.actions; track $index) {
-            <button class="chip" type="button" (click)="runAction(a)">{{ a.label || a.action }}</button>
+            <button class="chip" type="button" (click)="runAction(a)">
+              {{ a.label || a.action }}
+            </button>
           }
         </div>
       }
-      @if (turn.role === 'ai' && turn.messageId && !turn.blocked) {
+      @if (turn.role === "ai" && turn.messageId && !turn.blocked) {
         @if (turn.feedback) {
           <div class="fb-done">Thanks for the feedback</div>
         } @else {
           <div class="fb">
-            <button class="fb-btn" type="button" aria-label="Helpful" (click)="rate($index, true)"><lucide-icon name="thumbs-up" /></button>
-            <button class="fb-btn" type="button" aria-label="Not helpful" (click)="rate($index, false)"><lucide-icon name="thumbs-down" /></button>
+            <button
+              class="fb-btn"
+              type="button"
+              aria-label="Helpful"
+              (click)="rate($index, true)"
+            >
+              <lucide-icon name="thumbs-up" />
+            </button>
+            <button
+              class="fb-btn"
+              type="button"
+              aria-label="Not helpful"
+              (click)="rate($index, false)"
+            >
+              <lucide-icon name="thumbs-down" />
+            </button>
           </div>
         }
       }
     }
 
-    @if (busy()) { <div class="typing">Merlin is thinking…</div> }
+    @if (busy()) {
+      <div class="typing">Merlin is thinking…</div>
+    }
   </div>
 
   @if (!prefsLoaded()) {
     <div class="card composer">
-      <div class="row" style="gap:var(--s-2)">
-        <input type="text" disabled placeholder="Loading…" aria-label="Loading Merlin" />
-        <button class="btn primary sm" type="button" disabled aria-disabled="true">Send</button>
+      <div class="row" style="gap: var(--s-2)">
+        <input
+          type="text"
+          disabled
+          placeholder="Loading…"
+          aria-label="Loading Merlin"
+        />
+        <button
+          class="btn primary sm"
+          type="button"
+          disabled
+          aria-disabled="true"
+        >
+          Send
+        </button>
       </div>
     </div>
   } @else if (aiEnabled()) {
     <div class="card composer">
-      <div class="row" style="gap:var(--s-2)">
-        <input type="text" [value]="draft()" (input)="draft.set($any($event.target).value)"
-               (keydown.enter)="send()" [disabled]="busy()"
-               placeholder="Ask Merlin…" aria-label="Ask Merlin" />
-        <button class="btn primary sm" type="button" [attr.aria-disabled]="!canSend()" (click)="send()">Send</button>
+      <div class="row" style="gap: var(--s-2)">
+        <input
+          type="text"
+          [value]="draft()"
+          (input)="draft.set($any($event.target).value)"
+          (keydown.enter)="send()"
+          [disabled]="busy()"
+          placeholder="Ask Merlin…"
+          aria-label="Ask Merlin"
+        />
+        <button
+          class="btn primary sm"
+          type="button"
+          [attr.aria-disabled]="!canSend()"
+          (click)="send()"
+        >
+          Send
+        </button>
       </div>
     </div>
   } @else {
     <div class="card composer">
-      <div class="row" style="gap:var(--s-2)">
-        <input type="text" disabled placeholder="Ask Merlin…" aria-label="Ask Merlin (AI processing off)" />
-        <button class="btn primary sm" type="button" disabled aria-disabled="true">Send</button>
+      <div class="row" style="gap: var(--s-2)">
+        <input
+          type="text"
+          disabled
+          placeholder="Ask Merlin…"
+          aria-label="Ask Merlin (AI processing off)"
+        />
+        <button
+          class="btn primary sm"
+          type="button"
+          disabled
+          aria-disabled="true"
+        >
+          Send
+        </button>
       </div>
     </div>
-    <p class="note">Merlin is AI-consent-gated — <a routerLink="/settings" style="color:var(--accent)">enable AI personalisation in Settings → Privacy</a> to turn it on.</p>
+    <p class="note">
+      Merlin is AI-consent-gated —
+      <a routerLink="/settings" style="color: var(--accent)"
+        >enable AI personalisation in Settings → Privacy</a
+      >
+      to turn it on.
+    </p>
   }
 </main>

@@ -10,7 +10,6 @@ import { getActiveInjuries, injuriesPainLevel } from "./active-injuries.js";
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.session-resolver" });
 
-
 /**
  * Deterministic Session Resolver
  *
@@ -378,6 +377,4 @@ async function batchResolveSessions(supabase, userId, dates) {
   return results;
 }
 
-export { resolveTodaySession,
-  checkSportLayerOverrides,
-  batchResolveSessions, };
+export { resolveTodaySession, checkSportLayerOverrides, batchResolveSessions };

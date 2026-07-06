@@ -18,7 +18,8 @@ interface Spark {
   last: { x: number; y: number };
 }
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
 
 /**
  * Stats — ACWR + readiness trends over the last 28 days. Ported 1:1 from
@@ -30,7 +31,12 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 @Component({
   selector: "app-stats",
   standalone: true,
-  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./stats.component.html",
 })
@@ -47,7 +53,9 @@ export class StatsComponent {
   /** The ACWR chart's band also needs AcwrService's independent session load,
    * so its skeleton must stay up until BOTH the history fetch and AcwrService
    * settle — otherwise the band half flashes "building up" mid-load. */
-  readonly acwrLoading = computed(() => this.loading() || this.acwrSvc.loading());
+  readonly acwrLoading = computed(
+    () => this.loading() || this.acwrSvc.loading(),
+  );
 
   constructor() {
     // Load 28d of readiness/ACWR history (server scopes by auth).
@@ -99,6 +107,9 @@ export class StatsComponent {
       x: +((i / (n - 1)) * 359).toFixed(1),
       y: +clamp(toY(v), 8, 116).toFixed(1),
     }));
-    return { points: pts.map((p) => `${p.x},${p.y}`).join(" "), last: pts[n - 1] };
+    return {
+      points: pts.map((p) => `${p.x},${p.y}`).join(" "),
+      last: pts[n - 1],
+    };
   }
 }

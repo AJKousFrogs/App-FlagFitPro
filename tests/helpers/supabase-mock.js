@@ -69,7 +69,8 @@ export function createSupabaseMock(tables = {}, options = {}) {
         return Promise.resolve(result(rows[0] ?? null));
       },
       single() {
-        if (tableError) return Promise.resolve({ data: null, error: tableError });
+        if (tableError)
+          return Promise.resolve({ data: null, error: tableError });
         return Promise.resolve(
           rows[0]
             ? { data: rows[0], error: null }

@@ -57,12 +57,18 @@ function createFakeSupabase(initialState = {}) {
     async single() {
       const result = await this.exec();
       if (!result.data) {
-        return { data: null, error: { code: "PGRST116", message: "Not found" } };
+        return {
+          data: null,
+          error: { code: "PGRST116", message: "Not found" },
+        };
       }
       if (Array.isArray(result.data)) {
         return {
           data: result.data[0] || null,
-          error: result.data.length > 0 ? null : { code: "PGRST116", message: "Not found" },
+          error:
+            result.data.length > 0
+              ? null
+              : { code: "PGRST116", message: "Not found" },
         };
       }
       return result;
@@ -85,18 +91,20 @@ function createFakeSupabase(initialState = {}) {
         return { data: null, error: null };
       }
 
-      const rows = Array.from(state.protocolExercises.values()).filter((row) => {
-        return this.filters.every((f) => {
-          const value = row[f.field];
-          if (f.op === "eq") {
-            return value === f.value;
-          }
-          if (f.op === "neq") {
-            return value !== f.value;
-          }
-          return true;
-        });
-      });
+      const rows = Array.from(state.protocolExercises.values()).filter(
+        (row) => {
+          return this.filters.every((f) => {
+            const value = row[f.field];
+            if (f.op === "eq") {
+              return value === f.value;
+            }
+            if (f.op === "neq") {
+              return value !== f.value;
+            }
+            return true;
+          });
+        },
+      );
 
       if (!this.updatePayload) {
         return { data: rows, error: null };
@@ -129,7 +137,8 @@ function createFakeSupabase(initialState = {}) {
 }
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) => options.handler(event, context, {}),
+  baseHandler: async (event, context, options) =>
+    options.handler(event, context, {}),
 }));
 
 vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
@@ -217,7 +226,9 @@ describe("daily-protocol mutations", () => {
     mockCtx.supabase = fake;
 
     const first = await handler(
-      buildEvent("/api/daily-protocol/complete", { protocolExerciseId: "pe-1" }),
+      buildEvent("/api/daily-protocol/complete", {
+        protocolExerciseId: "pe-1",
+      }),
       {},
     );
     const firstPayload = JSON.parse(first.body);
@@ -226,7 +237,9 @@ describe("daily-protocol mutations", () => {
     expect(firstPayload.idempotent).toBeUndefined();
 
     const second = await handler(
-      buildEvent("/api/daily-protocol/complete", { protocolExerciseId: "pe-1" }),
+      buildEvent("/api/daily-protocol/complete", {
+        protocolExerciseId: "pe-1",
+      }),
       {},
     );
     const secondPayload = JSON.parse(second.body);
@@ -258,12 +271,16 @@ describe("daily-protocol mutations", () => {
     mockCtx.supabase = fake;
 
     const response = await handler(
-      buildEvent("/api/daily-protocol/skip", { protocolExerciseId: "pe-unauth" }),
+      buildEvent("/api/daily-protocol/skip", {
+        protocolExerciseId: "pe-unauth",
+      }),
       {},
     );
 
     expect(response.statusCode).toBe(403);
-    expect(fake.state.protocolExercises.get("pe-unauth").status).toBe("pending");
+    expect(fake.state.protocolExercises.get("pe-unauth").status).toBe(
+      "pending",
+    );
   });
 
   it("rejects invalid block type for complete-block", async () => {

@@ -209,7 +209,9 @@ const handler = async (event, context) =>
       }
 
       const allMessages = messages || [];
-      const assistantMessages = allMessages.filter((m) => m.role === "assistant");
+      const assistantMessages = allMessages.filter(
+        (m) => m.role === "assistant",
+      );
       const risk = { high: 0, medium: 0, low: 0, unknown: 0 };
       let fallbackCount = 0;
       let noCitationCount = 0;
@@ -226,7 +228,10 @@ const handler = async (event, context) =>
           fallbackCount += 1;
         }
 
-        if (!Array.isArray(message.citations) || message.citations.length === 0) {
+        if (
+          !Array.isArray(message.citations) ||
+          message.citations.length === 0
+        ) {
           noCitationCount += 1;
         }
       }
@@ -254,8 +259,14 @@ const handler = async (event, context) =>
             total: allMessages.length,
             assistant: assistantMessages.length,
             risk,
-            fallback_rate_pct: buildRates(assistantMessages.length, fallbackCount),
-            no_citation_rate_pct: buildRates(assistantMessages.length, noCitationCount),
+            fallback_rate_pct: buildRates(
+              assistantMessages.length,
+              fallbackCount,
+            ),
+            no_citation_rate_pct: buildRates(
+              assistantMessages.length,
+              noCitationCount,
+            ),
           },
           recommendations: {
             total: recs.length,

@@ -1,11 +1,20 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { canCoachViewWellness, filterWellnessDataForCoach } from "./utils/consent-guard.js";
+import {
+  canCoachViewWellness,
+  filterWellnessDataForCoach,
+} from "./utils/consent-guard.js";
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.wellness" });
@@ -116,13 +125,9 @@ async function createWellnessCheckin(userId, checkinData, log = logger) {
       .single();
 
     if (error) {
-      log.error(
-        "wellness_checkin_create_failed",
-        error,
-        {
-          user_id: userId,
-        },
-      );
+      log.error("wellness_checkin_create_failed", error, {
+        user_id: userId,
+      });
       throw error;
     }
 
@@ -137,13 +142,9 @@ async function createWellnessCheckin(userId, checkinData, log = logger) {
       notes: data.notes,
     };
   } catch (error) {
-    log.error(
-      "wellness_checkin_exception",
-      error,
-      {
-        user_id: userId,
-      },
-    );
+    log.error("wellness_checkin_exception", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }
@@ -191,14 +192,10 @@ async function getWellnessCheckins(
       .limit(limit);
 
     if (error) {
-      log.error(
-        "wellness_checkins_fetch_failed",
-        error,
-        {
-          requested_athlete_id: requestedAthleteId,
-          limit,
-        },
-      );
+      log.error("wellness_checkins_fetch_failed", error, {
+        requested_athlete_id: requestedAthleteId,
+        limit,
+      });
       throw error;
     }
 
@@ -216,13 +213,9 @@ async function getWellnessCheckins(
 
     return data || [];
   } catch (error) {
-    log.error(
-      "wellness_checkins_exception",
-      error,
-      {
-        requested_athlete_id: requestedAthleteId,
-      },
-    );
+    log.error("wellness_checkins_exception", error, {
+      requested_athlete_id: requestedAthleteId,
+    });
     throw error;
   }
 }
@@ -246,25 +239,17 @@ async function getLatestWellnessCheckin(userId, log = logger) {
       if (error.code === "PGRST116") {
         return null;
       }
-      log.error(
-        "wellness_latest_fetch_failed",
-        error,
-        {
-          user_id: userId,
-        },
-      );
+      log.error("wellness_latest_fetch_failed", error, {
+        user_id: userId,
+      });
       throw error;
     }
 
     return data;
   } catch (error) {
-    log.error(
-      "wellness_latest_exception",
-      error,
-      {
-        user_id: userId,
-      },
-    );
+    log.error("wellness_latest_exception", error, {
+      user_id: userId,
+    });
     throw error;
   }
 }
@@ -321,7 +306,7 @@ const handler = async (event, context) => {
         }
 
         // Handle GET requests
-          if (path.includes("/latest") || path.endsWith("/latest")) {
+        if (path.includes("/latest") || path.endsWith("/latest")) {
           const result = await getLatestWellnessCheckin(userId, requestLogger);
           return createSuccessResponse(result);
         }
@@ -329,14 +314,19 @@ const handler = async (event, context) => {
         if (path.includes("/checkins") || path.endsWith("/checkins")) {
           let limit;
           try {
-            limit = parseBoundedInt(event.queryStringParameters?.limit, "limit", {
-              min: 1,
-              max: 200,
-              fallback: 30,
-            });
+            limit = parseBoundedInt(
+              event.queryStringParameters?.limit,
+              "limit",
+              {
+                min: 1,
+                max: 200,
+                fallback: 30,
+              },
+            );
           } catch (validationError) {
             return createErrorResponse(
-              validationError.message || "limit must be an integer between 1 and 200",
+              validationError.message ||
+                "limit must be an integer between 1 and 200",
               422,
               "validation_error",
             );
@@ -371,15 +361,11 @@ const handler = async (event, context) => {
         ) {
           return createErrorResponse(error.message, 422, "validation_error");
         }
-        requestLogger.error(
-          "wellness_handler_failed",
-          error,
-          {
-            http_method: event.httpMethod,
-            path,
-            user_id: userId,
-          },
-        );
+        requestLogger.error("wellness_handler_failed", error, {
+          http_method: event.httpMethod,
+          path,
+          user_id: userId,
+        });
         throw error;
       }
     },

@@ -63,9 +63,7 @@ import {
   REALTIME_LISTEN_TYPES,
   REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 } from "../supabase-realtime-constants";
-import {
-  buildBaseEvidenceInfo,
-} from "../../shared/utils/evidence-info.utils";
+import { buildBaseEvidenceInfo } from "../../shared/utils/evidence-info.utils";
 import {
   roundToPrecision,
   safeDivide,
@@ -263,13 +261,21 @@ export class AcwrService {
       let sessionLoad: number;
       if (Number.isFinite(session.load) && (session.load as number) > 0) {
         sessionLoad = session.load as number;
-      } else if (typeof session.metrics?.calculatedLoad === "number" && session.metrics.calculatedLoad > 0) {
+      } else if (
+        typeof session.metrics?.calculatedLoad === "number" &&
+        session.metrics.calculatedLoad > 0
+      ) {
         sessionLoad = session.metrics.calculatedLoad;
-      } else if (typeof session.metrics?.internal?.workload === "number" && session.metrics.internal.workload > 0) {
+      } else if (
+        typeof session.metrics?.internal?.workload === "number" &&
+        session.metrics.internal.workload > 0
+      ) {
         sessionLoad = session.metrics.internal.workload;
       } else {
         sessionLoad = 0;
-        this.logger.warn("[ACWR] Missing load data for session", { id: session.id });
+        this.logger.warn("[ACWR] Missing load data for session", {
+          id: session.id,
+        });
       }
       dailyLoads.set(dateKey, currentLoad + sessionLoad);
     });
@@ -363,7 +369,9 @@ export class AcwrService {
    * Consumers should check this before using acwrRatio() to distinguish
    * "no data" from a genuinely low ratio.
    */
-  readonly sufficientDataForACWR = computed(() => this.hasSufficientData().sufficient);
+  readonly sufficientDataForACWR = computed(
+    () => this.hasSufficientData().sufficient,
+  );
 
   /**
    * Public computed: exposes tolerance detection so UI can surface it.
@@ -988,7 +996,10 @@ export class AcwrService {
   } {
     const preset = this.evidenceConfigService.getActivePreset();
     const acwrConfig = preset.acwr;
-    const baseEvidenceInfo = buildBaseEvidenceInfo(preset, acwrConfig.citations);
+    const baseEvidenceInfo = buildBaseEvidenceInfo(
+      preset,
+      acwrConfig.citations,
+    );
 
     return {
       ...baseEvidenceInfo,
@@ -1014,7 +1025,12 @@ export class AcwrService {
     if (risk.level === "elevated-risk" && daysUntilGame <= 2) return true;
 
     // Skip if ACWR exceeds sweet spot upper bound and it's Friday (day before Saturday game)
-    if (ratio !== null && ratio > cfg.thresholds.sweetSpotHigh && dayOfWeek === 5) return true;
+    if (
+      ratio !== null &&
+      ratio > cfg.thresholds.sweetSpotHigh &&
+      dayOfWeek === 5
+    )
+      return true;
 
     return false;
   }
@@ -1034,9 +1050,7 @@ export class AcwrService {
 
     // Add data quality warnings if applicable
     if (dataQuality.level === "low" || dataQuality.level === "insufficient") {
-      modifications.push(
-        `Low data quality: ${dataQuality.issues.join(", ")}`,
-      );
+      modifications.push(`Low data quality: ${dataQuality.issues.join(", ")}`);
       modifications.push(`Tip: ${dataQuality.recommendations[0]}`);
     }
 
@@ -1287,8 +1301,7 @@ export class AcwrService {
 
       return { ok: true };
     } catch (error: unknown) {
-      const msg =
-        error instanceof Error ? error.message : "acwr_save_failed";
+      const msg = error instanceof Error ? error.message : "acwr_save_failed";
       this.logger.error("acwr_save_failed", error, { userId });
       void this.remoteTelemetry.error(msg, {
         source: "acwr_service",
@@ -1299,5 +1312,4 @@ export class AcwrService {
       return { ok: false, errorMessage: msg };
     }
   }
-
 }

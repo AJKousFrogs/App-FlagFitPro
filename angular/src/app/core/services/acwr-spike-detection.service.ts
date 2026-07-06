@@ -183,7 +183,10 @@ export class AcwrSpikeDetectionService {
           if (isBenignSupabaseQueryError(error)) {
             this.loadCapsUnavailable = true;
           } else {
-            this.logger.error("[AcwrSpike] Error deactivating load cap:", error);
+            this.logger.error(
+              "[AcwrSpike] Error deactivating load cap:",
+              error,
+            );
           }
         } else {
           this.logger.info(

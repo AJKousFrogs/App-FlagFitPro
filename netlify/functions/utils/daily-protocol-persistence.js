@@ -53,7 +53,11 @@ export async function createProtocolGenerationRequest(
       .single();
 
     if (!error) {
-      return { requestRecord: request, existingCompleted: null, shouldContinue: true };
+      return {
+        requestRecord: request,
+        existingCompleted: null,
+        shouldContinue: true,
+      };
     }
 
     if (error.code === "23505") {
@@ -78,7 +82,11 @@ export async function createProtocolGenerationRequest(
     logger.warn("daily_protocol_generation_request_record_failed", {
       error_message: error.message,
     });
-    return { requestRecord: null, existingCompleted: null, shouldContinue: true };
+    return {
+      requestRecord: null,
+      existingCompleted: null,
+      shouldContinue: true,
+    };
   }
 }
 
@@ -127,7 +135,9 @@ async function createProtocolWithoutRpc({
   confidenceMetadata,
   exercisesJson,
 }) {
-  const persistedExercises = exercisesJson.filter((exercise) => exercise.exercise_id);
+  const persistedExercises = exercisesJson.filter(
+    (exercise) => exercise.exercise_id,
+  );
 
   if (persistedExercises.length === 0) {
     throw new Error("Cannot persist a protocol without exercise IDs");

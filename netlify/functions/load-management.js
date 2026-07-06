@@ -1,9 +1,27 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { getWeekStart } from "./utils/date-utils.js";
-import { DataState, MINIMUM_DATA_REQUIREMENTS, wrapWithDataState, getDataStateFromRiskZone, evaluateDataState } from "./utils/data-state.js";
-import { ConsentDataReader, AccessContext } from "./utils/consent-data-reader.js";
-import { roundToPrecision, safeDivide, average, standardDeviation, ACWR_PRECISION } from "./utils/precision.js";
+import {
+  DataState,
+  MINIMUM_DATA_REQUIREMENTS,
+  wrapWithDataState,
+  getDataStateFromRiskZone,
+  evaluateDataState,
+} from "./utils/data-state.js";
+import {
+  ConsentDataReader,
+  AccessContext,
+} from "./utils/consent-data-reader.js";
+import {
+  roundToPrecision,
+  safeDivide,
+  average,
+  standardDeviation,
+  ACWR_PRECISION,
+} from "./utils/precision.js";
 import { computeAcwrAt } from "./utils/acwr.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -136,13 +154,10 @@ async function getTrainingLoads(
   log = logger,
 ) {
   if (!supabase) {
-    log.warn(
-      "load_management_no_supabase_client",
-      {
-        requester_id: requesterId,
-        target_user_id: targetUserId,
-      },
-    );
+    log.warn("load_management_no_supabase_client", {
+      requester_id: requesterId,
+      target_user_id: targetUserId,
+    });
     return {
       loads: [],
       consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -212,16 +227,16 @@ async function getTrainingLoads(
       .order("session_date", { ascending: true });
 
     if (sessionsError) {
-    log.error(
-      "load_management_training_sessions_fetch_failed",
-      sessionsError,
-      {
-        requester_id: requesterId,
-        target_user_id: targetUserId,
-        start_date: startDateStr,
-        end_date: endDateStr,
-      },
-    );
+      log.error(
+        "load_management_training_sessions_fetch_failed",
+        sessionsError,
+        {
+          requester_id: requesterId,
+          target_user_id: targetUserId,
+          start_date: startDateStr,
+          end_date: endDateStr,
+        },
+      );
       return {
         loads: [],
         consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -252,16 +267,12 @@ async function getTrainingLoads(
       dataState: DataState.REAL_DATA,
     };
   } catch (error) {
-    log.error(
-      "load_management_fetch_failed",
-      error,
-      {
-        requester_id: requesterId,
-        target_user_id: targetUserId,
-        start_date: startDate.toISOString().split("T")[0],
-        end_date: endDate.toISOString().split("T")[0],
-      },
-    );
+    log.error("load_management_fetch_failed", error, {
+      requester_id: requesterId,
+      target_user_id: targetUserId,
+      start_date: startDate.toISOString().split("T")[0],
+      end_date: endDate.toISOString().split("T")[0],
+    });
     return {
       loads: [],
       consentInfo: { blockedPlayerIds: [], accessibleCount: 0 },
@@ -1082,7 +1093,11 @@ const handler = async (event, context) => {
       const targetUserId = query?.playerId || userId;
       const teamId = query?.teamId || null;
 
-      const access = await validateCrossUserAccess(userId, targetUserId, teamId);
+      const access = await validateCrossUserAccess(
+        userId,
+        targetUserId,
+        teamId,
+      );
       if (!access.authorized) {
         return createErrorResponse(
           access.message,
@@ -1107,11 +1122,7 @@ const handler = async (event, context) => {
           response = await handleInjuryRisk(userId, query);
           break;
         case "training-loads":
-          response = await handleTrainingLoads(
-            userId,
-            query,
-            requestLogger,
-          );
+          response = await handleTrainingLoads(userId, query, requestLogger);
           break;
         case "load-management": {
           // Default endpoint - return overview

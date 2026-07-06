@@ -45,9 +45,7 @@
     },
     {
       "name": "api-reference-data",
-      "urls": [
-        "https://*.supabase.co/rest/v1/exercises*"
-      ],
+      "urls": ["https://*.supabase.co/rest/v1/exercises*"],
       "cacheConfig": {
         "maxSize": 100,
         "maxAge": "1d",

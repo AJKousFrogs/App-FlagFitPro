@@ -35,10 +35,7 @@ import {
  * formatDate(new Date(), 'PPP') // "December 24, 2025"
  * formatDate('2025-12-24', 'yyyy-MM-dd') // "2025-12-24"
  */
-export function formatDate(
-  date: Date | string,
-  formatStr = "PPP",
-): string {
+export function formatDate(date: Date | string, formatStr = "PPP"): string {
   try {
     const dateObj = typeof date === "string" ? parseISO(date) : date;
     return dateFnsFormat(dateObj, formatStr);

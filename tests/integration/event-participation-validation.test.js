@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const state = vi.hoisted(() => ({ rpcResult: { data: "part-1", error: null }, rpcArgs: null }));
+const state = vi.hoisted(() => ({
+  rpcResult: { data: "part-1", error: null },
+  rpcArgs: null,
+}));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -13,7 +19,11 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
       const q = {
         select: () => q,
         eq: () => q,
-        order: () => Promise.resolve({ data: [{ competition_event_id: "ev-1" }], error: null }),
+        order: () =>
+          Promise.resolve({
+            data: [{ competition_event_id: "ev-1" }],
+            error: null,
+          }),
       };
       return q;
     },
@@ -38,7 +48,8 @@ describe("event-participation validation", () => {
     vi.resetModules();
     state.rpcResult = { data: "part-1", error: null };
     state.rpcArgs = null;
-    ({ handler } = await import("../../netlify/functions/event-participation.js"));
+    ({ handler } =
+      await import("../../netlify/functions/event-participation.js"));
   });
 
   it("GET returns the athlete's pending events", async () => {
@@ -67,7 +78,10 @@ describe("event-participation validation", () => {
   });
 
   it("returns 422 when attended is not a boolean", async () => {
-    const res = await handler(POST({ competitionEventId: "ev-1", gamesPlayed: 5 }), {});
+    const res = await handler(
+      POST({ competitionEventId: "ev-1", gamesPlayed: 5 }),
+      {},
+    );
     expect(res.statusCode).toBe(422);
   });
 
@@ -81,7 +95,12 @@ describe("event-participation validation", () => {
 
   it("returns 422 for an out-of-range avgRpe", async () => {
     const res = await handler(
-      POST({ competitionEventId: "ev-1", attended: true, gamesPlayed: 5, avgRpe: 12 }),
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 5,
+        avgRpe: 12,
+      }),
       {},
     );
     expect(res.statusCode).toBe(422);
@@ -89,7 +108,12 @@ describe("event-participation validation", () => {
 
   it("records participation and calls the RPC with mapped args", async () => {
     const res = await handler(
-      POST({ competitionEventId: "ev-1", attended: true, gamesPlayed: 5, avgRpe: 8 }),
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 5,
+        avgRpe: 8,
+      }),
       {},
     );
     expect(res.statusCode).toBe(201);
@@ -104,12 +128,20 @@ describe("event-participation validation", () => {
   });
 
   it("forces games_played to 0 when not attended", async () => {
-    await handler(POST({ competitionEventId: "ev-1", attended: false, gamesPlayed: 5 }), {});
+    await handler(
+      POST({ competitionEventId: "ev-1", attended: false, gamesPlayed: 5 }),
+      {},
+    );
     expect(state.rpcArgs.p_games_played).toBe(0);
   });
 
   it("maps an RPC authorization error to 403", async () => {
-    state.rpcResult = { data: null, error: { message: "Not authorized to record participation for this athlete" } };
+    state.rpcResult = {
+      data: null,
+      error: {
+        message: "Not authorized to record participation for this athlete",
+      },
+    };
     const res = await handler(
       POST({ competitionEventId: "ev-1", attended: true, gamesPlayed: 3 }),
       {},

@@ -280,10 +280,7 @@ async function logTrainingEntries(
     }
 
     // Training type dropdown/select
-    const typeSelectors = [
-      'select[name="type"]',
-      '[formControlName="type"]',
-    ];
+    const typeSelectors = ['select[name="type"]', '[formControlName="type"]'];
     for (const selector of typeSelectors) {
       try {
         const element = page.locator(selector).first();

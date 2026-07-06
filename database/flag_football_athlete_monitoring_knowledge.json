@@ -12,25 +12,19 @@
     "attribution": {
       "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
       "publisher": "FlagFit Pro",
-      "authors": [
-        "Sports Science Assessment Team"
-      ]
+      "authors": ["Sports Science Assessment Team"]
     }
   },
   "metadata": {
     "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
-    "authors": [
-      "Sports Science Assessment Team"
-    ],
+    "authors": ["Sports Science Assessment Team"],
     "total_pages": 26,
     "document_type": "practitioner_guide",
     "primary_focus": "flag_football_monitoring_metrics"
   },
   "research_article": {
     "title": "Evaluation of Flag Football Athlete Monitoring Metrics",
-    "authors": [
-      "Sports Science Assessment Team"
-    ],
+    "authors": ["Sports Science Assessment Team"],
     "publication_year": 2025,
     "publisher": "FlagFit Pro",
     "primary_category": "monitoring",
@@ -62,11 +56,7 @@
       "Use dashboards with multiple indicators rather than single composite scores",
       "Combine load, wellness, and previous injury for injury risk prediction"
     ],
-    "training_types": [
-      "monitoring",
-      "load_management",
-      "assessment"
-    ],
+    "training_types": ["monitoring", "load_management", "assessment"],
     "recovery_methods": [
       "wellness_tracking",
       "readiness_assessment",
@@ -99,10 +89,7 @@
         "sprint_athletes"
       ],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "load_management"
-      ],
+      "categories": ["monitoring", "load_management"],
       "tags": [
         "training_load",
         "session_RPE",
@@ -117,10 +104,7 @@
           "sprint_count",
           "accelerations"
         ],
-        "internal_metrics": [
-          "session_RPE",
-          "heart_rate_based_load"
-        ],
+        "internal_metrics": ["session_RPE", "heart_rate_based_load"],
         "spike_alert_threshold": "10_percent_week_to_week",
         "optimal_range": "progressive_overload_with_adequate_recovery"
       },
@@ -157,21 +141,10 @@
       "summary": "ACWR has mixed evidence. Use alongside absolute loads and wellness. Individualize thresholds. Consider EWMA. Avoid isolation.",
       "evidence_strength": "moderate",
       "consensus_level": "moderate",
-      "applicable_to": [
-        "flag_football_athletes",
-        "team_sport_athletes"
-      ],
+      "applicable_to": ["flag_football_athletes", "team_sport_athletes"],
       "sport_specificity": "flag_football",
-      "categories": [
-        "load_management",
-        "monitoring"
-      ],
-      "tags": [
-        "ACWR",
-        "EWMA",
-        "load_spike",
-        "injury_risk"
-      ],
+      "categories": ["load_management", "monitoring"],
+      "tags": ["ACWR", "EWMA", "load_spike", "injury_risk"],
       "protocols": {
         "sweet_spot_range": "0.8_to_1.3",
         "high_risk_threshold": ">1.5",
@@ -220,22 +193,10 @@
       "summary": "Combine subjective wellness, jump test, and HRV. Individualize baselines. CMJ correlates with sprint performance. Act on low scores.",
       "evidence_strength": "moderate",
       "consensus_level": "high",
-      "applicable_to": [
-        "flag_football_athletes",
-        "team_sport_athletes"
-      ],
+      "applicable_to": ["flag_football_athletes", "team_sport_athletes"],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "readiness"
-      ],
-      "tags": [
-        "readiness",
-        "CMJ",
-        "HRV",
-        "wellness",
-        "fatigue"
-      ],
+      "categories": ["monitoring", "readiness"],
+      "tags": ["readiness", "CMJ", "HRV", "wellness", "fatigue"],
       "protocols": {
         "components": [
           "subjective_wellness",
@@ -264,22 +225,10 @@
       "summary": "Wellness is highly valid. Cover fatigue, soreness, sleep, mood. Add joint pain for flag football. Traffic light system. Encourage honesty.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": [
-        "flag_football_athletes",
-        "all_athletes"
-      ],
+      "applicable_to": ["flag_football_athletes", "all_athletes"],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "wellness"
-      ],
-      "tags": [
-        "wellness",
-        "sleep",
-        "fatigue",
-        "soreness",
-        "injury_prevention"
-      ],
+      "categories": ["monitoring", "wellness"],
+      "tags": ["wellness", "sleep", "fatigue", "soreness", "injury_prevention"],
       "protocols": {
         "questionnaire_items": [
           "fatigue",
@@ -310,28 +259,13 @@
       "summary": "Use bodyweight for hydration. Replace BMI with body fat % and lean mass. LBM predicts injury resilience. Track 3-4x yearly.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": [
-        "flag_football_athletes",
-        "all_athletes"
-      ],
+      "applicable_to": ["flag_football_athletes", "all_athletes"],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "body_composition"
-      ],
-      "tags": [
-        "bodyweight",
-        "BMI",
-        "lean_mass",
-        "body_fat",
-        "hydration"
-      ],
+      "categories": ["monitoring", "body_composition"],
+      "tags": ["bodyweight", "BMI", "lean_mass", "body_fat", "hydration"],
       "protocols": {
         "bmi": "deprioritize_or_eliminate",
-        "preferred_metrics": [
-          "body_fat_percent",
-          "lean_body_mass"
-        ],
+        "preferred_metrics": ["body_fat_percent", "lean_body_mass"],
         "bodyweight_use": "hydration_tracking_pre_post_session",
         "lbm_frequency": "3_to_4_times_per_year"
       },
@@ -354,28 +288,12 @@
       "summary": "QB throw metrics like pitch counts. Track count, load, load per throw. Prevent overuse. Periodize throwing. Use for rehab progression.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": [
-        "quarterbacks",
-        "throwing_athletes"
-      ],
+      "applicable_to": ["quarterbacks", "throwing_athletes"],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "injury_prevention"
-      ],
-      "tags": [
-        "QB",
-        "throwing",
-        "pitch_count",
-        "arm_care",
-        "overuse"
-      ],
+      "categories": ["monitoring", "injury_prevention"],
+      "tags": ["QB", "throwing", "pitch_count", "arm_care", "overuse"],
       "protocols": {
-        "metrics": [
-          "throw_count",
-          "throw_load",
-          "load_per_throw"
-        ],
+        "metrics": ["throw_count", "throw_load", "load_per_throw"],
         "preseason_target": "~200_throws_per_week",
         "inseason_target": "100_to_150_throws_per_week",
         "spike_response": "reduce_next_day_volume"
@@ -405,10 +323,7 @@
         "performance_staff"
       ],
       "sport_specificity": "flag_football",
-      "categories": [
-        "monitoring",
-        "data_interpretation"
-      ],
+      "categories": ["monitoring", "data_interpretation"],
       "tags": [
         "composite_score",
         "trend_aggregation",

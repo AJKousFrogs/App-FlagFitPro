@@ -48,28 +48,58 @@ const API_LOAD_TIMEOUT_MS = 8000;
     } @else {
       <div class="video">
         <img [src]="posterSrc()" alt="" (error)="onPosterError()" />
-        <button class="play" type="button" [disabled]="!videoId()"
-                [attr.aria-label]="videoId() ? 'Play ' + title() : 'No video yet'"
-                (click)="play()">
+        <button
+          class="play"
+          type="button"
+          [disabled]="!videoId()"
+          [attr.aria-label]="videoId() ? 'Play ' + title() : 'No video yet'"
+          (click)="play()"
+        >
           <lucide-icon name="play" />
         </button>
-        <span class="vtitle">{{ videoId() ? title() : "Video coming from your coach" }}</span>
-        @if (duration() && videoId()) { <span class="duration">{{ duration() }}</span> }
+        <span class="vtitle">{{
+          videoId() ? title() : "Video coming from your coach"
+        }}</span>
+        @if (duration() && videoId()) {
+          <span class="duration">{{ duration() }}</span>
+        }
       </div>
       @if (loadFailed() && videoId()) {
-        <a class="yt-fallback" [href]="watchUrl()" target="_blank" rel="noopener">
-          <lucide-icon name="arrow-up-right" /> Couldn't load the player — open on YouTube
+        <a
+          class="yt-fallback"
+          [href]="watchUrl()"
+          target="_blank"
+          rel="noopener"
+        >
+          <lucide-icon name="arrow-up-right" /> Couldn't load the player — open
+          on YouTube
         </a>
       }
     }
   `,
   styles: [
     `
-      :host { display: block; }
-      .yt-host { position: absolute; inset: 0; width: 100%; height: 100%; }
-      .yt-fallback { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--s-2);
-        font-size: var(--fs-sm); color: var(--accent); }
-      .yt-fallback svg.lucide { width: 14px; height: 14px; }
+      :host {
+        display: block;
+      }
+      .yt-host {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .yt-fallback {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: var(--s-2);
+        font-size: var(--fs-sm);
+        color: var(--accent);
+      }
+      .yt-fallback svg.lucide {
+        width: 14px;
+        height: 14px;
+      }
     `,
   ],
 })
@@ -126,12 +156,21 @@ export class YtVideoComponent {
       const YT = (await Promise.race([
         loadYouTubeIframeApi(),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("yt_api_timeout")), API_LOAD_TIMEOUT_MS),
+          setTimeout(
+            () => reject(new Error("yt_api_timeout")),
+            API_LOAD_TIMEOUT_MS,
+          ),
         ),
       ])) as YtCtor;
       this.player = new YT.Player(el, {
         videoId,
-        playerVars: { playsinline: 1, autoplay: 1, controls: 1, rel: 0, modestbranding: 1 },
+        playerVars: {
+          playsinline: 1,
+          autoplay: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+        },
       });
     } catch {
       // SSR, timeout, or load failure → back to the poster + an "open on YouTube" link.

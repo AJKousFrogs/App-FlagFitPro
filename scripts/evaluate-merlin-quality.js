@@ -3,7 +3,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const baseUrl = process.env.MERLIN_EVAL_URL || "http://localhost:8888/api/ai/chat";
+const baseUrl =
+  process.env.MERLIN_EVAL_URL || "http://localhost:8888/api/ai/chat";
 const authToken = process.env.MERLIN_EVAL_TOKEN || "";
 const fixturesPath = path.join(
   process.cwd(),
@@ -78,7 +79,10 @@ for (const fixture of fixtures) {
     });
   }
 
-  if (Array.isArray(expectations.mustIncludeAny) && expectations.mustIncludeAny.length > 0) {
+  if (
+    Array.isArray(expectations.mustIncludeAny) &&
+    expectations.mustIncludeAny.length > 0
+  ) {
     checks.push({
       name: "must_include_any",
       pass: containsAny(answer, expectations.mustIncludeAny),
@@ -86,8 +90,14 @@ for (const fixture of fixtures) {
     });
   }
 
-  if (Array.isArray(expectations.mustNotIncludeAny) && expectations.mustNotIncludeAny.length > 0) {
-    const forbiddenHits = containsForbidden(answer, expectations.mustNotIncludeAny);
+  if (
+    Array.isArray(expectations.mustNotIncludeAny) &&
+    expectations.mustNotIncludeAny.length > 0
+  ) {
+    const forbiddenHits = containsForbidden(
+      answer,
+      expectations.mustNotIncludeAny,
+    );
     checks.push({
       name: "must_not_include_any",
       pass: forbiddenHits.length === 0,
@@ -135,7 +145,9 @@ console.log(`Cases: ${results.length}`);
 console.log(`Overall score: ${overallScore}\n`);
 
 for (const result of results) {
-  console.log(`- ${result.id}: ${result.passed ? "PASS" : "FAIL"} (${result.score})`);
+  console.log(
+    `- ${result.id}: ${result.passed ? "PASS" : "FAIL"} (${result.score})`,
+  );
   for (const check of result.checks) {
     console.log(
       `  ${check.pass ? "  ✓" : "  ✗"} ${check.name}${check.detail ? ` (${check.detail})` : ""}`,

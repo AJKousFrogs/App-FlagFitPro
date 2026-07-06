@@ -76,9 +76,9 @@ export async function buildProtocolDecisionContext({
       status: context.sessionResolution?.status || "unknown",
       hasProgram: !!context.playerProgram,
       hasSessionTemplate: !!context.sessionTemplate,
-      baselineProgram:
-        context.sessionResolution?.status === "baseline_program",
-      originalStatus: context.sessionResolution?.metadata?.originalStatus || null,
+      baselineProgram: context.sessionResolution?.status === "baseline_program",
+      originalStatus:
+        context.sessionResolution?.metadata?.originalStatus || null,
       reason: context.sessionResolution?.reason || null,
     },
   };
@@ -91,8 +91,13 @@ export async function buildProtocolDecisionContext({
     .select("context, threshold_low, threshold_mid")
     .in("context", ["session_type_select", "baseline_focus"])
     .eq("is_active", true);
-  const gateMap = Object.fromEntries((gateRows ?? []).map((g) => [g.context, g]));
-  const sessionGate = gateMap["session_type_select"] ?? { threshold_low: 50, threshold_mid: 70 };
+  const gateMap = Object.fromEntries(
+    (gateRows ?? []).map((g) => [g.context, g]),
+  );
+  const sessionGate = gateMap["session_type_select"] ?? {
+    threshold_low: 50,
+    threshold_mid: 70,
+  };
   const baselineGate = gateMap["baseline_focus"] ?? { threshold_low: 55 };
 
   // No fabrication (SOT Spec Laws 6/7): when readiness/load is unknown, do NOT
@@ -200,8 +205,9 @@ export async function buildProtocolDecisionContext({
   const periodizationPhase = context.dbSeasonPhase
     ? context.dbSeasonPhase
     : context.seasonPhase
-    ? (CLIENT_PHASE_MAP[context.seasonPhase] ?? getCurrentPeriodizationPhase(parseIsoDateString(date)))
-    : getCurrentPeriodizationPhase(parseIsoDateString(date));
+      ? (CLIENT_PHASE_MAP[context.seasonPhase] ??
+        getCurrentPeriodizationPhase(parseIsoDateString(date)))
+      : getCurrentPeriodizationPhase(parseIsoDateString(date));
   aiRationale += ` 📊 Periodization: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
 
   // Only surface the ACWR-elevated warning when ACWR is actually known.
@@ -240,7 +246,11 @@ export async function buildProtocolDecisionContext({
     .order("block_start_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (activeBlock?.max_load_percent != null && activeBlock.max_load_percent < 100) {
+  if (
+    activeBlock?.max_load_percent !== null &&
+    activeBlock?.max_load_percent !== undefined &&
+    activeBlock.max_load_percent < 100
+  ) {
     const beforeCap = adjustedLoadTarget;
     adjustedLoadTarget = Math.round(
       adjustedLoadTarget * (activeBlock.max_load_percent / 100),
@@ -277,7 +287,10 @@ function resolveBaselineTrainingFocus(
   acwrTargetRange,
   baselineThreshold = 55,
 ) {
-  if (readinessForLogic < baselineThreshold || acwrForLogic > acwrTargetRange.max) {
+  if (
+    readinessForLogic < baselineThreshold ||
+    acwrForLogic > acwrTargetRange.max
+  ) {
     return "recovery";
   }
 

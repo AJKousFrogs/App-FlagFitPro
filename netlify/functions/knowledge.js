@@ -11,9 +11,16 @@ import { handler as knowledgeGovernanceHandler } from "./knowledge-governance.js
 import { getCorsHeaders as cors } from "./utils/cors.js";
 
 export default async (req) => {
-  if (req.method === "OPTIONS") {return new Response(null, { status: 204, headers: cors(req) });}
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: cors(req) });
+  }
   const url = new URL(req.url);
   const path = url.pathname;
-  if (path.includes("/knowledge/governance") || path.includes("/knowledge-governance")) {return dispatch(knowledgeGovernanceHandler, req, url);}
+  if (
+    path.includes("/knowledge/governance") ||
+    path.includes("/knowledge-governance")
+  ) {
+    return dispatch(knowledgeGovernanceHandler, req, url);
+  }
   return dispatch(knowledgeSearchHandler, req, url);
 };

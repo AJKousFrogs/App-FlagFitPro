@@ -33,7 +33,9 @@ let createdSessionId = null;
 // ============================================================================
 
 beforeAll(async () => {
-  if (!RUN_API_E2E) {return;}
+  if (!RUN_API_E2E) {
+    return;
+  }
   // Authenticate test user
   const response = await request(API_BASE_URL).post("/api/auth/login").send({
     email: TEST_USER_EMAIL,
@@ -51,7 +53,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  if (!RUN_API_E2E) {return;}
+  if (!RUN_API_E2E) {
+    return;
+  }
   // Cleanup created resources
   if (createdSessionId && authToken) {
     await request(API_BASE_URL)

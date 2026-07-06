@@ -20,11 +20,13 @@ const DIST_CANDIDATES = [
   path.join(__dirname, "../dist/flagfit-pro"),
 ];
 const DIST_DIR =
-  DIST_CANDIDATES.find((candidate) =>
-    fs.existsSync(candidate) &&
-    fs.readdirSync(candidate).some((file) => file.endsWith(".js") || file.endsWith(".css")),
-  ) ??
-  DIST_CANDIDATES[0];
+  DIST_CANDIDATES.find(
+    (candidate) =>
+      fs.existsSync(candidate) &&
+      fs
+        .readdirSync(candidate)
+        .some((file) => file.endsWith(".js") || file.endsWith(".css")),
+  ) ?? DIST_CANDIDATES[0];
 const SIZE_LIMITS = {
   // Main bundle limits (in KB)
   main: 500,

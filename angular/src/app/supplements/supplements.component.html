@@ -4,8 +4,12 @@
     <h1>Supplements</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -14,70 +18,188 @@
   <div class="section-h"><h2>Today</h2></div>
   <div class="card">
     <div class="lrow">
-      <span id="t-cr"><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine <small>5 g</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="creatine()" aria-labelledby="t-cr" (click)="toggle('creatine')"></button>
+      <span id="t-cr"
+        ><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon
+        >Creatine <small>5 g</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="creatine()"
+        aria-labelledby="t-cr"
+        (click)="toggle('creatine')"
+      ></button>
     </div>
     <div class="lrow">
-      <span id="t-cf"><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine <small>200 mg · pre-session</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="caffeine()" aria-labelledby="t-cf" (click)="toggle('caffeine')"></button>
+      <span id="t-cf"
+        ><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine
+        <small>200 mg · pre-session</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="caffeine()"
+        aria-labelledby="t-cf"
+        (click)="toggle('caffeine')"
+      ></button>
     </div>
     <div class="lrow">
-      <span id="t-ba"><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine <small>4 g</small></span>
-      <button class="sw" role="switch" [attr.aria-checked]="beta()" aria-labelledby="t-ba" (click)="toggle('beta')"></button>
+      <span id="t-ba"
+        ><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon
+        >Beta-alanine <small>4 g</small></span
+      >
+      <button
+        class="sw"
+        role="switch"
+        [attr.aria-checked]="beta()"
+        aria-labelledby="t-ba"
+        (click)="toggle('beta')"
+      ></button>
     </div>
     @for (s of added(); track s) {
-      <div class="lrow"><span><iconify-icon icon="mdi:pill" class="suppi"></iconify-icon>{{ s }}</span><span class="band good">added</span></div>
+      <div class="lrow">
+        <span
+          ><iconify-icon icon="mdi:pill" class="suppi"></iconify-icon
+          >{{ s }}</span
+        ><span class="band good">added</span>
+      </div>
     }
     @if (adding()) {
-      <div style="margin-top:var(--s-2);display:flex;gap:var(--s-2);flex-wrap:wrap">
-        <input type="text" placeholder="Name (e.g. Vitamin D)" [value]="newName()" (input)="newName.set($any($event.target).value)"
-               aria-label="Supplement name"
-               class="input" style="flex:2;min-width:140px" />
-        <input type="text" placeholder="Dose" [value]="newDose()" (input)="newDose.set($any($event.target).value)"
-               aria-label="Dose"
-               class="input" style="flex:1;min-width:80px" />
-        <button class="btn primary sm" type="button" (click)="saveSupplement()">Add</button>
+      <div
+        style="
+          margin-top: var(--s-2);
+          display: flex;
+          gap: var(--s-2);
+          flex-wrap: wrap;
+        "
+      >
+        <input
+          type="text"
+          placeholder="Name (e.g. Vitamin D)"
+          [value]="newName()"
+          (input)="newName.set($any($event.target).value)"
+          aria-label="Supplement name"
+          class="input"
+          style="flex: 2; min-width: 140px"
+        />
+        <input
+          type="text"
+          placeholder="Dose"
+          [value]="newDose()"
+          (input)="newDose.set($any($event.target).value)"
+          aria-label="Dose"
+          class="input"
+          style="flex: 1; min-width: 80px"
+        />
+        <button class="btn primary sm" type="button" (click)="saveSupplement()">
+          Add
+        </button>
       </div>
     } @else {
-      <button class="btn ghost block sm" type="button" style="margin-top:var(--s-2)" (click)="adding.set(true)"><lucide-icon name="plus" /> Add supplement</button>
+      <button
+        class="btn ghost block sm"
+        type="button"
+        style="margin-top: var(--s-2)"
+        (click)="adding.set(true)"
+      >
+        <lucide-icon name="plus" /> Add supplement
+      </button>
     }
   </div>
 
   <!-- RPE/ACWR honesty note -->
   <div class="card warn">
-    <b class="inline"><lucide-icon name="info" /> Caffeine &amp; today's load</b>
-    <p class="muted" style="font-size:var(--fs-sm);margin-top:var(--s-1)">
-      Caffeine lowers perceived effort, so today's RPE reads a bit low — we mark the session load
-      <b style="color:var(--text)">lower-confidence</b>. We never silently rewrite your ACWR.
+    <b class="inline"
+      ><lucide-icon name="info" /> Caffeine &amp; today's load</b
+    >
+    <p class="muted" style="font-size: var(--fs-sm); margin-top: var(--s-1)">
+      Caffeine lowers perceived effort, so today's RPE reads a bit low — we mark
+      the session load
+      <b style="color: var(--text)">lower-confidence</b>. We never silently
+      rewrite your ACWR.
     </p>
   </div>
 
   <!-- adherence -->
   <div class="section-h"><h2>Adherence</h2></div>
   <div class="tiles">
-    <div><b>{{ creatineDays() === null ? "—" : creatineDays() + "/7" }}</b><small>creatine days</small></div>
+    <div>
+      <b>{{ creatineDays() === null ? "—" : creatineDays() + "/7" }}</b
+      ><small>creatine days</small>
+    </div>
     <div><b>~3wk</b><small>to saturation</small></div>
     <div><b>+1–2kg</b><small>water (expected)</small></div>
   </div>
-  <p class="note">Only “creatine days” is yours — saturation time and water gain are typical creatine effects, not personal measurements.</p>
+  <p class="note">
+    Only “creatine days” is yours — saturation time and water gain are typical
+    creatine effects, not personal measurements.
+  </p>
 
   <!-- the stack -->
   <div class="section-h"><h2>Your stack</h2></div>
   <div class="card">
-    <div class="lrow"><div><b><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon>Creatine</b>
-      <div class="muted" style="font-size:var(--fs-sm)">repeated-sprint power · 3–5 g/day · +1–2 kg water</div></div><span class="band good">daily</span></div>
-    <div class="lrow"><div><b><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon>Caffeine</b>
-      <div class="muted" style="font-size:var(--fs-sm)">↓RPE, ↑power · 3–6 mg/kg pre · watch sleep</div></div><span class="band info">pre-session</span></div>
-    <div class="lrow"><div><b><iconify-icon icon="mdi:shield-half-full" class="suppi"></iconify-icon>Beta-alanine</b>
-      <div class="muted" style="font-size:var(--fs-sm)">buffer repeated efforts · 3–6 g/day · may tingle</div></div><span class="band neutral">optional</span></div>
+    <div class="lrow">
+      <div>
+        <b
+          ><iconify-icon icon="mdi:lightning-bolt" class="suppi"></iconify-icon
+          >Creatine</b
+        >
+        <div class="muted" style="font-size: var(--fs-sm)">
+          repeated-sprint power · 3–5 g/day · +1–2 kg water
+        </div>
+      </div>
+      <span class="band good">daily</span>
+    </div>
+    <div class="lrow">
+      <div>
+        <b
+          ><iconify-icon icon="mdi:coffee" class="suppi"></iconify-icon
+          >Caffeine</b
+        >
+        <div class="muted" style="font-size: var(--fs-sm)">
+          ↓RPE, ↑power · 3–6 mg/kg pre · watch sleep
+        </div>
+      </div>
+      <span class="band info">pre-session</span>
+    </div>
+    <div class="lrow">
+      <div>
+        <b
+          ><iconify-icon
+            icon="mdi:shield-half-full"
+            class="suppi"
+          ></iconify-icon
+          >Beta-alanine</b
+        >
+        <div class="muted" style="font-size: var(--fs-sm)">
+          buffer repeated efforts · 3–6 g/day · may tingle
+        </div>
+      </div>
+      <span class="band neutral">optional</span>
+    </div>
   </div>
 
   <!-- restock CTA → partner store -->
-  <a class="card linkcard" href="https://www.laprimafit.eu" target="_blank" rel="noopener">
-    <span class="lc-ic"><iconify-icon icon="mdi:cart-outline"></iconify-icon></span>
-    <div style="flex:1"><b>Running low?</b><div class="muted" style="font-size:var(--fs-sm)">Restock your supplements at La Prima Fit</div></div>
+  <a
+    class="card linkcard"
+    href="https://www.laprimafit.eu"
+    target="_blank"
+    rel="noopener"
+  >
+    <span class="lc-ic"
+      ><iconify-icon icon="mdi:cart-outline"></iconify-icon
+    ></span>
+    <div style="flex: 1">
+      <b>Running low?</b>
+      <div class="muted" style="font-size: var(--fs-sm)">
+        Restock your supplements at La Prima Fit
+      </div>
+    </div>
     <lucide-icon name="arrow-up-right" class="lc-go" />
   </a>
 
-  <p class="note">Backed by the IOC consensus A-list &amp; ISSN positions. Shared with your coach only if you allow it.</p>
+  <p class="note">
+    Backed by the IOC consensus A-list &amp; ISSN positions. Shared with your
+    coach only if you allow it.
+  </p>
 </main>

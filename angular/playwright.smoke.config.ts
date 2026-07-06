@@ -15,7 +15,8 @@ export default defineConfig({
   reporter: [["list"]],
   use: { baseURL: "http://localhost:4319", trace: "off" },
   webServer: {
-    command: "npx http-server dist/flagfit-pro/browser -p 4319 -c-1 --silent --proxy http://localhost:4319?",
+    command:
+      "npx http-server dist/flagfit-pro/browser -p 4319 -c-1 --silent --proxy http://localhost:4319?",
     url: "http://localhost:4319",
     reuseExistingServer: true,
     timeout: 60_000,
@@ -23,11 +24,17 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 800 },
+      },
     },
     {
       name: "mobile",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 375, height: 812 } },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 375, height: 812 },
+      },
     },
   ],
 });

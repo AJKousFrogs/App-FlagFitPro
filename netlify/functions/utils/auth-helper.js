@@ -1,4 +1,7 @@
-import { supabaseAdmin, setAuthContextToken } from "../utils/supabase-client.js";
+import {
+  supabaseAdmin,
+  setAuthContextToken,
+} from "../utils/supabase-client.js";
 import {
   handleAuthenticationError,
   handleAuthorizationError,
@@ -199,9 +202,11 @@ async function getUserContext(userId) {
   };
 }
 
-export { getSupabaseClient,
+export {
+  getSupabaseClient,
   authenticateRequest,
   checkResourceOwnership,
   checkTeamMembership,
   getUserTeamId,
-  getUserContext, };
+  getUserContext,
+};

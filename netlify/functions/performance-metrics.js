@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -126,7 +129,8 @@ async function getPerformanceMetrics(userId, log = logger) {
     metrics.push({
       id: "accuracy",
       label: "Pass Accuracy",
-      value: accuracyValue !== null ? Math.round(accuracyValue * 10) / 10 : null,
+      value:
+        accuracyValue !== null ? Math.round(accuracyValue * 10) / 10 : null,
       hasData: accuracyValue !== null,
       unit: "%",
       trend: accuracyTrend.trend,

@@ -4,7 +4,6 @@ import { injuriesPainLevel } from "./active-injuries.js";
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-rtp" });
 
-
 export async function generateReturnToPlayProtocol(
   supabase,
   userId,
@@ -19,13 +18,12 @@ export async function generateReturnToPlayProtocol(
   // not the raw soreness_areas slider — soreness_areas is an INPUT, never the
   // trigger (SOT Law 5a / active-injuries.js). Fall back to the check-in only for
   // legacy callers that pass no structured injuries.
-  const hasAuthority = Array.isArray(activeInjuries) && activeInjuries.length > 0;
+  const hasAuthority =
+    Array.isArray(activeInjuries) && activeInjuries.length > 0;
   const injuries = hasAuthority
     ? activeInjuries.map((i) => i.injury_location).filter(Boolean)
     : wellnessCheckin?.soreness_areas || [];
-  const painLevel = hasAuthority
-    ? injuriesPainLevel(activeInjuries)
-    : 2;
+  const painLevel = hasAuthority ? injuriesPainLevel(activeInjuries) : 2;
 
   let rtpPhase = 1;
   let phaseName = "Phase 1: Foundation & Pain Management";
@@ -115,7 +113,8 @@ export async function generateReturnToPlayProtocol(
           pending_approval: true,
           rtp_phase: rtpPhase,
           phase_name: phaseName,
-          message: "RTP prescription sent to coach for review. You will be notified when approved.",
+          message:
+            "RTP prescription sent to coach for review. You will be notified when approved.",
         }),
       };
     }
@@ -143,12 +142,16 @@ export async function generateReturnToPlayProtocol(
           rejected: true,
           rtp_phase: rtpPhase,
           phase_name: phaseName,
-          message: "Your coach has reviewed and adjusted your RTP plan. Please contact your coach for the updated protocol.",
+          message:
+            "Your coach has reviewed and adjusted your RTP plan. Please contact your coach for the updated protocol.",
         }),
       };
     }
     // status === 'approved' → fall through to build and deliver the prescription
-    logger.info("rtp_approval_gate_passed", { phase: rtpPhase, approvalId: existingApproval.id });
+    logger.info("rtp_approval_gate_passed", {
+      phase: rtpPhase,
+      approvalId: existingApproval.id,
+    });
   }
 
   // Upsert (not insert) so that tightness reported after the day's initial
@@ -293,7 +296,9 @@ export async function generateReturnToPlayProtocol(
           prescribed_duration_seconds: rtpPhase === 2 ? 30 : 45,
           rest_seconds: 60,
           notes: "Low impact only. Stop if pain occurs.",
-          load_contribution_au: Math.round((ex.load_contribution_au || 15) * 0.4),
+          load_contribution_au: Math.round(
+            (ex.load_contribution_au || 15) * 0.4,
+          ),
         });
       });
     }
@@ -335,7 +340,10 @@ export async function generateReturnToPlayProtocol(
     }
   }
 
-  logger.info("rtp_protocol_generated", { phase: rtpPhase, exerciseCount: protocolExercises.length });
+  logger.info("rtp_protocol_generated", {
+    phase: rtpPhase,
+    exerciseCount: protocolExercises.length,
+  });
 
   return {
     statusCode: 200,

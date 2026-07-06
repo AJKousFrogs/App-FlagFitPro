@@ -74,10 +74,10 @@ function createFakeSupabase() {
         if (state.sponsorRewardsInsertErrorMessage) {
           throw new Error(state.sponsorRewardsInsertErrorMessage);
         }
-        return Promise.resolve({ data: [{ id: "reward-1" }], error: null }).then(
-          resolve,
-          reject,
-        );
+        return Promise.resolve({
+          data: [{ id: "reward-1" }],
+          error: null,
+        }).then(resolve, reject);
       }
       if (this.table === "notifications" && this.mode === "insert") {
         return Promise.resolve({ data: [{ id: "notif-1" }], error: null }).then(
@@ -92,10 +92,10 @@ function createFakeSupabase() {
         );
       }
       if (this.table === "sponsor_rewards" && this.mode === "update") {
-        return Promise.resolve({ data: [{ id: "reward-1" }], error: null }).then(
-          resolve,
-          reject,
-        );
+        return Promise.resolve({
+          data: [{ id: "reward-1" }],
+          error: null,
+        }).then(resolve, reject);
       }
       return Promise.resolve({ data: [], error: null }).then(resolve, reject);
     }

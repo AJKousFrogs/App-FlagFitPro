@@ -76,7 +76,9 @@ function createFakeSupabase() {
 
     runList() {
       if (this.table === "supplement_logs" && this.mode === "upsert") {
-        const rows = Array.isArray(this.payload) ? this.payload : [this.payload];
+        const rows = Array.isArray(this.payload)
+          ? this.payload
+          : [this.payload];
         return {
           data: rows.map((r, i) => ({ id: `log-${i + 1}`, ...r })),
           error: null,
@@ -115,7 +117,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "athlete-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "athlete-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -144,7 +149,9 @@ describe("supplements validation and mapping", () => {
 
     expect(response.statusCode).toBe(422);
     const payload = JSON.parse(response.body);
-    expect(payload.error?.message).toContain("limit must be an integer between 1 and 200");
+    expect(payload.error?.message).toContain(
+      "limit must be an integer between 1 and 200",
+    );
   });
 
   it("returns normalized fields for legacy single supplement log (now idempotent upsert)", async () => {
@@ -181,7 +188,12 @@ describe("supplements validation and mapping", () => {
           date: "2026-02-13",
           supplements: [
             { name: "Creatine", taken: true, dosage: "5 g" },
-            { name: "Caffeine", taken: false, dosage: "200 mg", timeOfDay: "pre-session" },
+            {
+              name: "Caffeine",
+              taken: false,
+              dosage: "200 mg",
+              timeOfDay: "pre-session",
+            },
           ],
         }),
       },
@@ -192,7 +204,10 @@ describe("supplements validation and mapping", () => {
     const payload = JSON.parse(response.body);
     expect(payload.data.logged).toBe(2);
     expect(payload.data.date).toBe("2026-02-13");
-    expect(payload.data.supplements[0]).toMatchObject({ supplement: "Creatine", taken: true });
+    expect(payload.data.supplements[0]).toMatchObject({
+      supplement: "Creatine",
+      taken: true,
+    });
     expect(payload.data.supplements[1]).toMatchObject({
       supplement: "Caffeine",
       taken: false,

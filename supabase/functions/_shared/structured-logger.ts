@@ -22,7 +22,9 @@ const REDACTED = "[REDACTED]";
 
 function isSensitiveKey(key: string): boolean {
   const normalized = key.toLowerCase();
-  return SENSITIVE_KEY_FRAGMENTS.some((fragment) => normalized.includes(fragment));
+  return SENSITIVE_KEY_FRAGMENTS.some((fragment) =>
+    normalized.includes(fragment),
+  );
 }
 
 function maskString(value: string): string {
@@ -68,7 +70,9 @@ function redact(value: unknown, depth = 0): unknown {
 
   if (typeof value === "object") {
     const output: Record<string, unknown> = {};
-    for (const [key, nestedValue] of Object.entries(value as Record<string, unknown>)) {
+    for (const [key, nestedValue] of Object.entries(
+      value as Record<string, unknown>,
+    )) {
       output[key] = isSensitiveKey(key)
         ? REDACTED
         : redact(nestedValue, depth + 1);
@@ -80,7 +84,9 @@ function redact(value: unknown, depth = 0): unknown {
 }
 
 function extractCorrelationId(headers?: Headers): string | null {
-  return headers?.get("x-correlation-id") ?? headers?.get("x-request-id") ?? null;
+  return (
+    headers?.get("x-correlation-id") ?? headers?.get("x-request-id") ?? null
+  );
 }
 
 export function createLogger(

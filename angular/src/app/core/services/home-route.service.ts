@@ -13,7 +13,10 @@ export class HomeRouteService {
   }
 
   getHomeRouteForUser(
-    user: { role?: string | null; user_metadata?: { role?: string } | null } | null,
+    user: {
+      role?: string | null;
+      user_metadata?: { role?: string } | null;
+    } | null,
   ): string {
     const role = user?.role ?? user?.user_metadata?.role;
     return this.getHomeRouteForRole(role);

@@ -1,11 +1,13 @@
-
 // Netlify Function: Training Complete API
 // Handles marking training sessions as completed
 // Endpoint: /api/training/complete
 
 import { baseHandler } from "./utils/base-handler.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
@@ -16,7 +18,10 @@ import {
 
 const logger = createLogger({ service: "netlify.training-complete" });
 
-function parseOptionalBoundedNumber(value, { field, min, max, integer = false }) {
+function parseOptionalBoundedNumber(
+  value,
+  { field, min, max, integer = false },
+) {
   if (value === undefined || value === null || value === "") {
     return undefined;
   }
@@ -68,7 +73,10 @@ function parseCompletionPayload(body) {
   });
   const notes =
     body.notes === undefined || body.notes === null ? undefined : body.notes;
-  if (notes !== undefined && (typeof notes !== "string" || notes.length > 2000)) {
+  if (
+    notes !== undefined &&
+    (typeof notes !== "string" || notes.length > 2000)
+  ) {
     throw new Error("notes must be a string up to 2000 characters");
   }
   if (
@@ -165,11 +173,22 @@ async function syncWorkoutLog(
   // workout_logs has been merged into training_sessions: the completed session is already
   // persisted there (the canonical ACWR load source), so no shadow sync is needed.
   // No-op retained to preserve call sites; params intentionally unused.
-  void userId, sessionId, workoutType, plannedDate, completedAt, rpe, durationMinutes, log;
+  (void userId,
+    sessionId,
+    workoutType,
+    plannedDate,
+    completedAt,
+    rpe,
+    durationMinutes,
+    log);
   return true;
 }
 
-async function completeTrainingSessionViaRpc(userId, sessionId, completionData) {
+async function completeTrainingSessionViaRpc(
+  userId,
+  sessionId,
+  completionData,
+) {
   const { data, error } = await supabaseAdmin.rpc("complete_training_session", {
     p_user_id: userId,
     p_session_id: sessionId,
@@ -218,7 +237,8 @@ async function completeTrainingSession(
 
     // Calculate workload if not provided.
     // Prefer explicit completion payload, then session values.
-    const duration = completionData.duration ?? session.duration_minutes ?? null;
+    const duration =
+      completionData.duration ?? session.duration_minutes ?? null;
     const intensity =
       completionData.intensity ?? session.intensity_level ?? null;
     const rpe =
@@ -395,7 +415,11 @@ async function completeTrainingSession(
 /**
  * Main handler function
  */
-async function handleRequest(event, context, { userId, requestId, correlationId }) {
+async function handleRequest(
+  event,
+  context,
+  { userId, requestId, correlationId },
+) {
   const requestLogger = logger.child(
     buildRequestLogContext(event, {
       function_name: "training-complete",
@@ -413,7 +437,11 @@ async function handleRequest(event, context, { userId, requestId, correlationId 
 
     // Only POST is allowed for completing sessions
     if (event.httpMethod !== "POST") {
-      return createErrorResponse("Method not allowed. Use POST.", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed. Use POST.",
+        405,
+        "method_not_allowed",
+      );
     }
 
     // Parse and validate request body

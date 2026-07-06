@@ -9,7 +9,10 @@ const state = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -51,7 +54,11 @@ vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
 }));
 
 vi.mock("../../netlify/functions/utils/consent-guard.js", () => ({
-  canCoachViewReadiness: async () => ({ allowed: false, reason: "NO_CONSENT", safetyOverride: false }),
+  canCoachViewReadiness: async () => ({
+    allowed: false,
+    reason: "NO_CONSENT",
+    safetyOverride: false,
+  }),
   filterReadinessForCoach: (item) => item,
 }));
 

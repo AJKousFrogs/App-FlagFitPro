@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -42,7 +45,9 @@ async function submitAthleteFeedback(
   // First, get the message to capture original values
   const { data: message, error: msgError } = await supabaseAdmin
     .from("ai_messages")
-    .select("risk_level, intent_type, classification_confidence, session_id, user_id")
+    .select(
+      "risk_level, intent_type, classification_confidence, session_id, user_id",
+    )
     .eq("id", messageId)
     .single();
 
@@ -145,8 +150,12 @@ async function submitCoachFeedback(messageId, coachId, feedbackData) {
     .select("team_id")
     .eq("user_id", message.user_id)
     .eq("status", "active");
-  const athleteTeamIds = [...new Set((athleteTeams || []).map((t) => t.team_id))];
-  const sharesTeam = athleteTeamIds.some((teamId) => coachTeamIds.includes(teamId));
+  const athleteTeamIds = [
+    ...new Set((athleteTeams || []).map((t) => t.team_id)),
+  ];
+  const sharesTeam = athleteTeamIds.some((teamId) =>
+    coachTeamIds.includes(teamId),
+  );
   if (!sharesTeam) {
     throw new Error("Not authorized to review this message");
   }
@@ -231,7 +240,9 @@ async function ensureMessageAccess(messageId, requesterId) {
     .eq("status", "active")
     .in("role", COACH_ROUTE_ROLES);
 
-  const requesterTeamIds = [...new Set((requesterTeams || []).map((t) => t.team_id))];
+  const requesterTeamIds = [
+    ...new Set((requesterTeams || []).map((t) => t.team_id)),
+  ];
   if (requesterTeamIds.length === 0) {
     throw new Error("Not authorized to access this message");
   }
@@ -242,8 +253,12 @@ async function ensureMessageAccess(messageId, requesterId) {
     .eq("user_id", message.user_id)
     .eq("status", "active");
 
-  const athleteTeamIds = [...new Set((athleteTeams || []).map((t) => t.team_id))];
-  const sharesTeam = athleteTeamIds.some((teamId) => requesterTeamIds.includes(teamId));
+  const athleteTeamIds = [
+    ...new Set((athleteTeams || []).map((t) => t.team_id)),
+  ];
+  const sharesTeam = athleteTeamIds.some((teamId) =>
+    requesterTeamIds.includes(teamId),
+  );
   if (!sharesTeam) {
     throw new Error("Not authorized to access this message");
   }
@@ -271,7 +286,9 @@ async function getFeedbackStats(coachId, teamId = null, options = {}) {
       .in("role", COACH_ROUTE_ROLES)
       .maybeSingle();
     if (!coachMembership) {
-      throw new Error("Not authorized to access this team's feedback statistics");
+      throw new Error(
+        "Not authorized to access this team's feedback statistics",
+      );
     }
 
     const { data: members } = await supabaseAdmin
@@ -504,7 +521,6 @@ const handler = async (event, context) => {
     rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
-  
       const { path } = event;
       const method = event.httpMethod;
 

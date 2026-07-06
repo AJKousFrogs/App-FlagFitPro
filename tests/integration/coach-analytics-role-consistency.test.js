@@ -83,7 +83,10 @@ function createFakeSupabase() {
       }
 
       if (this.table === "micro_sessions") {
-        return { data: [{ user_id: "player-1", status: "completed" }], error: null };
+        return {
+          data: [{ user_id: "player-1", status: "completed" }],
+          error: null,
+        };
       }
 
       return { data: [], error: null };
@@ -100,7 +103,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

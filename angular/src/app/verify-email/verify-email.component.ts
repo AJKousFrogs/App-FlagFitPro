@@ -23,8 +23,16 @@ import { LoggerService } from "../core/services/logger.service";
   templateUrl: "./verify-email.component.html",
   styles: [
     `
-      :host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
-      .brand { font-family: var(--font-display); font-weight: var(--fw-bold); }
+      :host {
+        display: block;
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+      .brand {
+        font-family: var(--font-display);
+        font-weight: var(--fw-bold);
+      }
     `,
   ],
 })

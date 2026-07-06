@@ -6,7 +6,8 @@ import "dotenv/config";
 const __filename = fileURLToPath(import.meta.url);
 const isMain =
   process.argv[1]?.endsWith("seedIsometricsTrainingDatabase.js") ||
-  (process.argv[1] && path.resolve(process.cwd(), process.argv[1]) === __filename);
+  (process.argv[1] &&
+    path.resolve(process.cwd(), process.argv[1]) === __filename);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

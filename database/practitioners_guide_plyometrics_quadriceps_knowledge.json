@@ -13,10 +13,7 @@
       "title": "Plyometrics and Quadriceps: Evidence-Based Lower Limb Training",
       "publisher": "Synthesis",
       "source_url": "https://resources.valdperformance.com",
-      "authors": [
-        "VALD Performance Contributors",
-        "NSCA"
-      ]
+      "authors": ["VALD Performance Contributors", "NSCA"]
     }
   },
   "metadata": {
@@ -32,10 +29,7 @@
   },
   "research_article": {
     "title": "Plyometrics and Quadriceps: Evidence-Based Lower Limb Training",
-    "authors": [
-      "VALD Performance Contributors",
-      "NSCA"
-    ],
+    "authors": ["VALD Performance Contributors", "NSCA"],
     "publication_year": 2024,
     "publisher": "Synthesis",
     "primary_category": "training",
@@ -64,20 +58,9 @@
       "Contraindicate high-intensity plyometrics for ACL <12mo, ankle instability",
       "Integrate plyometrics with strength and speed development"
     ],
-    "injury_types": [
-      "ACL_injury",
-      "ankle_sprain",
-      "patellofemoral_pain"
-    ],
-    "training_types": [
-      "plyometric",
-      "power",
-      "reactive_strength"
-    ],
-    "recovery_methods": [
-      "progressive_loading",
-      "criteria_based_progression"
-    ],
+    "injury_types": ["ACL_injury", "ankle_sprain", "patellofemoral_pain"],
+    "training_types": ["plyometric", "power", "reactive_strength"],
+    "recovery_methods": ["progressive_loading", "criteria_based_progression"],
     "is_open_access": true,
     "verified": true,
     "quality_score": 8,
@@ -105,10 +88,7 @@
         "sprint_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "training",
-        "power_development"
-      ],
+      "categories": ["training", "power_development"],
       "tags": [
         "plyometrics",
         "progression",
@@ -147,16 +127,9 @@
       "summary": "Ankle stiffness is foundational for plyometrics. Pogos and low hurdles first. Enables efficient stretch-shortening cycle; protects knee and hip.",
       "evidence_strength": "strong",
       "consensus_level": "high",
-      "applicable_to": [
-        "all_athletes",
-        "sprint_athletes",
-        "jumping_athletes"
-      ],
+      "applicable_to": ["all_athletes", "sprint_athletes", "jumping_athletes"],
       "sport_specificity": "general",
-      "categories": [
-        "training",
-        "injury_prevention"
-      ],
+      "categories": ["training", "injury_prevention"],
       "tags": [
         "ankle_stiffness",
         "pogos",
@@ -194,10 +167,7 @@
         "sprint_athletes"
       ],
       "sport_specificity": "running_sports",
-      "categories": [
-        "assessment",
-        "injury_prevention"
-      ],
+      "categories": ["assessment", "injury_prevention"],
       "tags": [
         "quadriceps",
         "hamstring_quadriceps_ratio",
@@ -210,10 +180,7 @@
           "eccentric": ">0.8",
           "conventional": ">0.6"
         },
-        "assessment": [
-          "isokinetic",
-          "isometric_knee_extension"
-        ]
+        "assessment": ["isokinetic", "isometric_knee_extension"]
       },
       "best_practices": [
         "Monitor H:Q ratio preseason and in-season",
@@ -238,10 +205,7 @@
         "flag_football_athletes"
       ],
       "sport_specificity": "field_sports",
-      "categories": [
-        "training",
-        "power_development"
-      ],
+      "categories": ["training", "power_development"],
       "tags": [
         "single_leg",
         "plyometrics",
@@ -250,11 +214,7 @@
         "change_of_direction"
       ],
       "protocols": {
-        "drills": [
-          "single_leg_hops",
-          "skater_bounds",
-          "lateral_hops"
-        ],
+        "drills": ["single_leg_hops", "skater_bounds", "lateral_hops"],
         "prerequisite": "bilateral_plyometric_competency"
       },
       "safety_warnings": [

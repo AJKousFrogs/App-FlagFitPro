@@ -27,12 +27,31 @@ import { staffLaneFor } from "../core/guards/staff.guard";
   templateUrl: "./landing.component.html",
   styles: [
     `
-      :host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }
-      .brand { font-family: var(--font-display); font-weight: var(--fw-bold); }
+      :host {
+        display: block;
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+      .brand {
+        font-family: var(--font-display);
+        font-weight: var(--fw-bold);
+      }
       /* Hero wordmark — a deliberate one-off larger than the --fs-display token (32px). */
-      .ovr-title { font-size: 52px; letter-spacing: -0.02em; }
-      .signin input { width: 100%; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-sm); padding: var(--s-3) var(--s-3); color: var(--text-strong); font-family: var(--font-body); margin-top: var(--s-2); }
+      .ovr-title {
+        font-size: 52px;
+        letter-spacing: -0.02em;
+      }
+      .signin input {
+        width: 100%;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-sm);
+        padding: var(--s-3) var(--s-3);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+        margin-top: var(--s-2);
+      }
     `,
   ],
 })
@@ -64,7 +83,10 @@ export class LandingComponent {
     this.busy.set(true);
     this.error.set(null);
     try {
-      const { error } = await this.supabase.signIn(this.email().trim(), this.password());
+      const { error } = await this.supabase.signIn(
+        this.email().trim(),
+        this.password(),
+      );
       if (error) {
         this.error.set(error.message ?? "Sign-in failed");
       } else {
@@ -72,9 +94,12 @@ export class LandingComponent {
         // authGuard bounced them here from a deep link (returnUrl), in which case
         // honour it so the original destination is restored after login.
         await this.membership.loadMembership(true).catch(() => null);
-        const roleDest = staffLaneFor(this.membership.role()) ? "/staff" : "/today";
+        const roleDest = staffLaneFor(this.membership.role())
+          ? "/staff"
+          : "/today";
         const returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
-        const dest = returnUrl && returnUrl.startsWith("/") ? returnUrl : roleDest;
+        const dest =
+          returnUrl && returnUrl.startsWith("/") ? returnUrl : roleDest;
         await this.router.navigateByUrl(dest);
       }
     } catch (e) {

@@ -1,12 +1,17 @@
-
 // Netlify Function: Knowledge Base Search
 // Searches the evidence-based knowledge database
 // Updated to work with actual knowledge_base_entries schema
 
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -65,9 +70,7 @@ const normalizeKnowledgeEntry = (entry) => {
     ? entry.supporting_articles[0] || null
     : null;
   const evidenceGrade =
-    typeof entry.evidence_strength === "string"
-      ? entry.evidence_strength
-      : "C";
+    typeof entry.evidence_strength === "string" ? entry.evidence_strength : "C";
 
   return {
     id: entry.id,
@@ -95,7 +98,7 @@ const handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "knowledge-search",
     allowedMethods: ["GET", "POST"],
-rateLimitType,
+    rateLimitType,
     requireAuth: false, // Knowledge search is public
     handler: async (event, _context, { requestId }) => {
       const supabase = supabaseAdmin;
@@ -128,7 +131,8 @@ rateLimitType,
           const { query, category, subcategory, limit = 10 } = bodyData;
           let sanitizedLimit;
           try {
-            sanitizedLimit = parseBoundedInt(limit, "limit", { min: 1, max: 50 }) ?? 10;
+            sanitizedLimit =
+              parseBoundedInt(limit, "limit", { min: 1, max: 50 }) ?? 10;
           } catch (error) {
             return createErrorResponse(
               error.message,
@@ -281,7 +285,10 @@ rateLimitType,
               );
             }
 
-            return createSuccessResponse(normalizeKnowledgeEntry(data), requestId);
+            return createSuccessResponse(
+              normalizeKnowledgeEntry(data),
+              requestId,
+            );
           }
 
           // GET /knowledge-search?category=nutrition - List by category

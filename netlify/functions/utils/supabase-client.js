@@ -600,7 +600,6 @@ const db = {
     },
   },
 
-
   // Games operations
   games: {
     async getRecentGames(teamId = null, limit = 10) {
@@ -917,7 +916,9 @@ const db = {
       requireSupabaseAdmin("createNotification");
 
       const normalizePriority = (value) => {
-        const normalized = String(value || "normal").trim().toLowerCase();
+        const normalized = String(value || "normal")
+          .trim()
+          .toLowerCase();
         if (normalized === "medium") {
           return "normal";
         }
@@ -1236,7 +1237,8 @@ function checkEnvVars() {
         ? `${supabaseUrl.substring(0, 20)}...`
         : "MISSING",
       SUPABASE_SERVICE_KEY:
-        process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+        process.env.SUPABASE_SERVICE_KEY ||
+        process.env.SUPABASE_SERVICE_ROLE_KEY
           ? "SET"
           : "MISSING",
       SUPABASE_ANON_KEY:
@@ -1282,7 +1284,8 @@ function checkEnvVars() {
   }
 }
 
-export { supabase,
+export {
+  supabase,
   supabaseAdmin, // Service role client - bypasses RLS (for server-side use only)
   supabaseService, // Alias for supabaseAdmin (backwards compatibility)
   supabaseRLS, // RLS-aware client - respects row-level security policies
@@ -1291,4 +1294,5 @@ export { supabase,
   runWithAuthContext,
   db,
   getSupabaseConfigStatus,
-  checkEnvVars, };
+  checkEnvVars,
+};

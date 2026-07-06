@@ -32,9 +32,7 @@ const mockSupabaseService = {
       insert: mockInsert,
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() =>
-            Promise.resolve({ data: null, error: null }),
-          ),
+          single: vi.fn(() => Promise.resolve({ data: null, error: null })),
         })),
       })),
     })),

@@ -162,10 +162,14 @@ Deno.serve(async (req: Request) => {
         }
       } catch (sendError) {
         results.failed++;
-        requestLogger.error("consultation_reminder_processing_failed", sendError, {
-          reminder_id: reminder.id,
-          user_id: reminder.user_id,
-        });
+        requestLogger.error(
+          "consultation_reminder_processing_failed",
+          sendError,
+          {
+            reminder_id: reminder.id,
+            user_id: reminder.user_id,
+          },
+        );
 
         await supabase
           .from("consultation_reminders")

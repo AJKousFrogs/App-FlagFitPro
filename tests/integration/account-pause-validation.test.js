@@ -30,7 +30,8 @@ describe("account-pause validation hardening", () => {
   });
 
   it("returns 422 for non-object payload", async () => {
-    const { handler } = await import("../../netlify/functions/account-pause.js");
+    const { handler } =
+      await import("../../netlify/functions/account-pause.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -46,7 +47,8 @@ describe("account-pause validation hardening", () => {
   });
 
   it("returns 422 for invalid action", async () => {
-    const { handler } = await import("../../netlify/functions/account-pause.js");
+    const { handler } =
+      await import("../../netlify/functions/account-pause.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -62,7 +64,8 @@ describe("account-pause validation hardening", () => {
   });
 
   it("returns 422 for invalid paused_until date", async () => {
-    const { handler } = await import("../../netlify/functions/account-pause.js");
+    const { handler } =
+      await import("../../netlify/functions/account-pause.js");
     const response = await handler(
       {
         httpMethod: "POST",
@@ -79,7 +82,8 @@ describe("account-pause validation hardening", () => {
 
   it("does not leak internal rpc error details on pause failure", async () => {
     state.rpcError = { message: "sensitive db error" };
-    const { handler } = await import("../../netlify/functions/account-pause.js");
+    const { handler } =
+      await import("../../netlify/functions/account-pause.js");
     const response = await handler(
       {
         httpMethod: "POST",

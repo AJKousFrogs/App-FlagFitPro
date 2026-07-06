@@ -61,10 +61,10 @@ function createSupabase() {
 
     then(resolve, reject) {
       if (this.table === "team_members") {
-        return Promise.resolve({ data: [{ team_id: "team-1" }], error: null }).then(
-          resolve,
-          reject,
-        );
+        return Promise.resolve({
+          data: [{ team_id: "team-1" }],
+          error: null,
+        }).then(resolve, reject);
       }
       if (this.table === "coach_activity_log") {
         if (state.feedErrorMessage) {
@@ -88,7 +88,10 @@ function createSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

@@ -1,7 +1,13 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody, parseBoundedInt } from "./utils/input-validator.js";
+import {
+  parseJsonObjectBody,
+  parseBoundedInt,
+} from "./utils/input-validator.js";
 import { validate } from "./validation.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -602,7 +608,12 @@ const handler = async (event, context) => {
               requestId,
             );
           }
-          return createErrorResponse("Invalid JSON", 400, "invalid_json", requestId);
+          return createErrorResponse(
+            "Invalid JSON",
+            400,
+            "invalid_json",
+            requestId,
+          );
         }
       }
 
@@ -683,7 +694,8 @@ const handler = async (event, context) => {
         return createErrorResponse(
           statusCode === 500
             ? "Internal server error"
-            : error.message || (statusCode === 404 ? "Not found" : "Access denied"),
+            : error.message ||
+                (statusCode === 404 ? "Not found" : "Access denied"),
           statusCode,
           "chat_error",
           requestId,

@@ -300,10 +300,7 @@ async function cleanupTestData(supabase) {
     return;
   }
 
-  await supabase
-    .from("load_monitoring")
-    .delete()
-    .in("player_id", playerIds);
+  await supabase.from("load_monitoring").delete().in("player_id", playerIds);
   await supabase.from("workout_logs").delete().in("player_id", playerIds);
   console.log("   Cleanup complete");
 }
@@ -321,7 +318,9 @@ async function cleanupAuthUsers(supabase) {
   for (const userId of createdAuthUserIds) {
     const { error } = await supabase.auth.admin.deleteUser(userId);
     if (error) {
-      console.log(`   ⚠️ Could not delete fixture auth user ${userId}: ${error.message}`);
+      console.log(
+        `   ⚠️ Could not delete fixture auth user ${userId}: ${error.message}`,
+      );
     }
   }
   createdAuthUserIds.clear();
@@ -525,7 +524,9 @@ async function testLoadCalculationsAtCheckpoints(supabase) {
     if (lmData?.acwr !== undefined && expected.acwr !== null) {
       try {
         assertWithTolerance(lmData.acwr, expected.acwr, TOLERANCE.ACWR, "ACWR");
-        console.log(`     ✅ ACWR: ${lmData.acwr} (expected: ${expected.acwr})`);
+        console.log(
+          `     ✅ ACWR: ${lmData.acwr} (expected: ${expected.acwr})`,
+        );
       } catch (e) {
         console.log(`     ❌ ACWR: ${e.message}`);
         allPassed = false;
@@ -590,7 +591,9 @@ async function testRiskLevelClassification(supabase) {
     if (data === tc.expected) {
       console.log(`   ✅ ACWR ${tc.acwr} → ${data}`);
     } else {
-      console.log(`   ❌ ACWR ${tc.acwr}: Expected ${tc.expected}, got ${data}`);
+      console.log(
+        `   ❌ ACWR ${tc.acwr}: Expected ${tc.expected}, got ${data}`,
+      );
       allPassed = false;
     }
   }
@@ -602,8 +605,14 @@ async function testMinimumChronicLoadFloor(supabase) {
   console.log("\n🛡️ Testing Minimum Chronic Load Floor...");
 
   try {
-    await supabase.from("load_monitoring").delete().eq("player_id", LOW_LOAD_PLAYER_ID);
-    await supabase.from("workout_logs").delete().eq("player_id", LOW_LOAD_PLAYER_ID);
+    await supabase
+      .from("load_monitoring")
+      .delete()
+      .eq("player_id", LOW_LOAD_PLAYER_ID);
+    await supabase
+      .from("workout_logs")
+      .delete()
+      .eq("player_id", LOW_LOAD_PLAYER_ID);
 
     const baseDate = new Date();
     const lightSessions = [
@@ -620,18 +629,25 @@ async function testMinimumChronicLoadFloor(supabase) {
       duration_minutes: s.duration,
     }));
 
-    const { error: insertError } = await supabase.from("workout_logs").insert(workouts);
+    const { error: insertError } = await supabase
+      .from("workout_logs")
+      .insert(workouts);
 
     if (insertError) {
       console.log(`   ⚠️ Could not insert test data: ${insertError.message}`);
       return true;
     }
 
-    const totalLoad = lightSessions.reduce((sum, s) => sum + s.duration * s.rpe, 0);
+    const totalLoad = lightSessions.reduce(
+      (sum, s) => sum + s.duration * s.rpe,
+      0,
+    );
     const chronicWithoutFloor = totalLoad / 7;
 
     console.log(`   Total load: ${totalLoad} AU`);
-    console.log(`   Chronic WITHOUT floor: ${chronicWithoutFloor.toFixed(2)} AU`);
+    console.log(
+      `   Chronic WITHOUT floor: ${chronicWithoutFloor.toFixed(2)} AU`,
+    );
     console.log(`   Chronic WITH floor: 50.00 AU (minimum)`);
 
     const checkDate = getDateForDay(7, baseDate);
@@ -641,7 +657,9 @@ async function testMinimumChronicLoadFloor(supabase) {
     );
 
     if (chronicError) {
-      console.log(`   ⚠️ Could not calculate chronic load: ${chronicError.message}`);
+      console.log(
+        `   ⚠️ Could not calculate chronic load: ${chronicError.message}`,
+      );
       return true;
     }
 
@@ -660,8 +678,14 @@ async function testMinimumChronicLoadFloor(supabase) {
       return false;
     }
   } finally {
-    await supabase.from("load_monitoring").delete().eq("player_id", LOW_LOAD_PLAYER_ID);
-    await supabase.from("workout_logs").delete().eq("player_id", LOW_LOAD_PLAYER_ID);
+    await supabase
+      .from("load_monitoring")
+      .delete()
+      .eq("player_id", LOW_LOAD_PLAYER_ID);
+    await supabase
+      .from("workout_logs")
+      .delete()
+      .eq("player_id", LOW_LOAD_PLAYER_ID);
   }
 }
 
@@ -673,7 +697,9 @@ async function runTests() {
   console.log("═".repeat(72));
   console.log("ACWR REGRESSION TEST");
   console.log("═".repeat(72));
-  console.log("\nValidating ACWR calculations against synthetic 28-day dataset");
+  console.log(
+    "\nValidating ACWR calculations against synthetic 28-day dataset",
+  );
   console.log("\nTolerance values:");
   console.log(`  - Daily Load: ${TOLERANCE.DAILY_LOAD} AU (exact)`);
   console.log(`  - Acute Load: ±${TOLERANCE.ACUTE_LOAD} AU`);
@@ -682,7 +708,9 @@ async function runTests() {
 
   const envStatus = getSupabaseEnvStatus();
   if (!envStatus.ok) {
-    console.log("\n⏭️ Skipping ACWR regression test: missing Supabase credentials.");
+    console.log(
+      "\n⏭️ Skipping ACWR regression test: missing Supabase credentials.",
+    );
     console.log(`Missing: ${envStatus.missing.join(", ")}`);
     console.log("Set the required environment variables to run this test.");
     return;
@@ -705,7 +733,8 @@ async function runTests() {
     await calculateLoadMonitoring(supabase);
 
     results.dailyLoad = await testDailyLoadCalculation(supabase);
-    results.loadCalculations = await testLoadCalculationsAtCheckpoints(supabase);
+    results.loadCalculations =
+      await testLoadCalculationsAtCheckpoints(supabase);
     results.consentView = await testConsentAwareView(supabase);
     results.riskLevels = await testRiskLevelClassification(supabase);
     results.chronicFloor = await testMinimumChronicLoadFloor(supabase);
@@ -725,11 +754,21 @@ async function runTests() {
   console.log("═".repeat(72));
   const allPassed = Object.values(results).every((r) => r);
 
-  console.log(`\nDaily Load Calculation:    ${results.dailyLoad ? "✅ PASS" : "❌ FAIL"}`);
-  console.log(`Load Calculations:         ${results.loadCalculations ? "✅ PASS" : "❌ FAIL"}`);
-  console.log(`Consent-Aware View:        ${results.consentView ? "✅ PASS" : "❌ FAIL"}`);
-  console.log(`Risk Level Classification: ${results.riskLevels ? "✅ PASS" : "❌ FAIL"}`);
-  console.log(`Min Chronic Load Floor:    ${results.chronicFloor ? "✅ PASS" : "❌ FAIL"}`);
+  console.log(
+    `\nDaily Load Calculation:    ${results.dailyLoad ? "✅ PASS" : "❌ FAIL"}`,
+  );
+  console.log(
+    `Load Calculations:         ${results.loadCalculations ? "✅ PASS" : "❌ FAIL"}`,
+  );
+  console.log(
+    `Consent-Aware View:        ${results.consentView ? "✅ PASS" : "❌ FAIL"}`,
+  );
+  console.log(
+    `Risk Level Classification: ${results.riskLevels ? "✅ PASS" : "❌ FAIL"}`,
+  );
+  console.log(
+    `Min Chronic Load Floor:    ${results.chronicFloor ? "✅ PASS" : "❌ FAIL"}`,
+  );
 
   console.log(`\n${"═".repeat(72)}`);
   if (allPassed) {
@@ -756,9 +795,4 @@ if (isMain) {
   });
 }
 
-export {
-  SYNTHETIC_DATASET,
-  EXPECTED_VALUES,
-  TOLERANCE,
-  runTests,
-};
+export { SYNTHETIC_DATASET, EXPECTED_VALUES, TOLERANCE, runTests };

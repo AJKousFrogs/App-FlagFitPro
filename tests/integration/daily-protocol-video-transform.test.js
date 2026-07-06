@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
-  baseHandler: async (event, context, options) => options.handler(event, context, {}),
+  baseHandler: async (event, context, options) =>
+    options.handler(event, context, {}),
 }));
 
 vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({

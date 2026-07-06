@@ -31,7 +31,10 @@ function createSupabase() {
     async single() {
       if (this.table === "users") {
         if (state.userMissing) {
-          return { data: null, error: { code: "PGRST116", message: "No rows" } };
+          return {
+            data: null,
+            error: { code: "PGRST116", message: "No rows" },
+          };
         }
         if (state.userQueryErrorMessage) {
           return {
@@ -103,7 +106,11 @@ describe("user-context validation hardening", () => {
   it("maps body metrics from height_cm/weight_kg fields", async () => {
     const { handler } = await import("../../netlify/functions/user-context.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/user-context", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/user-context",
+        queryStringParameters: {},
+      },
       {},
     );
 
@@ -118,7 +125,11 @@ describe("user-context validation hardening", () => {
     state.userMissing = true;
     const { handler } = await import("../../netlify/functions/user-context.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/user-context", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/user-context",
+        queryStringParameters: {},
+      },
       {},
     );
 
@@ -131,7 +142,11 @@ describe("user-context validation hardening", () => {
     state.userQueryErrorMessage = "sensitive db plan detail";
     const { handler } = await import("../../netlify/functions/user-context.js");
     const response = await handler(
-      { httpMethod: "GET", path: "/.netlify/functions/user-context", queryStringParameters: {} },
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/user-context",
+        queryStringParameters: {},
+      },
       {},
     );
 

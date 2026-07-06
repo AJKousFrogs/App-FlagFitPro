@@ -42,7 +42,12 @@ interface ProfileRead {
         <div class="eyebrow">Your profile</div>
         <h1>Edit profile</h1>
       </div>
-      <button class="icon-btn" type="button" aria-label="Back" (click)="cancel()">
+      <button
+        class="icon-btn"
+        type="button"
+        aria-label="Back"
+        (click)="cancel()"
+      >
         <lucide-icon name="x" />
       </button>
     </header>
@@ -55,10 +60,18 @@ interface ProfileRead {
           <b>Profile photo</b>
           <div class="inline">
             <label class="btn secondary sm">
-              <lucide-icon name="camera" /> {{ photoBusy() ? "Uploading…" : "Change photo" }}
-              <input type="file" accept="image/*" hidden (change)="onPhoto($event)" />
+              <lucide-icon name="camera" />
+              {{ photoBusy() ? "Uploading…" : "Change photo" }}
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                (change)="onPhoto($event)"
+              />
             </label>
-            @if (photoMsg(); as m) { <small class="muted">{{ m }}</small> }
+            @if (photoMsg(); as m) {
+              <small class="muted">{{ m }}</small>
+            }
           </div>
         </div>
       </div>
@@ -67,40 +80,86 @@ interface ProfileRead {
         <p class="lbl" style="margin:0">Position</p>
         <div class="chiprow">
           @for (p of positions; track p) {
-            <button type="button" class="chip" [class.sel]="position() === p" (click)="position.set(p)">{{ p }}</button>
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="position() === p"
+              (click)="position.set(p)"
+            >
+              {{ p }}
+            </button>
           }
         </div>
 
         <div class="grid2">
           <div>
             <label class="lbl" for="pe-jersey">Jersey number</label>
-            <input id="pe-jersey" class="input" type="number" min="0" max="99" inputmode="numeric"
-                   [value]="jersey()" (input)="jersey.set(numOrEmpty($event))" />
+            <input
+              id="pe-jersey"
+              class="input"
+              type="number"
+              min="0"
+              max="99"
+              inputmode="numeric"
+              [value]="jersey()"
+              (input)="jersey.set(numOrEmpty($event))"
+            />
           </div>
           <div>
             <label class="lbl" for="pe-birth-date">Birth date</label>
-            <input id="pe-birth-date" class="input" type="date" [value]="birthDate()" (change)="birthDate.set(val($event))" />
+            <input
+              id="pe-birth-date"
+              class="input"
+              type="date"
+              [value]="birthDate()"
+              (change)="birthDate.set(val($event))"
+            />
           </div>
         </div>
 
         <div class="grid2">
           <div>
             <label class="lbl" for="pe-height-cm">Height (cm)</label>
-            <input id="pe-height-cm" class="input" type="number" min="100" max="250" inputmode="numeric"
-                   [value]="heightCm()" (input)="heightCm.set(numOrEmpty($event))" />
+            <input
+              id="pe-height-cm"
+              class="input"
+              type="number"
+              min="100"
+              max="250"
+              inputmode="numeric"
+              [value]="heightCm()"
+              (input)="heightCm.set(numOrEmpty($event))"
+            />
           </div>
           <div>
             <label class="lbl" for="pe-weight-kg">Weight (kg)</label>
-            <input id="pe-weight-kg" class="input" type="number" min="30" max="200" inputmode="numeric"
-                   [value]="weightKg()" (input)="weightKg.set(numOrEmpty($event))" />
+            <input
+              id="pe-weight-kg"
+              class="input"
+              type="number"
+              min="30"
+              max="200"
+              inputmode="numeric"
+              [value]="weightKg()"
+              (input)="weightKg.set(numOrEmpty($event))"
+            />
           </div>
         </div>
 
-        @if (error(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+        @if (error(); as e) {
+          <p class="note" style="color:var(--danger)">{{ e }}</p>
+        }
 
         <div class="row" style="justify-content:flex-end;gap:var(--s-2)">
-          <button class="btn ghost" type="button" (click)="cancel()">Cancel</button>
-          <button class="btn primary" type="button" [attr.aria-disabled]="saving()" (click)="save()">
+          <button class="btn ghost" type="button" (click)="cancel()">
+            Cancel
+          </button>
+          <button
+            class="btn primary"
+            type="button"
+            [attr.aria-disabled]="saving()"
+            (click)="save()"
+          >
             {{ saving() ? "Saving…" : "Save profile" }}
           </button>
         </div>
@@ -109,10 +168,24 @@ interface ProfileRead {
   `,
   styles: [
     `
-      .lbl { font-size: var(--fs-sm); color: var(--text-muted); font-weight: var(--fw-semi); }
-      .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
-      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
-      .input { width: 100%; }
+      .lbl {
+        font-size: var(--fs-sm);
+        color: var(--text-muted);
+        font-weight: var(--fw-semi);
+      }
+      .chiprow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--s-3);
+      }
+      .input {
+        width: 100%;
+      }
     `,
   ],
 })
@@ -146,7 +219,10 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit(): void {
     // prefill from the canonical profile read; jersey/position fall back to identity/meta
-    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>;
+    const meta = (this.supabase.currentUser()?.user_metadata ?? {}) as Record<
+      string,
+      unknown
+    >;
     const jerseyMeta = meta["jersey_number"] ?? this.identity.jersey();
     if (jerseyMeta != null) this.jersey.set(String(jerseyMeta));
     this.position.set(this.identity.position() ?? "");
@@ -240,7 +316,9 @@ export class ProfileEditComponent implements OnInit {
       );
       const url = extractApiPayload<{ url?: string }>(res)?.url;
       if (!url) throw new Error("Upload returned no URL");
-      const { error } = await this.supabase.updateUser({ data: { avatar_url: url } });
+      const { error } = await this.supabase.updateUser({
+        data: { avatar_url: url },
+      });
       if (error) throw error;
       await this.supabase.refreshCurrentUser();
       this.photoMsg.set("Photo updated");

@@ -65,10 +65,15 @@ describe("auth-reset-password validation hardening", () => {
 
   it("allows verify action without email and does not initialize smtp", async () => {
     state.validationData = { action: "verify", token: "tok-1" };
-    const { handler } = await import("../../netlify/functions/auth-reset-password.js");
+    const { handler } =
+      await import("../../netlify/functions/auth-reset-password.js");
 
     const response = await handler(
-      { httpMethod: "POST", path: "/.netlify/functions/auth-reset-password", body: "{}" },
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/auth-reset-password",
+        body: "{}",
+      },
       {},
     );
 
@@ -83,10 +88,15 @@ describe("auth-reset-password validation hardening", () => {
       token: "tok-1",
       newPassword: "StrongPass1!",
     };
-    const { handler } = await import("../../netlify/functions/auth-reset-password.js");
+    const { handler } =
+      await import("../../netlify/functions/auth-reset-password.js");
 
     const response = await handler(
-      { httpMethod: "POST", path: "/.netlify/functions/auth-reset-password", body: "{}" },
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/auth-reset-password",
+        body: "{}",
+      },
       {},
     );
 
@@ -98,10 +108,15 @@ describe("auth-reset-password validation hardening", () => {
 
   it("requires email for request action", async () => {
     state.validationData = { action: "request" };
-    const { handler } = await import("../../netlify/functions/auth-reset-password.js");
+    const { handler } =
+      await import("../../netlify/functions/auth-reset-password.js");
 
     const response = await handler(
-      { httpMethod: "POST", path: "/.netlify/functions/auth-reset-password", body: "{}" },
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/auth-reset-password",
+        body: "{}",
+      },
       {},
     );
 

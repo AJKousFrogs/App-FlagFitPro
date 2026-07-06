@@ -14,7 +14,10 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
             return {
               select: () => ({
                 eq: () => ({
-                  single: async () => ({ data: { date_of_birth: "2012-01-01" }, error: null }),
+                  single: async () => ({
+                    data: { date_of_birth: "2012-01-01" },
+                    error: null,
+                  }),
                 }),
               }),
             };
@@ -53,7 +56,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
         return {
           select: () => ({
             eq: () => ({
-              single: async () => ({ data: { date_of_birth: "2012-01-01" }, error: null }),
+              single: async () => ({
+                data: { date_of_birth: "2012-01-01" },
+                error: null,
+              }),
             }),
           }),
         };
@@ -71,7 +77,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
             select: () => ({
               single: async () =>
                 state.insertError
-                  ? { data: null, error: { message: "sensitive relation detail" } }
+                  ? {
+                      data: null,
+                      error: { message: "sensitive relation detail" },
+                    }
                   : { data: { id: "consent-1" }, error: null },
             }),
           }),

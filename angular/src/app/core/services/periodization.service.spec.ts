@@ -126,18 +126,14 @@ describe("prescribeFor — pre-game taper-prime", () => {
 
 describe("prescribeFor — ACWR safety override", () => {
   it("ACWR > 1.5 forces rest, regardless of phase", () => {
-    const rx = prescribeFor(
-      inputs({ phase: "accumulation", acwr: 1.6 }),
-    );
+    const rx = prescribeFor(inputs({ phase: "accumulation", acwr: 1.6 }));
     expect(rx.intent).toBe("rest");
     expect(rx.recoveryEmphasis).toBe("critical");
     expect(rx.reasoning).toMatch(/ACWR.*danger/i);
   });
 
   it("ACWR exactly 1.5 does NOT trigger rest override", () => {
-    const rx = prescribeFor(
-      inputs({ phase: "accumulation", acwr: 1.5 }),
-    );
+    const rx = prescribeFor(inputs({ phase: "accumulation", acwr: 1.5 }));
     expect(rx.intent).not.toBe("rest");
   });
 });
@@ -148,17 +144,13 @@ describe("prescribeFor — ACWR safety override", () => {
 
 describe("prescribeFor — readiness collapse", () => {
   it("readiness < 55 forces recovery", () => {
-    const rx = prescribeFor(
-      inputs({ phase: "accumulation", readiness: 45 }),
-    );
+    const rx = prescribeFor(inputs({ phase: "accumulation", readiness: 45 }));
     expect(rx.intent).toBe("recovery");
     expect(rx.reasoning).toMatch(/readiness/i);
   });
 
   it("readiness null falls back to 70 (no override)", () => {
-    const rx = prescribeFor(
-      inputs({ phase: "accumulation", readiness: null }),
-    );
+    const rx = prescribeFor(inputs({ phase: "accumulation", readiness: null }));
     expect(rx.intent).not.toBe("recovery");
   });
 });
@@ -232,31 +224,28 @@ describe("prescribeFor — phase defaults", () => {
 
 describe("prescribeFor — accumulation week shape", () => {
   // Anchor dates by day of week to be timezone-safe.
-  const monday    = new Date("2026-05-04T10:00:00Z");
-  const tuesday   = new Date("2026-05-05T10:00:00Z");
+  const monday = new Date("2026-05-04T10:00:00Z");
+  const tuesday = new Date("2026-05-05T10:00:00Z");
   const wednesday = new Date("2026-05-06T10:00:00Z");
-  const thursday  = new Date("2026-05-07T10:00:00Z");
-  const friday    = new Date("2026-05-08T10:00:00Z");
-  const saturday  = new Date("2026-05-09T10:00:00Z");
-  const sunday    = new Date("2026-05-10T10:00:00Z");
+  const thursday = new Date("2026-05-07T10:00:00Z");
+  const friday = new Date("2026-05-08T10:00:00Z");
+  const saturday = new Date("2026-05-09T10:00:00Z");
+  const sunday = new Date("2026-05-10T10:00:00Z");
 
   it.each([
-    ["Mon", monday,    "strength"],
-    ["Tue", tuesday,   "sprint"],
+    ["Mon", monday, "strength"],
+    ["Tue", tuesday, "sprint"],
     ["Wed", wednesday, "mobility"],
-    ["Thu", thursday,  "strength"],
-    ["Fri", friday,    "sprint"],
-    ["Sat", saturday,  "mixed"],
-    ["Sun", sunday,    "rest"],
-  ] as const)(
-    "%s default intent is %s",
-    (_label, date, expected) => {
-      const rx = prescribeFor(
-        inputs({ date, phase: "accumulation", upcoming: [] }),
-      );
-      expect(rx.intent).toBe(expected);
-    },
-  );
+    ["Thu", thursday, "strength"],
+    ["Fri", friday, "sprint"],
+    ["Sat", saturday, "mixed"],
+    ["Sun", sunday, "rest"],
+  ] as const)("%s default intent is %s", (_label, date, expected) => {
+    const rx = prescribeFor(
+      inputs({ date, phase: "accumulation", upcoming: [] }),
+    );
+    expect(rx.intent).toBe(expected);
+  });
 
   it("elevated ACWR demotes a sprint day to mobility", () => {
     const rx = prescribeFor(
@@ -293,7 +282,9 @@ describe("prescribeFor — accumulation week shape", () => {
 
 describe("prescribeFor — team practice (day type) × phase modifier", () => {
   it("accumulation phase → practice IS the session (mixed, rpe7/90min, 'own' framing)", () => {
-    const rx = prescribeFor(inputs({ isTeamPractice: true, phase: "accumulation" }));
+    const rx = prescribeFor(
+      inputs({ isTeamPractice: true, phase: "accumulation" }),
+    );
     expect(rx.intent).toBe("mixed");
     expect(rx.intentLabel).toBe("Flag football practice");
     expect(rx.targetRpe).toBe(7);
@@ -348,7 +339,9 @@ describe("prescribeFor — team practice (day type) × phase modifier", () => {
   });
 
   it("competition phase → the GAME is the session; practice yields", () => {
-    const rx = prescribeFor(inputs({ isTeamPractice: true, phase: "competition" }));
+    const rx = prescribeFor(
+      inputs({ isTeamPractice: true, phase: "competition" }),
+    );
     expect(rx.intent).toBe("competition");
   });
 
@@ -417,7 +410,9 @@ describe("prescribeFor — nutrition", () => {
         density14d: { totalGames: 12, hasPeakImportance: true },
       }),
     );
-    expect(rxHeavy.nutrition.hydrationL - rxNormal.nutrition.hydrationL).toBeCloseTo(0.5, 1);
+    expect(
+      rxHeavy.nutrition.hydrationL - rxNormal.nutrition.hydrationL,
+    ).toBeCloseTo(0.5, 1);
   });
 
   it("rest day: 3 g/kg carbs (lower)", () => {
@@ -506,7 +501,10 @@ const tuesday = new Date("2026-05-05T10:00:00Z"); // accumulation → sprint
 describe("prescribeFor — weather guard", () => {
   it("rain substitutes a sprint for an indoor strength session", () => {
     const rx = prescribeFor(
-      inputs({ date: tuesday, weather: weather({ weatherCode: 63, precipMm: 2 }) }),
+      inputs({
+        date: tuesday,
+        weather: weather({ weatherCode: 63, precipMm: 2 }),
+      }),
     );
     expect(rx.intent).toBe("strength");
     expect(rx.weatherAdjustment?.applied).toBe(true);
@@ -578,7 +576,9 @@ describe("prescribeFor — weather guard", () => {
 
 describe("macroPhaseFor — athlete-declared windows", () => {
   it("resolves a specific span", () => {
-    const w = [{ phase: "inseason" as const, from: "2025-09-01", to: "2026-04-30" }];
+    const w = [
+      { phase: "inseason" as const, from: "2025-09-01", to: "2026-04-30" },
+    ];
     expect(macroPhaseFor(new Date("2026-03-01T10:00:00Z"), w)).toBe("inseason");
     expect(macroPhaseFor(new Date("2026-07-01T10:00:00Z"), w)).toBeNull();
   });
@@ -612,12 +612,16 @@ describe("prescribeFor — season macro-phase shapes the non-event week", () => 
   });
 
   it("transition is active rest / base", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, seasonPhase: "transition" }),
+    );
     expect(rx.intent).toBe("mobility");
   });
 
   it("pre-season uses the generic progressive build (Tuesday → sprint)", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, seasonPhase: "preseason" }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, seasonPhase: "preseason" }),
+    );
     expect(rx.intent).toBe("sprint");
   });
 
@@ -762,7 +766,9 @@ describe("prescribeFor — sprint CNS recovery spacing", () => {
       }),
     );
     expect(rx.intent).not.toBe("sprint");
-    expect(["technical", "strength", "mobility", "recovery"]).toContain(rx.intent);
+    expect(["technical", "strength", "mobility", "recovery"]).toContain(
+      rx.intent,
+    );
   });
 });
 
@@ -905,7 +911,12 @@ describe("prescribeFor — age-scaled CNS spacing (19 vs 38)", () => {
 
   it("a 38yo is still recovering at 60h post-sprint → today downgraded", () => {
     const rx = prescribeFor(
-      inputs({ phase: "accumulation", date: sprintDay, ageYears: 38, recentSessions: sprint60hAgo }),
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        ageYears: 38,
+        recentSessions: sprint60hAgo,
+      }),
     );
     expect(rx.intent).toBe("technical");
     expect(rx.cnsRecoveryAdjustment?.windowHours).toBe(60);
@@ -913,7 +924,12 @@ describe("prescribeFor — age-scaled CNS spacing (19 vs 38)", () => {
 
   it("a 19yo has cleared the 48h window at 60h → sprint allowed", () => {
     const rx = prescribeFor(
-      inputs({ phase: "accumulation", date: sprintDay, ageYears: 19, recentSessions: sprint60hAgo }),
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        ageYears: 19,
+        recentSessions: sprint60hAgo,
+      }),
     );
     expect(rx.intent).toBe("sprint");
     expect(rx.cnsRecoveryAdjustment ?? null).toBeNull();
@@ -921,7 +937,11 @@ describe("prescribeFor — age-scaled CNS spacing (19 vs 38)", () => {
 
   it("no age provided behaves exactly like the 48h base (younger never under-rested)", () => {
     const rx = prescribeFor(
-      inputs({ phase: "accumulation", date: sprintDay, recentSessions: sprint60hAgo }),
+      inputs({
+        phase: "accumulation",
+        date: sprintDay,
+        recentSessions: sprint60hAgo,
+      }),
     );
     expect(rx.intent).toBe("sprint"); // 60h > 48h base → cleared
   });
@@ -940,25 +960,51 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
       inputs({
         date: tuesday,
         bodyweightKg: 80,
-        density14d: { totalGames: 8, hasPeakImportance: false, peakDayGameCount: 1 },
+        density14d: {
+          totalGames: 8,
+          hasPeakImportance: false,
+          peakDayGameCount: 1,
+        },
       }),
     );
     const congested = prescribeFor(
       inputs({
         date: tuesday,
         bodyweightKg: 80,
-        density14d: { totalGames: 8, hasPeakImportance: false, peakDayGameCount: 4 },
+        density14d: {
+          totalGames: 8,
+          hasPeakImportance: false,
+          peakDayGameCount: 4,
+        },
       }),
     );
-    expect(congested.nutrition.hydrationL - spread.nutrition.hydrationL).toBeCloseTo(0.5, 1);
+    expect(
+      congested.nutrition.hydrationL - spread.nutrition.hydrationL,
+    ).toBeCloseTo(0.5, 1);
   });
 
   it("a non-congested low total (peak 2/day) does NOT trip heavy density", () => {
     const a = prescribeFor(
-      inputs({ date: tuesday, bodyweightKg: 80, density14d: { totalGames: 4, hasPeakImportance: false, peakDayGameCount: 2 } }),
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        density14d: {
+          totalGames: 4,
+          hasPeakImportance: false,
+          peakDayGameCount: 2,
+        },
+      }),
     );
     const b = prescribeFor(
-      inputs({ date: tuesday, bodyweightKg: 80, density14d: { totalGames: 4, hasPeakImportance: false, peakDayGameCount: 1 } }),
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        density14d: {
+          totalGames: 4,
+          hasPeakImportance: false,
+          peakDayGameCount: 1,
+        },
+      }),
     );
     expect(a.nutrition.hydrationL).toBeCloseTo(b.nutrition.hydrationL, 1);
   });
@@ -972,9 +1018,24 @@ describe("prescribeFor — heat adds fluid", () => {
   const tuesday = new Date("2026-05-05T10:00:00Z");
 
   it("apparent ≥ 28°C adds +0.5L over a cool day", () => {
-    const cool = prescribeFor(inputs({ date: tuesday, bodyweightKg: 80, weather: weather({ apparentC: 18 }) }));
-    const hot = prescribeFor(inputs({ date: tuesday, bodyweightKg: 80, weather: weather({ apparentC: 30, tempC: 30 }) }));
-    expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(0.5, 1);
+    const cool = prescribeFor(
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        weather: weather({ apparentC: 18 }),
+      }),
+    );
+    const hot = prescribeFor(
+      inputs({
+        date: tuesday,
+        bodyweightKg: 80,
+        weather: weather({ apparentC: 30, tempC: 30 }),
+      }),
+    );
+    expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(
+      0.5,
+      1,
+    );
   });
 });
 
@@ -987,15 +1048,21 @@ describe("prescribeFor — peak & post-season phases", () => {
 
   it("peak is sharp & low-volume (a Monday is a quality sprint, not strength)", () => {
     const peak = prescribeFor(inputs({ date: monday, seasonPhase: "peak" }));
-    const inseason = prescribeFor(inputs({ date: monday, seasonPhase: "inseason" }));
+    const inseason = prescribeFor(
+      inputs({ date: monday, seasonPhase: "inseason" }),
+    );
     expect(peak.intent).toBe("sprint"); // quality
     expect(inseason.intent).toBe("strength"); // maintenance volume
     expect(peak.seasonPhase).toBe("peak");
   });
 
   it("post-season is active regeneration (Tuesday → mobility), same shape as transition", () => {
-    const post = prescribeFor(inputs({ date: tuesday, seasonPhase: "postseason" }));
-    const trans = prescribeFor(inputs({ date: tuesday, seasonPhase: "transition" }));
+    const post = prescribeFor(
+      inputs({ date: tuesday, seasonPhase: "postseason" }),
+    );
+    const trans = prescribeFor(
+      inputs({ date: tuesday, seasonPhase: "transition" }),
+    );
     expect(post.intent).toBe("mobility");
     expect(post.intent).toBe(trans.intent);
   });
@@ -1008,11 +1075,21 @@ describe("prescribeFor — peak & post-season phases", () => {
       { phase: "postseason" as const, from: "11-01", to: "11-30" },
       { phase: "offseason" as const, from: "12-01", to: "02-28" },
     ];
-    expect(macroPhaseFor(new Date("2026-05-10T10:00:00Z"), windows)).toBe("inseason"); // spring block
-    expect(macroPhaseFor(new Date("2026-07-25T10:00:00Z"), windows)).toBe("offseason"); // mid gap
-    expect(macroPhaseFor(new Date("2026-09-10T10:00:00Z"), windows)).toBe("inseason"); // autumn block
-    expect(macroPhaseFor(new Date("2026-11-15T10:00:00Z"), windows)).toBe("postseason");
-    expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe("offseason"); // winter
+    expect(macroPhaseFor(new Date("2026-05-10T10:00:00Z"), windows)).toBe(
+      "inseason",
+    ); // spring block
+    expect(macroPhaseFor(new Date("2026-07-25T10:00:00Z"), windows)).toBe(
+      "offseason",
+    ); // mid gap
+    expect(macroPhaseFor(new Date("2026-09-10T10:00:00Z"), windows)).toBe(
+      "inseason",
+    ); // autumn block
+    expect(macroPhaseFor(new Date("2026-11-15T10:00:00Z"), windows)).toBe(
+      "postseason",
+    );
+    expect(macroPhaseFor(new Date("2026-01-10T10:00:00Z"), windows)).toBe(
+      "offseason",
+    ); // winter
   });
 });
 
@@ -1038,7 +1115,9 @@ describe("prescribeFor — position emphasis", () => {
   });
 
   it("center/rusher gets snapping wrist/shoulder + brace focus", () => {
-    const rx = prescribeFor(inputs({ date: tuesday, position: "center_rusher" }));
+    const rx = prescribeFor(
+      inputs({ date: tuesday, position: "center_rusher" }),
+    );
     expect(rx.positionEmphasis?.position).toBe("center");
     expect(rx.positionEmphasis?.note).toMatch(/snap/i);
   });
@@ -1052,8 +1131,13 @@ describe("prescribeFor — position emphasis", () => {
   });
 
   it("no position, or a rest day, yields no emphasis", () => {
-    expect(prescribeFor(inputs({ date: tuesday })).positionEmphasis ?? null).toBeNull();
-    expect(prescribeFor(inputs({ date: sunday, position: "qb" })).positionEmphasis ?? null).toBeNull();
+    expect(
+      prescribeFor(inputs({ date: tuesday })).positionEmphasis ?? null,
+    ).toBeNull();
+    expect(
+      prescribeFor(inputs({ date: sunday, position: "qb" })).positionEmphasis ??
+        null,
+    ).toBeNull();
   });
 });
 
@@ -1069,7 +1153,12 @@ describe("prescribeFor — throwing restriction overrides QB/center emphasis", (
       inputs({
         date: tuesday,
         position: "qb",
-        activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "moderate", regions: ["shoulder"] },
+        activeRestrictions: {
+          restrictsSprint: false,
+          restrictsThrowing: true,
+          severity: "moderate",
+          regions: ["shoulder"],
+        },
       }),
     );
     expect(rx.intent).toBe("sprint"); // running unaffected — shoulder doesn't restrict sprinting
@@ -1088,7 +1177,12 @@ describe("prescribeFor — throwing restriction overrides QB/center emphasis", (
       inputs({
         date: tuesday,
         position: "center_rusher",
-        activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "minor", regions: ["wrist"] },
+        activeRestrictions: {
+          restrictsSprint: false,
+          restrictsThrowing: true,
+          severity: "minor",
+          regions: ["wrist"],
+        },
       }),
     );
     expect(rx.positionEmphasis?.restricted).toBe(true);
@@ -1104,13 +1198,15 @@ describe("prescribeFor — position worst-case volume targets", () => {
   const tuesday = new Date("2026-05-05T10:00:00Z");
 
   it("QB shows the throws/session worst case", () => {
-    const v = prescribeFor(inputs({ date: tuesday, position: "qb" })).positionEmphasis?.volume;
+    const v = prescribeFor(inputs({ date: tuesday, position: "qb" }))
+      .positionEmphasis?.volume;
     expect(v?.targets.join(" ")).toMatch(/throws\/session/);
     expect(v?.worstCase).toMatch(/throw/i);
   });
 
   it("WR/DB shows catches/week, backpedals and sprints/game", () => {
-    const v = prescribeFor(inputs({ date: tuesday, position: "wr_db" })).positionEmphasis?.volume;
+    const v = prescribeFor(inputs({ date: tuesday, position: "wr_db" }))
+      .positionEmphasis?.volume;
     const s = v?.targets.join(" ") ?? "";
     expect(s).toMatch(/catches\/week/);
     expect(s).toMatch(/backpedals/);
@@ -1118,17 +1214,26 @@ describe("prescribeFor — position worst-case volume targets", () => {
   });
 
   it("center shows snaps/session + catches + sprints", () => {
-    const v = prescribeFor(inputs({ date: tuesday, position: "center_rusher" })).positionEmphasis?.volume;
+    const v = prescribeFor(inputs({ date: tuesday, position: "center_rusher" }))
+      .positionEmphasis?.volume;
     const s = v?.targets.join(" ") ?? "";
     expect(s).toMatch(/snaps\/session/);
     expect(s).toMatch(/sprints\/game/);
   });
 
   it("volume still shows when the arm is injury-restricted (awareness)", () => {
-    const v = prescribeFor(inputs({
-      date: tuesday, position: "qb",
-      activeRestrictions: { restrictsSprint: false, restrictsThrowing: true, severity: "moderate", regions: ["shoulder"] },
-    })).positionEmphasis?.volume;
+    const v = prescribeFor(
+      inputs({
+        date: tuesday,
+        position: "qb",
+        activeRestrictions: {
+          restrictsSprint: false,
+          restrictsThrowing: true,
+          severity: "moderate",
+          regions: ["shoulder"],
+        },
+      }),
+    ).positionEmphasis?.volume;
     expect(v?.targets.length).toBeGreaterThan(0);
   });
 });
@@ -1142,7 +1247,9 @@ describe("prescribeFor — team practice day", () => {
   const wed = new Date("2026-05-06T10:00:00Z");
 
   it("accumulation: a practice day is the session (light extra work)", () => {
-    const rx = prescribeFor(inputs({ date: wed, phase: "accumulation", isTeamPractice: true }));
+    const rx = prescribeFor(
+      inputs({ date: wed, phase: "accumulation", isTeamPractice: true }),
+    );
     expect(rx.intentLabel).toBe("Flag football practice");
     expect(rx.reasoning).toMatch(/practice/i);
   });
@@ -1183,7 +1290,9 @@ describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () =
   const mon = new Date("2026-05-04T10:00:00Z");
 
   it("honours the practice (label) at recovery intensity instead of dropping it", () => {
-    const rx = prescribeFor(inputs({ date: mon, phase: "recovery", isTeamPractice: true }));
+    const rx = prescribeFor(
+      inputs({ date: mon, phase: "recovery", isTeamPractice: true }),
+    );
     expect(rx.intentLabel).toBe("Flag football practice");
     expect(rx.intent).toBe("recovery");
     expect(rx.targetRpe).toBe(3); // same intensity as the recovery default — safe
@@ -1192,7 +1301,9 @@ describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () =
   });
 
   it("without a declared practice, a recovery phase still emits the generic recovery session", () => {
-    const rx = prescribeFor(inputs({ date: mon, phase: "recovery", isTeamPractice: false }));
+    const rx = prescribeFor(
+      inputs({ date: mon, phase: "recovery", isTeamPractice: false }),
+    );
     expect(rx.intentLabel).not.toBe("Flag football practice");
     expect(rx.intent).toBe("recovery");
   });

@@ -55,7 +55,10 @@ export default async (req) => {
   const path = url.pathname;
 
   // Sessions: /api/training/sessions, /api/training-sessions, /api/training-sessions/:id
-  if (path.includes("/training/sessions") || path.includes("/training-sessions")) {
+  if (
+    path.includes("/training/sessions") ||
+    path.includes("/training-sessions")
+  ) {
     return dispatch(trainingSessionsHandler, req, url);
   }
 
@@ -100,7 +103,11 @@ export default async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ success: false, error: `Not found: ${req.method} ${path}`, code: "not_found" }),
+    JSON.stringify({
+      success: false,
+      error: `Not found: ${req.method} ${path}`,
+      code: "not_found",
+    }),
     { status: 404, headers: corsHeaders(req) },
   );
 };

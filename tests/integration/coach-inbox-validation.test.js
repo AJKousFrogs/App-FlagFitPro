@@ -63,7 +63,11 @@ function createFakeSupabase() {
         };
       }
 
-      if (this.table === "coach_inbox_items" && this.mode === "update" && isMaybeSingle) {
+      if (
+        this.table === "coach_inbox_items" &&
+        this.mode === "update" &&
+        isMaybeSingle
+      ) {
         if (!mockCtx.itemExists) {
           return { data: null, error: null };
         }
@@ -87,7 +91,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "coach-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "coach-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

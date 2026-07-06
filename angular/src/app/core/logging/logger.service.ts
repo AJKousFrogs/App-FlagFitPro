@@ -42,7 +42,6 @@ export function toLogContext(value: unknown): LogContext {
   return { value: String(value) };
 }
 
-
 type InternalLevel = "debug" | "info" | "warning" | "error";
 
 @Injectable({
@@ -159,12 +158,14 @@ export class LoggerService {
           details?: unknown;
         };
         if ("code" in error) {
-          (err as ErrorWithDetails).code = (error as { code?: string | number })
-            .code;
+          (err as ErrorWithDetails).code = (
+            error as { code?: string | number }
+          ).code;
         }
         if ("details" in error) {
-          (err as ErrorWithDetails).details = (error as { details?: unknown })
-            .details;
+          (err as ErrorWithDetails).details = (
+            error as { details?: unknown }
+          ).details;
         }
         return err;
       }

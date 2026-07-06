@@ -30,9 +30,9 @@ export class ProtocolService {
     if (!p) {
       return [];
     }
-    return PROTOCOL_BLOCK_ORDER.map((k) => p[k] as ProtocolBlock | undefined).filter(
-      (b): b is ProtocolBlock => !!b && (b.exercises?.length ?? 0) > 0,
-    );
+    return PROTOCOL_BLOCK_ORDER.map(
+      (k) => p[k] as ProtocolBlock | undefined,
+    ).filter((b): b is ProtocolBlock => !!b && (b.exercises?.length ?? 0) > 0);
   });
 
   /**

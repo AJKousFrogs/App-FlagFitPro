@@ -14,12 +14,12 @@
  */
 
 // Pull in Angular's generated service worker (caching, push notifications, etc.)
-importScripts('/ngsw-worker.js');
+importScripts("/ngsw-worker.js");
 
 // ── Background Sync ──────────────────────────────────────────────────────────
 
-self.addEventListener('sync', (event) => {
-  if (event.tag !== 'flagfit-offline-queue') return;
+self.addEventListener("sync", (event) => {
+  if (event.tag !== "flagfit-offline-queue") return;
 
   event.waitUntil(notifyClientsToSync());
 });
@@ -29,8 +29,11 @@ self.addEventListener('sync', (event) => {
  * can call syncQueue() from within the normal DI context.
  */
 async function notifyClientsToSync() {
-  const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  const clients = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
   for (const client of clients) {
-    client.postMessage({ type: 'OFFLINE_SYNC_TRIGGER' });
+    client.postMessage({ type: "OFFLINE_SYNC_TRIGGER" });
   }
 }

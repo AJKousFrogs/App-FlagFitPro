@@ -1,6 +1,9 @@
 import crypto from "node:crypto";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -96,7 +99,11 @@ const handler = async (event, context) =>
     allowedMethods: ["GET", "POST"],
     rateLimitType: "UPDATE",
     requireAuth: true,
-    handler: async (evt, _ctx, { userId, supabase, requestId, correlationId }) => {
+    handler: async (
+      evt,
+      _ctx,
+      { userId, supabase, requestId, correlationId },
+    ) => {
       const subPath = getSubPath(evt.path || "");
       const requestLogger = createRequestLogger(evt, {
         requestId,
@@ -105,7 +112,10 @@ const handler = async (event, context) =>
 
       try {
         if (evt.httpMethod === "GET" && (subPath === "" || subPath === "/")) {
-          const { data: protocol, error } = await getActiveProtocol(supabase, userId);
+          const { data: protocol, error } = await getActiveProtocol(
+            supabase,
+            userId,
+          );
           if (error) {
             throw error;
           }
@@ -136,11 +146,16 @@ const handler = async (event, context) =>
         }
 
         if (evt.httpMethod !== "POST") {
-          return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+          return createErrorResponse(
+            "Method not allowed",
+            405,
+            "method_not_allowed",
+          );
         }
 
         if (subPath === "/start") {
-          const startDate = isoDate(body.injuryDate) || new Date().toISOString().split("T")[0];
+          const startDate =
+            isoDate(body.injuryDate) || new Date().toISOString().split("T")[0];
           const targetReturnDate =
             isoDate(body.targetReturnDate) ||
             isoDate(new Date(Date.now() + 14 * 86400000));
@@ -150,7 +165,7 @@ const handler = async (event, context) =>
             severity: body.severity || "moderate",
             medicalNotes: body.medicalNotes || "",
             criteriaCompleted: [],
-            stageStartedAt: { "1": startDate },
+            stageStartedAt: { 1: startDate },
             checkins: [],
           };
 
@@ -222,7 +237,10 @@ const handler = async (event, context) =>
         }
 
         if (subPath === "/advance") {
-          const nextPhase = Math.min(TOTAL_STAGES, (protocol.current_phase || 1) + 1);
+          const nextPhase = Math.min(
+            TOTAL_STAGES,
+            (protocol.current_phase || 1) + 1,
+          );
           metadata.criteriaCompleted = [];
           metadata.stageStartedAt = {
             ...(metadata.stageStartedAt || {}),
@@ -254,11 +272,16 @@ const handler = async (event, context) =>
             functionScore: Number(body.functionScore) || 0,
             confidenceLevel: Number(body.confidenceLevel) || 0,
             activitiesCompleted: Array.isArray(body.activitiesCompleted)
-              ? body.activitiesCompleted.filter((value) => typeof value === "string")
+              ? body.activitiesCompleted.filter(
+                  (value) => typeof value === "string",
+                )
               : [],
             notes: typeof body.notes === "string" ? body.notes : "",
           };
-          metadata.checkins = [nextCheckin, ...mapCheckins(metadata)].slice(0, 30);
+          metadata.checkins = [nextCheckin, ...mapCheckins(metadata)].slice(
+            0,
+            30,
+          );
 
           const { error } = await supabase
             .from("return_to_play_protocols")
@@ -278,14 +301,10 @@ const handler = async (event, context) =>
 
         return createErrorResponse("Endpoint not found", 404, "not_found");
       } catch (error) {
-        requestLogger.error(
-          "return_to_play_request_failed",
-          error,
-          {
-            http_method: evt.httpMethod,
-            path: evt.path,
-          },
-        );
+        requestLogger.error("return_to_play_request_failed", error, {
+          http_method: evt.httpMethod,
+          path: evt.path,
+        });
         return createErrorResponse(
           error?.message || "Failed to process return-to-play request",
           500,

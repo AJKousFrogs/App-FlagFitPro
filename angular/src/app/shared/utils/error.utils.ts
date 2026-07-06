@@ -347,10 +347,8 @@ export function isBenignSupabaseQueryError(error: unknown): boolean {
 
   if (code && benignCodes.has(code)) return true;
 
-  const message =
-    typeof e.message === "string" ? e.message.toLowerCase() : "";
-  const details =
-    typeof e.details === "string" ? e.details.toLowerCase() : "";
+  const message = typeof e.message === "string" ? e.message.toLowerCase() : "";
+  const details = typeof e.details === "string" ? e.details.toLowerCase() : "";
 
   const missingOptionalResourcePatterns = [
     "relation",
@@ -360,7 +358,10 @@ export function isBenignSupabaseQueryError(error: unknown): boolean {
   ];
 
   // PostgREST sometimes surfaces missing-table errors as plain Error (no status/code).
-  const strictMissingTablePatterns = ["schema cache", "could not find the table"];
+  const strictMissingTablePatterns = [
+    "schema cache",
+    "could not find the table",
+  ];
   if (
     strictMissingTablePatterns.some(
       (pattern) => message.includes(pattern) || details.includes(pattern),

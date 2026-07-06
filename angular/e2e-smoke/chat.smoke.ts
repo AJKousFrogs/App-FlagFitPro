@@ -7,7 +7,9 @@ import { test, expect } from "@playwright/test";
  * is present. We don't assert a real model reply (no backend) — only that the
  * screen boots, the composer accepts input, and nothing throws.
  */
-test("Merlin renders a live composer that accepts input, no uncaught errors", async ({ page }) => {
+test("Merlin renders a live composer that accepts input, no uncaught errors", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
 
@@ -23,7 +25,9 @@ test("Merlin renders a live composer that accepts input, no uncaught errors", as
   await expect(input).toHaveValue("should I sprint today?");
 
   // Send button present and reachable.
-  await expect(page.locator(".composer .btn", { hasText: "Send" })).toBeVisible();
+  await expect(
+    page.locator(".composer .btn", { hasText: "Send" }),
+  ).toBeVisible();
 
   expect(errors, `uncaught errors:\n${errors.join("\n")}`).toEqual([]);
 });

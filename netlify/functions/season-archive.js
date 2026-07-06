@@ -1,4 +1,3 @@
-
 /**
  * Season Archive Function
  * Archives season data and generates summary reports
@@ -7,7 +6,11 @@
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { createErrorResponse, createSuccessResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { tryParseJsonObjectBody, isUuid } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -56,10 +59,18 @@ const handler = async (event, context) =>
           throw error;
         }
 
-        return createSuccessResponse({}, 200, "Season data archived successfully");
+        return createSuccessResponse(
+          {},
+          200,
+          "Season data archived successfully",
+        );
       } catch (error) {
         logger.error("season_archive_failed", error, {});
-        return createErrorResponse("Failed to archive season", 500, "server_error");
+        return createErrorResponse(
+          "Failed to archive season",
+          500,
+          "server_error",
+        );
       }
     },
   });

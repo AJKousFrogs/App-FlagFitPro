@@ -1,11 +1,13 @@
-
 /**
  * Isometrics Exercises API
  * Provides isometric exercises from the database for training plans
  */
 
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -22,10 +24,11 @@ const handler = async (event, context) =>
         const params = evt.queryStringParameters || {};
         const { difficulty } = params;
         const { category } = params;
-        const limit = parseBoundedInt(params.limit, "limit", {
-          min: 1,
-          max: 100,
-        }) ?? 10;
+        const limit =
+          parseBoundedInt(params.limit, "limit", {
+            min: 1,
+            max: 100,
+          }) ?? 10;
 
         let query = supabase
           .from("isometrics_exercises")
@@ -58,7 +61,11 @@ const handler = async (event, context) =>
           return createErrorResponse(error.message, 422, "validation_error");
         }
         logger.error("isometrics_api_error", error, {});
-        return createErrorResponse("Internal server error", 500, "server_error");
+        return createErrorResponse(
+          "Internal server error",
+          500,
+          "server_error",
+        );
       }
     },
   });

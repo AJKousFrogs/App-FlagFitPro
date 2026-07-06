@@ -39,7 +39,11 @@ function createFakeSupabase() {
     run() {
       if (this.table === "channels") {
         return {
-          data: { id: this.filters.id, team_id: "team-1", channel_type: "direct_message" },
+          data: {
+            id: this.filters.id,
+            team_id: "team-1",
+            channel_type: "direct_message",
+          },
           error: null,
         };
       }
@@ -72,7 +76,10 @@ function createFakeSupabase() {
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({

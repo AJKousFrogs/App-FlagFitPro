@@ -1,7 +1,11 @@
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { getSupabaseClient } from "./utils/auth-helper.js";
-import { createSuccessResponse, createErrorResponse, handleNotFoundError } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleNotFoundError,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -189,7 +193,8 @@ const handler = async (event, context) => {
       try {
         body = parseJsonObjectBody(event.body);
       } catch (error) {
-        const isObjectError = error.message === "Request body must be an object";
+        const isObjectError =
+          error.message === "Request body must be an object";
         return createErrorResponse(
           isObjectError ? error.message : "Invalid JSON in request body",
           isObjectError ? 422 : 400,
@@ -229,7 +234,9 @@ const handler = async (event, context) => {
       }
       if (
         jerseyNumber !== undefined &&
-        (!Number.isInteger(jerseyNumber) || jerseyNumber <= 0 || jerseyNumber > 999)
+        (!Number.isInteger(jerseyNumber) ||
+          jerseyNumber <= 0 ||
+          jerseyNumber > 999)
       ) {
         return createErrorResponse(
           "jerseyNumber must be an integer between 1 and 999",
@@ -263,14 +270,15 @@ const handler = async (event, context) => {
         return handleNotFoundError("Team", requestId);
       }
 
-      const { data: inviterMembership, error: inviterMembershipError } = await supabase
-        .from("team_members")
-        .select("role, status")
-        .eq("team_id", teamId)
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .in("role", Array.from(ALLOWED_INVITER_ROLES))
-        .maybeSingle();
+      const { data: inviterMembership, error: inviterMembershipError } =
+        await supabase
+          .from("team_members")
+          .select("role, status")
+          .eq("team_id", teamId)
+          .eq("user_id", userId)
+          .eq("status", "active")
+          .in("role", Array.from(ALLOWED_INVITER_ROLES))
+          .maybeSingle();
       if (inviterMembershipError) {
         throw inviterMembershipError;
       }
@@ -295,13 +303,14 @@ const handler = async (event, context) => {
       }
 
       // Check for existing pending invitation
-      const { data: existingInvitation, error: existingInviteError } = await supabase
-        .from("team_invitations")
-        .select("id, status, expires_at")
-        .eq("team_id", teamId)
-        .eq("email", normalizedEmail)
-        .eq("status", "pending")
-        .maybeSingle();
+      const { data: existingInvitation, error: existingInviteError } =
+        await supabase
+          .from("team_invitations")
+          .select("id, status, expires_at")
+          .eq("team_id", teamId)
+          .eq("email", normalizedEmail)
+          .eq("status", "pending")
+          .maybeSingle();
 
       if (existingInviteError && existingInviteError.code !== "PGRST116") {
         throw existingInviteError;
@@ -366,14 +375,10 @@ const handler = async (event, context) => {
             );
           }
         }
-        requestLogger.error(
-          "team_invitation_insert_failed",
-          inviteError,
-          {
-            team_id: teamId,
-            email: normalizedEmail,
-          },
-        );
+        requestLogger.error("team_invitation_insert_failed", inviteError, {
+          team_id: teamId,
+          email: normalizedEmail,
+        });
         throw new Error("Failed to create invitation");
       }
 
@@ -406,15 +411,14 @@ const handler = async (event, context) => {
         await transporter.sendMail(mailOptions);
       } catch (mailError) {
         // Avoid leaving pending invitations that were never delivered.
-        await supabase.from("team_invitations").delete().eq("id", invitation.id);
-        requestLogger.error(
-          "team_invitation_email_send_failed",
-          mailError,
-          {
-            team_id: teamId,
-            email: normalizedEmail,
-          },
-        );
+        await supabase
+          .from("team_invitations")
+          .delete()
+          .eq("id", invitation.id);
+        requestLogger.error("team_invitation_email_send_failed", mailError, {
+          team_id: teamId,
+          email: normalizedEmail,
+        });
         throw mailError;
       }
 

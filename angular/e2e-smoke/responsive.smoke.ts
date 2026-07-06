@@ -7,19 +7,39 @@ import { mkdirSync } from "node:fs";
  * Uncaught errors fail the run.
  */
 const ROUTES = [
-  "today", "training", "wellness", "stats", "more",
-  "supplements", "settings", "achievements", "notifications",
-  "acwr", "profile", "competition", "gameday", "chat",
-  "return-to-play", "team-chat", "sleep-debt", "roster", "knowledge", "reports",
-  "landing", "onboarding",
+  "today",
+  "training",
+  "wellness",
+  "stats",
+  "more",
+  "supplements",
+  "settings",
+  "achievements",
+  "notifications",
+  "acwr",
+  "profile",
+  "competition",
+  "gameday",
+  "chat",
+  "return-to-play",
+  "team-chat",
+  "sleep-debt",
+  "roster",
+  "knowledge",
+  "reports",
+  "landing",
+  "onboarding",
 ] as const;
 const DIR = "e2e-smoke/__shots__/responsive";
 
-test("every route fits its viewport (no horizontal overflow) + screenshot", async ({ page }, testInfo) => {
+test("every route fits its viewport (no horizontal overflow) + screenshot", async ({
+  page,
+}, testInfo) => {
   mkdirSync(DIR, { recursive: true });
   const w = page.viewportSize()?.width ?? 0;
   // Real uncaught JS errors only — ignore network failures (no backend in harness).
-  const NETWORK = /Failed to fetch|NetworkError|fetch failed|ERR_|Load failed|HttpErrorResponse/i;
+  const NETWORK =
+    /Failed to fetch|NetworkError|fetch failed|ERR_|Load failed|HttpErrorResponse/i;
   const errors: string[] = [];
   page.on("pageerror", (e) => {
     const s = String(e);
@@ -36,11 +56,16 @@ test("every route fits its viewport (no horizontal overflow) + screenshot", asyn
       window.dispatchEvent(new PopStateEvent("popstate"));
     }, r);
     // wait for the screen (shell screens use main.screen; entry screens too)
-    await page.locator("main.screen, app-onboarding, app-landing").first().waitFor({ state: "visible" });
+    await page
+      .locator("main.screen, app-onboarding, app-landing")
+      .first()
+      .waitFor({ state: "visible" });
     await page.waitForTimeout(350);
 
     const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      () =>
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth,
     );
     if (overflow > 1) offenders.push(`${r}@${w}: +${overflow}px`);
 
@@ -48,6 +73,11 @@ test("every route fits its viewport (no horizontal overflow) + screenshot", asyn
   }
 
   expect(errors, `uncaught errors:\n${errors.join("\n")}`).toEqual([]);
-  expect(offenders, `horizontal overflow:\n${offenders.join("\n")}`).toEqual([]);
-  testInfo.annotations.push({ type: "viewport", description: `${w}px — ${ROUTES.length} routes OK` });
+  expect(offenders, `horizontal overflow:\n${offenders.join("\n")}`).toEqual(
+    [],
+  );
+  testInfo.annotations.push({
+    type: "viewport",
+    description: `${w}px — ${ROUTES.length} routes OK`,
+  });
 });

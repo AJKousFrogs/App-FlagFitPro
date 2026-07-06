@@ -35,7 +35,10 @@ function createFakeSupabase() {
     }
 
     run() {
-      if (this.table === "athlete_recovery_profiles" && this.mode === "upsert") {
+      if (
+        this.table === "athlete_recovery_profiles" &&
+        this.mode === "upsert"
+      ) {
         return { data: { id: "profile-1" }, error: null };
       }
       if (this.table === "recovery_sessions" && this.mode === "insert") {

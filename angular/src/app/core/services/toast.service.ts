@@ -52,24 +52,84 @@ export class ToastService {
   private recentMessages = new Map<string, number>();
   private nextId = 1;
 
-  success(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 3000): void {
-    const { summary, lifeMs, sticky, key } = this.parseArgs(summaryOrOptions, "Success", life);
-    this.addWithDedup({ severity: "success", summary, detail, life: lifeMs, sticky, key });
+  success(
+    detail: string,
+    summaryOrOptions?: string | ToastMethodOptions,
+    life = 3000,
+  ): void {
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
+      summaryOrOptions,
+      "Success",
+      life,
+    );
+    this.addWithDedup({
+      severity: "success",
+      summary,
+      detail,
+      life: lifeMs,
+      sticky,
+      key,
+    });
   }
 
-  error(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 5000): void {
-    const { summary, lifeMs, sticky, key } = this.parseArgs(summaryOrOptions, "Error", life);
-    this.addWithDedup({ severity: "error", summary, detail, life: lifeMs, sticky, key });
+  error(
+    detail: string,
+    summaryOrOptions?: string | ToastMethodOptions,
+    life = 5000,
+  ): void {
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
+      summaryOrOptions,
+      "Error",
+      life,
+    );
+    this.addWithDedup({
+      severity: "error",
+      summary,
+      detail,
+      life: lifeMs,
+      sticky,
+      key,
+    });
   }
 
-  warn(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 4000): void {
-    const { summary, lifeMs, sticky, key } = this.parseArgs(summaryOrOptions, "Warning", life);
-    this.addWithDedup({ severity: "warn", summary, detail, life: lifeMs, sticky, key });
+  warn(
+    detail: string,
+    summaryOrOptions?: string | ToastMethodOptions,
+    life = 4000,
+  ): void {
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
+      summaryOrOptions,
+      "Warning",
+      life,
+    );
+    this.addWithDedup({
+      severity: "warn",
+      summary,
+      detail,
+      life: lifeMs,
+      sticky,
+      key,
+    });
   }
 
-  info(detail: string, summaryOrOptions?: string | ToastMethodOptions, life = 3000): void {
-    const { summary, lifeMs, sticky, key } = this.parseArgs(summaryOrOptions, "Info", life);
-    this.addWithDedup({ severity: "info", summary, detail, life: lifeMs, sticky, key });
+  info(
+    detail: string,
+    summaryOrOptions?: string | ToastMethodOptions,
+    life = 3000,
+  ): void {
+    const { summary, lifeMs, sticky, key } = this.parseArgs(
+      summaryOrOptions,
+      "Info",
+      life,
+    );
+    this.addWithDedup({
+      severity: "info",
+      summary,
+      detail,
+      life: lifeMs,
+      sticky,
+      key,
+    });
   }
 
   show(options: ToastOptions): void {
@@ -169,7 +229,12 @@ export class ToastService {
 
   private normalizeSeverity(severity: string): ToastSeverity {
     if (severity === "warning") return "warn";
-    if (severity === "success" || severity === "info" || severity === "warn" || severity === "error") {
+    if (
+      severity === "success" ||
+      severity === "info" ||
+      severity === "warn" ||
+      severity === "error"
+    ) {
       return severity;
     }
     return "info";
@@ -177,16 +242,21 @@ export class ToastService {
 
   private defaultSummaryForSeverity(severity: string): string {
     switch (severity) {
-      case "success": return "Success";
-      case "warn": return "Warning";
-      case "error": return "Error";
-      default: return "Info";
+      case "success":
+        return "Success";
+      case "warn":
+        return "Warning";
+      case "error":
+        return "Error";
+      default:
+        return "Info";
     }
   }
 
   private cleanupOldEntries(now: number): void {
     for (const [key, timestamp] of this.recentMessages.entries()) {
-      if (now - timestamp > DEDUP_WINDOW_MS * 2) this.recentMessages.delete(key);
+      if (now - timestamp > DEDUP_WINDOW_MS * 2)
+        this.recentMessages.delete(key);
     }
   }
 

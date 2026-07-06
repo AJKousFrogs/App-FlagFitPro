@@ -84,8 +84,14 @@ test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
     const accent = parseRgb(t["--accent"]);
     const onAccent = parseRgb(t["--on-accent"]);
 
-    expect(accent, `--accent did not resolve to rgb (got "${t["--accent"]}")`).not.toBeNull();
-    expect(onAccent, `--on-accent did not resolve to rgb (got "${t["--on-accent"]}")`).not.toBeNull();
+    expect(
+      accent,
+      `--accent did not resolve to rgb (got "${t["--accent"]}")`,
+    ).not.toBeNull();
+    expect(
+      onAccent,
+      `--on-accent did not resolve to rgb (got "${t["--on-accent"]}")`,
+    ).not.toBeNull();
 
     const ratio = contrastRatio(accent!, onAccent!);
     expect(
@@ -107,7 +113,12 @@ test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    const t = await resolveTokens(page, ["--text", "--bg", "--text-muted", "--text-faint"]);
+    const t = await resolveTokens(page, [
+      "--text",
+      "--bg",
+      "--text-muted",
+      "--text-faint",
+    ]);
     const bg = parseRgb(t["--bg"]);
     expect(bg, `--bg did not resolve (got "${t["--bg"]}")`).not.toBeNull();
 
@@ -130,7 +141,9 @@ test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
 
     // Real design-system selector (.btn.primary), not PrimeNG. Skip the route
     // gracefully if no primary CTA is rendered on it.
-    const buttons = await page.locator("button.btn.primary, a.btn.primary").all();
+    const buttons = await page
+      .locator("button.btn.primary, a.btn.primary")
+      .all();
     test.skip(buttons.length === 0, "No .btn.primary rendered on this route");
 
     for (const button of buttons) {
@@ -173,14 +186,17 @@ test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
         const lum = ([r, g, b]: [number, number, number]) => {
           const [rs, gs, bs] = [r, g, b].map((c) => {
             const s = c / 255;
-            return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+            return s <= 0.03928
+              ? s / 12.92
+              : Math.pow((s + 0.055) / 1.055, 2.4);
           });
           return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
         };
         const ratio = (
           a: [number, number, number],
           b: [number, number, number],
-        ) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
+        ) =>
+          (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
 
         const out: string[] = [];
         document.querySelectorAll<HTMLElement>(".btn, .chip").forEach((el) => {
@@ -191,7 +207,8 @@ test.describe("Color Contrast — Phase E tokens (ink-on-accent)", () => {
           const fg = parse(s.color);
           // Transparent backgrounds (.btn.ghost, gradients) resolve against the
           // page surface — out of scope for this element-local check.
-          if (!bg || !fg || s.backgroundColor.includes("rgba(0, 0, 0, 0)")) return;
+          if (!bg || !fg || s.backgroundColor.includes("rgba(0, 0, 0, 0)"))
+            return;
           const cr = ratio(bg, fg);
           if (cr < aaLarge) {
             out.push(

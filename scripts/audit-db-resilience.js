@@ -53,7 +53,8 @@ function analyze(filePath) {
   const resilient = usesResilientPath(source);
   const usesBaseHandler = source.includes("baseHandler(");
   const hasErrorContext =
-    source.includes("createErrorResponse(") || source.includes("handleServerError(");
+    source.includes("createErrorResponse(") ||
+    source.includes("handleServerError(");
 
   return {
     file: path.relative(ROOT, filePath),
@@ -71,7 +72,9 @@ function main() {
   const warnings = [];
 
   for (const item of findings) {
-    if (!item.dbUsage) {continue;}
+    if (!item.dbUsage) {
+      continue;
+    }
 
     if (!item.resilient) {
       severe.push(

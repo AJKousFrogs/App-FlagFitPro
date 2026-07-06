@@ -35,24 +35,95 @@ import { LoggerService } from "../core/services/logger.service";
   templateUrl: "./team-chat.component.html",
   styles: [
     `
-      :host { display: flex; flex-direction: column; min-height: 100dvh; }
-      main.screen { flex: 1; display: flex; flex-direction: column; }
-      .chans { display: flex; gap: var(--s-2); overflow-x: auto; padding-bottom: var(--s-1); }
-      .thread { display: flex; flex-direction: column; gap: var(--s-3); overflow-y: auto; flex: 1; padding: var(--s-1) 0 var(--s-2); }
-      .msg { display: flex; gap: var(--s-3); max-width: 92%; }
-      .msg.me { align-self: flex-end; flex-direction: row-reverse; }
-      .ava { width: 30px; height: 30px; border-radius: var(--r-pill); flex: 0 0 auto; object-fit: cover;
-        display: grid; place-items: center; background: var(--surface-2); color: var(--text-faint);
-        font-size: var(--fs-xs); font-weight: var(--fw-bold); }
-      .body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-      .meta { font-size: var(--fs-xs); color: var(--text-faint); display: flex; gap: var(--s-2); }
-      .msg.me .meta { justify-content: flex-end; }
-      .bubble { padding: var(--s-2) var(--s-3); border-radius: var(--r-lg); white-space: pre-wrap; word-break: break-word; line-height: var(--lh-body); }
-      .msg:not(.me) .bubble { background: var(--surface-2); border-bottom-left-radius: 4px; }
-      .msg.me .bubble { background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 4px; }
-      .composer { margin-top: auto; }
-      .composer input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
+      :host {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+      main.screen {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .chans {
+        display: flex;
+        gap: var(--s-2);
+        overflow-x: auto;
+        padding-bottom: var(--s-1);
+      }
+      .thread {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s-3);
+        overflow-y: auto;
+        flex: 1;
+        padding: var(--s-1) 0 var(--s-2);
+      }
+      .msg {
+        display: flex;
+        gap: var(--s-3);
+        max-width: 92%;
+      }
+      .msg.me {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+      .ava {
+        width: 30px;
+        height: 30px;
+        border-radius: var(--r-pill);
+        flex: 0 0 auto;
+        object-fit: cover;
+        display: grid;
+        place-items: center;
+        background: var(--surface-2);
+        color: var(--text-faint);
+        font-size: var(--fs-xs);
+        font-weight: var(--fw-bold);
+      }
+      .body {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .meta {
+        font-size: var(--fs-xs);
+        color: var(--text-faint);
+        display: flex;
+        gap: var(--s-2);
+      }
+      .msg.me .meta {
+        justify-content: flex-end;
+      }
+      .bubble {
+        padding: var(--s-2) var(--s-3);
+        border-radius: var(--r-lg);
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: var(--lh-body);
+      }
+      .msg:not(.me) .bubble {
+        background: var(--surface-2);
+        border-bottom-left-radius: 4px;
+      }
+      .msg.me .bubble {
+        background: var(--accent);
+        color: var(--on-accent);
+        border-bottom-right-radius: 4px;
+      }
+      .composer {
+        margin-top: auto;
+      }
+      .composer input {
+        flex: 1;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-pill);
+        padding: var(--s-3) var(--s-4);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+      }
     `,
   ],
 })
@@ -72,7 +143,9 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
   readonly busy = signal(false);
 
   readonly messages = this.channels.messages;
-  private readonly myId = computed(() => this.supabase.currentUser()?.id ?? null);
+  private readonly myId = computed(
+    () => this.supabase.currentUser()?.id ?? null,
+  );
   readonly canSend = computed(
     () => !!this.current() && !this.busy() && this.draft().trim().length > 0,
   );
@@ -106,9 +179,12 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
     this.autoScroll = true;
     try {
       await this.channels.selectChannel(channel);
-      this.unsubscribe = this.channels.subscribeToChannelMessages(channel.id, () => {
-        this.autoScroll = true;
-      });
+      this.unsubscribe = this.channels.subscribeToChannelMessages(
+        channel.id,
+        () => {
+          this.autoScroll = true;
+        },
+      );
     } catch (err) {
       this.logger.error("team_chat_open_failed", err);
     }
@@ -137,7 +213,11 @@ export class TeamChatComponent implements AfterViewChecked, OnDestroy {
     if (!text || !channel || this.busy()) return;
     this.busy.set(true);
     this.channels
-      .sendMessage({ channel_id: channel.id, message: text, team_id: channel.team_id ?? undefined })
+      .sendMessage({
+        channel_id: channel.id,
+        message: text,
+        team_id: channel.team_id ?? undefined,
+      })
       .then(() => {
         this.draft.set("");
         this.autoScroll = true;

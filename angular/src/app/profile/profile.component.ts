@@ -44,19 +44,23 @@ interface Profile {
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./profile.component.html",
-  styles: [`
-    .sign-out-btn {
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      color: var(--danger);
-      background: none;
-      border: none;
-      font: inherit;
-      padding: 0;
-    }
-    .sign-out-btn .inline { color: var(--danger); }
-  `],
+  styles: [
+    `
+      .sign-out-btn {
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        color: var(--danger);
+        background: none;
+        border: none;
+        font: inherit;
+        padding: 0;
+      }
+      .sign-out-btn .inline {
+        color: var(--danger);
+      }
+    `,
+  ],
 })
 export class ProfileComponent {
   private readonly supabase = inject(SupabaseService);
@@ -66,7 +70,11 @@ export class ProfileComponent {
 
   private readonly profile = signal<Profile | null>(null);
   private readonly meta = computed(
-    () => (this.supabase.currentUser()?.user_metadata ?? {}) as Record<string, unknown>,
+    () =>
+      (this.supabase.currentUser()?.user_metadata ?? {}) as Record<
+        string,
+        unknown
+      >,
   );
 
   constructor() {
@@ -79,19 +87,38 @@ export class ProfileComponent {
   readonly name = this.identity.displayName;
   readonly jersey = this.identity.jersey;
   readonly teamName = this.identity.teamName;
-  readonly position = computed(() => this.profile()?.position || this.identity.position());
+  readonly position = computed(
+    () => this.profile()?.position || this.identity.position(),
+  );
 
-  readonly heightCm = computed(() => this.num(this.profile()?.heightCm ?? this.meta()["height_cm"] ?? this.meta()["height"]));
-  readonly weightKg = computed(() => this.num(this.profile()?.weightKg ?? this.meta()["weight_kg"] ?? this.meta()["weight"]));
+  readonly heightCm = computed(() =>
+    this.num(
+      this.profile()?.heightCm ??
+        this.meta()["height_cm"] ??
+        this.meta()["height"],
+    ),
+  );
+  readonly weightKg = computed(() =>
+    this.num(
+      this.profile()?.weightKg ??
+        this.meta()["weight_kg"] ??
+        this.meta()["weight"],
+    ),
+  );
   readonly age = computed(() => {
-    const dob = this.profile()?.birthDate ?? this.meta()["date_of_birth"] ?? this.meta()["dob"];
+    const dob =
+      this.profile()?.birthDate ??
+      this.meta()["date_of_birth"] ??
+      this.meta()["dob"];
     if (!dob) return null;
     const d = new Date(String(dob));
     if (Number.isNaN(d.getTime())) return null;
     return Math.floor((Date.now() - d.getTime()) / (365.25 * 864e5));
   });
 
-  readonly sessionsPerWk = computed(() => this.num(this.profile()?.trainingFrequency));
+  readonly sessionsPerWk = computed(() =>
+    this.num(this.profile()?.trainingFrequency),
+  );
   readonly avgMin = computed(() => this.num(this.profile()?.typicalDuration));
   readonly avgRpe = computed(() => {
     const v = this.profile()?.avgIntensity;

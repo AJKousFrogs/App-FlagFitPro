@@ -18,7 +18,10 @@
 import { supabaseAdmin } from "./utils/supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   getIsoDateString,
@@ -68,7 +71,10 @@ import {
   getExistingProtocolGenerationRequest,
   persistGeneratedProtocol,
 } from "./utils/daily-protocol-persistence.js";
-import { buildRequestLogContext, createLogger } from "./utils/structured-logger.js";
+import {
+  buildRequestLogContext,
+  createLogger,
+} from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.daily-protocol" });
 const TRAINING_SESSIONS_TABLE = "training_sessions";
@@ -153,7 +159,8 @@ async function fetchExercisesByCategories(
 
 function isMissingProtocolPersistenceError(error) {
   const code = error?.code;
-  const message = typeof error?.message === "string" ? error.message.toLowerCase() : "";
+  const message =
+    typeof error?.message === "string" ? error.message.toLowerCase() : "";
   return (
     code === "42P01" ||
     code === "PGRST202" ||
@@ -744,9 +751,7 @@ const legacyDailyProtocolHandler = async (event, log = logger) => {
     if (httpMethod === "POST") {
       const parsedPayload = tryParseJsonObjectBody(body);
       if (!parsedPayload.ok) {
-        return withHeaders(
-          parsedPayload.error,
-        );
+        return withHeaders(parsedPayload.error);
       }
       const payload = parsedPayload.data;
 
@@ -989,12 +994,16 @@ async function getProtocol(supabase, userId, params, headers, log = logger) {
           .insert(fallbackExercises);
 
         if (insertError) {
-          log.error("daily_protocol_fallback_exercise_insert_failed", insertError, {
-            user_id: userId,
-            protocol_id: protocol.id,
-            date,
-            fallback_exercise_count: fallbackExercises.length,
-          });
+          log.error(
+            "daily_protocol_fallback_exercise_insert_failed",
+            insertError,
+            {
+              user_id: userId,
+              protocol_id: protocol.id,
+              date,
+              fallback_exercise_count: fallbackExercises.length,
+            },
+          );
         } else {
           // Update protocol total_exercises count
           await supabase
@@ -1093,25 +1102,60 @@ function positionFlagsFor(bucket) {
  * the underlying intent. */
 function mapIntentToSession(intent, intentLabel) {
   if (/practice/i.test(String(intentLabel || ""))) {
-    return { trainingFocus: "practice_day", isSprintSession: false, isGymTrainingDay: false, isPracticeDay: true };
+    return {
+      trainingFocus: "practice_day",
+      isSprintSession: false,
+      isGymTrainingDay: false,
+      isPracticeDay: true,
+    };
   }
   switch (intent) {
     case "sprint":
     case "taper-prime":
-      return { trainingFocus: "speed", isSprintSession: true, isGymTrainingDay: false, isPracticeDay: false };
+      return {
+        trainingFocus: "speed",
+        isSprintSession: true,
+        isGymTrainingDay: false,
+        isPracticeDay: false,
+      };
     case "strength":
-      return { trainingFocus: "strength", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+      return {
+        trainingFocus: "strength",
+        isSprintSession: false,
+        isGymTrainingDay: true,
+        isPracticeDay: false,
+      };
     case "mixed":
-      return { trainingFocus: "conditioning", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+      return {
+        trainingFocus: "conditioning",
+        isSprintSession: false,
+        isGymTrainingDay: true,
+        isPracticeDay: false,
+      };
     case "technical":
-      return { trainingFocus: "skill", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+      return {
+        trainingFocus: "skill",
+        isSprintSession: false,
+        isGymTrainingDay: true,
+        isPracticeDay: false,
+      };
     case "mobility":
     case "recovery":
     case "rest":
     case "competition":
-      return { trainingFocus: "recovery", isSprintSession: false, isGymTrainingDay: false, isPracticeDay: false };
+      return {
+        trainingFocus: "recovery",
+        isSprintSession: false,
+        isGymTrainingDay: false,
+        isPracticeDay: false,
+      };
     default:
-      return { trainingFocus: "strength", isSprintSession: false, isGymTrainingDay: true, isPracticeDay: false };
+      return {
+        trainingFocus: "strength",
+        isSprintSession: false,
+        isGymTrainingDay: true,
+        isPracticeDay: false,
+      };
   }
 }
 
@@ -1131,7 +1175,13 @@ function seededOrderKey(seed, ex) {
   return h >>> 0;
 }
 
-async function generateProtocol(supabase, userId, payload, headers, log = logger) {
+async function generateProtocol(
+  supabase,
+  userId,
+  payload,
+  headers,
+  log = logger,
+) {
   const date = payload.date || getIsoDateString();
   // Stable seed for deterministic exercise variety (H1) — see seededOrderKey.
   const varietySeed = `${userId}:${date}`;
@@ -1212,7 +1262,9 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
           context.dbSeasonPhase = tsp.phase_key;
         }
       }
-    } catch (_) { /* non-fatal — month-switch fallback still applies */ }
+    } catch (_) {
+      /* non-fatal — month-switch fallback still applies */
+    }
   }
 
   // ============================================================================
@@ -1252,14 +1304,19 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       .eq("id", userId)
       .maybeSingle();
     if (userRow?.injury_gate_active) {
-      log.info("daily_protocol_injury_gate_blocked", { user_id: userId, date, gate_set_at: userRow.injury_gate_set_at });
+      log.info("daily_protocol_injury_gate_blocked", {
+        user_id: userId,
+        date,
+        gate_set_at: userRow.injury_gate_set_at,
+      });
       return {
         statusCode: 202,
         headers,
         body: JSON.stringify({
           success: true,
           pending_approval: true,
-          message: "Your prescription is pending coach review following a recent injury report. You will be notified when it is approved.",
+          message:
+            "Your prescription is pending coach review following a recent injury report. You will be notified when it is approved.",
         }),
       };
     }
@@ -1292,7 +1349,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       idempotencyKey,
     );
 
-  if (existingCompleted?.status === "completed" && existingCompleted.protocol_id) {
+  if (
+    existingCompleted?.status === "completed" &&
+    existingCompleted.protocol_id
+  ) {
     return await getProtocol(supabase, userId, { date }, headers, log);
   }
 
@@ -1323,7 +1383,12 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // training-modalities.config.ts. The client AcwrService.shouldSkipSprints()
   // is a coarse proxy (riskZone + day-of-week only); this is the server authority.
   const CNS_SPACING_HOURS = 72;
-  const cnsBlockedAt = await getLastHighCnsSession(supabase, userId, date, CNS_SPACING_HOURS);
+  const cnsBlockedAt = await getLastHighCnsSession(
+    supabase,
+    userId,
+    date,
+    CNS_SPACING_HOURS,
+  );
   if (cnsBlockedAt) {
     aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥72h between max-effort sessions.`;
   }
@@ -1381,7 +1446,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   });
 
   // 2. Foam Roll — suppressed if athlete had a sports massage in the last 24h
-  await addFoamRollBlock({ supabase, protocolExercises, userId, date, seed: userId + date });
+  await addFoamRollBlock({
+    supabase,
+    protocolExercises,
+    userId,
+    date,
+    seed: userId + date,
+  });
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
   // Declare early so it can be used in both warmup and main session generation.
@@ -1389,17 +1460,17 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // Weather guard: if the client reports poor suitability or sub-zero apparent
   // temperature, suppress the Saturday-sprint fallback even when no intent overrides.
   const weatherSuitability = payload.weatherSuitability ?? null;
-  const weatherTempC = typeof payload.weatherTempC === "number" ? payload.weatherTempC : null;
+  const weatherTempC =
+    typeof payload.weatherTempC === "number" ? payload.weatherTempC : null;
   const weatherBlocksSprint =
     weatherSuitability === "poor" ||
     (weatherTempC !== null && weatherTempC < 2);
   let isSprintSession =
-    !weatherBlocksSprint && (
-      context.dayOfWeek === 6 || // Saturday fallback
+    !weatherBlocksSprint &&
+    (context.dayOfWeek === 6 || // Saturday fallback
       context.sessionResolution?.override?.type === "sprint_saturday" ||
       context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
-      context.sessionTemplate?.session_type?.toLowerCase() === "sprint"
-    );
+      context.sessionTemplate?.session_type?.toLowerCase() === "sprint");
   // COMPOSE: the intent layer decides whether today is a sprint session, not the
   // Saturday hard-rule. Weather block applies even to compose path.
   if (composeSprint !== null) {
@@ -1474,7 +1545,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     if (allIsometrics.length > 0) {
       // Select 4-5 isometric exercises for ~15 min block
       const selectedIsometrics = allIsometrics
-        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+        .sort(
+          (a, b) =>
+            seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+        )
         .slice(0, 5);
 
       selectedIsometrics.forEach((ex, idx) => {
@@ -1503,9 +1577,15 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     // Thresholds match the readiness tier labels (high/moderate/low):
     //   ≥ 75 → full volume (3 sets)  |  55–74 → reduced (2 sets)  |  < 55 → minimal (1 set)
     const readinessSets =
-      readinessScore != null && readinessScore < 55 ? 1
-      : readinessScore != null && readinessScore < 75 ? 2
-      : 3;
+      readinessScore !== null &&
+      readinessScore !== undefined &&
+      readinessScore < 55
+        ? 1
+        : readinessScore !== null &&
+            readinessScore !== undefined &&
+            readinessScore < 75
+          ? 2
+          : 3;
 
     // ============================================================================
     // 5. PLYOMETRICS BLOCK (15 min)
@@ -1538,7 +1618,12 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       );
       // Contacts per rep scales with intensity: low=4, medium=6, high/very_high=8.
       // Lower intensity = more technical focus per rep; higher = more contacts at speed.
-      const repsPerExercise = plyoIntensity === "low" ? 4 : plyoIntensity === "very_high" || plyoIntensity === "high" ? 8 : 6;
+      const repsPerExercise =
+        plyoIntensity === "low"
+          ? 4
+          : plyoIntensity === "very_high" || plyoIntensity === "high"
+            ? 8
+            : 6;
       const exerciseCount = Math.min(
         5,
         Math.ceil(contactsPerSession / repsPerExercise),
@@ -1569,7 +1654,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedPlyos = filteredPlyos
-        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+        .sort(
+          (a, b) =>
+            seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+        )
         .slice(0, exerciseCount);
 
       selectedPlyos.forEach((ex, idx) => {
@@ -1645,7 +1733,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
 
       if (hipExercises.length > 0) {
         const selectedHip = hipExercises
-          .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+          .sort(
+            (a, b) =>
+              seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+          )
           .slice(0, 2);
 
         selectedHip.forEach((ex, idx) => {
@@ -1672,7 +1763,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
             !ex.name?.toLowerCase().includes("adduct") &&
             !ex.name?.toLowerCase().includes("copenhagen"),
         )
-        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+        .sort(
+          (a, b) =>
+            seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+        )
         .slice(0, 3);
 
       generalStrength.forEach((ex, idx) => {
@@ -1727,7 +1821,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedConditioning = filteredConditioning
-        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+        .sort(
+          (a, b) =>
+            seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+        )
         .slice(0, 4);
 
       selectedConditioning.forEach((ex, idx) => {
@@ -1794,7 +1891,10 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
       }
 
       const selectedSkills = filteredSkill
-        .sort((a, b) => seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b))
+        .sort(
+          (a, b) =>
+            seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
+        )
         .slice(0, 4);
 
       selectedSkills.forEach((ex, idx) => {
@@ -1838,7 +1938,8 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.exercise_id,
-          exercise_name: ex.exercise_name || ex.exercise?.name || ex.name || null,
+          exercise_name:
+            ex.exercise_name || ex.exercise?.name || ex.name || null,
           block_type: "main_session",
           sequence_order: mainSessionSequence++,
           prescribed_sets: ex.prescribed_sets,
@@ -1883,11 +1984,7 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
     });
   }
 
-  if (
-    !mainSessionGenerated &&
-    !isPracticeDay &&
-    !isFilmRoomDay
-  ) {
+  if (!mainSessionGenerated && !isPracticeDay && !isFilmRoomDay) {
     const fallbackResult = await generateMainSessionFallback({
       supabase,
       protocolExercises,
@@ -1919,8 +2016,11 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   // (reducing hold time is not the sport-science model for taper).
   if (taperLoadMultiplier < 1.0) {
     for (const ex of protocolExercises) {
-      if (ex.prescribed_sets != null) {
-        ex.prescribed_sets = Math.max(1, Math.round(ex.prescribed_sets * taperLoadMultiplier));
+      if (ex.prescribed_sets !== null && ex.prescribed_sets !== undefined) {
+        ex.prescribed_sets = Math.max(
+          1,
+          Math.round(ex.prescribed_sets * taperLoadMultiplier),
+        );
       }
     }
   }
@@ -1935,9 +2035,13 @@ async function generateProtocol(supabase, userId, payload, headers, log = logger
   {
     const seen = new Set();
     const deduped = protocolExercises.filter((ex) => {
-      if (ex?.exercise_id == null) return true;
+      if (ex?.exercise_id === null || ex?.exercise_id === undefined) {
+        return true;
+      }
       const key = `${ex.exercise_id}|${ex.block_type ?? ""}`;
-      if (seen.has(key)) return false;
+      if (seen.has(key)) {
+        return false;
+      }
       seen.add(key);
       return true;
     });

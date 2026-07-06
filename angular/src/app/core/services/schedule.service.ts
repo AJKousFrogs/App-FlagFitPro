@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  computed,
-  inject,
-  resource,
-} from "@angular/core";
+import { Injectable, computed, inject, resource } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
@@ -147,9 +142,13 @@ export class ScheduleService {
     // that's still in the future relative to today never counts as a past event
     // for the days after it, and the week-ahead would miss post-game recovery
     // (e.g. the Monday after this weekend's games should read as recovery).
-    const all = snap.lastEvent ? [snap.lastEvent, ...snap.upcoming] : snap.upcoming;
+    const all = snap.lastEvent
+      ? [snap.lastEvent, ...snap.upcoming]
+      : snap.upcoming;
     const priorByDate = all
-      .filter((e) => new Date(e.endsAt ?? e.startsAt).getTime() < date.getTime())
+      .filter(
+        (e) => new Date(e.endsAt ?? e.startsAt).getTime() < date.getTime(),
+      )
       .sort(
         (a, b) =>
           new Date(b.endsAt ?? b.startsAt).getTime() -
@@ -211,7 +210,7 @@ export function resolvePhase(ctx: PhaseContext): CompetitionPhase {
     // (e.g. UTC+2: midnight June 21 = 22:00 June 20 UTC < 08:00 June 21 UTC).
     // Compare calendar dates instead: local YYYY-MM-DD for `date`, UTC for events.
     const localDate = (d: Date) =>
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     const dateStr = localDate(date);
     const startStr = startsAt.toISOString().slice(0, 10);
     const endStr = endsAt.toISOString().slice(0, 10);

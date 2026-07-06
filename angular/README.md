@@ -35,17 +35,17 @@ npm start
 
 All from the `angular/` directory unless noted.
 
-| Command | What it does |
-|---|---|
-| `npm start` | Angular dev server only |
-| `npm run build` | Production build |
-| `npm run type-check` | TypeScript check (no emit) |
-| `npm run lint` | ESLint on `src/app/**` |
-| `npm run test` | Vitest unit suite |
-| `npm run e2e:smoke` | Playwright smoke suite |
-| `npm run e2e:critical` | Playwright critical paths |
-| `npm run bundle:check` | Bundle size analysis |
-| `npm run audit:a11y` | Accessibility audit |
+| Command                | What it does               |
+| ---------------------- | -------------------------- |
+| `npm start`            | Angular dev server only    |
+| `npm run build`        | Production build           |
+| `npm run type-check`   | TypeScript check (no emit) |
+| `npm run lint`         | ESLint on `src/app/**`     |
+| `npm run test`         | Vitest unit suite          |
+| `npm run e2e:smoke`    | Playwright smoke suite     |
+| `npm run e2e:critical` | Playwright critical paths  |
+| `npm run bundle:check` | Bundle size analysis       |
+| `npm run audit:a11y`   | Accessibility audit        |
 
 CSS/design-system checks run from repo root:
 

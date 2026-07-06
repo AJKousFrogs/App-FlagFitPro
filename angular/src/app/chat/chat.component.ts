@@ -41,7 +41,11 @@ export function parseTightness(
   for (const { re, region } of TIGHT_REGIONS) {
     if (re.test(text)) {
       let severity: InjurySeverity = "minor";
-      if (/\b(severe|really bad|very bad|killing|can'?t walk|can'?t run|sharp)\b/i.test(text)) {
+      if (
+        /\b(severe|really bad|very bad|killing|can'?t walk|can'?t run|sharp)\b/i.test(
+          text,
+        )
+      ) {
         severity = "severe";
       } else if (/\b(quite|pretty|very|bad|really)\b/i.test(text)) {
         severity = "moderate";
@@ -80,26 +84,106 @@ interface Turn {
   templateUrl: "./chat.component.html",
   styles: [
     `
-      :host { display: flex; flex-direction: column; min-height: 100dvh; }
-      main.screen { flex: 1; display: flex; flex-direction: column; }
-      .thread { display: flex; flex-direction: column; gap: var(--s-3); overflow-y: auto; flex: 1; padding-bottom: var(--s-2); }
-      .bubble { max-width: 85%; padding: var(--s-3) var(--s-4); border-radius: var(--r-lg); white-space: pre-wrap; line-height: var(--lh-body); }
-      .me { background: var(--accent); color: var(--on-accent); align-self: flex-end; border-bottom-right-radius: 4px; }
-      .ai { background: var(--surface-2); align-self: flex-start; border-bottom-left-radius: 4px; }
-      .ai.blocked { border: 1px solid var(--danger); }
-      .disc { font-size: var(--fs-sm); color: var(--text-faint); align-self: flex-start; max-width: 85%; margin: calc(-1 * var(--s-1)) 0 2px; }
-      .acts { display: flex; flex-wrap: wrap; gap: var(--s-2); align-self: flex-start; }
-      .typing { align-self: flex-start; color: var(--text-faint); font-size: var(--fs-sm); }
-      .composer { margin-top: auto; }
-      .composer input { flex: 1; background: var(--surface-2); border: 1px solid var(--border-soft);
-        border-radius: var(--r-pill); padding: var(--s-3) var(--s-4); color: var(--text-strong); font-family: var(--font-body); }
-      .composer input:disabled { color: var(--text-faint); }
-      .fb { display: flex; gap: var(--s-1); align-self: flex-start; margin-top: calc(-1 * var(--s-1)); }
-      .fb-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
-        border: 1px solid var(--border-soft); border-radius: var(--r-md); background: transparent;
-        color: var(--text-faint); cursor: pointer; }
-      .fb-btn:hover { color: var(--text-strong); border-color: var(--border-strong); }
-      .fb-done { align-self: flex-start; font-size: var(--fs-sm); color: var(--text-faint); margin-top: calc(-1 * var(--s-1)); }
+      :host {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+      main.screen {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .thread {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s-3);
+        overflow-y: auto;
+        flex: 1;
+        padding-bottom: var(--s-2);
+      }
+      .bubble {
+        max-width: 85%;
+        padding: var(--s-3) var(--s-4);
+        border-radius: var(--r-lg);
+        white-space: pre-wrap;
+        line-height: var(--lh-body);
+      }
+      .me {
+        background: var(--accent);
+        color: var(--on-accent);
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+      }
+      .ai {
+        background: var(--surface-2);
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+      }
+      .ai.blocked {
+        border: 1px solid var(--danger);
+      }
+      .disc {
+        font-size: var(--fs-sm);
+        color: var(--text-faint);
+        align-self: flex-start;
+        max-width: 85%;
+        margin: calc(-1 * var(--s-1)) 0 2px;
+      }
+      .acts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--s-2);
+        align-self: flex-start;
+      }
+      .typing {
+        align-self: flex-start;
+        color: var(--text-faint);
+        font-size: var(--fs-sm);
+      }
+      .composer {
+        margin-top: auto;
+      }
+      .composer input {
+        flex: 1;
+        background: var(--surface-2);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-pill);
+        padding: var(--s-3) var(--s-4);
+        color: var(--text-strong);
+        font-family: var(--font-body);
+      }
+      .composer input:disabled {
+        color: var(--text-faint);
+      }
+      .fb {
+        display: flex;
+        gap: var(--s-1);
+        align-self: flex-start;
+        margin-top: calc(-1 * var(--s-1));
+      }
+      .fb-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-md);
+        background: transparent;
+        color: var(--text-faint);
+        cursor: pointer;
+      }
+      .fb-btn:hover {
+        color: var(--text-strong);
+        border-color: var(--border-strong);
+      }
+      .fb-done {
+        align-self: flex-start;
+        font-size: var(--fs-sm);
+        color: var(--text-faint);
+        margin-top: calc(-1 * var(--s-1));
+      }
     `,
   ],
 })
@@ -158,7 +242,10 @@ export class ChatComponent implements AfterViewChecked {
       this.injury
         .report(tight.region, tight.severity)
         .then(() => {
-          const grade = tight.severity === "minor" ? "tightness" : `${tight.severity} tightness`;
+          const grade =
+            tight.severity === "minor"
+              ? "tightness"
+              : `${tight.severity} tightness`;
           this.turns.update((t) => [
             ...t,
             {

@@ -97,7 +97,9 @@ describe("AIService.sendMessage", () => {
   });
 
   it("throws on an empty answer rather than rendering a blank bubble", async () => {
-    mockApi.post.mockReturnValue(of({ success: true, data: { answer_markdown: "  " } }));
+    mockApi.post.mockReturnValue(
+      of({ success: true, data: { answer_markdown: "  " } }),
+    );
     await expect(firstValueFrom(service.sendMessage("hi"))).rejects.toThrow(
       /empty/i,
     );
@@ -115,7 +117,12 @@ describe("AIService.sendMessage", () => {
 
   it("propagates and logs a server error", async () => {
     mockApi.post.mockReturnValue(throwError(() => new Error("500")));
-    await expect(firstValueFrom(service.sendMessage("hi"))).rejects.toThrow("500");
-    expect(mockLogger.error).toHaveBeenCalledWith("merlin_send_failed", expect.any(Error));
+    await expect(firstValueFrom(service.sendMessage("hi"))).rejects.toThrow(
+      "500",
+    );
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      "merlin_send_failed",
+      expect.any(Error),
+    );
   });
 });

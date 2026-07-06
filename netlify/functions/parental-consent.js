@@ -1,6 +1,9 @@
 import crypto from "node:crypto";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { parseJsonObjectBody as sharedParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -56,11 +59,15 @@ function getRestrictedFeatures(consent) {
   return {
     healthData: {
       restricted: !f.healthData,
-      reason: f.healthData ? null : "Guardian did not approve health data collection",
+      reason: f.healthData
+        ? null
+        : "Guardian did not approve health data collection",
     },
     biometrics: {
       restricted: !f.biometrics,
-      reason: f.biometrics ? null : "Guardian did not approve biometrics collection",
+      reason: f.biometrics
+        ? null
+        : "Guardian did not approve biometrics collection",
     },
     location: {
       restricted: !f.location,
@@ -68,7 +75,9 @@ function getRestrictedFeatures(consent) {
     },
     research: {
       restricted: !f.research,
-      reason: f.research ? null : "Guardian did not approve research participation",
+      reason: f.research
+        ? null
+        : "Guardian did not approve research participation",
     },
   };
 }
@@ -88,7 +97,11 @@ function parseJsonBody(body) {
   }
 }
 
-async function handleAuthenticatedRequest(event, _context, { userId, supabase }) {
+async function handleAuthenticatedRequest(
+  event,
+  _context,
+  { userId, supabase },
+) {
   if (event.httpMethod === "GET") {
     const { data: user, error: userError } = await supabase
       .from("users")
@@ -157,7 +170,9 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       return createErrorResponse(
         parsed.reason || "Invalid JSON body",
         parsed.reason === "Invalid JSON body" ? 400 : 422,
-        parsed.reason === "Invalid JSON body" ? "invalid_json" : "validation_error",
+        parsed.reason === "Invalid JSON body"
+          ? "invalid_json"
+          : "validation_error",
       );
     }
 
@@ -262,7 +277,11 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       .single();
 
     if (insertError) {
-      return createErrorResponse("Failed to create consent request", 500, "database_error");
+      return createErrorResponse(
+        "Failed to create consent request",
+        500,
+        "database_error",
+      );
     }
 
     const minorName =
@@ -274,7 +293,8 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
     // Track the outcome and surface it (visibly failed, per S10).
     let emailSent = false;
     try {
-      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseUrl =
+        process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
       const supabaseAnonKey =
         process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
@@ -298,10 +318,14 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
         );
         emailSent = emailResp.ok;
         if (!emailResp.ok) {
-          logger.error("guardian_email_send_failed", undefined, { http_status: emailResp.status });
+          logger.error("guardian_email_send_failed", undefined, {
+            http_status: emailResp.status,
+          });
         }
       } else {
-        logger.error("guardian_email_not_configured", undefined, { message: "Guardian email not sent: email service not configured" });
+        logger.error("guardian_email_not_configured", undefined, {
+          message: "Guardian email not sent: email service not configured",
+        });
       }
     } catch (emailError) {
       logger.error("guardian_email_send_error", emailError, {});
@@ -327,7 +351,6 @@ async function handleAuthenticatedRequest(event, _context, { userId, supabase })
       guardianEmail,
     });
   }
-
 }
 
 async function handlePublicVerification(event) {
@@ -336,7 +359,9 @@ async function handlePublicVerification(event) {
     return createErrorResponse(
       parsed.reason || "Invalid JSON body",
       parsed.reason === "Invalid JSON body" ? 400 : 422,
-      parsed.reason === "Invalid JSON body" ? "invalid_json" : "validation_error",
+      parsed.reason === "Invalid JSON body"
+        ? "invalid_json"
+        : "validation_error",
     );
   }
 
@@ -351,10 +376,18 @@ async function handlePublicVerification(event) {
   } = parsed.data;
 
   if (!token) {
-    return createErrorResponse("Verification token is required", 400, "missing_token");
+    return createErrorResponse(
+      "Verification token is required",
+      400,
+      "missing_token",
+    );
   }
   if (!isValidVerificationToken(token)) {
-    return createErrorResponse("Invalid verification token format", 400, "invalid_token");
+    return createErrorResponse(
+      "Invalid verification token format",
+      400,
+      "invalid_token",
+    );
   }
   if (action && !["approve", "revoke"].includes(action)) {
     return createErrorResponse(
@@ -380,7 +413,9 @@ async function handlePublicVerification(event) {
   }
   if (
     reason !== undefined &&
-    (typeof reason !== "string" || reason.trim().length === 0 || reason.length > 1000)
+    (typeof reason !== "string" ||
+      reason.trim().length === 0 ||
+      reason.length > 1000)
   ) {
     return createErrorResponse(
       "reason must be a non-empty string up to 1000 characters when provided",
@@ -398,19 +433,31 @@ async function handlePublicVerification(event) {
     .single();
 
   if (findError || !consent) {
-    return createErrorResponse("Invalid or expired verification token", 404, "invalid_token");
+    return createErrorResponse(
+      "Invalid or expired verification token",
+      404,
+      "invalid_token",
+    );
   }
 
   if (consent.verification_sent_at) {
     const tokenExpiry = new Date(consent.verification_sent_at);
     tokenExpiry.setDate(tokenExpiry.getDate() + 7);
     if (new Date() > tokenExpiry) {
-      return createErrorResponse("Verification token has expired", 410, "token_expired");
+      return createErrorResponse(
+        "Verification token has expired",
+        410,
+        "token_expired",
+      );
     }
   }
 
   if (consent.status === "revoked") {
-    return createErrorResponse("This consent has been revoked", 400, "consent_revoked");
+    return createErrorResponse(
+      "This consent has been revoked",
+      400,
+      "consent_revoked",
+    );
   }
 
   const clientIp =
@@ -454,7 +501,8 @@ async function handlePublicVerification(event) {
 
     return createSuccessResponse({
       success: true,
-      message: "Parental consent has been revoked. Restricted features will be disabled.",
+      message:
+        "Parental consent has been revoked. Restricted features will be disabled.",
     });
   }
 

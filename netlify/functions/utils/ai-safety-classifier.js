@@ -1318,7 +1318,8 @@ function filterSourcesByEvidence(sources, riskLevel) {
 // EXPORTS
 // =====================================================
 
-export { // Constants
+export {
+  // Constants
   RISK_LEVELS,
   INTENT_TYPES,
   HIGH_RISK_KEYWORDS,
@@ -1354,4 +1355,5 @@ export { // Constants
   // Evidence filtering
   getMinimumEvidenceGrade,
   compareEvidenceGrade,
-  filterSourcesByEvidence, };
+  filterSourcesByEvidence,
+};

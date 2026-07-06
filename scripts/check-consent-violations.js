@@ -55,23 +55,74 @@ const CONFIG = {
     /getCoach/i,
   ],
   allowedExceptions: [
-    { file: "supabase-client.js", reason: "Database client initialization and helper functions" },
-    { file: "training-sessions.js", reason: "Player-only: user accesses own training sessions" },
-    { file: "training-complete.js", reason: "Player-only: user completes own training session" },
-    { file: "daily-training.js", reason: "Player-only: user accesses own daily training" },
-    { file: "user-context.js", reason: "Player-only: user accesses own context data" },
-    { file: "dashboard.js", reason: "Player-only: user accesses own dashboard" },
-    { file: "ai-chat.js", reason: "Player-only: AI uses player own data for coaching" },
-    { file: "training-suggestions.js", reason: "Player-only: user gets own training suggestions" },
-    { file: "training-stats-enhanced.js", reason: "Player-only: user accesses own training stats" },
-    { file: "training-plan.js", reason: "Player-only: user accesses own training plan" },
-    { file: "smart-training-recommendations.js", reason: "Player-only: user gets own AI recommendations" },
-    { file: "recovery.js", reason: "Player-only: user accesses own recovery data" },
-    { file: "performance-metrics.js", reason: "Player-only: user accesses own performance metrics" },
-    { file: "performance-heatmap.js", reason: "Player-only: user accesses own performance heatmap" },
-    { file: "nutrition.js", reason: "Player-only: user accesses own nutrition data" },
-    { file: "load-management.js", reason: "Player-only: user accesses own load management data" },
-    { file: "calc-readiness.js", reason: "Player-only: user calculates own readiness score" },
+    {
+      file: "supabase-client.js",
+      reason: "Database client initialization and helper functions",
+    },
+    {
+      file: "training-sessions.js",
+      reason: "Player-only: user accesses own training sessions",
+    },
+    {
+      file: "training-complete.js",
+      reason: "Player-only: user completes own training session",
+    },
+    {
+      file: "daily-training.js",
+      reason: "Player-only: user accesses own daily training",
+    },
+    {
+      file: "user-context.js",
+      reason: "Player-only: user accesses own context data",
+    },
+    {
+      file: "dashboard.js",
+      reason: "Player-only: user accesses own dashboard",
+    },
+    {
+      file: "ai-chat.js",
+      reason: "Player-only: AI uses player own data for coaching",
+    },
+    {
+      file: "training-suggestions.js",
+      reason: "Player-only: user gets own training suggestions",
+    },
+    {
+      file: "training-stats-enhanced.js",
+      reason: "Player-only: user accesses own training stats",
+    },
+    {
+      file: "training-plan.js",
+      reason: "Player-only: user accesses own training plan",
+    },
+    {
+      file: "smart-training-recommendations.js",
+      reason: "Player-only: user gets own AI recommendations",
+    },
+    {
+      file: "recovery.js",
+      reason: "Player-only: user accesses own recovery data",
+    },
+    {
+      file: "performance-metrics.js",
+      reason: "Player-only: user accesses own performance metrics",
+    },
+    {
+      file: "performance-heatmap.js",
+      reason: "Player-only: user accesses own performance heatmap",
+    },
+    {
+      file: "nutrition.js",
+      reason: "Player-only: user accesses own nutrition data",
+    },
+    {
+      file: "load-management.js",
+      reason: "Player-only: user accesses own load management data",
+    },
+    {
+      file: "calc-readiness.js",
+      reason: "Player-only: user calculates own readiness score",
+    },
   ],
 };
 
@@ -87,7 +138,9 @@ class ConsentViolationChecker {
 
   async run() {
     console.log("🔍 Consent Violation Checker\n");
-    console.log('Policy: "All coach-facing performance access must go through consent views"\n');
+    console.log(
+      'Policy: "All coach-facing performance access must go through consent views"\n',
+    );
     console.log(`${"=".repeat(70)}\n`);
 
     const files = await this.getFilesToScan();
@@ -122,19 +175,33 @@ class ConsentViolationChecker {
     try {
       const content = fs.readFileSync(filePath, "utf-8");
       const fileName = path.basename(filePath);
-      const exception = CONFIG.allowedExceptions.find((e) => fileName.includes(e.file));
+      const exception = CONFIG.allowedExceptions.find((e) =>
+        fileName.includes(e.file),
+      );
       const tableViolations = this.detectDirectTableAccess(content, filePath);
       const isCoachContext = this.isCoachContextFile(content, filePath);
 
       for (const violation of tableViolations) {
         if (exception) {
           if (exception.requiresReview) {
-            this.warnings.push({ ...violation, isException: true, exceptionReason: exception.reason });
+            this.warnings.push({
+              ...violation,
+              isException: true,
+              exceptionReason: exception.reason,
+            });
           }
         } else if (isCoachContext) {
-          this.violations.push({ ...violation, isCoachContext: true, severity: "error" });
+          this.violations.push({
+            ...violation,
+            isCoachContext: true,
+            severity: "error",
+          });
         } else {
-          this.warnings.push({ ...violation, isCoachContext: false, severity: "warning" });
+          this.warnings.push({
+            ...violation,
+            isCoachContext: false,
+            severity: "warning",
+          });
         }
       }
     } catch (err) {
@@ -146,7 +213,12 @@ class ConsentViolationChecker {
     const violations = [];
     const lines = content.split("\n");
     const fromPattern = /\.from\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
-    const writeOperationPatterns = [/\.insert\s*\(/, /\.update\s*\(/, /\.upsert\s*\(/, /\.delete\s*\(/];
+    const writeOperationPatterns = [
+      /\.insert\s*\(/,
+      /\.update\s*\(/,
+      /\.upsert\s*\(/,
+      /\.delete\s*\(/,
+    ];
 
     for (let lineNum = 0; lineNum < lines.length; lineNum++) {
       const line = lines[lineNum];
@@ -174,7 +246,9 @@ class ConsentViolationChecker {
           table: tableName,
           code: line.trim(),
           message: `Direct access to protected table '${tableName}'`,
-          suggestion: consentView ? `Use '${consentView}' view or ConsentDataReader` : "Use ConsentDataReader for consent-aware access",
+          suggestion: consentView
+            ? `Use '${consentView}' view or ConsentDataReader`
+            : "Use ConsentDataReader for consent-aware access",
         });
       }
     }
@@ -270,7 +344,9 @@ class ConsentViolationChecker {
       console.log("✅ No consent violations found in coach-context code!\n");
     } else {
       console.log("❌ CONSENT VIOLATIONS DETECTED\n");
-      console.log("These files access protected tables directly in coach context.");
+      console.log(
+        "These files access protected tables directly in coach context.",
+      );
       console.log("Refactor to use consent views or ConsentDataReader.\n");
     }
 

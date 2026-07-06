@@ -17,7 +17,7 @@ const state = vi.hoisted(() => ({
     "u-coach-2:u-player": false,
   },
   games: {
-    "a1b2": {
+    a1b2: {
       id: "a1b2",
       visibility_scope: "team",
       team_id: "t-1",
@@ -27,7 +27,7 @@ const state = vi.hoisted(() => ({
       home_away: "home",
       opponent_name: "Rivals",
     },
-    "b2c3": {
+    b2c3: {
       id: "b2c3",
       visibility_scope: "personal",
       team_id: "t-1",
@@ -111,7 +111,8 @@ function buildSupabase() {
     }
 
     findEq(field) {
-      return this.filters.find((f) => f.op === "eq" && f.field === field)?.value;
+      return this.filters.find((f) => f.op === "eq" && f.field === field)
+        ?.value;
     }
 
     consentGrantedFilter() {
@@ -123,7 +124,10 @@ function buildSupabase() {
         const gameId = this.findEq("id");
         const game = state.games[gameId];
         if (!game) {
-          return { data: null, error: { code: "PGRST116", message: "Not found" } };
+          return {
+            data: null,
+            error: { code: "PGRST116", message: "Not found" },
+          };
         }
         return { data: { ...game }, error: null };
       }
@@ -132,7 +136,10 @@ function buildSupabase() {
         const gameId = this.findEq("id");
         const game = state.games[gameId];
         if (!game) {
-          return { data: null, error: { code: "PGRST116", message: "Not found" } };
+          return {
+            data: null,
+            error: { code: "PGRST116", message: "Not found" },
+          };
         }
         const updated = { ...game, ...this.payload };
         state.games[gameId] = updated;
@@ -140,13 +147,19 @@ function buildSupabase() {
       }
 
       if (this.table === "game_events" && this.mode === "insert") {
-        const inserted = { id: `evt-${state.insertedEvents.length + 1}`, ...this.payload };
+        const inserted = {
+          id: `evt-${state.insertedEvents.length + 1}`,
+          ...this.payload,
+        };
         state.insertedEvents.push(inserted);
         return { data: inserted, error: null };
       }
 
       if (this.table === "player_stats_consent" && this.mode === "update") {
-        return { data: null, error: { code: "PGRST116", message: "Not found" } };
+        return {
+          data: null,
+          error: { code: "PGRST116", message: "Not found" },
+        };
       }
 
       return { data: null, error: null };
@@ -160,7 +173,10 @@ function buildSupabase() {
         const userId = this.findEq("user_id");
         const role = state.userRoleByUser[userId];
         if (!role) {
-          return { data: null, error: { code: "PGRST116", message: "Not found" } };
+          return {
+            data: null,
+            error: { code: "PGRST116", message: "Not found" },
+          };
         }
         return { data: { role }, error: null };
       }
@@ -177,7 +193,8 @@ function buildSupabase() {
         );
         const key = `${coachId}:${playerId}`;
         const granted = state.consentByCoachPlayer[key] === true;
-        const shouldReturn = granted && consentGranted === true && isRevokedNull;
+        const shouldReturn =
+          granted && consentGranted === true && isRevokedNull;
         return { data: shouldReturn ? [{ id: "cons-1" }] : [], error: null };
       }
       return { data: [], error: null };
@@ -218,7 +235,9 @@ vi.mock("../../netlify/functions/utils/auth-helper.js", () => ({
     return { authorized: true, role, teamId };
   },
   getUserTeamId: async (userId) => {
-    const entry = Object.keys(state.memberships).find((k) => k.startsWith(`${userId}:`));
+    const entry = Object.keys(state.memberships).find((k) =>
+      k.startsWith(`${userId}:`),
+    );
     return entry ? entry.split(":")[1] : null;
   },
 }));
@@ -257,7 +276,9 @@ describe("games authorization guardrails", () => {
     state.currentUserId = "u-player";
 
     const response = await handler(
-      buildEvent("PUT", "/.netlify/functions/games/a1b2", { status: "completed" }),
+      buildEvent("PUT", "/.netlify/functions/games/a1b2", {
+        status: "completed",
+      }),
       {},
     );
 

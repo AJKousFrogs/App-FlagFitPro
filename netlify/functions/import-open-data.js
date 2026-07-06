@@ -1,11 +1,14 @@
-
 // Netlify Function: Import Open Data
 // Imports open-source sport-science datasets and computes flag-football metrics
 // Endpoint: /api/import-open-data
 
 import { supabaseAdmin } from "./supabase-client.js";
 
-import { createSuccessResponse, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -35,11 +38,12 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
     return { authorized: false };
   }
 
-  const { data: requesterMemberships, error: requesterError } = await supabaseAdmin
-    .from("team_members")
-    .select("team_id")
-    .eq("user_id", requestUserId)
-    .eq("status", "active");
+  const { data: requesterMemberships, error: requesterError } =
+    await supabaseAdmin
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", requestUserId)
+      .eq("status", "active");
   if (requesterError || !requesterMemberships?.length) {
     return { authorized: false };
   }
@@ -54,9 +58,13 @@ async function verifyAthleteAccess(requestUserId, athleteId) {
   }
 
   const requesterTeamIds = new Set(
-    requesterMemberships.map((membership) => membership.team_id).filter(Boolean),
+    requesterMemberships
+      .map((membership) => membership.team_id)
+      .filter(Boolean),
   );
-  const authorized = targetMemberships.some((membership) => requesterTeamIds.has(membership.team_id));
+  const authorized = targetMemberships.some((membership) =>
+    requesterTeamIds.has(membership.team_id),
+  );
 
   return { authorized };
 }
@@ -118,7 +126,9 @@ async function persistImportedSession({
 }) {
   const estimatedRpe = estimateSessionIntensity(metrics);
   const workload =
-    metrics.duration_minutes > 0 ? estimatedRpe * metrics.duration_minutes : null;
+    metrics.duration_minutes > 0
+      ? estimatedRpe * metrics.duration_minutes
+      : null;
 
   const rpcResult = await supabaseAdmin.rpc("log_training_session", {
     p_user_id: athleteId,
@@ -203,7 +213,12 @@ function computeMetrics(raw) {
   raw.forEach((entry) => {
     const speed = Number(entry.speed_m_s ?? entry.speed ?? 0);
     const dist = Number(entry.distance_m ?? entry.distance ?? 0);
-    if (!Number.isFinite(speed) || !Number.isFinite(dist) || dist < 0 || speed < 0) {
+    if (
+      !Number.isFinite(speed) ||
+      !Number.isFinite(dist) ||
+      dist < 0 ||
+      speed < 0
+    ) {
       return;
     }
 
@@ -308,10 +323,14 @@ const handler = async (event, context) => {
       });
 
       if (persistResult.error) {
-        requestLogger.error("import_open_data_database_error", persistResult.error, {
-          athlete_id: athleteId,
-          session_date: normalizedSessionDate,
-        });
+        requestLogger.error(
+          "import_open_data_database_error",
+          persistResult.error,
+          {
+            athlete_id: athleteId,
+            session_date: normalizedSessionDate,
+          },
+        );
         return createErrorResponse(
           "Failed to insert session",
           500,

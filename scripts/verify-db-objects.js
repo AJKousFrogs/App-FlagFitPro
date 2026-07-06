@@ -173,9 +173,15 @@ async function checkViews(supabase) {
       error.code === "42P01" ||
       error.message?.toLowerCase?.().includes("does not exist")
     ) {
-      logFail(`View: ${view}`, `View '${view}' does not exist in public schema`);
+      logFail(
+        `View: ${view}`,
+        `View '${view}' does not exist in public schema`,
+      );
     } else {
-      logFail(`View: ${view}`, `View '${view}' not reachable: ${error.message}`);
+      logFail(
+        `View: ${view}`,
+        `View '${view}' not reachable: ${error.message}`,
+      );
     }
   }
 
@@ -255,7 +261,12 @@ async function checkConnectivity(supabase) {
     .select("user_id")
     .limit(1);
 
-  if (error && String(error.message || "").toLowerCase().includes("fetch failed")) {
+  if (
+    error &&
+    String(error.message || "")
+      .toLowerCase()
+      .includes("fetch failed")
+  ) {
     logFail(
       "Connectivity",
       "Supabase REST transport failed (fetch failed). Check network/project URL/keys.",
@@ -287,7 +298,10 @@ async function checkTables(supabase) {
     ) {
       logFail(`Table: ${table}`, `Table '${table}' does not exist`);
     } else {
-      logFail(`Table: ${table}`, `Table '${table}' not reachable: ${error.message}`);
+      logFail(
+        `Table: ${table}`,
+        `Table '${table}' not reachable: ${error.message}`,
+      );
     }
   }
 

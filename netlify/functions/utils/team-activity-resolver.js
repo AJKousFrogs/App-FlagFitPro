@@ -246,5 +246,4 @@ async function batchResolveTeamActivities(supabase, athleteId, teamId, dates) {
   return results;
 }
 
-export { resolveTeamActivityForAthleteDay,
-  batchResolveTeamActivities, };
+export { resolveTeamActivityForAthleteDay, batchResolveTeamActivities };

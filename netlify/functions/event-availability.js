@@ -1,6 +1,9 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -102,11 +105,14 @@ const handler = async (event, context) =>
       const reason =
         typeof body.reason === "string" ? body.reason.slice(0, 1000) : null;
 
-      const { data, error } = await supabaseAdmin.rpc("set_event_availability", {
-        p_competition_event_id: competitionEventId,
-        p_status: status,
-        p_reason: reason,
-      });
+      const { data, error } = await supabaseAdmin.rpc(
+        "set_event_availability",
+        {
+          p_competition_event_id: competitionEventId,
+          p_status: status,
+          p_reason: reason,
+        },
+      );
 
       if (error) {
         const isAuthz = /member of this event|authentication required/i.test(
@@ -135,7 +141,11 @@ const handler = async (event, context) =>
         );
       }
 
-      return createSuccessResponse({ availability: data }, 200, "Availability saved");
+      return createSuccessResponse(
+        { availability: data },
+        200,
+        "Availability saved",
+      );
     },
   });
 

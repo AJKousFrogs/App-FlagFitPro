@@ -33,12 +33,16 @@ describe("ewma", () => {
 
 describe("computeSessionLoad", () => {
   it("prefers a real workload column", () => {
-    expect(computeSessionLoad({ workload: 450, rpe: 5, duration_minutes: 60 })).toBe(450);
+    expect(
+      computeSessionLoad({ workload: 450, rpe: 5, duration_minutes: 60 }),
+    ).toBe(450);
   });
 
   it("falls back to rpe × duration when workload is missing/zero", () => {
     expect(computeSessionLoad({ rpe: 7, duration_minutes: 60 })).toBe(420);
-    expect(computeSessionLoad({ workload: 0, rpe: 7, duration_minutes: 60 })).toBe(420);
+    expect(
+      computeSessionLoad({ workload: 0, rpe: 7, duration_minutes: 60 }),
+    ).toBe(420);
   });
 
   it("returns 0 — never a fabricated default — when there is no real load", () => {
@@ -115,6 +119,8 @@ describe("classifyAcwrZone", () => {
   it("zone boundaries are contiguous with ACWR_RISK_ZONES metadata", () => {
     expect(ACWR_RISK_ZONES.safe.min).toBe(0.8);
     expect(ACWR_RISK_ZONES.critical.max).toBe(Infinity);
-    expect(ACWR_RISK_ZONES.danger.risk).toBeGreaterThan(ACWR_RISK_ZONES.safe.risk);
+    expect(ACWR_RISK_ZONES.danger.risk).toBeGreaterThan(
+      ACWR_RISK_ZONES.safe.risk,
+    );
   });
 });

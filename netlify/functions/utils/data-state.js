@@ -47,7 +47,11 @@ export const MINIMUM_DATA_REQUIREMENTS = {
   },
 };
 
-export function evaluateDataState(currentDataPoints, metricType, isDemo = false) {
+export function evaluateDataState(
+  currentDataPoints,
+  metricType,
+  isDemo = false,
+) {
   if (isDemo) {
     return DataState.DEMO_DATA;
   }

@@ -1,4 +1,3 @@
-
 // Netlify Function: API Documentation
 // Provides interactive API documentation for the Flag Football app
 // Endpoint: /api/api-docs
@@ -215,7 +214,8 @@ const API_ENDPOINTS = {
   roster: {
     path: "/api/roster/players",
     method: "GET",
-    description: "Get active roster players for the authenticated athlete's team",
+    description:
+      "Get active roster players for the authenticated athlete's team",
     auth: true,
     rateLimit: "READ (100/min)",
   },
@@ -235,7 +235,8 @@ const API_ENDPOINTS = {
   "wearables-status": {
     path: "/api/wearables/status",
     method: "GET",
-    description: "List wearable connection statuses exposed to the data import UI",
+    description:
+      "List wearable connection statuses exposed to the data import UI",
     auth: true,
     rateLimit: "READ (100/min)",
   },

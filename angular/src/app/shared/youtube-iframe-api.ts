@@ -7,8 +7,12 @@ type YT = unknown;
 let ready: Promise<YT> | null = null;
 
 export function loadYouTubeIframeApi(): Promise<YT> {
-  if (typeof window === "undefined") return Promise.reject(new Error("no window (SSR)"));
-  const w = window as unknown as { YT?: { Player?: unknown }; onYouTubeIframeAPIReady?: () => void };
+  if (typeof window === "undefined")
+    return Promise.reject(new Error("no window (SSR)"));
+  const w = window as unknown as {
+    YT?: { Player?: unknown };
+    onYouTubeIframeAPIReady?: () => void;
+  };
   if (w.YT?.Player) return Promise.resolve(w.YT);
   if (ready) return ready;
 
@@ -17,7 +21,10 @@ export function loadYouTubeIframeApi(): Promise<YT> {
     w.onYouTubeIframeAPIReady = () => resolve(w.YT as YT);
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
-    tag.onerror = () => { ready = null; reject(new Error("YouTube IFrame API unavailable")); };
+    tag.onerror = () => {
+      ready = null;
+      reject(new Error("YouTube IFrame API unavailable"));
+    };
     document.head.appendChild(tag);
   });
   return ready;

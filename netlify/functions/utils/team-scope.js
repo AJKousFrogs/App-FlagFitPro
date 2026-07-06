@@ -24,7 +24,9 @@ export async function getStaffedTeamIds(
   userId,
   { roles = TEAM_OPERATIONS_ROLES, client = supabaseAdmin } = {},
 ) {
-  if (!userId) {return [];}
+  if (!userId) {
+    return [];
+  }
   const { data, error } = await client
     .from("team_members")
     .select("team_id")
@@ -32,7 +34,9 @@ export async function getStaffedTeamIds(
     .eq("status", "active")
     .in("role", roles)
     .order("updated_at", { ascending: false });
-  if (error || !data) {return [];}
+  if (error || !data) {
+    return [];
+  }
   return data.map((r) => r.team_id).filter(Boolean);
 }
 
@@ -40,15 +44,22 @@ export async function getStaffedTeamIds(
  * Active team_ids `userId` belongs to (any role), most-recent first.
  * @returns {Promise<string[]>}
  */
-export async function getMemberTeamIds(userId, { client = supabaseAdmin } = {}) {
-  if (!userId) {return [];}
+export async function getMemberTeamIds(
+  userId,
+  { client = supabaseAdmin } = {},
+) {
+  if (!userId) {
+    return [];
+  }
   const { data, error } = await client
     .from("team_members")
     .select("team_id")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("updated_at", { ascending: false });
-  if (error || !data) {return [];}
+  if (error || !data) {
+    return [];
+  }
   return data.map((r) => r.team_id).filter(Boolean);
 }
 
@@ -63,14 +74,18 @@ export async function sharesStaffedTeam(
   { roles = TEAM_OPERATIONS_ROLES, client = supabaseAdmin } = {},
 ) {
   const staffTeamIds = await getStaffedTeamIds(staffUserId, { roles, client });
-  if (staffTeamIds.length === 0) {return { shared: false, teamIds: [] };}
+  if (staffTeamIds.length === 0) {
+    return { shared: false, teamIds: [] };
+  }
   const { data, error } = await client
     .from("team_members")
     .select("team_id")
     .eq("user_id", athleteUserId)
     .eq("status", "active")
     .in("team_id", staffTeamIds);
-  if (error || !data) {return { shared: false, teamIds: [] };}
+  if (error || !data) {
+    return { shared: false, teamIds: [] };
+  }
   const teamIds = data.map((r) => r.team_id).filter(Boolean);
   return { shared: teamIds.length > 0, teamIds };
 }
@@ -87,7 +102,9 @@ export async function resolveStaffedTeam(
   { roles = TEAM_OPERATIONS_ROLES, client = supabaseAdmin } = {},
 ) {
   const teamIds = await getStaffedTeamIds(userId, { roles, client });
-  if (teamIds.length === 0) {return null;}
+  if (teamIds.length === 0) {
+    return null;
+  }
   if (requestedTeamId) {
     return teamIds.includes(requestedTeamId) ? requestedTeamId : null;
   }
@@ -100,7 +117,9 @@ export async function isStaffOfTeam(
   teamId,
   { roles = TEAM_OPERATIONS_ROLES, client = supabaseAdmin } = {},
 ) {
-  if (!userId || !teamId) {return false;}
+  if (!userId || !teamId) {
+    return false;
+  }
   const { data, error } = await client
     .from("team_members")
     .select("team_id")
@@ -119,7 +138,9 @@ export async function isActiveTeamMember(
   teamId,
   { client = supabaseAdmin } = {},
 ) {
-  if (!userId || !teamId) {return false;}
+  if (!userId || !teamId) {
+    return false;
+  }
   const { data, error } = await client
     .from("team_members")
     .select("team_id")

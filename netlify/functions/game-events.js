@@ -1,5 +1,8 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse, createSuccessResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -20,7 +23,11 @@ async function loadGame(supabase, gameId) {
     return { data: null, error: new Error("gameId is required") };
   }
 
-  let result = await supabase.from("games").select("*").eq("game_id", gameId).maybeSingle();
+  let result = await supabase
+    .from("games")
+    .select("*")
+    .eq("game_id", gameId)
+    .maybeSingle();
   if (!result.error && result.data) {
     return result;
   }
@@ -48,8 +55,7 @@ function normalizePlay(payload, userId) {
       payload.interceptorId ||
       payload.deflectedBy ||
       userId,
-    yards_gained:
-      Number(payload.yardsGained ?? payload.yards ?? 0) || 0,
+    yards_gained: Number(payload.yardsGained ?? payload.yards ?? 0) || 0,
     play_notes:
       typeof payload.playNotes === "string"
         ? payload.playNotes
@@ -76,8 +82,15 @@ const handler = async (event, context) =>
           if (game.error || !game.data) {
             return createErrorResponse("Game not found", 404, "not_found");
           }
-          if (game.data.team_id !== teamId && game.data.team_id !== `TEAM_${userId}`) {
-            return createErrorResponse("Not authorized", 403, "authorization_error");
+          if (
+            game.data.team_id !== teamId &&
+            game.data.team_id !== `TEAM_${userId}`
+          ) {
+            return createErrorResponse(
+              "Not authorized",
+              403,
+              "authorization_error",
+            );
           }
 
           // Optimistic-locking: if the client supplied expectedVersion, atomically
@@ -88,7 +101,10 @@ const handler = async (event, context) =>
           if (typeof body.expectedVersion === "number") {
             const { data: versionRow, error: versionError } = await supabase
               .from("games")
-              .update({ version: body.expectedVersion + 1, updated_at: new Date().toISOString() })
+              .update({
+                version: body.expectedVersion + 1,
+                updated_at: new Date().toISOString(),
+              })
               .eq("game_id", game.data.game_id)
               .eq("version", body.expectedVersion)
               .select("version")
@@ -131,11 +147,22 @@ const handler = async (event, context) =>
           if (game.error || !game.data) {
             return createErrorResponse("Game not found", 404, "not_found");
           }
-          if (game.data.team_id !== teamId && game.data.team_id !== `TEAM_${userId}`) {
-            return createErrorResponse("Not authorized", 403, "authorization_error");
+          if (
+            game.data.team_id !== teamId &&
+            game.data.team_id !== `TEAM_${userId}`
+          ) {
+            return createErrorResponse(
+              "Not authorized",
+              403,
+              "authorization_error",
+            );
           }
           if (!body.playerId || typeof body.playerId !== "string") {
-            return createErrorResponse("playerId is required", 422, "validation_error");
+            return createErrorResponse(
+              "playerId is required",
+              422,
+              "validation_error",
+            );
           }
           // The check above authorizes the GAME (it belongs to the requester's
           // team), but not the TARGET player — without this, any team member could
@@ -144,7 +171,11 @@ const handler = async (event, context) =>
           // valid target is the user themselves, since it has no team_members rows.)
           if (game.data.team_id === `TEAM_${userId}`) {
             if (body.playerId !== userId) {
-              return createErrorResponse("Not authorized", 403, "authorization_error");
+              return createErrorResponse(
+                "Not authorized",
+                403,
+                "authorization_error",
+              );
             }
           } else {
             const member = await supabase
@@ -179,7 +210,10 @@ const handler = async (event, context) =>
           };
 
           const mutation = existing.data
-            ? supabase.from("game_participations").update(payload).eq("id", existing.data.id)
+            ? supabase
+                .from("game_participations")
+                .update(payload)
+                .eq("id", existing.data.id)
             : supabase.from("game_participations").insert(payload);
           const { error } = await mutation;
 
@@ -206,8 +240,15 @@ const handler = async (event, context) =>
           if (game.error || !game.data) {
             return createErrorResponse("Game not found", 404, "not_found");
           }
-          if (game.data.team_id !== teamId && game.data.team_id !== `TEAM_${userId}`) {
-            return createErrorResponse("Not authorized", 403, "authorization_error");
+          if (
+            game.data.team_id !== teamId &&
+            game.data.team_id !== `TEAM_${userId}`
+          ) {
+            return createErrorResponse(
+              "Not authorized",
+              403,
+              "authorization_error",
+            );
           }
 
           const { error } = await supabase

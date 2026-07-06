@@ -319,9 +319,7 @@ async function getSchedule(event, _context, { userId }) {
   ];
   const rows = [
     ...(teamRes.data ?? []),
-    ...athleteRows
-      .filter((e) => e.kind !== "training")
-      .map(athleteEventToRow),
+    ...athleteRows.filter((e) => e.kind !== "training").map(athleteEventToRow),
   ].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
   const upcoming = rows
     .filter((r) => new Date(r.ends_at ?? r.starts_at) >= now)
@@ -341,7 +339,11 @@ async function getSchedule(event, _context, { userId }) {
   const density14d = densityFor(upcomingRaw, now, 14);
   const density28d = densityFor(upcomingRaw, now, 28);
 
-  const currentPhase = resolvePhase(now, upcomingRaw, past[past.length - 1] ?? null);
+  const currentPhase = resolvePhase(
+    now,
+    upcomingRaw,
+    past[past.length - 1] ?? null,
+  );
 
   return createSuccessResponse({
     athleteId: userId,

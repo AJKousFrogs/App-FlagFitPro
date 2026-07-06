@@ -26,7 +26,12 @@ import { TOURNAMENT_DAY } from "../core/config/position-volume.config";
 @Component({
   selector: "app-gameday",
   standalone: true,
-  imports: [AvatarComponent, SkeletonComponent, RouterLink, LucideAngularModule],
+  imports: [
+    AvatarComponent,
+    SkeletonComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./gameday.component.html",
@@ -45,7 +50,9 @@ export class GamedayComponent {
   /** Re-warm-before-every-game protocol — a multi-game tournament day stacks
    * games (08:00 / 11:30 / 13:00 / 15:00 / 16:00 / 19:00), each needing its own
    * warm-up. Shown when the day carries more than one game. */
-  readonly multiGame = computed(() => (this.nextEvent()?.expectedGameCount ?? 0) > 1);
+  readonly multiGame = computed(
+    () => (this.nextEvent()?.expectedGameCount ?? 0) > 1,
+  );
   readonly warmupNote = TOURNAMENT_DAY.note;
 
   /**
@@ -59,12 +66,20 @@ export class GamedayComponent {
     const r = (w.reason ?? "").toLowerCase();
     if (w.heatLoadFactor > 1 || /too hot|feels-like.*hot|heat/.test(r))
       return { icon: "flame", band: "danger", label: "heat" };
-    if (/storm|lightning/.test(r)) return { icon: "cloud-rain", band: "danger", label: "storm" };
+    if (/storm|lightning/.test(r))
+      return { icon: "cloud-rain", band: "danger", label: "storm" };
     if (/warm/.test(r)) return { icon: "sun", band: "caution", label: "warm" };
-    if (/cold/.test(r)) return { icon: "cloud-rain", band: "info", label: "cold" };
-    if (/wind/.test(r)) return { icon: "cloud-rain", band: "info", label: "wind" };
-    if (/rain|wet/.test(r)) return { icon: "cloud-rain", band: "info", label: "wet" };
-    return { icon: "sun", band: null as string | null, label: null as string | null };
+    if (/cold/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "cold" };
+    if (/wind/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "wind" };
+    if (/rain|wet/.test(r))
+      return { icon: "cloud-rain", band: "info", label: "wet" };
+    return {
+      icon: "sun",
+      band: null as string | null,
+      label: null as string | null,
+    };
   });
 
   readonly reasoning = computed(
@@ -89,14 +104,12 @@ export class GamedayComponent {
   readonly hydrationL = computed(() => (this.hydrationMl() / 1000).toFixed(1));
   addHydration(ml: number): void {
     this.hydrationMl.update((v) => v + ml);
-    this.api
-      .post("/api/hydration/log", { amount: ml })
-      .subscribe({
-        // Roll back the optimistic total if the log didn't persist.
-        error: (e) => {
-          this.hydrationMl.update((v) => v - ml);
-          this.logger.error("hydration_log_failed", e);
-        },
-      });
+    this.api.post("/api/hydration/log", { amount: ml }).subscribe({
+      // Roll back the optimistic total if the log didn't persist.
+      error: (e) => {
+        this.hydrationMl.update((v) => v - ml);
+        this.logger.error("hydration_log_failed", e);
+      },
+    });
   }
 }

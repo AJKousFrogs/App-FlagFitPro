@@ -65,7 +65,10 @@ export interface AthleteEventInput {
   status?: AthleteEventStatus;
 }
 
-export const ATHLETE_EVENT_CATEGORY_LABEL: Record<AthleteEventCategory, string> = {
+export const ATHLETE_EVENT_CATEGORY_LABEL: Record<
+  AthleteEventCategory,
+  string
+> = {
   personal: "Personal",
   domestic: "Domestic league",
   national: "National team",

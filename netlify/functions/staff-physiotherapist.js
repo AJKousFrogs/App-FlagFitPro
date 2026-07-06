@@ -1,5 +1,9 @@
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse, ErrorType } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ErrorType,
+} from "./utils/error-handler.js";
 import { parseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
@@ -548,141 +552,141 @@ function calculateRiskIndicators(loadHistory, injuries) {
 
 // Main handler
 async function handleRequest(event, _context, { userId }) {
-    const path = event.path.replace(
-      "/.netlify/functions/staff-physiotherapist",
-      "",
-    );
-    const method = event.httpMethod;
+  const path = event.path.replace(
+    "/.netlify/functions/staff-physiotherapist",
+    "",
+  );
+  const method = event.httpMethod;
 
-    // Verify physiotherapist access
-    const access = await verifyPhysioAccess(userId);
-    if (!access) {
+  // Verify physiotherapist access
+  const access = await verifyPhysioAccess(userId);
+  if (!access) {
+    return createErrorResponse(
+      "Access denied. Physiotherapist role required.",
+      403,
+      ErrorType.AUTHORIZATION,
+    );
+  }
+
+  const teamId = access.team_id;
+
+  // GET /athletes - Get all athletes with physio status
+  if (
+    method === "GET" &&
+    (path === "" || path === "/" || path === "/athletes")
+  ) {
+    const athletes = await getAthletePhysioOverview(teamId);
+    return createSuccessResponse({ athletes });
+  }
+
+  // GET /athletes/:id - Get detailed injury data for athlete
+  if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
+    const athleteId = path.split("/")[2];
+    const canAccess = await verifyAthleteOnTeam(athleteId, teamId);
+    if (!canAccess) {
       return createErrorResponse(
-        "Access denied. Physiotherapist role required.",
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
+    }
+    const details = await getAthleteInjuryDetails(athleteId);
+    return createSuccessResponse(details);
+  }
+
+  // GET /rtp - Get Return-to-Play athletes
+  if (method === "GET" && path === "/rtp") {
+    const rtpAthletes = await getRTPAthletes(teamId);
+    return createSuccessResponse({ athletes: rtpAthletes });
+  }
+
+  // PUT /rtp/:injuryId - Update RTP progress
+  if (method === "PUT" && path.match(/^\/rtp\/[\w-]+$/)) {
+    const injuryId = path.split("/")[2];
+    let body = {};
+    try {
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      const isObjectError = error.message === "Request body must be an object";
+      return createErrorResponse(
+        isObjectError ? error.message : "Invalid JSON in request body",
+        isObjectError ? 422 : 400,
+        isObjectError ? "validation_error" : "invalid_json",
+      );
+    }
+
+    const { data: injuryRecord, error: injuryError } = await supabaseAdmin
+      .from("athlete_injuries")
+      .select("user_id")
+      .eq("id", injuryId)
+      .single();
+
+    if (injuryError || !injuryRecord) {
+      return createErrorResponse(
+        "Injury record not found",
+        404,
+        ErrorType.NOT_FOUND,
+      );
+    }
+
+    const canAccess = await verifyAthleteOnTeam(injuryRecord.user_id, teamId);
+    if (!canAccess) {
+      return createErrorResponse(
+        "Access denied to injury record",
         403,
         ErrorType.AUTHORIZATION,
       );
     }
 
-    const teamId = access.team_id;
+    const updated = await updateRTPProgress(injuryId, body);
+    return createSuccessResponse({ injury: updated });
+  }
 
-    // GET /athletes - Get all athletes with physio status
-    if (
-      method === "GET" &&
-      (path === "" || path === "/" || path === "/athletes")
-    ) {
-      const athletes = await getAthletePhysioOverview(teamId);
-      return createSuccessResponse({ athletes });
+  // GET /summary - Team injury summary
+  if (method === "GET" && path === "/summary") {
+    const summary = await getTeamInjurySummary(teamId);
+    return createSuccessResponse(summary);
+  }
+
+  // POST /injuries - Log new injury
+  if (method === "POST" && path === "/injuries") {
+    let body = {};
+    try {
+      body = parseJsonObjectBody(event.body);
+    } catch (error) {
+      const isObjectError = error.message === "Request body must be an object";
+      return createErrorResponse(
+        isObjectError ? error.message : "Invalid JSON in request body",
+        isObjectError ? 422 : 400,
+        isObjectError ? "validation_error" : "invalid_json",
+      );
+    }
+    if (!body.userId || !body.type || !body.location) {
+      return createErrorResponse(
+        "Missing required fields: userId, type, location",
+        400,
+        ErrorType.VALIDATION,
+      );
     }
 
-    // GET /athletes/:id - Get detailed injury data for athlete
-    if (method === "GET" && path.match(/^\/athletes\/[\w-]+$/)) {
-      const athleteId = path.split("/")[2];
-      const canAccess = await verifyAthleteOnTeam(athleteId, teamId);
-      if (!canAccess) {
-        return createErrorResponse(
-          "Access denied to athlete data",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-      const details = await getAthleteInjuryDetails(athleteId);
-      return createSuccessResponse(details);
+    const canAccess = await verifyAthleteOnTeam(body.userId, teamId);
+    if (!canAccess) {
+      return createErrorResponse(
+        "Access denied to athlete data",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
     }
 
-    // GET /rtp - Get Return-to-Play athletes
-    if (method === "GET" && path === "/rtp") {
-      const rtpAthletes = await getRTPAthletes(teamId);
-      return createSuccessResponse({ athletes: rtpAthletes });
-    }
+    // Determine role: if called from physio dashboard, role is physiotherapist
+    // Otherwise, assume coach flagged it
+    const createdByRole =
+      access.role === "physiotherapist" ? "physiotherapist" : "coach";
+    const injury = await logInjury(body.userId, body, createdByRole);
+    return createSuccessResponse({ injury });
+  }
 
-    // PUT /rtp/:injuryId - Update RTP progress
-    if (method === "PUT" && path.match(/^\/rtp\/[\w-]+$/)) {
-      const injuryId = path.split("/")[2];
-      let body = {};
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        const isObjectError = error.message === "Request body must be an object";
-        return createErrorResponse(
-          isObjectError ? error.message : "Invalid JSON in request body",
-          isObjectError ? 422 : 400,
-          isObjectError ? "validation_error" : "invalid_json",
-        );
-      }
-
-      const { data: injuryRecord, error: injuryError } = await supabaseAdmin
-        .from("athlete_injuries")
-        .select("user_id")
-        .eq("id", injuryId)
-        .single();
-
-      if (injuryError || !injuryRecord) {
-        return createErrorResponse(
-          "Injury record not found",
-          404,
-          ErrorType.NOT_FOUND,
-        );
-      }
-
-      const canAccess = await verifyAthleteOnTeam(injuryRecord.user_id, teamId);
-      if (!canAccess) {
-        return createErrorResponse(
-          "Access denied to injury record",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-
-      const updated = await updateRTPProgress(injuryId, body);
-      return createSuccessResponse({ injury: updated });
-    }
-
-    // GET /summary - Team injury summary
-    if (method === "GET" && path === "/summary") {
-      const summary = await getTeamInjurySummary(teamId);
-      return createSuccessResponse(summary);
-    }
-
-    // POST /injuries - Log new injury
-    if (method === "POST" && path === "/injuries") {
-      let body = {};
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        const isObjectError = error.message === "Request body must be an object";
-        return createErrorResponse(
-          isObjectError ? error.message : "Invalid JSON in request body",
-          isObjectError ? 422 : 400,
-          isObjectError ? "validation_error" : "invalid_json",
-        );
-      }
-      if (!body.userId || !body.type || !body.location) {
-        return createErrorResponse(
-          "Missing required fields: userId, type, location",
-          400,
-          ErrorType.VALIDATION,
-        );
-      }
-
-      const canAccess = await verifyAthleteOnTeam(body.userId, teamId);
-      if (!canAccess) {
-        return createErrorResponse(
-          "Access denied to athlete data",
-          403,
-          ErrorType.AUTHORIZATION,
-        );
-      }
-
-      // Determine role: if called from physio dashboard, role is physiotherapist
-      // Otherwise, assume coach flagged it
-      const createdByRole =
-        access.role === "physiotherapist" ? "physiotherapist" : "coach";
-      const injury = await logInjury(body.userId, body, createdByRole);
-      return createSuccessResponse({ injury });
-    }
-
-    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
+  return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
 }
 
 async function safeHandleRequest(event, context, auth) {

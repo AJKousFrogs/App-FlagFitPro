@@ -1,6 +1,14 @@
 import { supabaseAdmin } from "../utils/supabase-client.js";
-import { generateEmbedding, generateEmbeddings as _generateEmbeddings, cosineSimilarity as _cosineSimilarity, isEmbeddingServiceAvailable } from "./embedding-service.js";
-import { generateCoachingResponse as _generateCoachingResponse, generateClarifyingQuestion } from "./groq-client.js";
+import {
+  generateEmbedding,
+  generateEmbeddings as _generateEmbeddings,
+  cosineSimilarity as _cosineSimilarity,
+  isEmbeddingServiceAvailable,
+} from "./embedding-service.js";
+import {
+  generateCoachingResponse as _generateCoachingResponse,
+  generateClarifyingQuestion,
+} from "./groq-client.js";
 import { createLogger } from "./structured-logger.js";
 
 /**
@@ -114,7 +122,11 @@ async function searchKnowledgeKeyword(query, options = {}) {
   // filter conditions. Strip everything but letters/numbers/space/hyphen (ample
   // for a keyword search) and drop any that sanitise to empty.
   const keywords = extractKeywords(query)
-    .map((kw) => String(kw).replace(/[^\p{L}\p{N}\s-]/gu, "").trim())
+    .map((kw) =>
+      String(kw)
+        .replace(/[^\p{L}\p{N}\s-]/gu, "")
+        .trim(),
+    )
     .filter((kw) => kw.length > 0);
 
   if (keywords.length === 0) {
@@ -872,7 +884,8 @@ function buildMemoryPrompt(memory, pendingCheckins) {
 // EXPORTS
 // =============================================================================
 
-export { // RAG Pipeline
+export {
+  // RAG Pipeline
   searchKnowledgeSemantic,
   searchKnowledgeKeyword,
   searchKnowledgeHybrid,
@@ -900,4 +913,5 @@ export { // RAG Pipeline
 
   // Main Pipeline
   processSmartQuery,
-  buildMemoryPrompt, };
+  buildMemoryPrompt,
+};

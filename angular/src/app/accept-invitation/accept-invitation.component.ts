@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 
 /**
@@ -10,7 +15,16 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
   standalone: true,
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [`:host { display: block; max-width: 480px; margin: 0 auto; min-height: 100dvh; }`],
+  styles: [
+    `
+      :host {
+        display: block;
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+    `,
+  ],
   template: `
     <main class="screen" style="padding-top:var(--s-5)">
       <h1>Team invitation</h1>
@@ -18,10 +32,20 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
         <p class="note" style="color:var(--danger)">
           Invalid invitation link. It may have expired or already been used.
         </p>
-        <a routerLink="/login" class="btn primary block" style="margin-top:var(--s-3)">Go to sign in</a>
+        <a
+          routerLink="/login"
+          class="btn primary block"
+          style="margin-top:var(--s-3)"
+          >Go to sign in</a
+        >
       } @else {
         <p class="muted">Accepting your invitation…</p>
-        <a routerLink="/onboarding" class="btn primary block" style="margin-top:var(--s-3)">Continue</a>
+        <a
+          routerLink="/onboarding"
+          class="btn primary block"
+          style="margin-top:var(--s-3)"
+          >Continue</a
+        >
       }
     </main>
   `,

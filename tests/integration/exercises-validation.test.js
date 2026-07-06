@@ -105,6 +105,8 @@ describe("exercises validation hardening", () => {
     expect(response.statusCode).toBe(500);
     const payload = JSON.parse(response.body);
     expect(payload.error?.message).toBe("Internal server error");
-    expect(JSON.stringify(payload)).not.toContain("sensitive query planner detail");
+    expect(JSON.stringify(payload)).not.toContain(
+      "sensitive query planner detail",
+    );
   });
 });

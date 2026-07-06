@@ -6,7 +6,13 @@
  * for manual SQL Editor / MCP execution.
  */
 
-import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 
 const PROJECT_DIR = join(process.cwd());
@@ -44,9 +50,13 @@ function buildConsolidatedSql(files) {
   const parts = [header];
   for (const file of files) {
     const rel = file.replace(`${PROJECT_DIR}/`, "");
-    parts.push(`-- ============================================================================`);
+    parts.push(
+      `-- ============================================================================`,
+    );
     parts.push(`-- ${rel}`);
-    parts.push(`-- ============================================================================`);
+    parts.push(
+      `-- ============================================================================`,
+    );
     parts.push(readFileSync(file, "utf8").trim());
     parts.push("");
   }
@@ -68,11 +78,17 @@ function main() {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const planPath = join(RESULTS_DIR, `migration_plan_${timestamp}.txt`);
   const consolidatedPath = join(MCP_DIR, `mcp_chunk_${timestamp}.sql`);
-  const stableConsolidatedPath = join(RESULTS_DIR, "all_migrations_consolidated.sql");
+  const stableConsolidatedPath = join(
+    RESULTS_DIR,
+    "all_migrations_consolidated.sql",
+  );
 
   const bundle = buildConsolidatedSql(files);
 
-  writeFileSync(planPath, files.map((f) => f.replace(`${PROJECT_DIR}/`, "")).join("\n"));
+  writeFileSync(
+    planPath,
+    files.map((f) => f.replace(`${PROJECT_DIR}/`, "")).join("\n"),
+  );
   writeFileSync(consolidatedPath, bundle);
   writeFileSync(stableConsolidatedPath, bundle);
 
@@ -83,7 +99,9 @@ function main() {
   console.log(`MCP SQL bundle: ${consolidatedPath}`);
   console.log("\n⚠️  Execution note:");
   console.log("- Supabase REST API cannot run DDL migrations directly.");
-  console.log("- Execute the generated SQL bundle via Supabase SQL Editor or MCP SQL execution.");
+  console.log(
+    "- Execute the generated SQL bundle via Supabase SQL Editor or MCP SQL execution.",
+  );
 }
 
 main();

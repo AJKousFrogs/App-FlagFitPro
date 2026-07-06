@@ -190,8 +190,10 @@ function calculateDateRange(days, forward = false) {
   return { startDate, endDate };
 }
 
-export { executeQuery,
+export {
+  executeQuery,
   parseAthleteId,
   parseIntParam,
   parseDateParam,
-  calculateDateRange, };
+  calculateDateRange,
+};

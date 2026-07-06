@@ -207,8 +207,10 @@ async function checkCoachLockedForMerlin(sessionId) {
   };
 }
 
-export { isMerlinRequest,
+export {
+  isMerlinRequest,
   isMutationEndpoint,
   guardMerlinRequest,
   logMerlinViolation,
-  checkCoachLockedForMerlin, };
+  checkCoachLockedForMerlin,
+};

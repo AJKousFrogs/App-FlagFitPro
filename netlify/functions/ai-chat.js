@@ -1,11 +1,33 @@
 import { wrapHandler } from "./utils/lambda-compat.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
-import { classifyRiskLevel, generateSafeResponse, filterContent, filterSourcesByEvidence, RISK_LEVELS, INTENT_TYPES, classifyWithConfidence, generateBlockedYouthResponse } from "./utils/ai-safety-classifier.js";
-import { isGroqConfigured, generateCoachingResponse, generateCoachingResponseStream } from "./utils/groq-client.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
+import {
+  classifyRiskLevel,
+  generateSafeResponse,
+  filterContent,
+  filterSourcesByEvidence,
+  RISK_LEVELS,
+  INTENT_TYPES,
+  classifyWithConfidence,
+  generateBlockedYouthResponse,
+} from "./utils/ai-safety-classifier.js";
+import {
+  isGroqConfigured,
+  generateCoachingResponse,
+  generateCoachingResponseStream,
+} from "./utils/groq-client.js";
 import { authenticateRequest } from "./utils/auth-helper.js";
-import { processSmartQuery, searchKnowledgeHybrid, updateCheckinStatus, buildCheckinMessage, ROUTING_ACTIONS } from "./utils/smart-ai-service.js";
+import {
+  processSmartQuery,
+  searchKnowledgeHybrid,
+  updateCheckinStatus,
+  buildCheckinMessage,
+  ROUTING_ACTIONS,
+} from "./utils/smart-ai-service.js";
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { computeAcwrAt } from "./utils/acwr.js";
@@ -359,7 +381,9 @@ async function getUserContext(userId) {
         .maybeSingle(),
       supabaseAdmin
         .from("recovery_blocks")
-        .select("block_type, block_start_date, block_end_date, max_load_percent, focus")
+        .select(
+          "block_type, block_start_date, block_end_date, max_load_percent, focus",
+        )
         .eq("user_id", userId)
         .lte("block_start_date", today)
         .gte("block_end_date", today)
@@ -511,7 +535,9 @@ async function getUserContext(userId) {
       context.role ||= teamMembership.role;
     }
   } catch (error) {
-    logger.error("ai_chat_user_context_fetch_failed", error, { user_id: userId });
+    logger.error("ai_chat_user_context_fetch_failed", error, {
+      user_id: userId,
+    });
   }
 
   return context;
@@ -671,13 +697,17 @@ async function getPendingFollowups(userId) {
       .limit(3);
 
     if (error) {
-      logger.error("ai_chat_followups_fetch_failed", error, { user_id: userId });
+      logger.error("ai_chat_followups_fetch_failed", error, {
+        user_id: userId,
+      });
       return [];
     }
 
     return data || [];
   } catch (error) {
-    logger.error("ai_chat_followups_handler_failed", error, { user_id: userId });
+    logger.error("ai_chat_followups_handler_failed", error, {
+      user_id: userId,
+    });
     return [];
   }
 }
@@ -761,7 +791,6 @@ async function markFollowupTriggered(followupId) {
     });
   }
 }
-
 
 /**
  * Build conversation memory prompt from active contexts
@@ -1239,7 +1268,9 @@ async function buildAthleteStateGates(userId) {
       // clinical injuries via the compat view (see safety-context read above)
       supabaseAdmin
         .from("v_injuries_unified")
-        .select("id, type:injury_type, severity, body_part, status, start_date:injury_date")
+        .select(
+          "id, type:injury_type, severity, body_part, status, start_date:injury_date",
+        )
         .eq("user_id", userId)
         .in("status", ["active", "recovering", "monitoring"])
         .gte("injury_date", thirtyDaysAgo.toISOString().split("T")[0])
@@ -1338,7 +1369,9 @@ async function buildAthleteStateGates(userId) {
       user_id: userId,
     });
   } catch (error) {
-    logger.error("ai_chat_state_gates_build_failed", error, { user_id: userId });
+    logger.error("ai_chat_state_gates_build_failed", error, {
+      user_id: userId,
+    });
     // Return partial gates, don't block on error
   }
 
@@ -1433,7 +1466,9 @@ async function getSessionMessages(userId, sessionId) {
 
   const { data: messages, error: messagesError } = await supabaseAdmin
     .from("ai_messages")
-    .select("id, role, content, created_at, risk_level, intent, citations, feedback_helpful, coach_reviewed_at, coach_reviewed_by, metadata")
+    .select(
+      "id, role, content, created_at, risk_level, intent, citations, feedback_helpful, coach_reviewed_at, coach_reviewed_by, metadata",
+    )
     .eq("session_id", sessionId)
     .order("created_at", { ascending: true });
 
@@ -1491,9 +1526,13 @@ async function getRecentSessions(userId, limit = 5) {
     .order("created_at", { ascending: false });
 
   if (messagesError) {
-    logger.error("ai_chat_recent_session_messages_fetch_failed", messagesError, {
-      user_id: userId,
-    });
+    logger.error(
+      "ai_chat_recent_session_messages_fetch_failed",
+      messagesError,
+      {
+        user_id: userId,
+      },
+    );
     throw new Error("Failed to load recent chat sessions");
   }
 
@@ -1631,10 +1670,14 @@ async function createYouthParentNotification(
         .insert(notifications);
 
       if (insertError) {
-        logger.error("ai_chat_parent_notifications_insert_failed", insertError, {
-          youth_id: youthId,
-          notification_type: notificationType,
-        });
+        logger.error(
+          "ai_chat_parent_notifications_insert_failed",
+          insertError,
+          {
+            youth_id: youthId,
+            notification_type: notificationType,
+          },
+        );
       } else {
         logger.info("ai_chat_parent_notifications_created", {
           youth_id: youthId,
@@ -1945,7 +1988,12 @@ function detectKnowledgeBias(goalFocus, query) {
     /(recovery|sleep|sore|fatigue|pain|injury prevention)/.test(lowerQuery)
   ) {
     return {
-      categories: ["recovery", "recovery_method", "injury_prevention", "injury"],
+      categories: [
+        "recovery",
+        "recovery_method",
+        "injury_prevention",
+        "injury",
+      ],
       semanticWeight: 0.45,
     };
   }
@@ -1963,7 +2011,12 @@ function detectKnowledgeBias(goalFocus, query) {
   };
 }
 
-async function getCategoryBiasedKnowledge(query, categories, riskLevel, limit = 5) {
+async function getCategoryBiasedKnowledge(
+  query,
+  categories,
+  riskLevel,
+  limit = 5,
+) {
   if (!Array.isArray(categories) || categories.length === 0) {
     return [];
   }
@@ -2035,7 +2088,6 @@ async function getCategoryBiasedKnowledge(query, categories, riskLevel, limit = 
 
   return filterSourcesByEvidence(sources, riskLevel).slice(0, limit);
 }
-
 
 /**
  * Map evidence strength to grade
@@ -2525,8 +2577,9 @@ function generateSuggestedActions(
     /(eat|meal|nutrition|hydrate|hydration|protein|carb|calories|fuel|supplement|snack)/.test(
       normalizedQuery,
     );
-  const isHydrationFocused =
-    /hydrate|hydration|fluids|electrolyte|drink/.test(normalizedQuery);
+  const isHydrationFocused = /hydrate|hydration|fluids|electrolyte|drink/.test(
+    normalizedQuery,
+  );
 
   // High-risk: always suggest professional consultation (not a micro-session)
   if (riskLevel === RISK_LEVELS.HIGH) {
@@ -2765,7 +2818,8 @@ function generateSuggestedActions(
     if (userContext.nutritionPlan) {
       actions.push({
         type: "review_nutrition_targets",
-        reason: "Use your saved backend targets to turn guidance into a daily plan",
+        reason:
+          "Use your saved backend targets to turn guidance into a daily plan",
         label: "Review Nutrition Targets",
         isMicroSession: false,
       });
@@ -3413,7 +3467,8 @@ const handler = async (event, context) => {
     (path === "/sessions" || event.path.includes("/api/ai/chat/sessions"));
   const isSessionFetch =
     event.httpMethod === "GET" &&
-    (path.includes("/session/") || event.path.includes("/api/ai/chat/session/"));
+    (path.includes("/session/") ||
+      event.path.includes("/api/ai/chat/session/"));
   const sessionMatch = path.match(/\/session\/([^/]+)$/);
 
   if (event.httpMethod === "POST") {
@@ -3860,10 +3915,7 @@ const handler = async (event, context) => {
           goalFocus,
           timeHorizon,
         );
-        const knowledgeBias = detectKnowledgeBias(
-          goalFocus,
-          normalizedMessage,
-        );
+        const knowledgeBias = detectKnowledgeBias(goalFocus, normalizedMessage);
         const biasedKnowledge = await getCategoryBiasedKnowledge(
           knowledgeQuery,
           knowledgeBias.categories,
@@ -3876,13 +3928,13 @@ const handler = async (event, context) => {
             limit: 5,
             semanticWeight: knowledgeBias.semanticWeight,
           }));
-        const knowledge = [
-          ...biasedKnowledge,
-          ...(fallbackKnowledge || []),
-        ].filter(
-          (entry, index, array) =>
-            array.findIndex((candidate) => candidate.id === entry.id) === index,
-        ).slice(0, 5);
+        const knowledge = [...biasedKnowledge, ...(fallbackKnowledge || [])]
+          .filter(
+            (entry, index, array) =>
+              array.findIndex((candidate) => candidate.id === entry.id) ===
+              index,
+          )
+          .slice(0, 5);
 
         // 10c. Add learned preferences and memory to context
         userContext.learnedPreferences = smartResult.learnedPreferences;
@@ -4215,8 +4267,8 @@ export { handler };
 const STREAM_CORS_HEADERS = {
   "Content-Type": "text/event-stream; charset=utf-8",
   "Cache-Control": "no-cache, no-transform",
-  "Connection": "keep-alive",
-  "X-Accel-Buffering": "no",   // disable Nginx buffering on Netlify infra
+  Connection: "keep-alive",
+  "X-Accel-Buffering": "no", // disable Nginx buffering on Netlify infra
 };
 
 /**
@@ -4237,10 +4289,13 @@ function sseEvent(payload) {
  */
 async function runPreProcessing(req, controller) {
   // 1. Auth
-  const authHeader = req.headers.get("authorization") || req.headers.get("Authorization") || "";
+  const authHeader =
+    req.headers.get("authorization") || req.headers.get("Authorization") || "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
   if (!token) {
-    controller.enqueue(sseEvent({ type: "error", message: "Authorization token required" }));
+    controller.enqueue(
+      sseEvent({ type: "error", message: "Authorization token required" }),
+    );
     controller.close();
     return null;
   }
@@ -4248,7 +4303,9 @@ async function runPreProcessing(req, controller) {
   const fakeEvent = { headers: { authorization: authHeader } };
   const authResult = await authenticateRequest(fakeEvent);
   if (!authResult.success) {
-    controller.enqueue(sseEvent({ type: "error", message: "Invalid or expired token" }));
+    controller.enqueue(
+      sseEvent({ type: "error", message: "Invalid or expired token" }),
+    );
     controller.close();
     return null;
   }
@@ -4277,7 +4334,9 @@ export default async (req) => {
       try {
         // Step 1: Auth
         const auth = await runPreProcessing(req, controller);
-        if (!auth) {return;} // error already sent
+        if (!auth) {
+          return;
+        } // error already sent
 
         const { userId } = auth;
 
@@ -4286,14 +4345,18 @@ export default async (req) => {
         try {
           body = await req.json();
         } catch {
-          controller.enqueue(sseEvent({ type: "error", message: "Invalid JSON body" }));
+          controller.enqueue(
+            sseEvent({ type: "error", message: "Invalid JSON body" }),
+          );
           controller.close();
           return;
         }
 
         const { message, session_id, team_id, goal, time_horizon } = body;
         if (!message || typeof message !== "string" || !message.trim()) {
-          controller.enqueue(sseEvent({ type: "error", message: "Message is required" }));
+          controller.enqueue(
+            sseEvent({ type: "error", message: "Message is required" }),
+          );
           controller.close();
           return;
         }
@@ -4301,10 +4364,17 @@ export default async (req) => {
         const normalizedMessage = message.trim().substring(0, MAX_QUERY_LENGTH);
 
         // Step 3: Merlin guard
-        const guardReq = { method: "POST", path: req.url, headers: Object.fromEntries(req.headers), body: JSON.stringify(body) };
+        const guardReq = {
+          method: "POST",
+          path: req.url,
+          headers: Object.fromEntries(req.headers),
+          body: JSON.stringify(body),
+        };
         const blocked = guardMerlinRequest(guardReq);
         if (blocked?.statusCode === 403) {
-          controller.enqueue(sseEvent({ type: "error", message: "Request blocked" }));
+          controller.enqueue(
+            sseEvent({ type: "error", message: "Request blocked" }),
+          );
           controller.close();
           return;
         }
@@ -4312,7 +4382,12 @@ export default async (req) => {
         // Step 4: Check AI consent
         const consent = await checkAiProcessingConsent(userId);
         if (!consent) {
-          controller.enqueue(sseEvent({ type: "error", message: "AI processing consent not granted" }));
+          controller.enqueue(
+            sseEvent({
+              type: "error",
+              message: "AI processing consent not granted",
+            }),
+          );
           controller.close();
           return;
         }
@@ -4325,16 +4400,18 @@ export default async (req) => {
         ]);
 
         // Step 6: Conversation history + contexts
-        const [conversationHistory, conversationContexts, pendingFollowups] = await Promise.all([
-          getConversationHistory(session.id, 10),
-          getActiveConversationContexts(userId, 5),
-          getPendingFollowups(userId),
-        ]);
+        const [conversationHistory, conversationContexts, pendingFollowups] =
+          await Promise.all([
+            getConversationHistory(session.id, 10),
+            getActiveConversationContexts(userId, 5),
+            getPendingFollowups(userId),
+          ]);
 
         // Step 7: Youth settings
-        const youthSettings = stateGates.ageGroup !== "adult"
-          ? await getYouthSettings(userId)
-          : null;
+        const youthSettings =
+          stateGates.ageGroup !== "adult"
+            ? await getYouthSettings(userId)
+            : null;
 
         // Step 8: Classification + safety
         const enhancedClassification = await classifyWithConfidence(
@@ -4343,14 +4420,23 @@ export default async (req) => {
         );
 
         if (enhancedClassification.isYouthBlocked) {
-          controller.enqueue(sseEvent({ type: "error", message: "This topic is restricted for your age group" }));
+          controller.enqueue(
+            sseEvent({
+              type: "error",
+              message: "This topic is restricted for your age group",
+            }),
+          );
           controller.close();
           return;
         }
 
         let classification = classifyRiskLevel(normalizedMessage, userContext);
         classification = applyStateGateEscalation(classification, stateGates);
-        classification = applyACWRSafetyOverride(classification, userContext, normalizedMessage);
+        classification = applyACWRSafetyOverride(
+          classification,
+          userContext,
+          normalizedMessage,
+        );
 
         // Step 9: ACWR blocked — swap plan (not streamed, it's a special response)
         if (classification.acwrOverride) {
@@ -4363,31 +4449,49 @@ export default async (req) => {
             classification.riskLevel,
             swapResponse.answer,
             swapResponse.citations || [],
-            { requiresProfessional: true, acwrOverride: true, acwrData: classification.acwrData },
-          );
-          const messageId = await saveChatMessage(session.id, userId, normalizedMessage, safeResponse, classification);
-          if (messageId) {
-            await createCoachInboxItem(messageId, userId, normalizedMessage, classification, stateGates);
-          }
-          controller.enqueue(sseEvent({
-            type: "done",
-            payload: {
-              answer_markdown: safeResponse.answer,
-              citations: safeResponse.citations || [],
-              risk_level: safeResponse.riskLevel,
-              disclaimer: safeResponse.disclaimer || null,
-              suggested_actions: safeResponse.suggestedActions || [],
-              chat_session_id: session.id,
-              message_id: messageId || null,
-              is_swap_plan: true,
-              acwr_safety: {
-                blocked: true,
-                reason: classification.acwrBlockReason,
-                current_acwr: classification.acwrData?.acwr,
-                risk_zone: classification.acwrData?.riskZone,
-              },
+            {
+              requiresProfessional: true,
+              acwrOverride: true,
+              acwrData: classification.acwrData,
             },
-          }));
+          );
+          const messageId = await saveChatMessage(
+            session.id,
+            userId,
+            normalizedMessage,
+            safeResponse,
+            classification,
+          );
+          if (messageId) {
+            await createCoachInboxItem(
+              messageId,
+              userId,
+              normalizedMessage,
+              classification,
+              stateGates,
+            );
+          }
+          controller.enqueue(
+            sseEvent({
+              type: "done",
+              payload: {
+                answer_markdown: safeResponse.answer,
+                citations: safeResponse.citations || [],
+                risk_level: safeResponse.riskLevel,
+                disclaimer: safeResponse.disclaimer || null,
+                suggested_actions: safeResponse.suggestedActions || [],
+                chat_session_id: session.id,
+                message_id: messageId || null,
+                is_swap_plan: true,
+                acwr_safety: {
+                  blocked: true,
+                  reason: classification.acwrBlockReason,
+                  current_acwr: classification.acwrData?.acwr,
+                  risk_zone: classification.acwrData?.riskZone,
+                },
+              },
+            }),
+          );
           controller.close();
           return;
         }
@@ -4407,18 +4511,32 @@ export default async (req) => {
         });
 
         const [knowledgeFromBias, knowledgeFromHybrid] = await Promise.all([
-          getCategoryBiasedKnowledge(normalizedMessage, [classification.intent], classification.riskLevel, 3),
-          searchKnowledgeHybrid(normalizedMessage, { userId, riskLevel: classification.riskLevel, limit: 5 }),
+          getCategoryBiasedKnowledge(
+            normalizedMessage,
+            [classification.intent],
+            classification.riskLevel,
+            3,
+          ),
+          searchKnowledgeHybrid(normalizedMessage, {
+            userId,
+            riskLevel: classification.riskLevel,
+            limit: 5,
+          }),
         ]);
 
         const knowledgeSeen = new Set();
         const knowledge = [...knowledgeFromBias, ...(knowledgeFromHybrid || [])]
-          .filter((k) => k?.id && !knowledgeSeen.has(k.id) && knowledgeSeen.add(k.id))
+          .filter(
+            (k) => k?.id && !knowledgeSeen.has(k.id) && knowledgeSeen.add(k.id),
+          )
           .slice(0, 5);
 
         const enhancedContext = {
           ...userContext,
-          conversationHistory: conversationHistory.map((h) => ({ role: h.role, content: h.content })),
+          conversationHistory: conversationHistory.map((h) => ({
+            role: h.role,
+            content: h.content,
+          })),
           userName: stateGates.userName || null,
           dailyState: stateGates.dailyState || null,
           upcomingGame: stateGates.upcomingGame || null,
@@ -4461,8 +4579,16 @@ export default async (req) => {
         }
 
         // ── Step 12: Fire-and-forget post-processing ──────────────────────────
-        const filteredAnswer = filterContent(fullAnswer, classification.riskLevel);
-        const aiResponse = { answer: filteredAnswer, source: "groq-ai", model: streamModel, usage: streamUsage };
+        const filteredAnswer = filterContent(
+          fullAnswer,
+          classification.riskLevel,
+        );
+        const aiResponse = {
+          answer: filteredAnswer,
+          source: "groq-ai",
+          model: streamModel,
+          usage: streamUsage,
+        };
         const finalAiResponse = addEvidenceExplanation(aiResponse);
 
         const safeResponse = generateSafeResponse(
@@ -4484,57 +4610,87 @@ export default async (req) => {
           classification.riskLevel,
           classification.intent,
         );
-        safeResponse.suggestedActions = [...(safeResponse.suggestedActions || []), ...suggestedActions];
+        safeResponse.suggestedActions = [
+          ...(safeResponse.suggestedActions || []),
+          ...suggestedActions,
+        ];
 
         // DB operations — fire-and-forget (don't block the stream close)
         (async () => {
           try {
-            const messageId = await saveChatMessage(session.id, userId, normalizedMessage, safeResponse, classification);
+            const messageId = await saveChatMessage(
+              session.id,
+              userId,
+              normalizedMessage,
+              safeResponse,
+              classification,
+            );
             if (messageId) {
-              await createCoachInboxItem(messageId, userId, normalizedMessage, classification, stateGates);
+              await createCoachInboxItem(
+                messageId,
+                userId,
+                normalizedMessage,
+                classification,
+                stateGates,
+              );
               for (const action of safeResponse.suggestedActions) {
                 await logRecommendation(userId, session.id, action);
               }
               // Send the final done event with message_id from DB
-              controller.enqueue(sseEvent({
-                type: "done",
-                payload: {
-                  answer_markdown: safeResponse.answer,
-                  citations: safeResponse.citations || [],
-                  risk_level: safeResponse.riskLevel,
-                  disclaimer: safeResponse.disclaimer || null,
-                  suggested_actions: safeResponse.suggestedActions || [],
-                  chat_session_id: session.id,
-                  message_id: messageId,
-                  intent: classification.intent,
-                  is_swap_plan: false,
-                  acwr_safety: null,
-                  state_gate_escalation: classification.stateGateEscalation
-                    ? { escalated: true, original_risk: classification.originalRiskLevel, escalated_risk: classification.riskLevel, reasons: classification.escalationReasons }
-                    : null,
-                  smart_ai: {
-                    routing_action: smartResult.routingAction,
-                    confidence: smartResult.confidence,
-                    knowledge_sources_count: knowledge.length,
+              controller.enqueue(
+                sseEvent({
+                  type: "done",
+                  payload: {
+                    answer_markdown: safeResponse.answer,
+                    citations: safeResponse.citations || [],
+                    risk_level: safeResponse.riskLevel,
+                    disclaimer: safeResponse.disclaimer || null,
+                    suggested_actions: safeResponse.suggestedActions || [],
+                    chat_session_id: session.id,
+                    message_id: messageId,
+                    intent: classification.intent,
+                    is_swap_plan: false,
+                    acwr_safety: null,
+                    state_gate_escalation: classification.stateGateEscalation
+                      ? {
+                          escalated: true,
+                          original_risk: classification.originalRiskLevel,
+                          escalated_risk: classification.riskLevel,
+                          reasons: classification.escalationReasons,
+                        }
+                      : null,
+                    smart_ai: {
+                      routing_action: smartResult.routingAction,
+                      confidence: smartResult.confidence,
+                      knowledge_sources_count: knowledge.length,
+                    },
+                    metadata: {
+                      source: finalAiResponse.source,
+                      model: streamModel,
+                      usage: streamUsage,
+                    },
                   },
-                  metadata: {
-                    source: finalAiResponse.source,
-                    model: streamModel,
-                    usage: streamUsage,
-                  },
-                },
-              }));
+                }),
+              );
             }
           } catch (postErr) {
-            logger.error("ai_chat_stream_post_processing_failed", postErr, { user_id: userId });
+            logger.error("ai_chat_stream_post_processing_failed", postErr, {
+              user_id: userId,
+            });
           } finally {
             controller.close();
           }
         })();
 
         // Side effects — fire-and-forget
-        updateUserPreferences(userId, { intent: classification.intent, position: userContext.position })
-          .catch((e) => logger.error("ai_chat_stream_prefs_update_failed", e, { user_id: userId }));
+        updateUserPreferences(userId, {
+          intent: classification.intent,
+          position: userContext.position,
+        }).catch((e) =>
+          logger.error("ai_chat_stream_prefs_update_failed", e, {
+            user_id: userId,
+          }),
+        );
 
         for (const ctx of conversationContexts) {
           markContextReferenced(ctx.id);
@@ -4543,13 +4699,16 @@ export default async (req) => {
         if (pendingFollowups.length > 0) {
           markFollowupTriggered(pendingFollowups[0].id).catch(() => {});
         }
-
       } catch (err) {
         logger.error("ai_chat_stream_handler_failed", err);
         try {
-          controllerRef?.enqueue(sseEvent({ type: "error", message: "Internal server error" }));
+          controllerRef?.enqueue(
+            sseEvent({ type: "error", message: "Internal server error" }),
+          );
           controllerRef?.close();
-        } catch { /* already closed */ }
+        } catch {
+          /* already closed */
+        }
       }
     },
   });

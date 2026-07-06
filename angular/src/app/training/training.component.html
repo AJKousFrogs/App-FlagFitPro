@@ -4,8 +4,12 @@
     <h1>Training</h1>
   </div>
   <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"><lucide-icon name="bell" /><span class="dot"></span></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"><app-avatar /></a>
+    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
+      ><lucide-icon name="bell" /><span class="dot"></span
+    ></a>
+    <a class="avatar" routerLink="/profile" aria-label="Profile"
+      ><app-avatar
+    /></a>
   </div>
 </header>
 
@@ -13,7 +17,14 @@
   <!-- section tabs (Today populated; the rest land as the port continues) -->
   <nav class="tt-tabs" aria-label="Training sections">
     @for (t of tabs; track t) {
-      <button type="button" class="tt-tab" [class.on]="tab() === t" (click)="tab.set(t)">{{ t }}</button>
+      <button
+        type="button"
+        class="tt-tab"
+        [class.on]="tab() === t"
+        (click)="tab.set(t)"
+      >
+        {{ t }}
+      </button>
     }
   </nav>
 
@@ -24,57 +35,102 @@
       <div class="hero">
         <div class="row">
           <h1>{{ p.intentLabel }}</h1>
-          @if (heroBand(); as b) { <span class="band {{ b.cls }}">{{ b.label }}</span> }
+          @if (heroBand(); as b) {
+            <span class="band {{ b.cls }}">{{ b.label }}</span>
+          }
         </div>
-        <p style="margin:var(--s-2) 0 0;color:var(--text)">{{ p.reasoning }}</p>
+        <p style="margin: var(--s-2) 0 0; color: var(--text)">
+          {{ p.reasoning }}
+        </p>
         @if (weather(); as w) {
-          <p class="faint" style="margin:var(--s-1) 0 0;font-size:var(--fs-sm)">
+          <p
+            class="faint"
+            style="margin: var(--s-1) 0 0; font-size: var(--fs-sm)"
+          >
             <lucide-icon name="cloud-rain" /> {{ w.reason }}
           </p>
         }
 
-        <div style="margin:var(--s-4) 0">
-          <app-yt-video [videoId]="sessionVideoId()"
-                        title="Watch the full session" [duration]="sessionVideoDuration()" />
+        <div style="margin: var(--s-4) 0">
+          <app-yt-video
+            [videoId]="sessionVideoId()"
+            title="Watch the full session"
+            [duration]="sessionVideoDuration()"
+          />
         </div>
 
         @for (blk of blocks(); track blk.title) {
-          <div style="margin-bottom:var(--s-3)">
-            <div class="row" style="margin-bottom:var(--s-2)"><b>{{ blk.title }}</b><small>{{ blk.meta }}</small></div>
-            <app-yt-video [videoId]="blk.video?.youtubeId ?? null"
-                          [poster]="blk.video?.thumbnail || 'assets/images/rebuild/video-session.jpg'"
-                          [title]="blk.title" [duration]="blk.video?.duration || ''" />
+          <div style="margin-bottom: var(--s-3)">
+            <div class="row" style="margin-bottom: var(--s-2)">
+              <b>{{ blk.title }}</b
+              ><small>{{ blk.meta }}</small>
+            </div>
+            <app-yt-video
+              [videoId]="blk.video?.youtubeId ?? null"
+              [poster]="
+                blk.video?.thumbnail ||
+                'assets/images/rebuild/video-session.jpg'
+              "
+              [title]="blk.title"
+              [duration]="blk.video?.duration || ''"
+            />
           </div>
         }
 
         <!-- Realized exercises for today's intent (daily-protocol, composed under
              the intent layer). Only shows once the protocol resolves. -->
         @if (protocol.loading()) {
-          <div class="row"><small class="muted">Loading today's exercises…</small></div>
+          <div class="row">
+            <small class="muted">Loading today's exercises…</small>
+          </div>
         } @else if (protocol.blocks().length) {
-          <div class="section-h" style="margin-top:var(--s-3)"><h2>Today's exercises</h2></div>
+          <div class="section-h" style="margin-top: var(--s-3)">
+            <h2>Today's exercises</h2>
+          </div>
           <div class="bc-list">
             @for (b of protocol.blocks(); track b.type; let i = $index) {
               <article class="bc">
                 <div class="bc__head">
-                  <span class="bc__idx" [class.done]="(b.progressPercent ?? 0) >= 100">{{ i + 1 }}</span>
+                  <span
+                    class="bc__idx"
+                    [class.done]="(b.progressPercent ?? 0) >= 100"
+                    >{{ i + 1 }}</span
+                  >
                   <span class="bc__title">{{ b.title }}</span>
                   @if (blockStatus(b); as st) {
                     <span class="band {{ st.cls }}">{{ st.label }}</span>
                   }
                 </div>
                 <div class="bc__meta">
-                  {{ b.exercises?.length || 0 }} ex@if (b.estimatedDurationMinutes) { · ~{{ b.estimatedDurationMinutes }} min }@if (b.totalCount) { · {{ b.completedCount || 0 }}/{{ b.totalCount }} }
+                  {{ b.exercises?.length || 0 }} ex
+                  @if (b.estimatedDurationMinutes) {
+                    · ~{{ b.estimatedDurationMinutes }} min
+                  }
+                  @if (b.totalCount) {
+                    · {{ b.completedCount || 0 }}/{{ b.totalCount }}
+                  }
                 </div>
                 @if ((b.progressPercent ?? 0) > 0) {
-                  <div class="bc__bar"><i [style.width.%]="b.progressPercent"></i></div>
+                  <div class="bc__bar">
+                    <i [style.width.%]="b.progressPercent"></i>
+                  </div>
                 }
                 <ul class="bc__ex">
                   @for (ex of b.exercises; track $index) {
                     <li>
-                      <b>{{ ex.exercise?.name || "Exercise" }}</b>@if (exDose(ex); as dose) { <small> — {{ dose }}</small> }
-                      @if (ex.exercise?.howText) { <div class="ex-how">{{ ex.exercise?.howText }}</div> }
-                      @if (ex.exercise?.feelText) { <div class="ex-feel"><lucide-icon name="activity" /> {{ ex.exercise?.feelText }}</div> }
+                      <b>{{ ex.exercise?.name || "Exercise" }}</b>
+                      @if (exDose(ex); as dose) {
+                        <small> — {{ dose }}</small>
+                      }
+                      @if (ex.exercise?.howText) {
+                        <div class="ex-how">{{ ex.exercise?.howText }}</div>
+                      }
+                      @if (ex.exercise?.feelText) {
+                        <div class="ex-feel">
+                          <lucide-icon name="activity" />
+                          {{ ex.exercise?.feelText }}
+                        </div>
+                      }
                     </li>
                   }
                 </ul>
@@ -85,14 +141,31 @@
 
         <div class="slider">
           <label for="rpe">Actual RPE</label>
-          <input class="rng" id="rpe" type="range" min="1" max="10" [value]="actualRpe()"
-                 (input)="actualRpe.set(+$any($event.target).value)" aria-label="Actual RPE 1 to 10" />
+          <input
+            class="rng"
+            id="rpe"
+            type="range"
+            min="1"
+            max="10"
+            [value]="actualRpe()"
+            (input)="actualRpe.set(+$any($event.target).value)"
+            aria-label="Actual RPE 1 to 10"
+          />
           <span class="val">{{ actualRpe() }}</span>
         </div>
         <div class="slider">
           <label for="dur">Duration</label>
-          <input class="rng" id="dur" type="range" min="0" max="120" step="5" [value]="duration()"
-                 (input)="duration.set(+$any($event.target).value)" aria-label="Duration in minutes" />
+          <input
+            class="rng"
+            id="dur"
+            type="range"
+            min="0"
+            max="120"
+            step="5"
+            [value]="duration()"
+            (input)="duration.set(+$any($event.target).value)"
+            aria-label="Duration in minutes"
+          />
           <span class="val">{{ duration() }}</span>
         </div>
 
@@ -101,17 +174,26 @@
             <lucide-icon name="check" /> Session logged
           </button>
         } @else {
-          <button class="btn primary block" type="button" [attr.aria-disabled]="completing()"
-                  (click)="completeSession()">
+          <button
+            class="btn primary block"
+            type="button"
+            [attr.aria-disabled]="completing()"
+            (click)="completeSession()"
+          >
             {{ completing() ? "Logging…" : "Complete session" }}
           </button>
         }
-        @if (completeError(); as e) { <p class="note" style="color:var(--danger)">{{ e }}</p> }
+        @if (completeError(); as e) {
+          <p class="note" style="color: var(--danger)">{{ e }}</p>
+        }
       </div>
     } @else {
       <div class="empty">
-        No session planned yet — log a wellness check-in to generate today's plan.
-        <a class="btn primary sm" routerLink="/wellness"><lucide-icon name="clipboard-check" /> Log check-in</a>
+        No session planned yet — log a wellness check-in to generate today's
+        plan.
+        <a class="btn primary sm" routerLink="/wellness"
+          ><lucide-icon name="clipboard-check" /> Log check-in</a
+        >
       </div>
     }
 
@@ -130,19 +212,31 @@
         }
       </div>
     } @else {
-      <div class="empty">No schedule yet — add your competitions to see the week shape.</div>
+      <div class="empty">
+        No schedule yet — add your competitions to see the week shape.
+      </div>
     }
   } @else if (tab() === "Library") {
     @if (!videos().length) {
-      <div class="empty">No videos yet — your coach adds drills &amp; sessions here.</div>
+      <div class="empty">
+        No videos yet — your coach adds drills &amp; sessions here.
+      </div>
     } @else {
       @for (cat of categories(); track cat) {
-        <div class="section-h"><h2>{{ cat }}</h2></div>
+        <div class="section-h">
+          <h2>{{ cat }}</h2>
+        </div>
         @for (v of videos(); track v.id) {
           @if (v.category === cat) {
-            <div style="margin-bottom:var(--s-3)">
-              <app-yt-video [videoId]="v.youtubeId" [poster]="v.thumbnail || 'assets/images/rebuild/video-session.jpg'"
-                            [title]="v.title" [duration]="v.duration" />
+            <div style="margin-bottom: var(--s-3)">
+              <app-yt-video
+                [videoId]="v.youtubeId"
+                [poster]="
+                  v.thumbnail || 'assets/images/rebuild/video-session.jpg'
+                "
+                [title]="v.title"
+                [duration]="v.duration"
+              />
             </div>
           }
         }
@@ -151,24 +245,39 @@
   } @else if (tab() === "Schedule") {
     <div class="section-h">
       <h2>Upcoming</h2>
-      <a class="btn primary sm" routerLink="/schedule"><lucide-icon name="calendar-plus" /> Add event</a>
+      <a class="btn primary sm" routerLink="/schedule"
+        ><lucide-icon name="calendar-plus" /> Add event</a
+      >
     </div>
     @if (upcoming().length) {
       <div class="card">
         @for (e of upcoming(); track e.id) {
           <div class="lrow">
-            <span class="inline"><lucide-icon name="flag" /> {{ e.competitionShortName || e.competitionName }}</span>
-            <span class="band caution">in {{ daysTo(e.startsAt) }}d · {{ e.expectedGameCount }} games</span>
+            <span class="inline"
+              ><lucide-icon name="flag" />
+              {{ e.competitionShortName || e.competitionName }}</span
+            >
+            <span class="band caution"
+              >in {{ daysTo(e.startsAt) }}d ·
+              {{ e.expectedGameCount }} games</span
+            >
           </div>
         }
       </div>
     } @else {
       <div class="empty">
-        <p style="margin:0 0 var(--s-3)">No upcoming events — add your camps, tournaments &amp; gamedays so your plan adapts.</p>
-        <a class="btn primary" routerLink="/schedule"><lucide-icon name="calendar-plus" /> Add an event</a>
+        <p style="margin: 0 0 var(--s-3)">
+          No upcoming events — add your camps, tournaments &amp; gamedays so
+          your plan adapts.
+        </p>
+        <a class="btn primary" routerLink="/schedule"
+          ><lucide-icon name="calendar-plus" /> Add an event</a
+        >
       </div>
     }
   } @else {
-    <div class="empty">No program yet — your coach assigns training programs here.</div>
+    <div class="empty">
+      No program yet — your coach assigns training programs here.
+    </div>
   }
 </main>

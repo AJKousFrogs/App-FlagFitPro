@@ -1,11 +1,16 @@
-
 // Netlify Function: Training Plan Generator
 // Generates evidence-based training plans using real data up to and including today
 // Respects periodization phases, ACWR, and domestic vs international schedules
 
-import { checkEnvVars as _checkEnvVars, supabaseAdmin } from "./supabase-client.js";
+import {
+  checkEnvVars as _checkEnvVars,
+  supabaseAdmin,
+} from "./supabase-client.js";
 
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 import {
@@ -98,7 +103,11 @@ async function calculateACWR(userId, date, requestLogger = logger) {
 /**
  * Determine periodization phase based on date and stored program
  */
-async function determinePeriodizationPhase(userId, date, requestLogger = logger) {
+async function determinePeriodizationPhase(
+  userId,
+  date,
+  requestLogger = logger,
+) {
   try {
     // Resolve the athlete's OWN program assignment via player_programs —
     // never a globally-active training_programs row, which would leak one
@@ -321,7 +330,11 @@ async function getTodaySessions(userId, date, requestLogger = logger) {
  * Get training history (up to and including today)
  * Uses consistent date filtering: only sessions up to and including today
  */
-async function getTrainingHistory(userId, daysBack = 30, requestLogger = logger) {
+async function getTrainingHistory(
+  userId,
+  daysBack = 30,
+  requestLogger = logger,
+) {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -360,7 +373,11 @@ async function getTrainingHistory(userId, daysBack = 30, requestLogger = logger)
 /**
  * Generate training plan for today
  */
-async function generateTrainingPlan(userId, date = new Date(), requestLogger = logger) {
+async function generateTrainingPlan(
+  userId,
+  date = new Date(),
+  requestLogger = logger,
+) {
   try {
     // Normalize date to start of day
     const today = new Date(date);

@@ -6,7 +6,8 @@ import path from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const isMain =
   process.argv[1]?.endsWith("comprehensiveDatabaseAudit.js") ||
-  (process.argv[1] && path.resolve(process.cwd(), process.argv[1]) === __filename);
+  (process.argv[1] &&
+    path.resolve(process.cwd(), process.argv[1]) === __filename);
 
 class ComprehensiveDatabaseAudit {
   constructor() {

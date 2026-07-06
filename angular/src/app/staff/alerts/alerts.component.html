@@ -12,14 +12,28 @@
     @for (a of alerts()!; track a.id) {
       <div class="card {{ accentClass(a) }}">
         <div class="row">
-          <b class="inline"><lucide-icon [name]="icon(a)" /> {{ athleteName(a) }}</b>
-          <button class="btn ghost sm" type="button" (click)="acknowledge(a)">Ack</button>
+          <b class="inline"
+            ><lucide-icon [name]="icon(a)" /> {{ athleteName(a) }}</b
+          >
+          <button class="btn ghost sm" type="button" (click)="acknowledge(a)">
+            Ack
+          </button>
         </div>
-        @if (a.message) { <small>{{ a.message }}</small> }
+        @if (a.message) {
+          <small>{{ a.message }}</small>
+        }
         @if (athleteId(a)) {
-          <a class="faint" style="font-size:var(--fs-sm);display:inline-block;margin-top:var(--s-2)"
-             [routerLink]="['/staff/athlete', athleteId(a)]"
-             [state]="{ name: athleteName(a) }">view athlete →</a>
+          <a
+            class="faint"
+            style="
+              font-size: var(--fs-sm);
+              display: inline-block;
+              margin-top: var(--s-2);
+            "
+            [routerLink]="['/staff/athlete', athleteId(a)]"
+            [state]="{ name: athleteName(a) }"
+            >view athlete →</a
+          >
         }
       </div>
     }

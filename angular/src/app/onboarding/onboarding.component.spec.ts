@@ -39,7 +39,9 @@ describe("OnboardingComponent finish() — P0 write-failure guard", () => {
   it("navigates to /today when the API write succeeds", async () => {
     const subject = new Subject<unknown>();
     const fixture = await mountComponent(buildApiMock(subject));
-    const navigate = vi.spyOn(TestBed.inject(Router), "navigate").mockResolvedValue(true);
+    const navigate = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
 
     (fixture.componentInstance as unknown as { finish(): void }).finish?.();
     subject.next({ success: true });
@@ -50,9 +52,13 @@ describe("OnboardingComponent finish() — P0 write-failure guard", () => {
   });
 
   it("does NOT navigate when the API write fails", async () => {
-    const apiMock = { post: vi.fn(() => throwError(() => new Error("network error"))) };
+    const apiMock = {
+      post: vi.fn(() => throwError(() => new Error("network error"))),
+    };
     const fixture = await mountComponent(apiMock);
-    const navigate = vi.spyOn(TestBed.inject(Router), "navigate").mockResolvedValue(true);
+    const navigate = vi
+      .spyOn(TestBed.inject(Router), "navigate")
+      .mockResolvedValue(true);
 
     (fixture.componentInstance as unknown as { finish(): void }).finish?.();
     await fixture.whenStable();
@@ -66,7 +72,9 @@ describe("OnboardingComponent finish() — P0 write-failure guard", () => {
     // window before asserting the failure state is reached.
     vi.useFakeTimers();
     try {
-      const apiMock = { post: vi.fn(() => throwError(() => new Error("timeout"))) };
+      const apiMock = {
+        post: vi.fn(() => throwError(() => new Error("timeout"))),
+      };
       const fixture = await mountComponent(apiMock);
       const comp = fixture.componentInstance as unknown as {
         finish(): void;

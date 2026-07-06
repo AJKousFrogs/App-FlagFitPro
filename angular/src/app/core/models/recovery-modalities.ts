@@ -60,13 +60,18 @@ const MODALITIES: ModalityRule[] = [
     equipment: "compression_boots",
     when: (c) => c.highLoad || c.acwrSpike || c.congestedFixtures,
     reason: (c) =>
-      c.acwrSpike ? "ACWR spike — flush the legs" : c.congestedFixtures ? "congested fixtures" : "high-load day",
+      c.acwrSpike
+        ? "ACWR spike — flush the legs"
+        : c.congestedFixtures
+          ? "congested fixtures"
+          : "high-load day",
   },
   {
     id: "massage_gun",
     label: "Massage gun",
     equipment: "massage_gun",
-    when: (c) => c.tightnessRegions.length > 0 || c.highLoad || c.congestedFixtures,
+    when: (c) =>
+      c.tightnessRegions.length > 0 || c.highLoad || c.congestedFixtures,
     reason: (c) =>
       c.tightnessRegions.length
         ? `localized: ${c.tightnessRegions.join(", ")}`
@@ -78,7 +83,9 @@ const MODALITIES: ModalityRule[] = [
     id: "massage_knife",
     label: "Massage knife (IASTM)",
     equipment: "massage_knife",
-    when: (c) => c.tightnessRegions.length > 0 && (c.severity === "moderate" || c.severity === "severe"),
+    when: (c) =>
+      c.tightnessRegions.length > 0 &&
+      (c.severity === "moderate" || c.severity === "severe"),
     reason: () => "persistent soft-tissue tightness",
   },
   {
@@ -100,7 +107,10 @@ const MODALITIES: ModalityRule[] = [
     label: "Stretching & mobility",
     equipment: null, // always available — bodyweight
     when: (c) => c.tightnessRegions.length > 0 || c.lowReadiness,
-    reason: (c) => (c.lowReadiness ? "low readiness — keep it easy" : "maintenance / tightness"),
+    reason: (c) =>
+      c.lowReadiness
+        ? "low readiness — keep it easy"
+        : "maintenance / tightness",
   },
   {
     id: "physio",

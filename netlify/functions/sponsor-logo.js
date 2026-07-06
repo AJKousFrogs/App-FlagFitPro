@@ -1,7 +1,11 @@
 import https from "https";
 import http from "http";
 import { baseHandler } from "./utils/base-handler.js";
-import { CORS_HEADERS, createErrorResponse, handleValidationError } from "./utils/error-handler.js";
+import {
+  CORS_HEADERS,
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.sponsor-logo" });
@@ -117,7 +121,8 @@ const handler = async (event, context) =>
 
         const isAllowed = allowedDomains.some(
           (domain) =>
-            urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`),
+            urlObj.hostname === domain ||
+            urlObj.hostname.endsWith(`.${domain}`),
         );
 
         if (!isAllowed) {

@@ -164,10 +164,7 @@ export function average(values: number[], decimals = 2): number {
  * @example
  * standardDeviation([1, 2, 3, 4, 5], 2) // 1.41
  */
-export function standardDeviation(
-  values: number[],
-  decimals = 2,
-): number {
+export function standardDeviation(values: number[], decimals = 2): number {
   if (!values || values.length < 2) return 0;
 
   const validValues = values.filter((v) => !isNaN(v) && isFinite(v));

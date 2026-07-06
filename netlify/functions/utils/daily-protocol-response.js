@@ -314,9 +314,10 @@ export function transformProtocolResponse(
       // Fallback: estimate 4 s/rep for movement exercises (conservative).
       return sum + sets * (dur || reps * 4);
     }, 0);
-    const actualMinutes = totalSeconds > 0
-      ? Math.round(totalSeconds / 60)
-      : (blockTypes[type]?.estimatedMinutes ?? null);
+    const actualMinutes =
+      totalSeconds > 0
+        ? Math.round(totalSeconds / 60)
+        : (blockTypes[type]?.estimatedMinutes ?? null);
 
     return {
       type,
@@ -394,27 +395,15 @@ export function transformProtocolResponse(
       "pi-circle-fill",
     ),
     warmUp: createBlock("warm_up", "Warm-Up", "pi-bolt"),
-    isometrics: createBlock(
-      "isometrics",
-      "Isometrics",
-      "pi-pause-circle",
-    ),
-    plyometrics: createBlock(
-      "plyometrics",
-      "Plyometrics",
-      "pi-arrow-up",
-    ),
+    isometrics: createBlock("isometrics", "Isometrics", "pi-pause-circle"),
+    plyometrics: createBlock("plyometrics", "Plyometrics", "pi-arrow-up"),
     strength: createBlock("strength", "Strength", "pi-heart"),
     conditioning: createBlock(
       "conditioning",
       "Conditioning",
       "pi-directions-run",
     ),
-    skillDrills: createBlock(
-      "skill_drills",
-      "Skill Drills",
-      "pi-bolt",
-    ),
+    skillDrills: createBlock("skill_drills", "Skill Drills", "pi-bolt"),
     mainSession: createBlock("main_session", "Main Session", "pi-play"),
     coolDown: createBlock("cool_down", "Cool-Down", "pi-stop"),
     eveningRecovery: createBlock(

@@ -9,21 +9,21 @@
  * @see FRONTEND_AUDIT_REPORT.md Section 1.1
  */
 
-import fs from 'fs';
-import path from 'path';
-import { glob } from 'glob';
+import fs from "fs";
+import path from "path";
+import { glob } from "glob";
 
-const DRY_RUN = !process.argv.includes('--fix');
-const VERBOSE = process.argv.includes('--verbose');
+const DRY_RUN = !process.argv.includes("--fix");
+const VERBOSE = process.argv.includes("--verbose");
 
 // Colors for terminal output
 const colors = {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
+  reset: "\x1b[0m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  cyan: "\x1b[36m",
 };
 
 /**
@@ -31,49 +31,50 @@ const colors = {
  */
 const IMPORTANT_PATTERNS = [
   {
-    name: 'Grid column span (mobile)',
+    name: "Grid column span (mobile)",
     pattern: /grid-column:\s*span\s+\d+\s*!important\s*;/g,
     replacement: (match) => {
-      return match.replace(' !important', '');
+      return match.replace(" !important", "");
     },
-    context: '@media (max-width:',
-    advice: 'Remove !important and ensure this is in a @layer overrides block or increase specificity',
+    context: "@media (max-width:",
+    advice:
+      "Remove !important and ensure this is in a @layer overrides block or increase specificity",
   },
   {
-    name: 'Background transparent',
+    name: "Background transparent",
     pattern: /background:\s*transparent\s*!important\s*;/g,
-    replacement: 'background: transparent;',
-    advice: 'Use CSS layers (@layer overrides) instead of !important',
+    replacement: "background: transparent;",
+    advice: "Use CSS layers (@layer overrides) instead of !important",
   },
   {
-    name: 'Border none',
+    name: "Border none",
     pattern: /border:\s*none\s*!important\s*;/g,
-    replacement: 'border: none;',
-    advice: 'Use CSS layers or increase specificity instead',
+    replacement: "border: none;",
+    advice: "Use CSS layers or increase specificity instead",
   },
   {
-    name: 'Box shadow none',
+    name: "Box shadow none",
     pattern: /box-shadow:\s*none\s*!important\s*;/g,
-    replacement: 'box-shadow: none;',
-    advice: 'Use CSS layers or more specific selector',
+    replacement: "box-shadow: none;",
+    advice: "Use CSS layers or more specific selector",
   },
   {
-    name: 'Padding zero',
+    name: "Padding zero",
     pattern: /padding:\s*0\s*!important\s*;/g,
-    replacement: 'padding: 0;',
-    advice: 'Consider using utility class .p-0 instead',
+    replacement: "padding: 0;",
+    advice: "Consider using utility class .p-0 instead",
   },
   {
-    name: 'Grid template columns',
+    name: "Grid template columns",
     pattern: /grid-template-columns:\s*[^;]+!important\s*;/g,
-    replacement: (match) => match.replace(' !important', ''),
-    advice: 'Use @layer overrides or more specific selector',
+    replacement: (match) => match.replace(" !important", ""),
+    advice: "Use @layer overrides or more specific selector",
   },
   {
-    name: 'Gap',
+    name: "Gap",
     pattern: /gap:\s*[^;]+!important\s*;/g,
-    replacement: (match) => match.replace(' !important', ''),
-    advice: 'Use utility classes or CSS layers',
+    replacement: (match) => match.replace(" !important", ""),
+    advice: "Use utility classes or CSS layers",
   },
 ];
 
@@ -92,20 +93,30 @@ const stats = {
  * Main execution
  */
 async function main() {
-  console.log(`${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`,
+  );
   console.log(`${colors.cyan}🔍 !important Declaration Scanner${colors.reset}`);
-  console.log(`${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`);
+  console.log(
+    `${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`,
+  );
 
   if (DRY_RUN) {
-    console.log(`${colors.yellow}⚠️  DRY RUN MODE - No files will be modified${colors.reset}`);
-    console.log(`${colors.yellow}   Run with --fix to apply changes${colors.reset}\n`);
+    console.log(
+      `${colors.yellow}⚠️  DRY RUN MODE - No files will be modified${colors.reset}`,
+    );
+    console.log(
+      `${colors.yellow}   Run with --fix to apply changes${colors.reset}\n`,
+    );
   } else {
-    console.log(`${colors.green}✅ FIX MODE - Files will be modified${colors.reset}\n`);
+    console.log(
+      `${colors.green}✅ FIX MODE - Files will be modified${colors.reset}\n`,
+    );
   }
 
   // Find all SCSS files
-  const scssFiles = await glob('angular/src/**/*.scss', {
-    ignore: ['**/node_modules/**', '**/dist/**'],
+  const scssFiles = await glob("angular/src/**/*.scss", {
+    ignore: ["**/node_modules/**", "**/dist/**"],
   });
 
   console.log(`Found ${scssFiles.length} SCSS files to scan\n`);
@@ -125,7 +136,7 @@ async function main() {
 async function processFile(filePath) {
   stats.filesScanned++;
 
-  let content = fs.readFileSync(filePath, 'utf8');
+  let content = fs.readFileSync(filePath, "utf8");
   let modified = false;
   let fileChanges = [];
 
@@ -147,7 +158,8 @@ async function processFile(filePath) {
     const matches = content.match(pattern.pattern);
 
     if (matches && matches.length > 0) {
-      stats.patterns[pattern.name] = (stats.patterns[pattern.name] || 0) + matches.length;
+      stats.patterns[pattern.name] =
+        (stats.patterns[pattern.name] || 0) + matches.length;
 
       for (const match of matches) {
         const lineNumber = getLineNumber(content, match);
@@ -156,12 +168,17 @@ async function processFile(filePath) {
         console.log(`   ${colors.red}  - ${match.trim()}${colors.reset}`);
 
         if (DRY_RUN) {
-          const replacement = typeof pattern.replacement === 'function'
-            ? pattern.replacement(match)
-            : pattern.replacement;
+          const replacement =
+            typeof pattern.replacement === "function"
+              ? pattern.replacement(match)
+              : pattern.replacement;
 
-          console.log(`   ${colors.green}  + ${replacement.trim()}${colors.reset}`);
-          console.log(`   ${colors.blue}  ℹ ${pattern.advice}${colors.reset}\n`);
+          console.log(
+            `   ${colors.green}  + ${replacement.trim()}${colors.reset}`,
+          );
+          console.log(
+            `   ${colors.blue}  ℹ ${pattern.advice}${colors.reset}\n`,
+          );
         }
       }
 
@@ -169,7 +186,7 @@ async function processFile(filePath) {
         // Apply replacement
         content = content.replace(pattern.pattern, (match) => {
           stats.totalImportantRemoved++;
-          return typeof pattern.replacement === 'function'
+          return typeof pattern.replacement === "function"
             ? pattern.replacement(match)
             : pattern.replacement;
         });
@@ -185,12 +202,16 @@ async function processFile(filePath) {
 
   // Write changes back to file
   if (modified && !DRY_RUN) {
-    fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`   ${colors.green}✓ Applied ${fileChanges.length} fix(es)${colors.reset}\n`);
+    fs.writeFileSync(filePath, content, "utf8");
+    console.log(
+      `   ${colors.green}✓ Applied ${fileChanges.length} fix(es)${colors.reset}\n`,
+    );
   }
 
   if (VERBOSE && !modified) {
-    console.log(`   ${colors.yellow}⚠ No automatic fixes available (manual review needed)${colors.reset}\n`);
+    console.log(
+      `   ${colors.yellow}⚠ No automatic fixes available (manual review needed)${colors.reset}\n`,
+    );
   }
 }
 
@@ -199,24 +220,36 @@ async function processFile(filePath) {
  */
 function getLineNumber(content, match) {
   const index = content.indexOf(match);
-  return content.substring(0, index).split('\n').length;
+  return content.substring(0, index).split("\n").length;
 }
 
 /**
  * Print summary statistics
  */
 function printSummary() {
-  console.log(`\n${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `\n${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`,
+  );
   console.log(`${colors.cyan}📊 Summary${colors.reset}`);
-  console.log(`${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`);
+  console.log(
+    `${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}\n`,
+  );
 
   console.log(`Files scanned:              ${stats.filesScanned}`);
-  console.log(`Files with !important:      ${colors.yellow}${stats.filesWithImportant}${colors.reset}`);
-  console.log(`Total !important found:     ${colors.red}${stats.totalImportantFound}${colors.reset}`);
+  console.log(
+    `Files with !important:      ${colors.yellow}${stats.filesWithImportant}${colors.reset}`,
+  );
+  console.log(
+    `Total !important found:     ${colors.red}${stats.totalImportantFound}${colors.reset}`,
+  );
 
   if (!DRY_RUN) {
-    console.log(`Total !important removed:   ${colors.green}${stats.totalImportantRemoved}${colors.reset}`);
-    console.log(`Remaining:                  ${colors.yellow}${stats.totalImportantFound - stats.totalImportantRemoved}${colors.reset}`);
+    console.log(
+      `Total !important removed:   ${colors.green}${stats.totalImportantRemoved}${colors.reset}`,
+    );
+    console.log(
+      `Remaining:                  ${colors.yellow}${stats.totalImportantFound - stats.totalImportantRemoved}${colors.reset}`,
+    );
   }
 
   if (Object.keys(stats.patterns).length > 0) {
@@ -226,25 +259,39 @@ function printSummary() {
     }
   }
 
-  console.log(`\n${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`);
+  console.log(
+    `\n${colors.blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${colors.reset}`,
+  );
 
   if (DRY_RUN) {
-    console.log(`\n${colors.yellow}💡 Run with --fix to apply changes${colors.reset}`);
-    console.log(`${colors.yellow}   Example: node scripts/remove-important-declarations.js --fix${colors.reset}\n`);
+    console.log(
+      `\n${colors.yellow}💡 Run with --fix to apply changes${colors.reset}`,
+    );
+    console.log(
+      `${colors.yellow}   Example: node scripts/remove-important-declarations.js --fix${colors.reset}\n`,
+    );
   } else {
-    console.log(`\n${colors.green}✅ Changes applied successfully!${colors.reset}`);
+    console.log(
+      `\n${colors.green}✅ Changes applied successfully!${colors.reset}`,
+    );
     console.log(`${colors.cyan}Next steps:${colors.reset}`);
     console.log(`  1. Review git diff to ensure changes are correct`);
     console.log(`  2. Test in browser to verify no visual regressions`);
     console.log(`  3. Run: npm run test:e2e`);
-    console.log(`  4. Commit changes with message: "refactor: remove !important declarations"\n`);
+    console.log(
+      `  4. Commit changes with message: "refactor: remove !important declarations"\n`,
+    );
   }
 
   // Show remaining manual work if any
   const remaining = stats.totalImportantFound - stats.totalImportantRemoved;
   if (remaining > 0) {
-    console.log(`${colors.yellow}⚠️  ${remaining} !important declaration(s) require manual review${colors.reset}`);
-    console.log(`${colors.yellow}   These may be in complex contexts or require CSS layer refactoring${colors.reset}\n`);
+    console.log(
+      `${colors.yellow}⚠️  ${remaining} !important declaration(s) require manual review${colors.reset}`,
+    );
+    console.log(
+      `${colors.yellow}   These may be in complex contexts or require CSS layer refactoring${colors.reset}\n`,
+    );
   }
 }
 

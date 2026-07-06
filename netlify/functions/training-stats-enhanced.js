@@ -1,12 +1,18 @@
-
 // Netlify Function: Enhanced Training Statistics API
 // Centralized endpoint for aggregating training statistics with ACWR, REP, volume, intensity
 // Always filters data up to and including today's date
 // This is the single source of truth for training stats calculations
 
 import { supabaseAdmin } from "./supabase-client.js";
-import { computeAcwrAt, computeSessionLoad, classifyAcwrZone } from "./utils/acwr.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  classifyAcwrZone,
+} from "./utils/acwr.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -48,13 +54,25 @@ function calculateACWR(sessions, referenceDate = new Date()) {
   }
 
   if (dailyLoads.size === 0) {
-    return { acwr: null, acuteLoad: 0, chronicLoad: 0, riskZone: "insufficient_data", message: "Insufficient data to calculate ACWR" };
+    return {
+      acwr: null,
+      acuteLoad: 0,
+      chronicLoad: 0,
+      riskZone: "insufficient_data",
+      message: "Insufficient data to calculate ACWR",
+    };
   }
 
   const result = computeAcwrAt(dailyLoads, today);
 
   if (result.acwr === null || result.lowConfidence) {
-    return { acwr: null, acuteLoad: Math.round(result.acuteLoad), chronicLoad: Math.round(result.chronicLoad), riskZone: "insufficient_data", message: "Insufficient data to calculate ACWR (need at least 7 days)" };
+    return {
+      acwr: null,
+      acuteLoad: Math.round(result.acuteLoad),
+      chronicLoad: Math.round(result.chronicLoad),
+      riskZone: "insufficient_data",
+      message: "Insufficient data to calculate ACWR (need at least 7 days)",
+    };
   }
 
   const zone = classifyAcwrZone(result.acwr);
@@ -129,7 +147,6 @@ function calculateWeeklyVolume(sessions, referenceDate = new Date()) {
  */
 async function getTrainingStats(userId, options = {}) {
   try {
-
     const today = getTodayDate();
     const { startDate, endDate } = options;
 

@@ -14,7 +14,10 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
-    rpc: async () => ({ data: [{ new_streak: 1, achievements_unlocked: [] }], error: null }),
+    rpc: async () => ({
+      data: [{ new_streak: 1, achievements_unlocked: [] }],
+      error: null,
+    }),
     from: (table) => ({
       select: () => {
         if (table === "achievement_definitions") {
@@ -66,7 +69,10 @@ describe("achievements validation hardening", () => {
       {
         httpMethod: "POST",
         path: "/.netlify/functions/achievements/streak",
-        body: JSON.stringify({ streakType: "daily_protocol", date: "13-02-2026" }),
+        body: JSON.stringify({
+          streakType: "daily_protocol",
+          date: "13-02-2026",
+        }),
       },
       {},
     );

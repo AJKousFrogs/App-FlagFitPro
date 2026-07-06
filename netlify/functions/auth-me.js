@@ -12,7 +12,10 @@ function decodeJwtPayload(token) {
       return null;
     }
     const base64 = payloadSegment.replace(/-/g, "+").replace(/_/g, "/");
-    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+    const padded = base64.padEnd(
+      base64.length + ((4 - (base64.length % 4)) % 4),
+      "=",
+    );
     return JSON.parse(Buffer.from(padded, "base64").toString("utf8"));
   } catch {
     return null;
@@ -54,14 +57,17 @@ const handler = async (event, context) => {
       const safeUser = {
         id: user?.id || userId || decoded?.sub || null,
         email: user?.email || decoded?.email || null,
-        role: user?.user_metadata?.role || decoded?.user_metadata?.role || "player",
+        role:
+          user?.user_metadata?.role || decoded?.user_metadata?.role || "player",
         name:
           user?.user_metadata?.name ||
           decoded?.user_metadata?.name ||
           user?.email ||
           decoded?.email ||
           null,
-        email_verified: Boolean(user?.email_confirmed_at || decoded?.email_confirmed_at),
+        email_verified: Boolean(
+          user?.email_confirmed_at || decoded?.email_confirmed_at,
+        ),
         created_at: user?.created_at || null,
         updated_at: user?.updated_at || null,
         user_metadata: user?.user_metadata || decoded?.user_metadata || null,

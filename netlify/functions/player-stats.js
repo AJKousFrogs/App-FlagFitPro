@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { parseAthleteId } from "./utils/db-query-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { COACH_ROUTE_ROLES } from "./utils/role-sets.js";
@@ -41,7 +44,6 @@ function normalizePlayerStatsPath(pathname = "") {
  */
 const getPlayerAggregatedStats = async (playerId, options = {}) => {
   try {
-
     const todayEndOfDay = getTodayEndOfDay();
     const { season, teamId } = options;
 
@@ -380,7 +382,6 @@ function getEmptyStats() {
  */
 const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
   try {
-
     // Ensure endDate includes the full day
     const endDateInclusive = new Date(endDate);
     endDateInclusive.setHours(23, 59, 59, 999);

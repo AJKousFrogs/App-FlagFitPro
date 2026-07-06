@@ -77,15 +77,23 @@ describe("baseHandler", () => {
       },
     };
 
-    const response = await baseHandler(event, {}, {
-      functionName: "dashboard",
-      handler: async () => ({
-        statusCode: 200,
-        body: JSON.stringify({ success: true, data: [] }),
-      }),
-    });
+    const response = await baseHandler(
+      event,
+      {},
+      {
+        functionName: "dashboard",
+        handler: async () => ({
+          statusCode: 200,
+          body: JSON.stringify({ success: true, data: [] }),
+        }),
+      },
+    );
 
-    expect(mocks.applyRateLimit).toHaveBeenCalledWith(event, "READ", "user-123");
+    expect(mocks.applyRateLimit).toHaveBeenCalledWith(
+      event,
+      "READ",
+      "user-123",
+    );
     expect(response.statusCode).toBe(200);
     expect(response.headers["Access-Control-Allow-Origin"]).toBe(
       "http://localhost:8888",

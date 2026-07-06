@@ -24,8 +24,7 @@ const runtimeEnvPath = angularDistPath
   ? path.join(angularDistPath, "assets", "runtime-env.js")
   : path.join(distCandidates[0], "assets", "runtime-env.js");
 
-const DEFAULT_SUPABASE_URL =
-  "https://grfjmnjpzvknmsxrwesx.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co";
 const DEFAULT_SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0";
 

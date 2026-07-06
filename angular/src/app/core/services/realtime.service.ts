@@ -507,7 +507,10 @@ export class RealtimeService {
     };
   }
 
-  private incrementTableSubscription(tableName: string, channelName: string): void {
+  private incrementTableSubscription(
+    tableName: string,
+    channelName: string,
+  ): void {
     if (!tableName) return;
 
     const set = this.tableSubscriptions.get(tableName) ?? new Set<string>();

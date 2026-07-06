@@ -8,7 +8,7 @@
 
 const ALLOWED_ORIGINS = [
   process.env.ALLOWED_ORIGIN,
-  process.env.URL,              // Netlify injects the deploy URL automatically
+  process.env.URL, // Netlify injects the deploy URL automatically
   process.env.DEPLOY_PRIME_URL, // Netlify injects branch deploy URLs automatically
   "https://flagfit-pro.netlify.app",
   "https://flagfitpro.com",

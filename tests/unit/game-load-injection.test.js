@@ -13,7 +13,13 @@ const DOMESTIC = 300;
 describe("estimateGameLoads — format/level-aware, past games into the ACWR map", () => {
   it("unknown-format single-day 3-game round defaults to the heaviest per-game AU", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-05-10T09:00:00Z", ends_at: null, expected_game_count: 3 }],
+      [
+        {
+          starts_at: "2026-05-10T09:00:00Z",
+          ends_at: null,
+          expected_game_count: 3,
+        },
+      ],
       "2026-05-01",
       "2026-05-28",
     );
@@ -22,7 +28,13 @@ describe("estimateGameLoads — format/level-aware, past games into the ACWR map
 
   it("scales DOWN for a national (domestic) competition level", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-05-10T09:00:00Z", expected_game_count: 4, competition_level: "national" }],
+      [
+        {
+          starts_at: "2026-05-10T09:00:00Z",
+          expected_game_count: 4,
+          competition_level: "national",
+        },
+      ],
       "2026-05-01",
       "2026-05-28",
     );
@@ -31,7 +43,14 @@ describe("estimateGameLoads — format/level-aware, past games into the ACWR map
 
   it("an explicit game_format wins over level", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-05-10T09:00:00Z", expected_game_count: 2, game_format: "running_2x15", competition_level: "national" }],
+      [
+        {
+          starts_at: "2026-05-10T09:00:00Z",
+          expected_game_count: 2,
+          game_format: "running_2x15",
+          competition_level: "national",
+        },
+      ],
       "2026-05-01",
       "2026-05-28",
     );
@@ -40,7 +59,14 @@ describe("estimateGameLoads — format/level-aware, past games into the ACWR map
 
   it("spreads an international multi-day tournament's total load across its days", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-05-10T09:00:00Z", ends_at: "2026-05-11T18:00:00Z", expected_game_count: 8, competition_level: "international" }],
+      [
+        {
+          starts_at: "2026-05-10T09:00:00Z",
+          ends_at: "2026-05-11T18:00:00Z",
+          expected_game_count: 8,
+          competition_level: "international",
+        },
+      ],
       "2026-05-01",
       "2026-05-28",
     );
@@ -63,7 +89,13 @@ describe("estimateGameLoads — format/level-aware, past games into the ACWR map
 
   it("clips event days to the load window", () => {
     const m = estimateGameLoads(
-      [{ starts_at: "2026-04-28T09:00:00Z", ends_at: "2026-05-02T18:00:00Z", expected_game_count: 5 }],
+      [
+        {
+          starts_at: "2026-04-28T09:00:00Z",
+          ends_at: "2026-05-02T18:00:00Z",
+          expected_game_count: 5,
+        },
+      ],
       "2026-05-01", // window starts mid-event
       "2026-05-28",
     );

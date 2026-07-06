@@ -56,17 +56,23 @@ export class StaffEventsComponent {
       const teamId = this.membership.teamId();
       let q = this.supabase.client
         .from("competition_events")
-        .select("id, label, starts_at, expected_game_count, minutes_per_game, competitions(name, short_name)")
+        .select(
+          "id, label, starts_at, expected_game_count, minutes_per_game, competitions(name, short_name)",
+        )
         .gte("starts_at", new Date().toISOString())
         .order("starts_at", { ascending: true });
       if (teamId) q = q.eq("team_id", teamId);
       const { data } = await q;
       this.events.set(
         (data ?? []).map((r: Record<string, unknown>) => {
-          const comp = (r["competitions"] ?? {}) as { name?: string; short_name?: string };
+          const comp = (r["competitions"] ?? {}) as {
+            name?: string;
+            short_name?: string;
+          };
           return {
             id: String(r["id"]),
-            name: comp.short_name || comp.name || (r["label"] as string) || "Event",
+            name:
+              comp.short_name || comp.name || (r["label"] as string) || "Event",
             startsAt: String(r["starts_at"]),
             games: (r["expected_game_count"] as number) ?? null,
             minutesPerGame: (r["minutes_per_game"] as number) ?? null,
@@ -79,13 +85,18 @@ export class StaffEventsComponent {
   }
 
   date(iso: string): string {
-    return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+    return new Date(iso).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
   }
 
   async setFormat(ev: EventRow, min: number, label: string): Promise<void> {
     const prevMin = ev.minutesPerGame; // for rollback if the write is rejected
     this.events.update((list) =>
-      (list ?? []).map((e) => (e.id === ev.id ? { ...e, minutesPerGame: min } : e)),
+      (list ?? []).map((e) =>
+        e.id === ev.id ? { ...e, minutesPerGame: min } : e,
+      ),
     );
     const { error } = await this.supabase.client
       .from("competition_events")
@@ -95,7 +106,9 @@ export class StaffEventsComponent {
       // Direct client write under RLS — if it's rejected (e.g. not team staff), roll
       // the optimistic chip back so the UI doesn't show a format that never saved.
       this.events.update((list) =>
-        (list ?? []).map((e) => (e.id === ev.id ? { ...e, minutesPerGame: prevMin } : e)),
+        (list ?? []).map((e) =>
+          e.id === ev.id ? { ...e, minutesPerGame: prevMin } : e,
+        ),
       );
       this.formatError.set("Couldn't save the format — try again.");
       this.logger.error("event_format_save_failed", error);

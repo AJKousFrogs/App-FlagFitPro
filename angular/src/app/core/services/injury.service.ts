@@ -52,10 +52,14 @@ export class InjuryService {
   /** Restriction summary the engine keys on. */
   readonly restrictions = computed(() => {
     const sprintInjuries = this.active().filter((i) =>
-      (i.restrictions ?? []).some((r) => InjuryService.SPRINT_RESTRICTING.has(r)),
+      (i.restrictions ?? []).some((r) =>
+        InjuryService.SPRINT_RESTRICTING.has(r),
+      ),
     );
     const throwingInjuries = this.active().filter((i) =>
-      (i.restrictions ?? []).some((r) => InjuryService.THROWING_RESTRICTING.has(r)),
+      (i.restrictions ?? []).some((r) =>
+        InjuryService.THROWING_RESTRICTING.has(r),
+      ),
     );
     const restrictsSprint = sprintInjuries.length > 0;
     const restrictsThrowing = throwingInjuries.length > 0;
@@ -88,9 +92,17 @@ export class InjuryService {
   }
 
   /** Record a self-reported tightness. Throws on failure (caller must surface it). */
-  async report(region: string, severity: InjurySeverity, note?: string): Promise<void> {
+  async report(
+    region: string,
+    severity: InjurySeverity,
+    note?: string,
+  ): Promise<void> {
     const res = await firstValueFrom(
-      this.api.post<ActiveInjury>("/api/athlete-injuries", { region, severity, note }),
+      this.api.post<ActiveInjury>("/api/athlete-injuries", {
+        region,
+        severity,
+        note,
+      }),
     );
     if (!res.success) {
       throw new Error(res.error ?? "Could not log tightness");

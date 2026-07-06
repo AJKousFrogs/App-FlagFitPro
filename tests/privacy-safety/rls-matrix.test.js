@@ -69,12 +69,10 @@ describe.skipIf(!canRunTests)("Per-Role Access Matrix", () => {
     await cleanup(admin, { coachId, player1Id, player2Id });
 
     // Teams (coach_id is NOT NULL and FKs auth.users).
-    await admin
-      .from("teams")
-      .insert([
-        { id: TEAM_A, name: "RLS Matrix Team A", coach_id: coachId },
-        { id: TEAM_B, name: "RLS Matrix Team B", coach_id: player2Id },
-      ]);
+    await admin.from("teams").insert([
+      { id: TEAM_A, name: "RLS Matrix Team A", coach_id: coachId },
+      { id: TEAM_B, name: "RLS Matrix Team B", coach_id: player2Id },
+    ]);
 
     // Memberships: coach + player1 on A, player2 on B.
     await admin.from("team_members").insert([
@@ -127,7 +125,10 @@ describe.skipIf(!canRunTests)("Per-Role Access Matrix", () => {
 
     it("the coach is recognized as team staff", async () => {
       expect(
-        await rpc("ff_is_team_staff", { p_team_id: TEAM_A, p_user_id: coachId }),
+        await rpc("ff_is_team_staff", {
+          p_team_id: TEAM_A,
+          p_user_id: coachId,
+        }),
       ).toBe(true);
     });
 

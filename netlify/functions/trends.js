@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createSuccessResponse, createErrorResponse } from "./utils/error-handler.js";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getWeekNumber } from "./utils/date-utils.js";
 import { parseBoundedInt } from "./utils/input-validator.js";
@@ -251,10 +254,16 @@ const handler = async (event, context) => {
         const gamesParam = event.queryStringParameters?.games;
 
         if (weeksParam !== undefined) {
-          weeks = parseBoundedInt(String(weeksParam), "weeks", { min: 1, max: 52 });
+          weeks = parseBoundedInt(String(weeksParam), "weeks", {
+            min: 1,
+            max: 52,
+          });
         }
         if (gamesParam !== undefined) {
-          games = parseBoundedInt(String(gamesParam), "games", { min: 1, max: 50 });
+          games = parseBoundedInt(String(gamesParam), "games", {
+            min: 1,
+            max: 50,
+          });
         }
 
         if (athleteId !== userId) {

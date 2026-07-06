@@ -70,13 +70,20 @@ function createSupabase() {
 
     maybeSingle() {
       if (this.table === "team_members") {
-        const userId = this.filters.find((f) => f.op === "eq" && f.field === "user_id")?.value;
-        const teamIds = this.filters.find((f) => f.op === "in" && f.field === "team_id")?.values;
+        const userId = this.filters.find(
+          (f) => f.op === "eq" && f.field === "user_id",
+        )?.value;
+        const teamIds = this.filters.find(
+          (f) => f.op === "in" && f.field === "team_id",
+        )?.values;
 
         const memberships = state.teamMemberships[userId] || [];
         if (teamIds?.length) {
           const found = memberships.find((m) => teamIds.includes(m.team_id));
-          return Promise.resolve({ data: found ? { team_id: found.team_id } : null, error: null });
+          return Promise.resolve({
+            data: found ? { team_id: found.team_id } : null,
+            error: null,
+          });
         }
         return Promise.resolve({ data: memberships[0] || null, error: null });
       }
@@ -85,7 +92,9 @@ function createSupabase() {
 
     then(resolve, reject) {
       if (this.table === "team_members") {
-        const userId = this.filters.find((f) => f.op === "eq" && f.field === "user_id")?.value;
+        const userId = this.filters.find(
+          (f) => f.op === "eq" && f.field === "user_id",
+        )?.value;
         return Promise.resolve({
           data: state.teamMemberships[userId] || [],
           error: null,
@@ -96,11 +105,16 @@ function createSupabase() {
         const athleteId = this.filters.find(
           (f) => f.op === "eq" && f.field === "athlete_id",
         )?.value;
-        const data = state.wellnessRows.filter((r) => r.athlete_id === athleteId);
+        const data = state.wellnessRows.filter(
+          (r) => r.athlete_id === athleteId,
+        );
         return Promise.resolve({ data, error: null }).then(resolve, reject);
       }
 
-      if (this.table === "physical_measurements" || this.table === "performance_tests") {
+      if (
+        this.table === "physical_measurements" ||
+        this.table === "performance_tests"
+      ) {
         return Promise.resolve({ data: [], error: null }).then(resolve, reject);
       }
 

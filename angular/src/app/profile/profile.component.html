@@ -8,24 +8,54 @@
     <div class="row">
       <span class="avatar lg"><app-avatar /></span>
       <div>
-        <h1 style="margin:0">{{ name() }}@if (jersey() !== null) { · #{{ jersey() }} }</h1>
-        <small>{{ position() || "Athlete" }}@if (teamName()) { · {{ teamName() }} }</small>
+        <h1 style="margin: 0">
+          {{ name() }}
+          @if (jersey() !== null) {
+            · #{{ jersey() }}
+          }
+        </h1>
+        <small
+          >{{ position() || "Athlete" }}
+          @if (teamName()) {
+            · {{ teamName() }}
+          }
+        </small>
       </div>
     </div>
-    <div class="tiles" style="margin-top:var(--s-4)">
-      <div><b>{{ heightCm() ?? "—" }}</b><small>cm</small></div>
-      <div><b>{{ weightKg() ?? "—" }}</b><small>kg</small></div>
-      <div><b>{{ age() ?? "—" }}</b><small>yrs</small></div>
+    <div class="tiles" style="margin-top: var(--s-4)">
+      <div>
+        <b>{{ heightCm() ?? "—" }}</b
+        ><small>cm</small>
+      </div>
+      <div>
+        <b>{{ weightKg() ?? "—" }}</b
+        ><small>kg</small>
+      </div>
+      <div>
+        <b>{{ age() ?? "—" }}</b
+        ><small>yrs</small>
+      </div>
     </div>
   </div>
 
   <div class="section-h"><h2>Training · 30 days</h2></div>
   @if (sessionsPerWk() !== null || avgMin() !== null || avgRpe() !== null) {
-    <div class="card"><div class="tiles">
-      <div><b>{{ sessionsPerWk() ?? "—" }}</b><small>sessions/wk</small></div>
-      <div><b>{{ avgMin() ?? "—" }}</b><small>avg min</small></div>
-      <div><b>{{ avgRpe() ?? "—" }}</b><small>avg RPE</small></div>
-    </div></div>
+    <div class="card">
+      <div class="tiles">
+        <div>
+          <b>{{ sessionsPerWk() ?? "—" }}</b
+          ><small>sessions/wk</small>
+        </div>
+        <div>
+          <b>{{ avgMin() ?? "—" }}</b
+          ><small>avg min</small>
+        </div>
+        <div>
+          <b>{{ avgRpe() ?? "—" }}</b
+          ><small>avg RPE</small>
+        </div>
+      </div>
+    </div>
   } @else {
     <div class="empty">Log sessions to see your 30-day training summary.</div>
   }
@@ -35,21 +65,35 @@
     @for (inj of injuries(); track $index) {
       <div class="card">
         <div class="lrow">
-          <span>{{ inj.type }}@if (inj.severity) { · {{ inj.severity }} }</span>
-          <span class="band {{ injuryBand(inj.status) }}">{{ inj.status || "logged" }}</span>
+          <span
+            >{{ inj.type }}
+            @if (inj.severity) {
+              · {{ inj.severity }}
+            }
+          </span>
+          <span class="band {{ injuryBand(inj.status) }}">{{
+            inj.status || "logged"
+          }}</span>
         </div>
-        @if (inj.start_date) { <small>since {{ inj.start_date }}</small> }
+        @if (inj.start_date) {
+          <small>since {{ inj.start_date }}</small>
+        }
       </div>
     }
   } @else {
     <div class="empty">No active injuries on file.</div>
   }
 
-  <a class="card" routerLink="/settings" style="color:inherit">
-    <div class="row"><span class="inline"><lucide-icon name="settings" /> Settings</span><lucide-icon name="chevron-right" class="faint" /></div>
+  <a class="card" routerLink="/settings" style="color: inherit">
+    <div class="row">
+      <span class="inline"><lucide-icon name="settings" /> Settings</span
+      ><lucide-icon name="chevron-right" class="faint" />
+    </div>
   </a>
 
   <button class="card sign-out-btn" (click)="signOut()">
-    <div class="row"><span class="inline"><lucide-icon name="log-out" /> Sign out</span></div>
+    <div class="row">
+      <span class="inline"><lucide-icon name="log-out" /> Sign out</span>
+    </div>
   </button>
 </main>

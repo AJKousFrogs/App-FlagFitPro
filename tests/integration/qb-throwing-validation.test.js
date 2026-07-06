@@ -6,7 +6,10 @@ const dbState = vi.hoisted(() => ({
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
   baseHandler: async (event, context, options) =>
-    options.handler(event, context, { userId: "user-1", requestId: "req-test" }),
+    options.handler(event, context, {
+      userId: "user-1",
+      requestId: "req-test",
+    }),
 }));
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
@@ -40,7 +43,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
           return {
             select() {
               return {
-                single: async () => ({ data: { id: "session-1" }, error: null }),
+                single: async () => ({
+                  data: { id: "session-1" },
+                  error: null,
+                }),
               };
             },
           };
@@ -52,7 +58,10 @@ vi.mock("../../netlify/functions/supabase-client.js", () => ({
             },
             select() {
               return {
-                single: async () => ({ data: { id: "session-1" }, error: null }),
+                single: async () => ({
+                  data: { id: "session-1" },
+                  error: null,
+                }),
               };
             },
           };
