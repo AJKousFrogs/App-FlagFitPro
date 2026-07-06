@@ -4,7 +4,10 @@
  * testable and the service can stay focused on data access + realtime sync.
  */
 import { STATUS_HEX_COLORS } from "../../core/utils/design-tokens.util";
-import type { WellnessAverages, WellnessData } from "../../core/services/wellness.service";
+import type {
+  WellnessAverages,
+  WellnessData,
+} from "../../core/services/wellness.service";
 
 /**
  * Parse a timeframe string (e.g. '7d', '2w', '3m', '1y') to a number of days.
@@ -125,12 +128,18 @@ export function getWellnessScore(data: WellnessData): number {
   const metrics = [
     data.sleep,
     data.energy,
-    data.stress !== undefined && data.stress !== null ? 10 - clamp(data.stress) : undefined,
-    data.soreness !== undefined && data.soreness !== null ? 10 - clamp(data.soreness) : undefined,
+    data.stress !== undefined && data.stress !== null
+      ? 10 - clamp(data.stress)
+      : undefined,
+    data.soreness !== undefined && data.soreness !== null
+      ? 10 - clamp(data.soreness)
+      : undefined,
     data.motivation,
     data.mood,
     data.hydration,
-  ].filter((m): m is number => m !== undefined && m !== null && !Number.isNaN(m));
+  ].filter(
+    (m): m is number => m !== undefined && m !== null && !Number.isNaN(m),
+  );
 
   if (metrics.length === 0) return 0;
 
@@ -185,19 +194,27 @@ export function getRecommendations(entry: WellnessData): string[] {
     recs.push("Prioritize sleep — aim for 7–9 hours tonight.");
   }
   if (entry.energy !== undefined && entry.energy < 5) {
-    recs.push("Low energy detected — consider rest and lighter activity today.");
+    recs.push(
+      "Low energy detected — consider rest and lighter activity today.",
+    );
   }
   if (entry.stress !== undefined && entry.stress > 7) {
-    recs.push("High stress levels — try breathing exercises or stress management techniques.");
+    recs.push(
+      "High stress levels — try breathing exercises or stress management techniques.",
+    );
   }
   if (entry.soreness !== undefined && entry.soreness > 7) {
-    recs.push("High soreness — prioritize recovery, foam rolling, and reduced intensity.");
+    recs.push(
+      "High soreness — prioritize recovery, foam rolling, and reduced intensity.",
+    );
   }
   if (entry.hydration !== undefined && entry.hydration < 5) {
     recs.push("Drink more water — target at least 2–3 litres today.");
   }
   if (entry.motivation !== undefined && entry.motivation < 5) {
-    recs.push("Motivation is low — vary your training or try a fun drill session.");
+    recs.push(
+      "Motivation is low — vary your training or try a fun drill session.",
+    );
   }
 
   if (recs.length === 0) {
@@ -221,14 +238,27 @@ export function getWellnessTrends(
   const older = data.slice(mid);
 
   const invertedMetrics = new Set(["stress", "soreness"]);
-  const metrics: (keyof WellnessData)[] = ["sleep", "energy", "stress", "soreness", "mood", "hydration", "motivation"];
+  const metrics: (keyof WellnessData)[] = [
+    "sleep",
+    "energy",
+    "stress",
+    "soreness",
+    "mood",
+    "hydration",
+    "motivation",
+  ];
 
   const avg = (entries: WellnessData[], key: keyof WellnessData) => {
-    const vals = entries.map((e) => e[key] as number | undefined).filter((v): v is number => v !== undefined);
+    const vals = entries
+      .map((e) => e[key] as number | undefined)
+      .filter((v): v is number => v !== undefined);
     return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
   };
 
-  const results: { metric: string; trend: "improving" | "declining" | "stable" }[] = [];
+  const results: {
+    metric: string;
+    trend: "improving" | "declining" | "stable";
+  }[] = [];
 
   for (const metric of metrics) {
     const recentAvg = avg(recent, metric);

@@ -22,14 +22,19 @@ export class CompetitionEventsService {
   async loadUpcoming(teamId: string | null): Promise<CompetitionEventRow[]> {
     let q = this.supabase.client
       .from("competition_events")
-      .select("id, label, starts_at, expected_game_count, minutes_per_game, competitions(name, short_name)")
+      .select(
+        "id, label, starts_at, expected_game_count, minutes_per_game, competitions(name, short_name)",
+      )
       .gte("starts_at", new Date().toISOString())
       .order("starts_at", { ascending: true });
     if (teamId) q = q.eq("team_id", teamId);
 
     const { data } = await q;
     return (data ?? []).map((r: Record<string, unknown>) => {
-      const comp = (r["competitions"] ?? {}) as { name?: string; short_name?: string };
+      const comp = (r["competitions"] ?? {}) as {
+        name?: string;
+        short_name?: string;
+      };
       return {
         id: String(r["id"]),
         name: comp.short_name || comp.name || (r["label"] as string) || "Event",

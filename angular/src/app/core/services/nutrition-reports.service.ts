@@ -22,7 +22,9 @@ export class NutritionReportsService {
   async loadRecent(limit = 10): Promise<NutritionReportRow[]> {
     const { data } = await this.supabase.client
       .from("nutrition_reports")
-      .select("id, report_type, period_start, period_end, created_at, report_data")
+      .select(
+        "id, report_type, period_start, period_end, created_at, report_data",
+      )
       .order("created_at", { ascending: false })
       .limit(limit);
     return (data as NutritionReportRow[] | null) ?? [];

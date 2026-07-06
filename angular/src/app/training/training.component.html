@@ -212,12 +212,28 @@
             }
           </div>
           @if (d.secondSession; as pm) {
-            <div class="lrow" style="padding-left:var(--s-5);margin-top:calc(var(--s-1) * -1)">
-              <span style="font-size:var(--fs-sm);color:var(--text-muted)">
-                <span class="band info" style="font-size:var(--fs-xs);padding:1px 6px;margin-right:var(--s-1)">PM</span>
+            <div
+              class="lrow"
+              style="
+                padding-left: var(--s-5);
+                margin-top: calc(var(--s-1) * -1);
+              "
+            >
+              <span style="font-size: var(--fs-sm); color: var(--text-muted)">
+                <span
+                  class="band info"
+                  style="
+                    font-size: var(--fs-xs);
+                    padding: 1px 6px;
+                    margin-right: var(--s-1);
+                  "
+                  >PM</span
+                >
                 {{ pm.label }}
               </span>
-              <span class="chip" style="font-size:var(--fs-xs)">RPE {{ pm.rpe }}</span>
+              <span class="chip" style="font-size: var(--fs-xs)"
+                >RPE {{ pm.rpe }}</span
+              >
             </div>
           }
         }
