@@ -221,7 +221,7 @@ export class PeriodizationService {
     try {
       const { data, error } = await this.supabase.client
         .from("training_sessions")
-        .select("session_type, drill_type, completed_at")
+        .select("session_type, drill_type, completed_at, rpe")
         .eq("user_id", userId)
         .not("completed_at", "is", null)
         .gte("completed_at", since)
@@ -231,6 +231,7 @@ export class PeriodizationService {
         data.map((r) => ({
           at: r.completed_at as string,
           type: (r.session_type as string) || (r.drill_type as string) || "",
+          rpe: typeof r.rpe === "number" ? r.rpe : null,
         })),
       );
     } catch {
@@ -248,6 +249,26 @@ export class PeriodizationService {
       return null;
     }
     const now = new Date();
+
+    // Mirror weekAhead()'s two-pass approach so the live "today" signal is
+    // schedule-aware (sessions placed relative to actual practices and games,
+    // not DOW arrays). Compute the same 7-day window to derive today's hint.
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+    const teamPracticeFlags7: boolean[] = [];
+    const phases7: CompetitionPhase[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(todayStart);
+      d.setDate(todayStart.getDate() + i);
+      teamPracticeFlags7.push(this.isTeamPractice(d, snap.trainingDays));
+      phases7.push(this.schedule.phaseFor(d));
+    }
+    const intentHints = planWeekIntents(teamPracticeFlags7, phases7);
+
+    // Weekly progression cap: if this week's cumulative load already exceeds
+    // the safe increase limit, pull back high-intensity sessions.
+    const prog = this.acwrService.weeklyProgression();
+
     return prescribeFor({
       date: now,
       phase: snap.currentPhase,
@@ -272,12 +293,26 @@ export class PeriodizationService {
       activeRestrictions: this.injury.restrictions(),
       acclimatizationDay: this.eventTravel.daysSinceArrival(),
       arrivalDayTravelHours: this.eventTravel.arrivalDayTravelHours(),
+      weeklyIntentHint: intentHints[0],
+      weeklyProgressionUnsafe: prog ? !prog.isSafe : false,
     });
   });
 
   /**
-   * 7-day forward prescription view. Useful for a week-at-a-glance UI;
-   * each day resolved independently against the cached schedule snapshot.
+   * 7-day forward prescription view. Useful for a week-at-a-glance UI.
+   *
+   * Uses a two-pass approach:
+   *  Pass 1 — planWeekIntents(): surveys all 7 days (practices, games, taper,
+   *    recovery) and assigns session types to free days based on PROXIMITY to
+   *    high-load anchors, not by day-of-week. The intent hint is passed into
+   *    each prescribeFor() call so higher-priority guards (ACWR, injury, weather)
+   *    still apply on top of it.
+   *  Pass 2 — addSecondSessions(): attaches a PM session to strength days
+   *    eligible for two-a-day training (preseason/offseason, readiness ≥ 75,
+   *    ACWR ≤ 1.2, different energy system, not a team-practice day).
+   *
+   * enforceWeeklyRestMinimum() acts as a safety net for edge cases where the
+   * schedule topology produces fewer than 2 rest days despite the planner.
    */
   weekAhead(): DailyPrescription[] {
     const snap = this.schedule.snapshot();
@@ -297,11 +332,33 @@ export class PeriodizationService {
     // guard easing across the week instead of freezing at today's value.
     const acclimBase = this.eventTravel.daysSinceArrival();
 
+    // Pre-compute per-day data for the full 7-day window before calling
+    // prescribeFor, so planWeekIntents can see the whole schedule at once.
+    const dates7: Date[] = [];
+    const teamPracticeFlags: boolean[] = [];
+    const phases7: CompetitionPhase[] = [];
+    const seasonPhases7: ReturnType<typeof macroPhaseFor>[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      dates7.push(d);
+      teamPracticeFlags.push(this.isTeamPractice(d, snap.trainingDays));
+      phases7.push(this.schedule.phaseFor(d));
+      seasonPhases7.push(macroPhaseFor(d, this.seasonCalendar()));
+    }
+
+    // Schedule-aware intent plan: places sessions relative to practices and
+    // games rather than by hardcoded day-of-week.
+    const intentHints = planWeekIntents(teamPracticeFlags, phases7);
+
+    // Weekly progression cap drives a hard guard for the entire week view.
+    const prog = this.acwrService.weeklyProgression();
+    const weeklyUnsafe = prog ? !prog.isSafe : false;
+
     const out: DailyPrescription[] = [];
     for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const phase = this.schedule.phaseFor(date);
+      const date = dates7[i];
+      const phase = phases7[i];
       out.push(
         prescribeFor({
           date,
@@ -324,7 +381,7 @@ export class PeriodizationService {
                 peakDayGameCount: snap.density14d.peakDayGameCount,
               }
             : null,
-          seasonPhase: macroPhaseFor(date, this.seasonCalendar()),
+          seasonPhase: seasonPhases7[i],
           // Weather is current-conditions only (no 7-day forecast feed), so it
           // can only guard today; future days resolve unguarded rather than
           // against stale "now" weather.
@@ -336,13 +393,25 @@ export class PeriodizationService {
           recentSessions: this.recentSessions(),
           ageYears,
           position: this.position(),
-          isTeamPractice: this.isTeamPractice(date, snap.trainingDays),
+          isTeamPractice: teamPracticeFlags[i],
           activeRestrictions: this.injury.restrictions(),
           acclimatizationDay: acclimBase === null ? null : acclimBase + i,
+          weeklyIntentHint: intentHints[i],
+          weeklyProgressionUnsafe: weeklyUnsafe,
         }),
       );
     }
-    return out;
+
+    // Safety net: ensure ≥ 2 rest days even if schedule topology is unusual,
+    // then add PM double sessions where the phase and readiness allow it.
+    const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
+    return addSecondSessions(
+      capped,
+      teamPracticeFlags,
+      phases7,
+      readiness,
+      acwr,
+    );
   }
 
   /**
@@ -447,7 +516,7 @@ const DENSITY_HEAVY_GAMES_14D = 10;
 const DENSITY_CONGESTED_DAY_GAMES = 3;
 
 const INTENT_LABELS: Record<PrescriptionIntent, string> = {
-  rest: "Rest day",
+  rest: "Rest + daily mobility",
   recovery: "Active recovery",
   mobility: "Mobility & technique",
   technical: "Skills focus",
@@ -491,11 +560,32 @@ function cnsRecoveryHoursForAge(ageYears?: number | null): number {
   return CNS_RECOVERY_HOURS;
 }
 
-/** Detect a high-CNS session from its raw `session_type`/`drill_type`. */
-function isHighCnsSessionType(type: string): boolean {
-  return /sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(
-    type || "",
-  );
+/**
+ * Flag-football drill patterns that qualify as high-CNS when performed at
+ * meaningful intensity. Routes, evasion, and flag-pulls are repeated max-effort
+ * acceleration-and-cut sequences that stress the same neuromuscular pathways as
+ * sprinting (NSCA-TSAC flag-football guidelines). At sub-threshold intensity
+ * they are fine pre-sprint, but at RPE ≥ 6 they warrant the same CNS spacing.
+ */
+const FLAG_DRILL_HIGH_CNS_PATTERN =
+  /\b(?:route|routes|post|fade|hook|evade|evasion|flag.?pull)\b/i;
+
+/**
+ * Detect a high-CNS session from its raw `session_type`/`drill_type` and optional
+ * RPE. Standard high-CNS types (sprint/plyo/accel etc.) are always high-CNS.
+ * Flag-football drill types are high-CNS only when performed at significant
+ * intensity (RPE ≥ 6) or when RPE is unknown — conservative to prevent
+ * under-firing the guard due to missing data.
+ */
+function isHighCnsSessionType(type: string, rpe?: number | null): boolean {
+  const t = type || "";
+  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(t))
+    return true;
+  if (FLAG_DRILL_HIGH_CNS_PATTERN.test(t)) {
+    // Unknown RPE → conservative (treat as high-CNS).
+    return rpe == null || rpe >= 6;
+  }
+  return false;
 }
 
 /**
@@ -519,7 +609,7 @@ function applySprintRecoveryGuard(
   const windowMs = windowHours * 3_600_000;
   let mostRecent: number | null = null;
   for (const s of recentSessions) {
-    if (!isHighCnsSessionType(s.type)) continue;
+    if (!isHighCnsSessionType(s.type, s.rpe ?? null)) continue;
     const t = new Date(s.at).getTime();
     if (!Number.isFinite(t) || t >= now) continue; // future / invalid ignored
     if (now - t > windowMs) continue; // outside the recovery window
@@ -978,6 +1068,112 @@ function practiceModifierFor(
   return PRACTICE_PHASE_MODIFIERS[key] ?? null;
 }
 
+/** Minimum game count in a recently-completed event to trigger tournament recovery. */
+const TOURNAMENT_RECOVERY_GAMES = 4;
+/** Days after a congested tournament during which the engine forces recovery. */
+const TOURNAMENT_RECOVERY_WINDOW_DAYS = 2;
+
+/**
+ * Returns 1 or 2 if `date` falls within the forced recovery window after a
+ * congested tournament (≥ TOURNAMENT_RECOVERY_GAMES games), else null.
+ *
+ * "Day 1" = the calendar day immediately after the tournament ended.
+ * "Day 2" = two calendar days after.
+ *
+ * Evidence: Nédélec et al. (2014) post-match fatigue markers persist 72 h after
+ * a multi-game tournament; Bompa & Buzzichelli (2018) congestion-week management.
+ */
+function detectTournamentRecoveryDay(
+  lastEvent: CompetitionEvent | null,
+  date: Date,
+): number | null {
+  if (!lastEvent) return null;
+  if ((lastEvent.expectedGameCount ?? 0) < TOURNAMENT_RECOVERY_GAMES)
+    return null;
+  const eventEnd = new Date(lastEvent.endsAt ?? lastEvent.startsAt);
+  const msAfterEnd = date.getTime() - eventEnd.getTime();
+  if (msAfterEnd <= 0) return null; // event still active or in future
+  const dayAfterEnd = Math.ceil(msAfterEnd / 86_400_000);
+  return dayAfterEnd <= TOURNAMENT_RECOVERY_WINDOW_DAYS ? dayAfterEnd : null;
+}
+
+/**
+ * Builds the forced recovery/mobility prescription for day +1 and day +2 after
+ * a congested tournament. Only called for non-practice days; practice days are
+ * handled by switching their PRACTICE_PHASE_MODIFIERS key to "recovery".
+ */
+function applyPostTournamentRecovery(
+  inputs: PeriodizationInputs,
+  dayAfterTournament: number,
+): DailyPrescription {
+  const { date, bodyweightKg, acwr, seasonPhase, upcoming, lastEvent } = inputs;
+  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const gameCount = lastEvent!.expectedGameCount ?? 0;
+  const eventName =
+    lastEvent!.competitionShortName ??
+    lastEvent!.competitionName ??
+    "your tournament";
+  const hoursUntilNext = nextEventHours(date, upcoming);
+  const intent: PrescriptionIntent =
+    dayAfterTournament === 1 ? "recovery" : "mobility";
+  return finalize({
+    date,
+    phase: inputs.phase,
+    intent,
+    targetRpe: dayAfterTournament === 1 ? 3 : 4,
+    targetMinutes: dayAfterTournament === 1 ? 30 : 45,
+    sprintReps: 0,
+    strengthSets: 0,
+    reasoning:
+      dayAfterTournament === 1
+        ? `Day 1 after ${eventName} (${gameCount} games) — recovery only. Acute neuromuscular damage is still being repaired; no sprint or strength today.`
+        : `Day 2 after ${eventName} (${gameCount} games) — light mobility only; neuromuscular recovery is still active.`,
+    recoveryEmphasis: dayAfterTournament === 1 ? "critical" : "high",
+    nutrition: nutritionFor("recovery", bodyweight, false, false),
+    driverEvent: lastEvent!,
+    hoursUntilNextEvent: hoursUntilNext,
+    acwrAtIssue: acwr,
+    seasonPhase: seasonPhase ?? null,
+    tournamentRecoveryAdjustment: {
+      dayAfterTournament,
+      gamesPlayed: gameCount,
+      tournamentName: eventName,
+    },
+  });
+}
+
+/**
+ * Applies ACWR / density / weekly-progression safety modulation to a hint
+ * produced by planWeekIntents(). This makes the schedule-aware hint path
+ * receive the same safety layering that pickAccumulationIntent() and
+ * seasonShapedIntent() apply inline to their DOW fallback results.
+ */
+function modulateIntentForLoad(
+  intent: PrescriptionIntent,
+  acwr: number | null,
+  heavyDensity: boolean,
+  weeklyProgressionUnsafe: boolean,
+): PrescriptionIntent {
+  let i = intent;
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (i === "sprint" || i === "strength") i = "mobility";
+    else if (i === "mixed") i = "technical";
+  }
+  if (heavyDensity && i !== "rest") {
+    if (i === "strength") i = "technical";
+    if (i === "mixed") i = "mobility";
+  }
+  // Weekly progression cap: if this week's cumulative load already exceeds the
+  // safe increase threshold, pull back high-intensity work for the rest of the week.
+  if (
+    weeklyProgressionUnsafe &&
+    (i === "sprint" || i === "strength" || i === "mixed")
+  ) {
+    i = "technical";
+  }
+  return i;
+}
+
 /**
  * The core decision. Read top-to-bottom: highest-priority overrides first
  * (game day, taper, recovery, ACWR safety), then phase/season defaults.
@@ -1065,11 +1261,11 @@ function decideBasePrescription(
       date,
       phase,
       intent: "rest",
-      targetRpe: null,
-      targetMinutes: 0,
+      targetRpe: 2,
+      targetMinutes: 15,
       sprintReps: 0,
       strengthSets: 0,
-      reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone. Full rest today.`,
+      reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone — full rest today. Gentle 15-min mobility and stretching only; no cardio or loading.`,
       recoveryEmphasis: "critical",
       nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
       driverEvent,
@@ -1097,32 +1293,43 @@ function decideBasePrescription(
     });
   }
 
+  // 4.5 Detect post-congested-tournament context. Checked before the practice
+  // path so we can override the practice modifier to recovery intensity AND gate
+  // non-practice days uniformly.
+  const tournamentRecoveryDay = detectTournamentRecoveryDay(lastEvent, date);
+
   // 4.6 DAY TYPE = team practice. Resolved from the calendar FIRST (you're going
   // to practice regardless), then the event/season PHASE is applied as a
   // data-driven modifier (PRACTICE_PHASE_MODIFIERS) — the RPE/volume/fuel are
   // config, not control flow. A null modifier means a practice day does NOT own
   // this phase (only competition now — the game is the session) → fall through.
+  // Post-tournament override: practice is still attended but at recovery intensity
+  // (we don't skip practice, we just cap the load at the "recovery" row).
   const practiceDaysOut =
     hoursUntilNext !== null
       ? Math.max(1, Math.ceil(hoursUntilNext / 24))
       : null;
   const practiceMod = inputs.isTeamPractice
-    ? practiceModifierFor(phase, practiceDaysOut)
+    ? tournamentRecoveryDay !== null
+      ? PRACTICE_PHASE_MODIFIERS["recovery"]
+      : practiceModifierFor(phase, practiceDaysOut)
     : null;
   if (practiceMod) {
     const eventName = driverEvent
       ? (driverEvent.competitionShortName ?? driverEvent.competitionName)
       : null;
     const practiceReasoning =
-      practiceMod.framing === "recovery"
-        ? "Practice today, but you're in post-game recovery — keep it very light: active recovery and mobility only, no hard reps."
-        : practiceMod.framing === "sharp"
-          ? `Practice today is your session${
-              practiceDaysOut !== null
-                ? ` — ${practiceDaysOut} day${practiceDaysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
-                : ""
-            }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
-          : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).";
+      tournamentRecoveryDay !== null
+        ? `Practice today, but you're in post-tournament recovery (day ${tournamentRecoveryDay} after ${eventName ?? "your tournament"}) — active recovery and mobility only; no hard reps.`
+        : practiceMod.framing === "recovery"
+          ? "Practice today, but you're in post-game recovery — keep it very light: active recovery and mobility only, no hard reps."
+          : practiceMod.framing === "sharp"
+            ? `Practice today is your session${
+                practiceDaysOut !== null
+                  ? ` — ${practiceDaysOut} day${practiceDaysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}`
+                  : ""
+              }. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.`
+            : "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).";
     return finalize({
       date,
       phase,
@@ -1144,7 +1351,22 @@ function decideBasePrescription(
       hoursUntilNextEvent: hoursUntilNext,
       acwrAtIssue: acwr,
       seasonPhase: seasonPhase ?? null,
+      tournamentRecoveryAdjustment:
+        tournamentRecoveryDay !== null
+          ? {
+              dayAfterTournament: tournamentRecoveryDay,
+              gamesPlayed: lastEvent?.expectedGameCount ?? 0,
+              tournamentName: eventName,
+            }
+          : null,
     });
+  }
+
+  // 4.8 Non-practice post-tournament recovery: for free accumulation/transition
+  // days within 2 days of a congested tournament, force recovery regardless of
+  // phase. Practice days are already handled by the "recovery" modifier above.
+  if (tournamentRecoveryDay !== null && !inputs.isTeamPractice) {
+    return applyPostTournamentRecovery(inputs, tournamentRecoveryDay);
   }
 
   // 5. Phase-driven defaults.
@@ -1214,17 +1436,30 @@ function decideBasePrescription(
 
     case "accumulation":
     default: {
-      // No event micro-phase is driving the week. If the athlete's macro season
-      // phase is known, let it shape the week (off-season = strength/conditioning,
-      // in-season = maintain + skill, transition = base); otherwise fall back to
-      // the generic build shape. Pre-season == the generic progressive build.
+      // No event micro-phase is driving the week. Use the schedule-aware intent
+      // hint from weekAhead()'s planWeekIntents pass when available — it places
+      // sessions relative to actual practices and games rather than by DOW.
+      // When a hint is provided, apply the same ACWR / density / weekly-progression
+      // modulation that pickAccumulationIntent() and seasonShapedIntent() apply
+      // inline, via modulateIntentForLoad(). This closes the bypass bug where a
+      // schedule-aware hint could slip past safety guards.
+      const weekHint = inputs.weeklyIntentHint ?? null;
+      const weeklyUnsafe = inputs.weeklyProgressionUnsafe ?? false;
+
       if (seasonPhase && seasonPhase !== "preseason") {
-        const intent = seasonShapedIntent(
-          date,
-          seasonPhase,
-          acwr,
-          heavyDensity,
-        );
+        let intent =
+          weekHint !== null
+            ? modulateIntentForLoad(weekHint, acwr, heavyDensity, weeklyUnsafe)
+            : seasonShapedIntent(date, seasonPhase, acwr, heavyDensity);
+        // Also apply the weekly progression cap to the DOW fallback (ACWR/density
+        // already applied inside seasonShapedIntent).
+        if (
+          weekHint === null &&
+          weeklyUnsafe &&
+          (intent === "sprint" || intent === "strength" || intent === "mixed")
+        ) {
+          intent = "technical";
+        }
         const t = baseTargets(intent);
         return finalize({
           date,
@@ -1244,10 +1479,18 @@ function decideBasePrescription(
         });
       }
 
-      // Choose intent by day of week to give the week a shape. Targets come from
-      // the BUILD table (pre-season can carry more volume on light intents than
-      // in-season — finding M1, now explicit config not inline literals).
-      const intent = pickAccumulationIntent(date, acwr, heavyDensity);
+      let intent =
+        weekHint !== null
+          ? modulateIntentForLoad(weekHint, acwr, heavyDensity, weeklyUnsafe)
+          : pickAccumulationIntent(date, acwr, heavyDensity);
+      // Apply the weekly progression cap to the DOW fallback as well.
+      if (
+        weekHint === null &&
+        weeklyUnsafe &&
+        (intent === "sprint" || intent === "strength" || intent === "mixed")
+      ) {
+        intent = "technical";
+      }
       const t = buildTargets(intent);
       return finalize({
         date,
@@ -1312,6 +1555,313 @@ function inSeasonWindow(
   return f <= t ? iso >= f && iso <= t : iso >= f || iso <= t;
 }
 
+// =============================================================================
+// SCHEDULE-AWARE WEEK PLANNING
+//
+// The day-of-week array approach (Mon=strength, Tue=sprint, Wed=rest, …) is
+// fundamentally wrong for a real athlete's week: if practices fall on Mon/Wed/Thu
+// you can't give sprints on those days, and you can't hardcode rest to Wednesday
+// if practice IS Wednesday. The correct approach:
+//
+//  1. Identify "locked" days (practices, games, taper, post-game recovery) —
+//     prescribeFor already handles these correctly.
+//  2. For the remaining free "accumulation" days, place sessions based on
+//     PROXIMITY to locked high-load anchors (not by weekday):
+//       • Day adjacent to a game/competition → rest (mandatory buffer)
+//       • Day immediately before a practice → technical (complement; save legs)
+//       • Day immediately after a practice → strength (different stimulus)
+//       • Day with ≥ 2 days buffer from any practice → quality session (strength
+//         or sprint, alternating to avoid same-type back-to-back)
+//       • Any remaining free days beyond the 5-session cap → rest
+//  3. Spread sessions: never assign consecutive free training days when non-
+//     consecutive slots are available (avoids Fri+Sat strength+strength on top
+//     of Thu practice).
+//
+// Evidence: Bompa & Buzzichelli (2018) periodization principles; NSCA-TSAC
+// flag-football guidelines; Gabbett (2016) BJSM ACWR load management.
+// =============================================================================
+
+/**
+ * Plans the full 7-day intent assignment for free accumulation days, using the
+ * actual schedule (practices, games, tournaments) rather than day-of-week arrays.
+ * Returns null for days already owned by prescribeFor (practices, competition,
+ * taper, recovery). Non-null values are passed as `weeklyIntentHint` into
+ * prescribeFor, where modulateIntentForLoad() applies ACWR / density / weekly-
+ * progression safety modulation before the intent reaches the prescription.
+ */
+function planWeekIntents(
+  teamPracticeFlags: boolean[],
+  phases: CompetitionPhase[],
+): (PrescriptionIntent | null)[] {
+  const intents: (PrescriptionIntent | null)[] = new Array(7).fill(null);
+
+  // Game-type days mandate rest on adjacent free days.
+  const isGameDay = phases.map(
+    (p) => p === "competition" || p === "taper" || p === "recovery",
+  );
+
+  // Locked days: prescribeFor already handles these correctly.
+  const isLocked = Array.from(
+    { length: 7 },
+    (_, i) => teamPracticeFlags[i] || isGameDay[i],
+  );
+
+  // Only plan free accumulation days — everything else keeps a null hint.
+  const freeDays = Array.from({ length: 7 }, (_, i) => i).filter(
+    (i) => !isLocked[i] && phases[i] === "accumulation",
+  );
+  if (!freeDays.length) return intents;
+
+  const nearestBefore = (idx: number, flags: boolean[]): number => {
+    for (let d = 1; d <= idx; d++) if (flags[idx - d]) return d;
+    return 99;
+  };
+  const nearestAfter = (idx: number, flags: boolean[]): number => {
+    for (let d = 1; d < 7 - idx; d++) if (flags[idx + d]) return d;
+    return 99;
+  };
+
+  interface Slot {
+    idx: number;
+    gameB: number;
+    gameA: number;
+    pracB: number;
+    pracA: number;
+    quality: number;
+  }
+
+  const slots: Slot[] = freeDays.map((idx) => {
+    const gameB = nearestBefore(idx, isGameDay);
+    const gameA = nearestAfter(idx, isGameDay);
+    const pracB = nearestBefore(idx, teamPracticeFlags);
+    const pracA = nearestAfter(idx, teamPracticeFlags);
+    const minGame = Math.min(gameB, gameA);
+    const minPrac = Math.min(pracB, pracA);
+    const maxPrac = Math.max(pracB, pracA);
+    // Quality: game buffer dominates; practice buffer breaks ties.
+    const quality = minGame * 1000 + minPrac * 10 + maxPrac;
+    return { idx, gameB, gameA, pracB, pracA, quality };
+  });
+
+  // Budget: max 5 active days total; mandatory days already claimed.
+  const mandatoryCount = isLocked.filter(Boolean).length;
+  const budget = Math.max(0, 5 - mandatoryCount);
+
+  // Select training slots greedily: best quality first; avoid consecutive days
+  // (Fri+Sat back-to-back after Thu practice is a common trap).
+  const sorted = [...slots].sort((a, b) => b.quality - a.quality);
+  const trainingIdxs = new Set<number>();
+
+  for (const { idx } of sorted) {
+    if (trainingIdxs.size >= budget) break;
+    if ([...trainingIdxs].some((t) => Math.abs(t - idx) === 1)) continue;
+    trainingIdxs.add(idx);
+  }
+
+  // Assign REST to non-selected free days.
+  for (const { idx } of slots) {
+    if (!trainingIdxs.has(idx)) intents[idx] = "rest";
+  }
+
+  // Assign training intents chronologically (earlier days first).
+  let strengthAssigned = 0;
+  let sprintAssigned = 0;
+  for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
+    const s = slots.find((sl) => sl.idx === idx)!;
+    const minGameDist = Math.min(s.gameB, s.gameA);
+
+    // Shouldn't happen (we require minGameDist > 0 in slot selection), but guard.
+    if (minGameDist <= 1) {
+      intents[idx] = "rest";
+      continue;
+    }
+
+    // Day immediately before a practice → technical (complement practice; don't
+    // pre-fatigue legs with strength or sprint before the practice).
+    if (s.pracA === 1) {
+      intents[idx] = "technical";
+      continue;
+    }
+
+    // Day immediately after a practice → strength (different neuromuscular
+    // stimulus; the adaptation window from practice is still open).
+    if (s.pracB === 1) {
+      intents[idx] = "strength";
+      strengthAssigned++;
+      continue;
+    }
+
+    // Good buffer from practices on both sides (≥ 2 days): quality session.
+    // Alternate strength and sprint; cap sprint at 2 per week.
+    if (Math.min(s.pracB, s.pracA) >= 2) {
+      if (sprintAssigned < strengthAssigned && sprintAssigned < 2) {
+        intents[idx] = "sprint";
+        sprintAssigned++;
+      } else {
+        intents[idx] = "strength";
+        strengthAssigned++;
+      }
+      continue;
+    }
+
+    // Sandwiched between practices (both ≤ 2 days) with no single "after" or
+    // "before" adjacency: technical is the safest complementary choice.
+    intents[idx] = "technical";
+  }
+
+  return intents;
+}
+
+// =============================================================================
+// WEEKLY REST ENFORCEMENT
+//
+// Evidence (Bompa & Buzzichelli 2018; NSCA-TSAC; Gabbett 2016 BJSM):
+//   – Minimum 2 full rest days per week is non-negotiable for soft-tissue
+//     recovery and nervous-system adaptation in team-sport athletes.
+//   – Max 5 active training days caps weekly load before injury risk spikes.
+//   – Two-a-day (double) sessions are preseason/offseason only: different
+//     energy systems, ≥ 6 h apart, readiness ≥ 75, ACWR ≤ 1.2.
+// =============================================================================
+
+/** Demotion priority when the weekly cap forces rest: lowest disruption first. */
+// Sessions are demoted to rest from the front of this list when the week has
+// fewer than 2 rest days. "taper-prime" leads because in a loaded week the
+// day immediately before a game is the most natural rest slot — mandatory rest
+// trumps a pre-game primer. Regular training sessions follow in ascending
+// load/disruption order (mobility first, strength last).
+const DEMOTION_PRIORITY: PrescriptionIntent[] = [
+  "taper-prime",
+  "mobility",
+  "technical",
+  "mixed",
+  "sprint",
+  "strength",
+];
+
+/**
+ * Post-processing pass: ensures ≥ 2 full rest days in the 7-day window.
+ * Team-practice days, game days, and already-rest/recovery days are never
+ * demoted. Taper-prime IS demotable — in a loaded week the pre-game slot is
+ * the most natural rest day (see DEMOTION_PRIORITY). Converts the lowest-
+ * priority eligible session(s) to rest, least disruptive first.
+ */
+function enforceWeeklyRestMinimum(
+  prescriptions: DailyPrescription[],
+  teamPracticeFlags: boolean[],
+): DailyPrescription[] {
+  const MIN_REST = 2;
+  const restCount = prescriptions.filter((p) => p.intent === "rest").length;
+  if (restCount >= MIN_REST) return prescriptions;
+
+  const needed = MIN_REST - restCount;
+  const demotable = prescriptions
+    .map((p, i) => ({ i, p, priority: DEMOTION_PRIORITY.indexOf(p.intent) }))
+    .filter(
+      ({ p, i, priority }) =>
+        !teamPracticeFlags[i] &&
+        p.intent !== "rest" &&
+        p.intent !== "recovery" &&
+        p.intent !== "competition" &&
+        priority !== -1,
+      // taper-prime is no longer excluded — in a loaded week the pre-game slot
+      // is the most natural rest day. DEMOTION_PRIORITY already ranks it first,
+      // so it's only chosen when there's truly no better candidate.
+    )
+    .sort((a, b) => a.priority - b.priority);
+
+  const toRest = new Set(demotable.slice(0, needed).map((d) => d.i));
+  return prescriptions.map((p, i) =>
+    toRest.has(i)
+      ? {
+          ...p,
+          intent: "rest" as PrescriptionIntent,
+          intentLabel: INTENT_LABELS["rest"],
+          targetRpe: 2,
+          targetMinutes: 15,
+          sprintReps: 0,
+          strengthSets: 0,
+          reasoning:
+            "Rest day — 2 full rest days per week are non-negotiable for adaptation. Complete your 15-min daily mobility and stretching routine.",
+          recoveryEmphasis: "low" as RecoveryEmphasis,
+          secondSession: null,
+        }
+      : p,
+  );
+}
+
+/**
+ * Adds a PM second session to eligible strength days in the week view.
+ *
+ * Rules (Stone et al. 2007; NSCA-TSAC two-a-day guidelines):
+ *  – Phase: preseason or early offseason only
+ *  – Slot: any strength day that is ≥ 2 days from the nearest game/taper/recovery
+ *    (schedule-aware — no longer locked to Mon/Thu)
+ *  – Energy systems must differ — strength AM drives sprint or technical PM,
+ *    never the same system twice
+ *  – PM is technical (not sprint) when a practice follows the next day, to
+ *    avoid stacking two high-CNS sessions within ~18 h
+ *  – Not on team-practice days (practice IS the primary session)
+ *  – Today (i=0): gated on readiness ≥ 75 AND ACWR ≤ 1.2
+ *  – Future days (i>0): shown as eligible without live gates
+ */
+function addSecondSessions(
+  prescriptions: DailyPrescription[],
+  teamPracticeFlags: boolean[],
+  competitionPhases: CompetitionPhase[],
+  todayReadiness: number | null,
+  todayAcwr: number | null,
+): DailyPrescription[] {
+  // Days whose competition phase demands ≥ 2 days buffer before two-a-days.
+  // Stacking a PM session ≤ 1 day from game/taper/recovery compromises
+  // match-day readiness (Stone et al. 2007; NSCA-TSAC two-a-day guidelines).
+  const isHighLoad = competitionPhases.map(
+    (p) => p === "competition" || p === "taper" || p === "recovery",
+  );
+
+  return prescriptions.map((p, i) => {
+    const phase = p.seasonPhase;
+    if (phase !== "preseason" && phase !== "offseason") return p;
+    if (teamPracticeFlags[i]) return p;
+    if (p.intent !== "strength") return p;
+    if (p.targetRpe === null) return p; // already a rest/recovery override
+
+    // Require ≥ 2 days gap to the nearest high-load day — schedule-aware,
+    // not weekday-based. This replaces the Mon/Thu DOW hard-lock.
+    const nearestHighLoad = Array.from({ length: 7 }, (_, j) =>
+      isHighLoad[j] ? Math.abs(i - j) : 99,
+    ).reduce((min, d) => Math.min(min, d), 99);
+    if (nearestHighLoad < 2) return p;
+
+    // Apply live readiness/ACWR safety gates for today only.
+    if (i === 0) {
+      if ((todayReadiness ?? 70) < 75) return p;
+      if (todayAcwr !== null && todayAcwr > 1.2) return p;
+    }
+
+    // Energy-system diversification: prefer technical PM when a practice follows
+    // tomorrow (avoids stacking two high-CNS sessions within ~18 h); otherwise
+    // sprint PM capitalises on the strength-primed CNS state.
+    const practiceFollowsTomorrow = i + 1 < 7 && teamPracticeFlags[i + 1];
+    const secondIntent: PrescriptionIntent = practiceFollowsTomorrow
+      ? "technical"
+      : "sprint";
+
+    return {
+      ...p,
+      secondSession: {
+        intent: secondIntent,
+        intentLabel: INTENT_LABELS[secondIntent],
+        targetRpe: Math.max(5, (p.targetRpe ?? 7) - 1),
+        targetMinutes: secondIntent === "sprint" ? 40 : 45,
+        reasoning:
+          secondIntent === "sprint"
+            ? "PM speed session — 6 h after morning strength. Short, high-quality sprints while CNS is primed and pre-fatigue is low."
+            : "PM technical session — skills and route running at low metabolic cost; capitalises on strength stimulus without CNS overlap.",
+      },
+    };
+  });
+}
+
 /**
  * Day-of-week week shape biased by macro season phase. Off-season is
  * strength/conditioning-led; in-season maintains strength + sharpens skills;
@@ -1326,50 +1876,56 @@ function seasonShapedIntent(
 ): PrescriptionIntent {
   const dow = date.getDay(); // 0 = Sun
   let week: PrescriptionIntent[];
+  // All arrays: Sun=0 is rest, Wed=3 is rest — two mandatory full rest days.
+  // Max 5 active days satisfies the 7-session / 2-days-off spec law.
   switch (season) {
-    case "offseason": // GPP — get strong, build base
+    case "offseason": // GPP — build strength and aerobic base
+      //       Sun      Mon         Tue     Wed     Thu          Fri          Sat
       week = [
         "rest",
         "strength",
         "mixed",
-        "mobility",
+        "rest",
         "strength",
+        "technical",
         "mixed",
-        "strength",
       ];
       break;
-    case "inseason": // maintain + skill
+    case "inseason": // maintain strength; sharpen skill; no 2-a-days
+      //       Sun      Mon          Tue          Wed     Thu           Fri         Sat
       week = [
         "rest",
         "strength",
         "technical",
-        "mobility",
+        "rest",
         "technical",
         "strength",
         "mixed",
       ];
       break;
-    case "peak": // peaking block: sharp, low volume, high quality, fresh
+    case "peak": // peaking: sharp, low volume, 2 rest days, no 2-a-days
+      //       Sun      Mon        Tue          Wed     Thu           Fri        Sat
       week = [
         "rest",
         "sprint",
         "technical",
-        "mobility",
+        "rest",
         "technical",
         "sprint",
         "recovery",
       ];
       break;
-    case "postseason": // active regeneration after the competitive block
-    case "transition": // active rest / aerobic base (legacy alias)
+    case "postseason": // active regeneration; easy movement only
+    case "transition": // active-rest / aerobic base (legacy alias)
+      //       Sun      Mon          Tue          Wed     Thu          Fri          Sat
       week = [
         "rest",
         "recovery",
         "mobility",
+        "rest",
+        "mobility",
         "recovery",
         "mobility",
-        "mixed",
-        "recovery",
       ];
       break;
     case "preseason":
@@ -1642,9 +2198,12 @@ function baseTargets(intent: PrescriptionIntent): {
 } {
   switch (intent) {
     case "rest":
+      // No structured training, but daily 15-min mobility + stretching is always
+      // prescribed — it maintains range of motion and accelerates tissue recovery
+      // (Behm & Chaouachi 2011; NSCA-TSAC general prep guidelines).
       return {
-        targetRpe: null,
-        targetMinutes: 0,
+        targetRpe: 2,
+        targetMinutes: 15,
         sprintReps: 0,
         strengthSets: 0,
       };
@@ -1723,7 +2282,9 @@ type SessionTarget = ReturnType<typeof baseTargets>;
 const BUILD_TARGET_OVERRIDES: Partial<
   Record<PrescriptionIntent, SessionTarget>
 > = {
-  rest: { targetRpe: 6, targetMinutes: 0, sprintReps: 0, strengthSets: 0 },
+  // rest is rest in any phase: no structured training, just daily mobility.
+  // Previous value (RPE 6) was a stale pre-refactor literal and is corrected here.
+  rest: { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 },
   mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
   technical: {
     targetRpe: 6,
@@ -1828,6 +2389,9 @@ function accumulationReasoning(
   if (acwr !== null && acwr < ACWR_UNDER) {
     return `Under-trained (ACWR ${acwr.toFixed(2)}) — building load with a ${intent} session.`;
   }
+  if (intent === "rest") {
+    return "Build phase rest day — no structured training. Complete your 15-min daily mobility and stretching routine.";
+  }
   return `Build phase. Today is a ${intent} day.`;
 }
 
@@ -1836,17 +2400,20 @@ function pickAccumulationIntent(
   acwr: number | null,
   heavyDensity: boolean,
 ): PrescriptionIntent {
-  // Standard week shape: Mon strength, Tue sprint, Wed technical/mobility,
-  // Thu strength, Fri sprint, Sat mixed, Sun rest. Day-of-week 0 = Sunday.
+  // Fallback DOW shape — reached only when planWeekIntents() returned null for
+  // this day (no schedule anchor in the 7-day window to place the session
+  // relative to). Both today and weekAhead() prefer the schedule-aware hint;
+  // this array is the last resort. Two rest days (Sun + Wed) per NSCA-TSAC /
+  // Bompa 2018; max 5 active days.
   const dow = date.getDay();
   const standard: PrescriptionIntent[] = [
-    "rest", // Sun
-    "strength", // Mon
-    "sprint", // Tue
-    "mobility", // Wed
-    "strength", // Thu
-    "sprint", // Fri
-    "mixed", // Sat
+    "rest", // Sun — post-week full rest
+    "strength", // Mon — neuromuscular block
+    "sprint", // Tue — speed / agility quality
+    "rest", // Wed — mid-week full rest
+    "strength", // Thu — second neuromuscular block
+    "technical", // Fri — skills / routes (low CNS demand)
+    "mixed", // Sat — integrated flag-football session
   ];
   let intent = standard[dow];
 
@@ -1954,4 +2521,8 @@ export const __periodization__ = {
   baseTargets,
   CARB_PER_KG,
   cnsRecoveryHoursForAge,
+  isHighCnsSessionType,
+  planWeekIntents,
+  detectTournamentRecoveryDay,
+  modulateIntentForLoad,
 };

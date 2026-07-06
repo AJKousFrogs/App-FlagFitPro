@@ -235,9 +235,9 @@ describe("prescribeFor — accumulation week shape", () => {
   it.each([
     ["Mon", monday, "strength"],
     ["Tue", tuesday, "sprint"],
-    ["Wed", wednesday, "mobility"],
+    ["Wed", wednesday, "rest"], // second mandatory rest day
     ["Thu", thursday, "strength"],
-    ["Fri", friday, "sprint"],
+    ["Fri", friday, "technical"], // lower CNS load heading into the mixed weekend
     ["Sat", saturday, "mixed"],
     ["Sun", sunday, "rest"],
   ] as const)("%s default intent is %s", (_label, date, expected) => {
@@ -1498,5 +1498,414 @@ describe("prescribeFor — practice day on a recovery phase (finding 1.1)", () =
     );
     expect(rx.intentLabel).not.toBe("Flag football practice");
     expect(rx.intent).toBe("recovery");
+  });
+});
+
+// =============================================================================
+// REST DAY — daily mobility prescription (even on rest days)
+// Behm & Chaouachi 2011: passive rest loses nothing; 15-min mobility preserves
+// ROM and accelerates structural repair. Rest = no structured training load,
+// not absence of all movement.
+// =============================================================================
+
+describe("prescribeFor — rest day includes daily mobility prescription", () => {
+  const sunday = new Date("2026-05-10T10:00:00Z"); // DOW fallback: Sunday → rest
+
+  it("rest intent has RPE 2 and 15-min target (mobility, not couch rest)", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.intent).toBe("rest");
+    expect(rx.targetRpe).toBe(2);
+    expect(rx.targetMinutes).toBe(15);
+  });
+
+  it("rest day intentLabel mentions mobility", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.intentLabel).toMatch(/mobility/i);
+  });
+
+  it("rest day reasoning mentions mobility or stretching", () => {
+    const rx = prescribeFor(inputs({ date: sunday, phase: "accumulation" }));
+    expect(rx.reasoning).toMatch(/mobility|stretching/i);
+  });
+
+  it("ACWR danger zone also prescribes gentle mobility (RPE 2 / 15 min)", () => {
+    const rx = prescribeFor(
+      inputs({ date: sunday, phase: "accumulation", acwr: 1.6 }),
+    );
+    expect(rx.intent).toBe("rest");
+    expect(rx.targetRpe).toBe(2);
+    expect(rx.targetMinutes).toBe(15);
+    expect(rx.reasoning).toMatch(/mobility|stretching/i);
+  });
+});
+
+// =============================================================================
+// POST-TOURNAMENT RECOVERY — detectTournamentRecoveryDay + prescription guard
+// Sports science: Nédélec et al. (2014); Bompa & Buzzichelli (2018);
+// NSCA-TSAC tournament load guidelines.
+// =============================================================================
+
+describe("detectTournamentRecoveryDay", () => {
+  const { detectTournamentRecoveryDay } = __periodization__;
+
+  const tournamentEndingMay9 = event({
+    startsAt: "2026-05-09T08:00:00Z",
+    endsAt: "2026-05-09T17:00:00Z",
+    expectedGameCount: 8,
+  });
+
+  it("returns 1 the day after a congested (≥4 game) tournament ends", () => {
+    const day1 = new Date("2026-05-10T10:00:00Z"); // Sunday
+    expect(detectTournamentRecoveryDay(tournamentEndingMay9, day1)).toBe(1);
+  });
+
+  it("returns 2 two days after a congested tournament ends", () => {
+    const day2 = new Date("2026-05-11T10:00:00Z"); // Monday
+    expect(detectTournamentRecoveryDay(tournamentEndingMay9, day2)).toBe(2);
+  });
+
+  it("returns null on day 3+ (past the 2-day recovery window)", () => {
+    const day3 = new Date("2026-05-12T10:00:00Z");
+    expect(detectTournamentRecoveryDay(tournamentEndingMay9, day3)).toBeNull();
+  });
+
+  it("returns null when the game count is below the threshold (< 4 games)", () => {
+    const lightEvent = event({
+      startsAt: "2026-05-09T08:00:00Z",
+      endsAt: "2026-05-09T17:00:00Z",
+      expectedGameCount: 3,
+    });
+    const day1 = new Date("2026-05-10T10:00:00Z");
+    expect(detectTournamentRecoveryDay(lightEvent, day1)).toBeNull();
+  });
+
+  it("returns null when no last event is present", () => {
+    const day1 = new Date("2026-05-10T10:00:00Z");
+    expect(detectTournamentRecoveryDay(null, day1)).toBeNull();
+  });
+
+  it("returns null when the tournament has not finished yet (date is during the event)", () => {
+    const duringEvent = new Date("2026-05-09T12:00:00Z");
+    expect(
+      detectTournamentRecoveryDay(tournamentEndingMay9, duringEvent),
+    ).toBeNull();
+  });
+});
+
+describe("prescribeFor — post-tournament recovery prescription", () => {
+  const tournamentLastEvent = event({
+    startsAt: "2026-05-09T08:00:00Z",
+    endsAt: "2026-05-09T17:00:00Z",
+    expectedGameCount: 8,
+    competitionShortName: "EuroNines 2026",
+  });
+
+  it("day +1 after a tournament forces recovery intent (RPE 3 / 30 min)", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-10T10:00:00Z"),
+        phase: "accumulation",
+        lastEvent: tournamentLastEvent,
+      }),
+    );
+    expect(rx.intent).toBe("recovery");
+    expect(rx.targetRpe).toBe(3);
+    expect(rx.targetMinutes).toBe(30);
+    expect(rx.tournamentRecoveryAdjustment?.dayAfterTournament).toBe(1);
+    expect(rx.tournamentRecoveryAdjustment?.gamesPlayed).toBe(8);
+    expect(rx.reasoning).toMatch(/Day 1/i);
+  });
+
+  it("day +2 after a tournament forces mobility intent (RPE 4 / 45 min)", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-11T10:00:00Z"),
+        phase: "accumulation",
+        lastEvent: tournamentLastEvent,
+      }),
+    );
+    expect(rx.intent).toBe("mobility");
+    expect(rx.targetRpe).toBe(4);
+    expect(rx.targetMinutes).toBe(45);
+    expect(rx.tournamentRecoveryAdjustment?.dayAfterTournament).toBe(2);
+    expect(rx.reasoning).toMatch(/Day 2/i);
+  });
+
+  it("day +3 (past the window) resumes normal accumulation", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-12T10:00:00Z"), // Tuesday
+        phase: "accumulation",
+        lastEvent: tournamentLastEvent,
+      }),
+    );
+    // Tuesday without tournament guard → sprint (standard DOW fallback)
+    expect(rx.intent).toBe("sprint");
+    expect(rx.tournamentRecoveryAdjustment).toBeUndefined();
+  });
+
+  it("a 3-game event (below threshold) does NOT trigger the guard", () => {
+    const lightEvent = event({
+      startsAt: "2026-05-09T08:00:00Z",
+      endsAt: "2026-05-09T17:00:00Z",
+      expectedGameCount: 3,
+    });
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-10T10:00:00Z"), // day after
+        phase: "accumulation",
+        lastEvent: lightEvent,
+      }),
+    );
+    expect(rx.intent).not.toBe("recovery");
+    expect(rx.tournamentRecoveryAdjustment).toBeUndefined();
+  });
+
+  it("practice day +1 after a tournament is honoured at recovery intensity", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: new Date("2026-05-10T10:00:00Z"),
+        phase: "accumulation",
+        lastEvent: tournamentLastEvent,
+        isTeamPractice: true,
+      }),
+    );
+    // Practice is still attended — but at recovery intensity.
+    expect(rx.intentLabel).toBe("Flag football practice");
+    expect(rx.intent).toBe("recovery");
+    expect(rx.tournamentRecoveryAdjustment?.dayAfterTournament).toBe(1);
+    expect(rx.reasoning).toMatch(/post-tournament/i);
+  });
+});
+
+// =============================================================================
+// ROUTES / EVASION CNS GUARD — isHighCnsSessionType + RPE gate
+// NSCA-TSAC flag-football guidelines: repeated acceleration-and-cut sequences
+// at RPE ≥ 6 carry the same CNS cost as sprinting.
+// =============================================================================
+
+describe("isHighCnsSessionType — flag-football drill RPE gate", () => {
+  const { isHighCnsSessionType } = __periodization__;
+
+  it.each([
+    "sprint",
+    "Sprint",
+    "plyo",
+    "speed work",
+    "max velocity",
+    "accel",
+    "agility",
+    "bound",
+  ])(
+    "standard high-CNS type '%s' is always high-CNS regardless of RPE",
+    (type) => {
+      expect(isHighCnsSessionType(type)).toBe(true);
+      expect(isHighCnsSessionType(type, 3)).toBe(true);
+    },
+  );
+
+  it.each([
+    "route",
+    "routes",
+    "post",
+    "fade",
+    "hook",
+    "evade",
+    "evasion",
+    "flag pull",
+    "flag-pull",
+  ])("flag drill '%s' at RPE ≥ 6 is high-CNS", (type) => {
+    expect(isHighCnsSessionType(type, 6)).toBe(true);
+    expect(isHighCnsSessionType(type, 9)).toBe(true);
+  });
+
+  it.each([
+    "route",
+    "routes",
+    "post",
+    "fade",
+    "hook",
+    "evade",
+    "evasion",
+    "flag pull",
+  ])("flag drill '%s' at RPE 5 is NOT high-CNS (sub-threshold)", (type) => {
+    expect(isHighCnsSessionType(type, 5)).toBe(false);
+  });
+
+  it.each(["route", "fade", "evade"])(
+    "flag drill '%s' with null RPE is conservatively treated as high-CNS",
+    (type) => {
+      expect(isHighCnsSessionType(type, null)).toBe(true);
+      expect(isHighCnsSessionType(type, undefined)).toBe(true);
+      expect(isHighCnsSessionType(type)).toBe(true);
+    },
+  );
+
+  it("a plain skill-work label that doesn't match flag drills is not high-CNS", () => {
+    expect(isHighCnsSessionType("skills", 9)).toBe(false);
+    expect(isHighCnsSessionType("throwing drills", null)).toBe(false);
+  });
+
+  it("flag drill CNS guard blocks a planned sprint day when recent session has RPE ≥ 6", () => {
+    const tuesday = new Date("2026-05-05T10:00:00Z");
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        phase: "accumulation",
+        recentSessions: [
+          {
+            at: new Date(tuesday.getTime() - 20 * 3_600_000).toISOString(),
+            type: "route",
+            rpe: 8,
+          },
+        ],
+        ageYears: 30,
+      }),
+    );
+    expect(rx.intent).not.toBe("sprint");
+    expect(rx.cnsRecoveryAdjustment).toBeTruthy();
+    expect(rx.cnsRecoveryAdjustment?.originalIntent).toBe("sprint");
+  });
+
+  it("flag drill at RPE 4 does NOT block a subsequent sprint session", () => {
+    const tuesday = new Date("2026-05-05T10:00:00Z");
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        phase: "accumulation",
+        recentSessions: [
+          {
+            at: new Date(tuesday.getTime() - 20 * 3_600_000).toISOString(),
+            type: "routes",
+            rpe: 4,
+          },
+        ],
+        ageYears: 30,
+      }),
+    );
+    expect(rx.intent).toBe("sprint"); // guard should NOT fire
+    expect(rx.cnsRecoveryAdjustment).toBeUndefined();
+  });
+});
+
+// =============================================================================
+// ACWR / WEEKLY PROGRESSION MODULATION — modulateIntentForLoad
+// =============================================================================
+
+describe("modulateIntentForLoad", () => {
+  const { modulateIntentForLoad } = __periodization__;
+
+  it("elevated ACWR (1.4) downgrades sprint → mobility", () => {
+    expect(modulateIntentForLoad("sprint", 1.4, false, false)).toBe("mobility");
+  });
+
+  it("elevated ACWR (1.4) downgrades strength → mobility", () => {
+    expect(modulateIntentForLoad("strength", 1.4, false, false)).toBe(
+      "mobility",
+    );
+  });
+
+  it("elevated ACWR (1.4) downgrades mixed → technical", () => {
+    expect(modulateIntentForLoad("mixed", 1.4, false, false)).toBe("technical");
+  });
+
+  it("heavy density downgrades strength → technical", () => {
+    expect(modulateIntentForLoad("strength", 1.0, true, false)).toBe(
+      "technical",
+    );
+  });
+
+  it("heavy density downgrades mixed → mobility", () => {
+    expect(modulateIntentForLoad("mixed", 1.0, true, false)).toBe("mobility");
+  });
+
+  it("weekly progression unsafe downgrades sprint → technical", () => {
+    expect(modulateIntentForLoad("sprint", 1.0, false, true)).toBe("technical");
+  });
+
+  it("weekly progression unsafe downgrades strength → technical", () => {
+    expect(modulateIntentForLoad("strength", 1.0, false, true)).toBe(
+      "technical",
+    );
+  });
+
+  it("rest and recovery are never upgraded or changed", () => {
+    expect(modulateIntentForLoad("rest", 1.6, true, true)).toBe("rest");
+    expect(modulateIntentForLoad("recovery", 1.6, true, true)).toBe("recovery");
+  });
+
+  it("technical is not changed by weekly progression unsafe (already low-intensity)", () => {
+    expect(modulateIntentForLoad("technical", 1.0, false, true)).toBe(
+      "technical",
+    );
+  });
+});
+
+describe("prescribeFor — weeklyIntentHint bypasses bug is fixed (ACWR modulation applied)", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z");
+
+  it("a sprint hint with elevated ACWR is downgraded to mobility", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        phase: "accumulation",
+        acwr: 1.4,
+        weeklyIntentHint: "sprint",
+      }),
+    );
+    expect(rx.intent).toBe("mobility");
+  });
+
+  it("a strength hint with heavy density is downgraded to technical", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        phase: "accumulation",
+        weeklyIntentHint: "strength",
+        density14d: { totalGames: 12, hasPeakImportance: true },
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+  });
+});
+
+describe("prescribeFor — weeklyProgressionUnsafe cap", () => {
+  const tuesday = new Date("2026-05-05T10:00:00Z");
+
+  it("sprint DOW fallback is downgraded to technical when weekly load cap is exceeded", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday, // Tuesday → sprint in the DOW array
+        phase: "accumulation",
+        acwr: 1.0, // safe ACWR — only cap drives the change
+        weeklyProgressionUnsafe: true,
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+  });
+
+  it("sprint hint is downgraded to technical when weekly load cap is exceeded", () => {
+    const rx = prescribeFor(
+      inputs({
+        date: tuesday,
+        phase: "accumulation",
+        acwr: 1.0,
+        weeklyIntentHint: "sprint",
+        weeklyProgressionUnsafe: true,
+      }),
+    );
+    expect(rx.intent).toBe("technical");
+  });
+
+  it("rest days are unaffected by the weekly progression cap", () => {
+    const sunday = new Date("2026-05-10T10:00:00Z");
+    const rx = prescribeFor(
+      inputs({
+        date: sunday,
+        phase: "accumulation",
+        weeklyProgressionUnsafe: true,
+      }),
+    );
+    expect(rx.intent).toBe("rest");
   });
 });

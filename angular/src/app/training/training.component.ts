@@ -27,7 +27,9 @@ interface WeekRow {
   day: string;
   label: string;
   isGame: boolean;
+  isRest: boolean;
   rpe: number | null;
+  secondSession?: { label: string; rpe: number } | null;
 }
 
 /**
@@ -366,7 +368,11 @@ export class TrainingComponent {
       }),
       label: p.intentLabel,
       isGame: p.intent === "competition",
+      isRest: p.intent === "rest",
       rpe: p.targetRpe,
+      secondSession: p.secondSession
+        ? { label: p.secondSession.intentLabel, rpe: p.secondSession.targetRpe }
+        : null,
     })),
   );
 }
