@@ -286,7 +286,12 @@
   <!-- diagnostics below the fold -->
   <div class="section-h"><h2>How you're tracking</h2></div>
 
-  <div class="card">
+  <!-- Whole card is the tap target (one-handed / gloved use), not just the link. -->
+  <a
+    class="card"
+    routerLink="/wellness"
+    style="text-decoration: none; color: inherit"
+  >
     <div class="row">
       <div class="inline">
         <span>Readiness</span>
@@ -296,11 +301,9 @@
           <span class="band neutral">not logged today</span>
         }
       </div>
-      <a class="faint" style="font-size: var(--fs-sm)" routerLink="/wellness"
-        >breakdown →</a
-      >
+      <span class="faint" style="font-size: var(--fs-sm)">breakdown →</span>
     </div>
-  </div>
+  </a>
 
   @if (acwrBand(); as b) {
     <div class="card">

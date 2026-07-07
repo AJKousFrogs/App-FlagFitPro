@@ -855,6 +855,29 @@
     color: var(--overlay-text);
     opacity: 0.85;
   }
+  /* On short screens (landscape phones, small devices) the decorative 150px hero
+     image pushes the actual answer below the fold. Drop the image and render the
+     eyebrow/heading as a normal compact header so content leads. */
+  @media (max-height: 700px) {
+    .screen-hero {
+      height: auto;
+      background: none;
+    }
+    .screen-hero > img,
+    .screen-hero .scrim {
+      display: none;
+    }
+    .screen-hero .content {
+      padding: 0 0 var(--s-2);
+    }
+    .screen-hero .content h2 {
+      color: var(--text-strong);
+    }
+    .screen-hero .eyebrow {
+      color: var(--text-muted);
+      opacity: 1;
+    }
+  }
 
   /* ---- fuel / nutrition card ---- */
   .fuel-macros {
