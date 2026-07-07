@@ -266,6 +266,13 @@
   status = 200
   force = true
 
+# API Route for session-load import (POST; provider adapter ingest)
+[[redirects]]
+  from = "/api/session-load-import"
+  to = "/.netlify/functions/session-load-import"
+  status = 200
+  force = true
+
 # API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
 [[redirects]]
   from = "/api/athlete-events/*"
