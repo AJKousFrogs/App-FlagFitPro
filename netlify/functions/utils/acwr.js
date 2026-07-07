@@ -180,16 +180,21 @@ export function classifyAcwrZone(acwr) {
   if (!Number.isFinite(acwr)) {
     return null;
   }
-  if (acwr < 0.8) {
+  // Boundaries are read from ACWR_RISK_ZONES (the single source of truth) instead
+  // of repeating the literals here — the classifier and the zone metadata can no
+  // longer silently drift. The inequalities preserve the original per-zone
+  // inclusivity exactly (detraining/danger open at the top; safe/caution closed).
+  const Z = ACWR_RISK_ZONES;
+  if (acwr < Z.safe.min) {
     return "detraining";
   }
-  if (acwr <= 1.3) {
+  if (acwr <= Z.safe.max) {
     return "safe";
   }
-  if (acwr <= 1.5) {
+  if (acwr <= Z.caution.max) {
     return "caution";
   }
-  if (acwr < 1.8) {
+  if (acwr < Z.critical.min) {
     return "danger";
   }
   return "critical";

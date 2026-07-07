@@ -123,4 +123,16 @@ describe("classifyAcwrZone", () => {
       ACWR_RISK_ZONES.safe.risk,
     );
   });
+
+  it("never drifts from ACWR_RISK_ZONES ranges (single source of truth)", () => {
+    // classifyAcwrZone now derives its boundaries from ACWR_RISK_ZONES. This
+    // sweep fails if the two are ever edited out of sync: the zone a value is
+    // classified into must bracket that value.
+    for (let i = 0; i <= 50; i++) {
+      const acwr = Math.round(i * 5) / 100; // 0.00 → 2.50 step 0.05
+      const meta = ACWR_RISK_ZONES[classifyAcwrZone(acwr)];
+      expect(acwr).toBeGreaterThanOrEqual(meta.min);
+      expect(acwr).toBeLessThanOrEqual(meta.max);
+    }
+  });
 });
