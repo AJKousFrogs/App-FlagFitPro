@@ -9,7 +9,7 @@
 
 import { TestBed, ComponentFixture } from "@angular/core/testing";
 import { describe, it, expect, beforeEach } from "vitest";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { By } from "@angular/platform-browser";
 
 // ============================================================================
@@ -18,6 +18,10 @@ import { By } from "@angular/platform-browser";
 
 @Component({
   selector: "app-test-host",
+  // Static accessibility fixture — no dynamic change detection needed, so OnPush
+  // (the v22 ng-update migration blanket-added Eager here to preserve the old
+  // implicit default; this component has always rendered once and never updated).
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main role="main" aria-label="Test content">
       <h1>Test Page</h1>

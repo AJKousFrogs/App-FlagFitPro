@@ -60,7 +60,10 @@ import {
   Plane,
   Bed,
 } from "lucide-angular";
-import { provideClientHydration } from "@angular/platform-browser";
+import {
+  provideClientHydration,
+  withNoIncrementalHydration,
+} from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import {
   provideRouter,
@@ -153,7 +156,9 @@ export const appConfig: ApplicationConfig = {
     // Explicitly enabling stable experimental zoneless for performance.
     provideZonelessChangeDetection(),
 
-    ...(environment.devtools.hydration ? [provideClientHydration()] : []),
+    ...(environment.devtools.hydration
+      ? [provideClientHydration(withNoIncrementalHydration())]
+      : []),
 
     provideRouter(
       routes,

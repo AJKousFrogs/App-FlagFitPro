@@ -43,7 +43,9 @@
           @if (m.author?.avatar_url) {
             <img class="ava" [src]="m.author!.avatar_url" alt="" />
           } @else {
-            <span class="ava">{{ initials(m.author?.full_name) }}</span>
+            <span class="ava">{{
+              initials($safeNavigationMigration(m.author?.full_name))
+            }}</span>
           }
           <div class="body">
             <div class="meta">
