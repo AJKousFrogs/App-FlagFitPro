@@ -273,6 +273,13 @@
   status = 200
   force = true
 
+# API Route for wearable-health ingest (POST ingest / PUT consent)
+[[redirects]]
+  from = "/api/wearable-health-ingest"
+  to = "/.netlify/functions/wearable-health-ingest"
+  status = 200
+  force = true
+
 # API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
 [[redirects]]
   from = "/api/athlete-events/*"
