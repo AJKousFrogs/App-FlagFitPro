@@ -3,7 +3,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.import-process" });
@@ -84,7 +84,11 @@ const handler = async (event, context) =>
       const subPath = getSubPath(evt.path || "");
 
       try {
-        const body = parseJsonObjectBody(evt.body);
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
+        }
+        const body = parsedBody.data;
 
         if (subPath === "/fetch-url") {
           let parsedUrl;

@@ -4,7 +4,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.return-to-play" });
@@ -135,15 +135,11 @@ const handler = async (event, context) =>
         }
 
         let body;
-        try {
-          body = parseJsonObjectBody(evt.body);
-        } catch {
-          return createErrorResponse(
-            "Request body must be a JSON object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         if (evt.httpMethod !== "POST") {
           return createErrorResponse(

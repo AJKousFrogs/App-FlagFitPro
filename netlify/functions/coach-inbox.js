@@ -5,7 +5,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -540,7 +540,11 @@ const handler = async (event, context) => {
 
         // PATCH /api/coach-inbox/:id - Update inbox item
         if (method === "PATCH" && itemId) {
-          const body = parseJsonObjectBody(event.body);
+          const parsedBody = tryParseJsonObjectBody(event.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
+          }
+          const body = parsedBody.data;
           const updatableFields = [
             "action",
             "status",

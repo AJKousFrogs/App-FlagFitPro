@@ -5,7 +5,7 @@ import {
   createSuccessResponse,
 } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.knowledge-governance" });
@@ -28,19 +28,8 @@ function normalizeText(value) {
 }
 
 function parseRequestBody(rawBody, requestId) {
-  try {
-    return { body: parseJsonObjectBody(rawBody) };
-  } catch (error) {
-    const isObjectError = error.message === "Request body must be an object";
-    return {
-      error: createErrorResponse(
-        isObjectError ? error.message : "Invalid JSON in request body",
-        isObjectError ? 422 : 400,
-        isObjectError ? "validation_error" : "invalid_json",
-        requestId,
-      ),
-    };
-  }
+  const parsed = tryParseJsonObjectBody(rawBody, { requestId });
+  return parsed.ok ? { body: parsed.data } : { error: parsed.error };
 }
 
 function parsePositiveInt(value, fallback, min, max) {

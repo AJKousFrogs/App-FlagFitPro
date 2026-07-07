@@ -18,7 +18,7 @@ import { getUserRole } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import {
-  parseJsonObjectBody as sharedParseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import {
@@ -97,28 +97,10 @@ const ENDPOINT_HANDLERS = {
 const consentReader = new ConsentDataReader(supabaseAdmin);
 
 function parseJsonObjectBody(rawBody) {
-  try {
-    return { ok: true, data: sharedParseJsonObjectBody(rawBody) };
-  } catch (error) {
-    if (error?.message === "Request body must be an object") {
-      return {
-        ok: false,
-        response: createErrorResponse(
-          "Request body must be an object",
-          422,
-          "validation_error",
-        ),
-      };
-    }
-    return {
-      ok: false,
-      response: createErrorResponse(
-        "Invalid JSON in request body",
-        400,
-        "invalid_json",
-      ),
-    };
-  }
+  const parsed = tryParseJsonObjectBody(rawBody);
+  return parsed.ok
+    ? { ok: true, data: parsed.data }
+    : { ok: false, response: parsed.error };
 }
 
 async function coachCanAccessAthlete(coachUserId, athleteUserId) {

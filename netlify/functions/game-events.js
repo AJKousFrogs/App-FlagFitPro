@@ -3,7 +3,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -77,7 +77,11 @@ const handler = async (event, context) =>
 
       try {
         if (evt.httpMethod === "POST" && (subPath === "" || subPath === "/")) {
-          const body = parseJsonObjectBody(evt.body);
+          const parsedBody = tryParseJsonObjectBody(evt.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
+          }
+          const body = parsedBody.data;
           const game = await loadGame(supabase, body.gameId);
           if (game.error || !game.data) {
             return createErrorResponse("Game not found", 404, "not_found");
@@ -142,7 +146,11 @@ const handler = async (event, context) =>
         }
 
         if (evt.httpMethod === "POST" && subPath === "/mark-presence") {
-          const body = parseJsonObjectBody(evt.body);
+          const parsedBody = tryParseJsonObjectBody(evt.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
+          }
+          const body = parsedBody.data;
           const game = await loadGame(supabase, body.gameId);
           if (game.error || !game.data) {
             return createErrorResponse("Game not found", 404, "not_found");

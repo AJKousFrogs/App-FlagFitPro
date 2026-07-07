@@ -3,7 +3,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -251,7 +251,11 @@ const handler = async (event, context) =>
         }
 
         if (evt.httpMethod === "POST" && subPath === "/rsvp") {
-          const body = parseJsonObjectBody(evt.body);
+          const parsedBody = tryParseJsonObjectBody(evt.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
+          }
+          const body = parsedBody.data;
           if (!body.eventId || typeof body.eventId !== "string") {
             return createErrorResponse(
               "eventId is required",

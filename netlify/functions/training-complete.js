@@ -8,7 +8,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import {
@@ -460,19 +460,13 @@ async function handleRequest(
 
     // Parse and validate request body
     let parsedPayload;
+    const parsedBody = tryParseJsonObjectBody(event.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
+    }
     try {
-      parsedPayload = parseCompletionPayload(parseJsonObjectBody(event.body));
+      parsedPayload = parseCompletionPayload(parsedBody.data);
     } catch (validationError) {
-      if (
-        validationError?.code === "INVALID_JSON_BODY" &&
-        validationError?.message === "Invalid JSON in request body"
-      ) {
-        return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
-        );
-      }
       return createErrorResponse(
         validationError.message,
         422,

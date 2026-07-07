@@ -145,7 +145,7 @@ describe("training-complete validation hardening", () => {
     handler = mod.handler;
   });
 
-  it("returns 400 for invalid JSON", async () => {
+  it("returns 422 for invalid JSON", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -156,7 +156,7 @@ describe("training-complete validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for non-object JSON payload", async () => {

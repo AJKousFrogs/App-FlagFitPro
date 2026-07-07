@@ -242,7 +242,7 @@ describe("performance-data cross-athlete authorization", () => {
     expect(response.statusCode).toBe(422);
   });
 
-  it("returns 400 for malformed JSON in measurements POST", async () => {
+  it("returns 422 for malformed JSON in measurements POST", async () => {
     state.currentUserId = "player-1";
 
     const response = await handler(
@@ -250,7 +250,7 @@ describe("performance-data cross-athlete authorization", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for non-object JSON in measurements POST", async () => {

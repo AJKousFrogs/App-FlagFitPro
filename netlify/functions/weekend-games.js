@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.weekend-games" });
@@ -81,15 +81,11 @@ const handler = async (event, context) =>
       }
 
       let body;
-      try {
-        body = parseJsonObjectBody(evt.body);
-      } catch {
-        return createErrorResponse(
-          "Invalid request body",
-          422,
-          "validation_error",
-        );
+      const parsedBody = tryParseJsonObjectBody(evt.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       // played:false clears any previously-logged weekend game (athlete corrected
       // themselves) so it stops inflating acute load.

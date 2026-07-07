@@ -4,7 +4,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.team-templates" });
@@ -558,27 +558,10 @@ const handler = async (event, context) => {
         pathParts[0] && subPath !== "from-inbox" ? pathParts[0] : null;
       const action = pathParts[1] || null;
       const parseBody = () => {
-        try {
-          return { ok: true, body: parseJsonObjectBody(event.body) };
-        } catch (error) {
-          return {
-            ok: false,
-            response:
-              error?.message === "Request body must be an object"
-                ? createErrorResponse(
-                    "Request body must be an object",
-                    422,
-                    "validation_error",
-                    requestId,
-                  )
-                : createErrorResponse(
-                    "Invalid JSON in request body",
-                    400,
-                    "invalid_json",
-                    requestId,
-                  ),
-          };
-        }
+        const p = tryParseJsonObjectBody(event.body, { requestId });
+        return p.ok
+          ? { ok: true, body: p.data }
+          : { ok: false, response: p.error };
       };
 
       try {
