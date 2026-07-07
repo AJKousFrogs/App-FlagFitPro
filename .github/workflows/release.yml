@@ -101,11 +101,19 @@ jobs:
       - name: Get version
         id: version
         run: |
+          # Priority: explicit dispatch input → tag ref → a safe dev fallback.
+          # The fallback matters for workflow_dispatch runs (no tag): without it
+          # the version resolved to the raw ref (`refs/heads/main`), whose `/`
+          # then made an invalid artifact name and failed the job. Never emit a
+          # value with characters disallowed in artifact names.
           if [ -n "${{ github.event.inputs.version }}" ]; then
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
           else
-            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            VERSION="0.0.0-dev-${GITHUB_SHA::7}"
           fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate changelog
         id: changelog
