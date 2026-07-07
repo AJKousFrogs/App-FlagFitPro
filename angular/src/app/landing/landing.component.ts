@@ -7,6 +7,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { NgOptimizedImage } from "@angular/common";
 
 import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -21,7 +22,7 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-landing",
-  imports: [FormsModule, LucideAngularModule],
+  imports: [NgOptimizedImage, FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./landing.component.html",
   styles: [

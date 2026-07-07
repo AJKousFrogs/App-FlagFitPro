@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
@@ -38,6 +39,7 @@ import { TournamentPlanBlock } from "../core/models/tournament-plan.models";
 @Component({
   selector: "app-gameday",
   imports: [
+    NgOptimizedImage,
     AvatarComponent,
     SkeletonComponent,
     RouterLink,

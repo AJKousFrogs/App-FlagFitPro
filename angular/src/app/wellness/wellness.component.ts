@@ -9,6 +9,7 @@ import {
 } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 
@@ -36,6 +37,7 @@ import { EventTravelService } from "../core/services/event-travel.service";
 @Component({
   selector: "app-wellness",
   imports: [
+    NgOptimizedImage,
     AvatarComponent,
     ReadinessTrendComponent,
     RouterLink,

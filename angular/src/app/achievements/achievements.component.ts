@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
@@ -36,6 +37,7 @@ interface AchievementsData {
 @Component({
   selector: "app-achievements",
   imports: [
+    NgOptimizedImage,
     AvatarComponent,
     SkeletonComponent,
     RouterLink,

@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
@@ -31,6 +32,7 @@ const clamp = (v: number, lo: number, hi: number) =>
 @Component({
   selector: "app-stats",
   imports: [
+    NgOptimizedImage,
     AvatarComponent,
     SkeletonComponent,
     RouterLink,
