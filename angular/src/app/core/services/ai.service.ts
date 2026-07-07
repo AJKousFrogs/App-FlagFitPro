@@ -23,7 +23,6 @@ type UserPreferences = Record<string, unknown>;
 
 interface CommandAction {
   label: string;
-  icon: string;
   action: () => void;
 }
 
@@ -36,7 +35,6 @@ interface ContextInsight {
   id: string;
   type: string;
   message: string;
-  icon: string;
   priority: "high" | "medium" | "low";
   actions?: CommandAction[];
 }
@@ -254,7 +252,6 @@ export class AIService {
             actions: [
               {
                 label: "Begin Session",
-                icon: "pi pi-play",
                 action: () => {
                   // Start training logic
                 },
@@ -271,7 +268,6 @@ export class AIService {
           actions: [
             {
               label: "Log Session",
-              icon: "pi pi-save",
               action: () => {
                 // Log session logic
               },
@@ -289,7 +285,6 @@ export class AIService {
             actions: [
               {
                 label: "View Analytics",
-                icon: "pi pi-chart-line",
                 action: () => {
                   // Show stats logic
                 },
@@ -381,12 +376,10 @@ export class AIService {
           type: "Performance",
           message:
             "Your heart rate is elevated. Consider taking a short break.",
-          icon: "pi pi-heart",
           priority: "high",
           actions: [
             {
               label: "Take Break",
-              icon: "pi pi-pause",
               action: () => {
                 // Break logic
               },
@@ -402,7 +395,6 @@ export class AIService {
           id: "hr-low",
           type: "Performance",
           message: "Your heart rate suggests you can increase intensity.",
-          icon: "pi pi-arrow-up",
           priority: "medium",
         });
       }
@@ -415,12 +407,10 @@ export class AIService {
         type: "Recovery",
         message:
           "You've been training for over an hour. Great work! Consider recovery.",
-        icon: "pi pi-clock",
         priority: "medium",
         actions: [
           {
             label: "End Session",
-            icon: "pi pi-check",
             action: () => {
               // End session logic
             },
@@ -436,7 +426,6 @@ export class AIService {
         type: "Recovery",
         message:
           "You're showing signs of fatigue. Rest is important for performance.",
-        icon: "pi pi-exclamation-triangle",
         priority: "high",
       });
     }
@@ -457,7 +446,6 @@ export class AIService {
           type: "Motivation",
           message:
             "Your recent performance has been excellent! Keep up the great work!",
-          icon: "pi pi-star",
           priority: "low",
         });
       }

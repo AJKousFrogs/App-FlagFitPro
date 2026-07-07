@@ -43,19 +43,16 @@ export const VISIBILITY_OPTIONS = [
   {
     label: "Public",
     value: "public",
-    icon: "pi pi-globe",
     description: "Anyone can see your profile",
   },
   {
     label: "Team Only",
     value: "team",
-    icon: "pi pi-users",
     description: "Only your team can see your profile",
   },
   {
     label: "Private",
     value: "private",
-    icon: "pi pi-lock",
     description: "Only you can see your profile",
   },
 ] as const;
@@ -73,11 +70,11 @@ export const RESOURCE_VISIBILITY_OPTIONS = [
  * Staff visibility options - what parts of the app staff can access
  */
 export const STAFF_VISIBILITY_OPTIONS = [
-  { label: "Team Roster", value: "roster", icon: "pi pi-users" },
-  { label: "Training Data", value: "training", icon: "pi pi-chart-line" },
-  { label: "Wellness Data", value: "wellness", icon: "pi pi-heart" },
-  { label: "Performance", value: "analytics", icon: "pi pi-chart-bar" },
-  { label: "Chat & Messages", value: "chat", icon: "pi pi-comments" },
+  { label: "Team Roster", value: "roster" },
+  { label: "Training Data", value: "training" },
+  { label: "Wellness Data", value: "wellness" },
+  { label: "Performance", value: "analytics" },
+  { label: "Chat & Messages", value: "chat" },
 ] as const;
 
 /**
@@ -93,9 +90,9 @@ export type VisibilityLevel = "public" | "team" | "coaches" | "private";
  * Theme mode options for appearance settings
  */
 export const THEME_OPTIONS = [
-  { label: "Light", value: "light", icon: "pi pi-sun" },
-  { label: "Dark", value: "dark", icon: "pi pi-moon" },
-  { label: "System", value: "auto", icon: "pi pi-desktop" },
+  { label: "Light", value: "light" },
+  { label: "Dark", value: "dark" },
+  { label: "System", value: "auto" },
 ] as const;
 
 /**
@@ -141,11 +138,11 @@ export const NOTIFICATION_FREQUENCY_OPTIONS = [
  * Notification type options for filtering
  */
 export const NOTIFICATION_TYPE_OPTIONS = [
-  { label: "Training", value: "training", icon: "pi pi-calendar" },
-  { label: "Team Updates", value: "team", icon: "pi pi-users" },
-  { label: "Messages", value: "messages", icon: "pi pi-envelope" },
-  { label: "Alerts", value: "alerts", icon: "pi pi-exclamation-triangle" },
-  { label: "Achievements", value: "achievements", icon: "pi pi-star" },
+  { label: "Training", value: "training" },
+  { label: "Team Updates", value: "team" },
+  { label: "Messages", value: "messages" },
+  { label: "Alerts", value: "alerts" },
+  { label: "Achievements", value: "achievements" },
 ] as const;
 
 // =============================================================================

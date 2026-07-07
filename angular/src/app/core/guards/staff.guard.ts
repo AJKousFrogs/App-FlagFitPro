@@ -5,7 +5,7 @@ import {
   TeamRole,
 } from "../services/team-membership.service";
 
-const STAFF_ROLES: ReadonlySet<TeamRole> = new Set<TeamRole>([
+export const STAFF_ROLES: ReadonlySet<TeamRole> = new Set<TeamRole>([
   "owner",
   "admin",
   "head_coach",
