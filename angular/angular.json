@@ -54,9 +54,6 @@
               "@fontsource/space-grotesk/500.css",
               "@fontsource/space-grotesk/600.css",
               "@fontsource/space-grotesk/700.css",
-              "@fontsource/jetbrains-mono/400.css",
-              "@fontsource/jetbrains-mono/500.css",
-              "@fontsource/jetbrains-mono/700.css",
               "src/styles.scss"
             ],
             "scripts": [],
