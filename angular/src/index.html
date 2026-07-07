@@ -23,19 +23,10 @@
     />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
-    <!-- Design system fonts: Space Grotesk (display) + Plus Jakarta Sans (body).
-         Matches scss/tokens/_tokens.scss --font-display / --font-body. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-    />
+    <!-- Design-system fonts are SELF-HOSTED (bundled via @fontsource in
+         angular.json): Space Grotesk + Plus Jakarta Sans, and the monitoring
+         report's Archivo / Archivo Narrow / JetBrains Mono. No runtime CDN font
+         fetch — removes the Google Fonts 504 dependency. -->
 
     <!-- Preconnect to critical origins for faster loading -->
     <link
