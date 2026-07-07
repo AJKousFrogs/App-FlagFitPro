@@ -227,6 +227,32 @@
   status = 200
   force = true
 
+# API Routes for External Load metrics (Catapult/GPS-style; monitoring feature)
+[[redirects]]
+  from = "/api/external-load/*"
+  to = "/.netlify/functions/external-load"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/external-load"
+  to = "/.netlify/functions/external-load"
+  status = 200
+  force = true
+
+# API Routes for Bloodwork / labs (medical lane; monitoring feature)
+[[redirects]]
+  from = "/api/bloodwork/*"
+  to = "/.netlify/functions/bloodwork"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/bloodwork"
+  to = "/.netlify/functions/bloodwork"
+  status = 200
+  force = true
+
 # API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
 [[redirects]]
   from = "/api/athlete-events/*"
