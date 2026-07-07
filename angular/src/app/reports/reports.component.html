@@ -120,15 +120,21 @@
       <div class="card stack">
         <div class="row">
           <span>Agility / change-of-direction</span>
-          <span class="band {{ trendDir(t.cod?.change).cls }}"
-            >{{ trendDir(t.cod?.change).arrow }}
+          <span
+            class="band {{
+              trendDir($safeNavigationMigration(t.cod?.change)).cls
+            }}"
+            >{{ trendDir($safeNavigationMigration(t.cod?.change)).arrow }}
             {{ weekTrendLabel(t.cod) }}</span
           >
         </div>
         <div class="row">
           <span>Sprint / speed sessions</span>
-          <span class="band {{ trendDir(t.sprint?.change).cls }}"
-            >{{ trendDir(t.sprint?.change).arrow }}
+          <span
+            class="band {{
+              trendDir($safeNavigationMigration(t.sprint?.change)).cls
+            }}"
+            >{{ trendDir($safeNavigationMigration(t.sprint?.change)).arrow }}
             {{ weekTrendLabel(t.sprint) }}</span
           >
         </div>
