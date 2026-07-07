@@ -292,6 +292,22 @@ async function getUserContext(userId) {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const sevenDaysAgoStr = sevenDaysAgo.toISOString().split("T")[0];
 
+    // Resolved ahead of the batch below because the games query needs it as a
+    // filter value. games has no player_id/user_id column (real columns:
+    // team_id/team_score, see games-core.js normalizeGameRecord) — personal
+    // (non-team) games use the synthetic team_id `TEAM_<userId>` convention
+    // from games-core.js's getPersonalGameTeamId, so both must be checked.
+    const { data: teamMembership } = await supabaseAdmin
+      .from("team_members")
+      .select("team_id, role")
+      .eq("user_id", userId)
+      .limit(1)
+      .maybeSingle();
+    const personalGameTeamId = `TEAM_${userId}`;
+    const gameTeamIds = teamMembership?.team_id
+      ? [teamMembership.team_id, personalGameTeamId]
+      : [personalGameTeamId];
+
     // Every read below keys only on userId (+ constant date windows) and is independent of
     // the others — fetch them all concurrently (~13 sequential round-trips -> 1). All
     // derivation (recentLoad, dataConfidence, bodyStats, ...) is in-memory after the fetch.
@@ -309,7 +325,6 @@ async function getUserContext(userId) {
       { data: loadCap },
       { data: profile },
       { data: measurement },
-      { data: teamMembership },
     ] = await Promise.all([
       calculateUserACWR(userId),
       // v_injuries_unified maps the clinical athlete_injuries table onto the legacy injuries
@@ -362,10 +377,8 @@ async function getUserContext(userId) {
         .maybeSingle(),
       supabaseAdmin
         .from("games")
-        .select("game_date, our_score, opponent_score")
-        .or(
-          `player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`,
-        )
+        .select("game_date, team_score, opponent_score")
+        .in("team_id", gameTeamIds)
         .gte("game_date", sevenDaysAgoStr)
         .order("game_date", { ascending: false })
         .limit(3),
@@ -401,12 +414,6 @@ async function getUserContext(userId) {
         .order("created_at", { ascending: false })
         .limit(1)
         .single(),
-      supabaseAdmin
-        .from("team_members")
-        .select("team_id, role")
-        .eq("user_id", userId)
-        .limit(1)
-        .maybeSingle(),
     ]);
 
     // In-memory assembly (order + semantics preserved from the original sequential code).
@@ -4408,18 +4415,62 @@ export default async (req) => {
           ]);
 
         // Step 7: Youth settings
-        const youthSettings =
-          stateGates.ageGroup !== "adult"
-            ? await getYouthSettings(userId)
-            : null;
+        const isYouthUser = stateGates.ageGroup !== "adult";
+        const youthSettings = isYouthUser
+          ? await getYouthSettings(userId)
+          : null;
 
         // Step 8: Classification + safety
+        // userContext.ageGroup must be set (not just nested under stateGates) —
+        // classifyWithConfidence's isYouth check reads userContext.ageGroup
+        // directly (utils/ai-safety-classifier.js), the same as the
+        // non-streaming path does at "userContext.ageGroup = stateGates.ageGroup"
+        // above. Without this, youth restrictions never even evaluate here,
+        // regardless of the athlete's real age.
+        userContext.ageGroup = stateGates.ageGroup;
         const enhancedClassification = await classifyWithConfidence(
           normalizedMessage,
           { ...userContext, stateGates, youthSettings },
         );
 
-        if (enhancedClassification.isYouthBlocked) {
+        // classifyWithConfidence returns youthRestrictions.isBlocked, not a
+        // top-level isYouthBlocked — that field never existed, so this check
+        // was always false and no youth topic was ever blocked on the
+        // streaming path. Mirrors the non-streaming path's block handling
+        // (log, save the blocked interaction, notify the parent) as closely
+        // as the SSE response shape allows.
+        if (enhancedClassification.youthRestrictions?.isBlocked) {
+          // This streaming path has no requestId (only the legacy non-streaming
+          // handler receives one from baseHandler) — session.id is the closest
+          // in-scope correlation key.
+          logger.warn("ai_chat_youth_topic_blocked", {
+            session_id: session.id,
+            reason: enhancedClassification.youthRestrictions.blockedReason,
+          });
+
+          const blockedResponse = generateBlockedYouthResponse(
+            enhancedClassification.youthRestrictions.blockedReason,
+            enhancedClassification.entities,
+          );
+
+          const savedMessageId = await saveChatMessage(
+            session.id,
+            userId,
+            normalizedMessage,
+            blockedResponse,
+            enhancedClassification,
+          );
+
+          if (isYouthUser) {
+            await createYouthParentNotification(
+              userId,
+              "blocked_topic",
+              `Blocked query: ${normalizedMessage.substring(0, 50)}...`,
+              enhancedClassification.youthRestrictions.blockedReason,
+              savedMessageId,
+            );
+          }
+
           controller.enqueue(
             sseEvent({
               type: "error",

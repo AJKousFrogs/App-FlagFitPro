@@ -57,7 +57,10 @@ export class CompetitionComponent {
   readonly pending = signal<PendingEvent[]>([]);
   // Slider positions are a STARTING point, not a submission. `formTouched` gates
   // the write so we never log fabricated default actuals (5 games / RPE 8) the
-  // athlete never chose — that would feed garbage into ACWR.
+  // athlete never chose — that would feed garbage into ACWR. Only the games/RPE
+  // sliders call touch() (see template) — the game-format chip deliberately does
+  // NOT, since tapping it alone must not unlock submission of the still-default
+  // games/RPE values.
   readonly games = signal(5);
   readonly avgRpe = signal(8);
   readonly formTouched = signal(false);

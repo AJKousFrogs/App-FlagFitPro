@@ -57,7 +57,17 @@ export class AlertsComponent {
     this.api
       .post("/api/coach-alerts", { alertId: a.id, acknowledged: true })
       .subscribe({
-        error: (e) => this.logger.error("coach_alert_ack_failed", e),
+        error: (e) => {
+          this.logger.error("coach_alert_ack_failed", e);
+          // Roll back the optimistic removal — without this, a failed ack
+          // (network blip, server error) silently drops a possibly
+          // danger-severity alert from the coach's view even though it was
+          // never actually acknowledged server-side.
+          this.alerts.update((list) => {
+            const current = list ?? [];
+            return current.includes(a) ? current : [...current, a];
+          });
+        },
       });
   }
 

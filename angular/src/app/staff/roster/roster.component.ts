@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -299,44 +300,53 @@ export class RosterComponent {
         error: () => this.rows.set([]),
       });
     }
+
+    // Keyed on both tab() and teamId() (not just called from switchTab) so a tab
+    // switch that happens before teamId resolves (cold boot — the Supabase
+    // client is lazily imported, so teamId() can be null at first tap) still
+    // loads automatically once teamId becomes available, instead of leaving the
+    // tab stuck on "Loading…" until the user re-taps it.
+    effect(() => {
+      const t = this.tab();
+      const teamId = this.membership.teamId();
+      if (!teamId) return;
+
+      if (t === "injuries" && !this.injuriesLoaded) {
+        this.injuriesLoaded = true;
+        this.api
+          .get<{
+            injuries: InjuryRow[];
+            summary: InjurySummary;
+          }>(API_ENDPOINTS.roster.injuries(teamId))
+          .subscribe({
+            next: (res) => {
+              this.injuries.set(res?.data?.injuries ?? []);
+              this.injurySummary.set(res?.data?.summary ?? null);
+            },
+            error: () => this.injuries.set([]),
+          });
+      }
+
+      if (t === "cycle" && !this.cycleLoaded) {
+        this.cycleLoaded = true;
+        this.api
+          .get<{
+            athletes: CycleAthlete[];
+            nextTeamEvent: NextTeamEvent | null;
+          }>(API_ENDPOINTS.roster.trainingCycle(teamId))
+          .subscribe({
+            next: (res) => {
+              this.cycleAthletes.set(res?.data?.athletes ?? []);
+              this.nextEvent.set(res?.data?.nextTeamEvent ?? null);
+            },
+            error: () => this.cycleAthletes.set([]),
+          });
+      }
+    });
   }
 
   switchTab(t: "roster" | "injuries" | "cycle"): void {
     this.tab.set(t);
-    const teamId = this.membership.teamId();
-    if (!teamId) return;
-
-    if (t === "injuries" && !this.injuriesLoaded) {
-      this.injuriesLoaded = true;
-      this.api
-        .get<{
-          injuries: InjuryRow[];
-          summary: InjurySummary;
-        }>(API_ENDPOINTS.roster.injuries(teamId))
-        .subscribe({
-          next: (res) => {
-            this.injuries.set(res?.data?.injuries ?? []);
-            this.injurySummary.set(res?.data?.summary ?? null);
-          },
-          error: () => this.injuries.set([]),
-        });
-    }
-
-    if (t === "cycle" && !this.cycleLoaded) {
-      this.cycleLoaded = true;
-      this.api
-        .get<{
-          athletes: CycleAthlete[];
-          nextTeamEvent: NextTeamEvent | null;
-        }>(API_ENDPOINTS.roster.trainingCycle(teamId))
-        .subscribe({
-          next: (res) => {
-            this.cycleAthletes.set(res?.data?.athletes ?? []);
-            this.nextEvent.set(res?.data?.nextTeamEvent ?? null);
-          },
-          error: () => this.cycleAthletes.set([]),
-        });
-    }
   }
 
   initials(name: string): string {
@@ -368,7 +378,11 @@ export class RosterComponent {
   }
 
   gradeLabel(row: InjuryRow): string {
-    if (row.status === "self_report") return `Soreness ${row.todaySoreness}/10`;
+    if (row.status === "self_report") {
+      return row.todaySoreness == null
+        ? "Soreness —/10"
+        : `Soreness ${row.todaySoreness}/10`;
+    }
     return row.grade ?? "—";
   }
 

@@ -1,5 +1,6 @@
 import { getIsoDayOfWeek } from "./date-utils.js";
 import { injuriesPainLevel } from "./active-injuries.js";
+import { isExerciseSafeForInjuries } from "./daily-protocol-blocks.js";
 
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-rtp" });
@@ -24,6 +25,17 @@ export async function generateReturnToPlayProtocol(
     ? activeInjuries.map((i) => i.injury_location).filter(Boolean)
     : wellnessCheckin?.soreness_areas || [];
   const painLevel = hasAuthority ? injuriesPainLevel(activeInjuries) : 2;
+  // RTP's own rationale text promises "Focus on areas NOT injured" (below), but
+  // the exercise pools were never actually filtered by injured region — an
+  // athlete with a hamstring injury could be prescribed a Hamstring Stretch in
+  // the mobility/conditioning/evening blocks. Mirrors isExerciseSafeForInjuries
+  // from daily-protocol-blocks.js (already used for normal-day cool-down
+  // filtering). Rehab exercises are deliberately excluded from this filter —
+  // that block exists specifically to work the injured region under
+  // progressive, coach-approved RTP loading.
+  const injuredRegions = injuries
+    .map((r) => String(r).toLowerCase())
+    .filter(Boolean);
 
   let rtpPhase = 1;
   let phaseName = "Phase 1: Foundation & Pain Management";
@@ -228,8 +240,12 @@ export async function generateReturnToPlayProtocol(
     });
   }
 
-  if (mobilityExercises?.length) {
-    mobilityExercises.forEach((ex) => {
+  const safeMobilityExercises = (mobilityExercises || []).filter((ex) =>
+    isExerciseSafeForInjuries(ex, injuredRegions),
+  );
+
+  if (safeMobilityExercises.length) {
+    safeMobilityExercises.forEach((ex) => {
       protocolExercises.push({
         exercise_id: ex.id,
         exercise_name: ex.name,
@@ -284,8 +300,12 @@ export async function generateReturnToPlayProtocol(
       .eq("active", true)
       .limit(3);
 
-    if (conditioningExercises?.length) {
-      conditioningExercises.forEach((ex) => {
+    const safeConditioningExercises = (conditioningExercises || []).filter(
+      (ex) => isExerciseSafeForInjuries(ex, injuredRegions),
+    );
+
+    if (safeConditioningExercises.length) {
+      safeConditioningExercises.forEach((ex) => {
         protocolExercises.push({
           exercise_id: ex.id,
           exercise_name: ex.name,
@@ -311,8 +331,12 @@ export async function generateReturnToPlayProtocol(
     .eq("active", true)
     .limit(4);
 
-  if (eveningMobility?.length) {
-    eveningMobility.forEach((ex) => {
+  const safeEveningMobility = (eveningMobility || []).filter((ex) =>
+    isExerciseSafeForInjuries(ex, injuredRegions),
+  );
+
+  if (safeEveningMobility.length) {
+    safeEveningMobility.forEach((ex) => {
       protocolExercises.push({
         exercise_id: ex.id,
         exercise_name: ex.name,

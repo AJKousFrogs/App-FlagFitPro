@@ -59,59 +59,134 @@ export class PlatformService {
   }
 
   /**
-   * Safely get localStorage item
+   * Safely get localStorage item. Falls back to an in-memory Map outside the
+   * browser (SSR) or if real storage throws (disabled/blocked by the user).
    */
   getLocalStorage(key: string): string | null {
+    if (this.isBrowser) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] localStorage read failed, using memory fallback",
+          error,
+        );
+      }
+    }
     return this.localMemory.get(key) ?? null;
   }
 
   /**
-   * Safely set localStorage item
+   * Safely set localStorage item.
    */
   setLocalStorage(key: string, value: string): boolean {
+    if (this.isBrowser) {
+      try {
+        window.localStorage.setItem(key, value);
+        return true;
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] localStorage write failed, using memory fallback",
+          error,
+        );
+      }
+    }
     this.localMemory.set(key, value);
-    this.logger.debug(`[PlatformService] Stored in memory only: ${key}`);
     return true;
   }
 
   /**
-   * Safely remove localStorage item
+   * Safely remove localStorage item.
    */
   removeLocalStorage(key: string): boolean {
+    if (this.isBrowser) {
+      try {
+        window.localStorage.removeItem(key);
+        return true;
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] localStorage remove failed, using memory fallback",
+          error,
+        );
+      }
+    }
     this.localMemory.delete(key);
     return true;
   }
 
   /**
-   * Safely clear all localStorage
+   * Safely clear all localStorage.
    */
   clearLocalStorage(): boolean {
+    if (this.isBrowser) {
+      try {
+        window.localStorage.clear();
+        return true;
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] localStorage clear failed, using memory fallback",
+          error,
+        );
+      }
+    }
     this.localMemory.clear();
     return true;
   }
 
   /**
-   * Safely get sessionStorage item
+   * Safely get sessionStorage item. Real sessionStorage is required here (not
+   * just a nice-to-have) — callers like AuthFlowDataService's password-recovery
+   * intent must survive a full page load (the reset link opens in a fresh tab),
+   * which an in-memory Map cannot do since it's wiped on every app bootstrap.
    */
   getSessionStorage(key: string): string | null {
+    if (this.isBrowser) {
+      try {
+        return window.sessionStorage.getItem(key);
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] sessionStorage read failed, using memory fallback",
+          error,
+        );
+      }
+    }
     return this.sessionMemory.get(key) ?? null;
   }
 
   /**
-   * Safely set sessionStorage item
+   * Safely set sessionStorage item.
    */
   setSessionStorage(key: string, value: string): boolean {
+    if (this.isBrowser) {
+      try {
+        window.sessionStorage.setItem(key, value);
+        return true;
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] sessionStorage write failed, using memory fallback",
+          error,
+        );
+      }
+    }
     this.sessionMemory.set(key, value);
-    this.logger.debug(
-      `[PlatformService] Session value stored in memory only: ${key}`,
-    );
     return true;
   }
 
   /**
-   * Safely remove sessionStorage item
+   * Safely remove sessionStorage item.
    */
   removeSessionStorage(key: string): boolean {
+    if (this.isBrowser) {
+      try {
+        window.sessionStorage.removeItem(key);
+        return true;
+      } catch (error) {
+        this.logger.debug(
+          "[PlatformService] sessionStorage remove failed, using memory fallback",
+          error,
+        );
+      }
+    }
     this.sessionMemory.delete(key);
     return true;
   }

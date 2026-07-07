@@ -273,7 +273,12 @@ const handler = async (event, context) => {
           }
 
           // GET /knowledge-search/entry/:id - Get specific entry
-          if (endpoint === "entry" || params.id) {
+          // `endpoint` is the LAST path segment, which for this route is the id
+          // itself, not the literal "entry" — so `endpoint === "entry"` only ever
+          // matched a path with no id at all. Check the second-to-last segment
+          // instead (or fall back to ?id= for callers that pass it as a query param).
+          const isEntryPath = pathParts[pathParts.length - 2] === "entry";
+          if (isEntryPath || params.id) {
             const entryId = params.id || pathParts[pathParts.length - 1];
 
             const { data, error } = await supabase

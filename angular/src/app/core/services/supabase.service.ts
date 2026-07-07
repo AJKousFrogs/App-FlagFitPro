@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, Injector, signal } from "@angular/core";
 import type {
   AuthChangeEvent,
   RealtimeChannel,
@@ -11,6 +11,7 @@ import type {
 import { environment } from "../../../environments/environment";
 import { LoggerService, toLogContext } from "./logger.service";
 import { CorrelationContextService } from "./correlation-context.service";
+import { AuthFlowDataService } from "./auth-flow-data.service";
 
 export interface UserMetadata {
   firstName?: string;
@@ -28,6 +29,12 @@ export interface UserMetadata {
 export class SupabaseService {
   private readonly logger = inject(LoggerService);
   private readonly correlation = inject(CorrelationContextService);
+  // Resolved lazily (not constructor-injected) because AuthFlowDataService
+  // itself injects SupabaseService — a direct constructor dependency here
+  // would be circular (NG0200). By the time the PASSWORD_RECOVERY listener
+  // below actually fires, app bootstrap has long finished, so resolving it
+  // through the injector at call time is safe.
+  private readonly injector = inject(Injector);
   /** Populated after `import("@supabase/supabase-js")` resolves. */
   private supabase: SupabaseClient | null = null;
   private readonly bootstrapPromise: Promise<void>;
@@ -162,6 +169,17 @@ export class SupabaseService {
               this.logger.info("supabase_password_recovery", {
                 userId: session?.user?.id,
               });
+              // UpdatePasswordComponent gates the "set new password" form on
+              // AuthFlowDataService.hasActivePasswordRecoveryIntent() — this
+              // was the only place meant to set that intent, and the call was
+              // missing entirely, so no user could ever complete a password
+              // reset (the form always reported the link as invalid/expired).
+              // Resolved via the injector (not constructor-injected — see the
+              // `injector` field comment above) since AuthFlowDataService
+              // itself depends on SupabaseService.
+              this.injector
+                .get(AuthFlowDataService)
+                .markPasswordRecoveryIntent();
               break;
             case "SIGNED_IN":
               this.logger.info("supabase_signed_in", {

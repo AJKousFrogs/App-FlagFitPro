@@ -78,8 +78,13 @@ export class TeamMembershipService {
   private readonly _isLoading = signal(false);
   private readonly _lastUpdated = signal<Date | null>(null);
 
-  /** In-flight request deduplication */
+  /** In-flight request deduplication — keyed by userId so a load started for
+   * one user can never be handed to a different user who calls loadMembership()
+   * while it's still in flight (same cross-user leak class as the TTL cache
+   * check above, just for the concurrent-call path instead of the cached-value
+   * path). */
   private _loadPromise: Promise<TeamMembership | null> | null = null;
+  private _loadPromiseUserId: string | null = null;
 
   /** Cache TTL in ms - skip refetch if data is newer than this */
   private static readonly CACHE_TTL_MS = 30_000;
@@ -203,23 +208,33 @@ export class TeamMembershipService {
     if (!forceRefresh) {
       const last = this._lastUpdated();
       const cached = this._membership();
+      // Must also check the cache actually belongs to the CURRENT user — this
+      // service is a root singleton that outlives sign-out/sign-in (no full
+      // page reload happens on logout), so without this check a sign-out
+      // followed by a different user signing back in within the 30s TTL
+      // would silently serve the previous user's cached role/team/jersey data
+      // (wrong role badge, wrong team, wrong canViewHealthData/canDeletePlayers
+      // permissions) until the cache expired or something forced a refresh.
       if (
         cached &&
+        cached.userId === user.id &&
         last &&
         Date.now() - last.getTime() < TeamMembershipService.CACHE_TTL_MS
       ) {
         return cached;
       }
-      if (this._loadPromise) {
+      if (this._loadPromise && this._loadPromiseUserId === user.id) {
         return this._loadPromise;
       }
     }
 
+    this._loadPromiseUserId = user.id;
     this._loadPromise = this.fetchMembership(user.id);
     try {
       return await this._loadPromise;
     } finally {
       this._loadPromise = null;
+      this._loadPromiseUserId = null;
     }
   }
 

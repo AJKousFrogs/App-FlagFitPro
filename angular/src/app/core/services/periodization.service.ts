@@ -99,30 +99,40 @@ export class PeriodizationService {
    */
   readonly recentSessions = signal<RecentSession[]>([]);
 
-  /** Guards the recent-sessions load against re-running for the same user. */
+  /** Guards the per-user bootstrap loads below against re-running for the same user. */
   private lastRecentSessionsUserId: string | null = null;
 
   constructor() {
-    this.loadSettings();
-    void this.injury.load();
-    // V2.4 acclimatization guard needs to know if/when the athlete last
-    // arrived somewhere new — see eventTravel.daysSinceArrival() below.
-    void this.eventTravel.load();
-
-    // Recent-sessions load is keyed off userId(). On a cold boot the Supabase
-    // client is lazily imported, so userId() is null at construction — a plain
-    // fire-and-forget call would return empty and the CNS recovery-spacing data
-    // would silently never load. An effect re-runs once the user resolves.
+    // Recent-sessions, injuries, player-settings (season calendar / team
+    // training days / position), AND travel/acclimatization state all
+    // previously loaded exactly once at construction, keyed to whichever user
+    // happened to be signed in when this root-singleton service was first
+    // instantiated. Because sign-out here is an in-SPA navigation (no full page
+    // reload — confirmed no window.location.reload() anywhere in the sign-out
+    // path), a second user signing in on the same device/tab within the app's
+    // lifetime got the FIRST user's stale injuries/settings/travel:
+    // sprint/high-intensity work could be silently prescribed unguarded for an
+    // athlete with a real active injury (if the first user had none), or guarded
+    // against a phantom injury that isn't theirs (if the first user had one).
+    // Reload all of them whenever the resolved userId changes (cold boot: the
+    // Supabase client is lazily imported, so userId() is null at construction —
+    // the effect re-runs once the user resolves, and again on every change).
     effect(() => {
       const userId = this.supabase.userId();
       if (!userId) {
         this.lastRecentSessionsUserId = null;
         this.recentSessions.set([]);
+        this.injury.active.set([]);
         return;
       }
       if (this.lastRecentSessionsUserId === userId) return;
       this.lastRecentSessionsUserId = userId;
       void this.loadRecentSessions(userId);
+      void this.injury.load();
+      this.loadSettings();
+      // V2.4 acclimatization guard — travel state is per-user too, so it must
+      // reload on user change alongside injuries/settings (same leak class).
+      void this.eventTravel.load();
     });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).

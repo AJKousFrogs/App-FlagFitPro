@@ -119,6 +119,11 @@ export class WellnessService {
 
   private readonly _wellnessData = signal<WellnessData[]>([]);
   private readonly _averages = signal<WellnessAverages | null>(null);
+  // Monotonic token guarding getWellnessData against out-of-order responses —
+  // login (effect), post-checkin refresh, and realtime updates can all trigger
+  // concurrent fetches; without this, a slower-but-earlier-started request can
+  // resolve after a newer one and overwrite fresher data with stale data.
+  private wellnessRequestSeq = 0;
 
   // Public readonly signals for components
   readonly wellnessData = this._wellnessData.asReadonly();
@@ -193,6 +198,8 @@ export class WellnessService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
+    const requestId = ++this.wellnessRequestSeq;
+
     return from(
       (async () => {
         // Query from daily_wellness_checkin (canonical source)
@@ -231,9 +238,12 @@ export class WellnessService {
         // Calculate averages
         const averages = this.calculateAverages(wellnessData);
 
-        // Update signals
-        this._wellnessData.set(wellnessData);
-        this._averages.set(averages);
+        // Only apply if this is still the most recently-started request — an
+        // older, slower request must never clobber a newer response.
+        if (requestId === this.wellnessRequestSeq) {
+          this._wellnessData.set(wellnessData);
+          this._averages.set(averages);
+        }
 
         return {
           success: true,
