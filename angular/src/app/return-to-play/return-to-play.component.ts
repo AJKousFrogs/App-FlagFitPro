@@ -56,7 +56,6 @@ const STAGES = [
  */
 @Component({
   selector: "app-return-to-play",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./return-to-play.component.html",

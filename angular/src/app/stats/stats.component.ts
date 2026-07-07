@@ -30,7 +30,6 @@ const clamp = (v: number, lo: number, hi: number) =>
  */
 @Component({
   selector: "app-stats",
-  standalone: true,
   imports: [
     AvatarComponent,
     SkeletonComponent,

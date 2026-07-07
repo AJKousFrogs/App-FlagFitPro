@@ -85,7 +85,6 @@ const TYPE_LABEL: Record<string, string> = {
  */
 @Component({
   selector: "app-reports",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./reports.component.html",

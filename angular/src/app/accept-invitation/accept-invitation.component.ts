@@ -12,7 +12,6 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
  */
 @Component({
   selector: "app-accept-invitation",
-  standalone: true,
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [

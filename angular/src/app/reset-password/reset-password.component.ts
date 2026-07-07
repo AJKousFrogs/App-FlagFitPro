@@ -16,7 +16,6 @@ import { LoggerService } from "../core/services/logger.service";
  */
 @Component({
   selector: "app-reset-password",
-  standalone: true,
   imports: [FormInputComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [

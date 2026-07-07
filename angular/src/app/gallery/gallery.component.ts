@@ -11,7 +11,6 @@ import { YtVideoComponent } from "../shared/yt-video.component";
  */
 @Component({
   selector: "app-gallery",
-  standalone: true,
   imports: [LucideAngularModule, YtVideoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

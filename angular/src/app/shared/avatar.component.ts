@@ -8,7 +8,6 @@ import { IdentityService } from "../core/services/identity.service";
  */
 @Component({
   selector: "app-avatar",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `@if (url(); as u) {
       <img [src]="u" alt="" />

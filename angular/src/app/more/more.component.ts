@@ -21,7 +21,6 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-more",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./more.component.html",

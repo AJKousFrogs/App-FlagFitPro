@@ -35,7 +35,6 @@ interface AchievementsData {
  */
 @Component({
   selector: "app-achievements",
-  standalone: true,
   imports: [
     AvatarComponent,
     SkeletonComponent,

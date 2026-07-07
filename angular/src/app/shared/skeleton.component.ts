@@ -23,7 +23,6 @@ import {
  */
 @Component({
   selector: "app-skeleton",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="sk-sr" role="status">Loading {{ label() }}…</span>

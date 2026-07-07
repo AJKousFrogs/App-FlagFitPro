@@ -17,7 +17,6 @@ import { LoggerService } from "../core/services/logger.service";
  */
 @Component({
   selector: "app-update-password",
-  standalone: true,
   imports: [FormInputComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [

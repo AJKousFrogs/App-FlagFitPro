@@ -27,7 +27,6 @@ interface Notif {
  */
 @Component({
   selector: "app-notifications",
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./notifications.component.html",

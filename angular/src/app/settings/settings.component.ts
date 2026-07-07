@@ -35,7 +35,6 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
  */
 @Component({
   selector: "app-settings",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./settings.component.html",

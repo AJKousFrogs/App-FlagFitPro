@@ -29,7 +29,6 @@ interface Alert {
  */
 @Component({
   selector: "app-staff-alerts",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./alerts.component.html",

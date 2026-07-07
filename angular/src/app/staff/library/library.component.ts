@@ -32,7 +32,6 @@ const CATEGORIES = [
  */
 @Component({
   selector: "app-staff-library",
-  standalone: true,
   imports: [LucideAngularModule, YtVideoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./library.component.html",

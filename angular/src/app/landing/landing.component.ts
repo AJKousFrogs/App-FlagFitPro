@@ -21,7 +21,6 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-landing",
-  standalone: true,
   imports: [FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./landing.component.html",

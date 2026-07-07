@@ -40,7 +40,6 @@ interface Profile {
  */
 @Component({
   selector: "app-profile",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./profile.component.html",

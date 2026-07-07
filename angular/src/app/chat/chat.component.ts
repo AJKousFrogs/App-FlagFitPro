@@ -78,7 +78,6 @@ interface Turn {
  */
 @Component({
   selector: "app-chat",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./chat.component.html",

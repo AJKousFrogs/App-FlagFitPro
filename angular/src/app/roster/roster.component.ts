@@ -36,7 +36,6 @@ interface Mate {
  */
 @Component({
   selector: "app-roster",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster.component.html",

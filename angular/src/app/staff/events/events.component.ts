@@ -19,6 +19,7 @@ import {
   CompetitionLevel,
   EventImportance,
 } from "../../core/models/schedule.models";
+import { eventValue, eventNumber } from "../../shared/utils/event.utils";
 
 type EventRow = CompetitionEventRow;
 
@@ -67,7 +68,6 @@ const LEVELS: { key: CompetitionLevel; label: string }[] = [
  */
 @Component({
   selector: "app-staff-events",
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./events.component.html",
@@ -224,14 +224,9 @@ export class StaffEventsComponent {
     }
   }
 
-  // ── event-target helpers (no two-way ngModel in this codebase) ──
-  val(e: Event): string {
-    return (e.target as HTMLInputElement).value;
-  }
-  num(e: Event): number {
-    const n = Number.parseInt((e.target as HTMLInputElement).value, 10);
-    return Number.isFinite(n) ? n : 0;
-  }
+  // ── event-target helpers — shared typed accessors (no two-way ngModel here) ──
+  protected readonly val = eventValue;
+  protected readonly num = eventNumber;
 
   openCreate(): void {
     this.resetForm();

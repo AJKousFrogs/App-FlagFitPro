@@ -23,7 +23,6 @@ import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
  */
 @Component({
   selector: "app-onboarding",
-  standalone: true,
   imports: [FormsModule, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./onboarding.component.html",

@@ -37,7 +37,6 @@ import { TournamentPlanBlock } from "../core/models/tournament-plan.models";
  */
 @Component({
   selector: "app-gameday",
-  standalone: true,
   imports: [
     AvatarComponent,
     SkeletonComponent,

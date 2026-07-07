@@ -23,6 +23,7 @@ import {
 } from "../core/models/athlete-event.models";
 import { CompetitionEvent } from "../core/models/schedule.models";
 import { googleMapsSearchUrl } from "../core/utils/map-link.util";
+import { eventValue, eventNumber } from "../shared/utils/event.utils";
 
 /**
  * Schedule — the athlete's calendar.
@@ -49,7 +50,6 @@ const KIND_DEFAULT_IMPORTANCE: Record<
 
 @Component({
   selector: "app-schedule",
-  standalone: true,
   imports: [LucideAngularModule, SkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -282,7 +282,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<
           @for (ev of myEvents(); track ev.id) {
             <div class="card">
               <div class="row" style="align-items:flex-start">
-                <div class="stack" style="gap:4px">
+                <div class="stack" style="gap: var(--s-1)">
                   <div class="inline">
                     <span class="band {{ importanceClass(ev.importance) }}">{{
                       tierLabel(ev)
@@ -327,7 +327,7 @@ const KIND_DEFAULT_IMPORTANCE: Record<
           @for (ev of teamEvents(); track ev.id) {
             <div class="card flat">
               <div class="row">
-                <div class="stack" style="gap:4px">
+                <div class="stack" style="gap: var(--s-1)">
                   <b>{{ ev.competitionShortName || ev.competitionName }}</b>
                   <small class="muted">{{
                     whenLabel(ev.startsAt, ev.endsAt)
@@ -437,14 +437,9 @@ export class ScheduleComponent implements OnInit {
     void this.athleteEvents.load();
   }
 
-  // event-target helpers (no two-way ngModel in this codebase)
-  val(e: Event): string {
-    return (e.target as HTMLInputElement).value;
-  }
-  num(e: Event): number {
-    const n = Number.parseInt((e.target as HTMLInputElement).value, 10);
-    return Number.isFinite(n) ? n : 0;
-  }
+  // event-target helpers — shared typed accessors (no two-way ngModel here)
+  protected readonly val = eventValue;
+  protected readonly num = eventNumber;
 
   catLabel(c: AthleteEventCategory): string {
     return ATHLETE_EVENT_CATEGORY_LABEL[c];

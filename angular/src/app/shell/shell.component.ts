@@ -28,7 +28,6 @@ import { LucideAngularModule } from "lucide-angular";
  */
 @Component({
   selector: "app-shell",
-  standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

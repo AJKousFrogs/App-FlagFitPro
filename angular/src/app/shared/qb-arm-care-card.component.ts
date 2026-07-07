@@ -24,7 +24,6 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
  */
 @Component({
   selector: "app-qb-arm-care-card",
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

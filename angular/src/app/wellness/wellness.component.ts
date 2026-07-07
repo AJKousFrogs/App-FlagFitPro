@@ -35,7 +35,6 @@ import { EventTravelService } from "../core/services/event-travel.service";
  */
 @Component({
   selector: "app-wellness",
-  standalone: true,
   imports: [
     AvatarComponent,
     ReadinessTrendComponent,

@@ -28,7 +28,6 @@ const clamp = (v: number, lo: number, hi: number) =>
  */
 @Component({
   selector: "app-readiness-trend",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (chart(); as c) {

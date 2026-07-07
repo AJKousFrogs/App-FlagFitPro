@@ -21,7 +21,6 @@ const LANE_LABEL: Record<string, string> = {
 /** Staff More — team + role, switch to the athlete view (if also a player), sign out. */
 @Component({
   selector: "app-staff-more",
-  standalone: true,
   imports: [LucideAngularModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./staff-more.component.html",

@@ -29,7 +29,6 @@ import { LoggerService } from "../core/services/logger.service";
  */
 @Component({
   selector: "app-team-chat",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./team-chat.component.html",

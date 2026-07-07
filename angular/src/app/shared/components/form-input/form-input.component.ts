@@ -13,7 +13,6 @@ let nextFormInputId = 0;
  */
 @Component({
   selector: "app-form-input",
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (label()) {

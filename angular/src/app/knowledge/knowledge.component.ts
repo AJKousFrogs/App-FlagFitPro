@@ -49,7 +49,6 @@ const CATEGORY_LABELS: Record<string, string> = {
  */
 @Component({
   selector: "app-knowledge",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./knowledge.component.html",

@@ -31,7 +31,6 @@ import { CompetitionEvent } from "../core/models/schedule.models";
  */
 @Component({
   selector: "app-today",
-  standalone: true,
   imports: [
     AvatarComponent,
     YtVideoComponent,

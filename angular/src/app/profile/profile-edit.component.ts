@@ -15,6 +15,7 @@ import { SupabaseService } from "../core/services/supabase.service";
 import { LoggerService } from "../core/services/logger.service";
 import { IdentityService } from "../core/services/identity.service";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
+import { eventValue } from "../shared/utils/event.utils";
 
 interface ProfileRead {
   heightCm?: number | null;
@@ -33,7 +34,6 @@ interface ProfileRead {
  */
 @Component({
   selector: "app-profile-edit",
-  standalone: true,
   imports: [AvatarComponent, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -242,9 +242,7 @@ export class ProfileEditComponent implements OnInit {
     });
   }
 
-  val(e: Event): string {
-    return (e.target as HTMLInputElement).value;
-  }
+  protected readonly val = eventValue;
   numOrEmpty(e: Event): string {
     const v = (e.target as HTMLInputElement).value;
     return v === "" ? "" : v;

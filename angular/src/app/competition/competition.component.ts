@@ -32,7 +32,6 @@ interface PendingEvent {
  */
 @Component({
   selector: "app-competition",
-  standalone: true,
   imports: [
     AvatarComponent,
     SkeletonComponent,

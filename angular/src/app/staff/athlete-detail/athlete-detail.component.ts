@@ -65,7 +65,6 @@ const RTP_PHASES = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Cleared"];
  */
 @Component({
   selector: "app-athlete-detail",
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./athlete-detail.component.html",

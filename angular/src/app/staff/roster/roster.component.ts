@@ -112,7 +112,6 @@ const FOCUS_CLS: Record<string, string> = {
 
 @Component({
   selector: "app-roster",
-  standalone: true,
   imports: [DecimalPipe, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster.component.html",

@@ -28,7 +28,6 @@ const clamp = (v: number, lo: number, hi: number) =>
  */
 @Component({
   selector: "app-acwr",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./acwr.component.html",

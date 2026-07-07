@@ -42,7 +42,6 @@ const FALLBACK_BODYWEIGHT_KG = 80;
  */
 @Component({
   selector: "app-supplements",
-  standalone: true,
   imports: [AvatarComponent, RouterLink, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,

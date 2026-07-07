@@ -18,7 +18,6 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-staff-shell",
-  standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

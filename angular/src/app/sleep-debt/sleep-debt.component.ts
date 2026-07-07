@@ -26,7 +26,6 @@ interface SleepNight {
  */
 @Component({
   selector: "app-sleep-debt",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./sleep-debt.component.html",

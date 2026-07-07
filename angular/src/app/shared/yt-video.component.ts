@@ -39,7 +39,6 @@ const API_LOAD_TIMEOUT_MS = 8000;
  */
 @Component({
   selector: "app-yt-video",
-  standalone: true,
   imports: [LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

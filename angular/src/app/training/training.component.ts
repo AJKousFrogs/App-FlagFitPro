@@ -42,7 +42,6 @@ interface WeekRow {
  */
 @Component({
   selector: "app-training",
-  standalone: true,
   imports: [
     AvatarComponent,
     YtVideoComponent,
@@ -169,7 +168,7 @@ interface WeekRow {
         font-size: var(--fs-xs);
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--s-1);
         margin: 2px 0 var(--s-2);
       }
       .ex-feel svg.lucide {

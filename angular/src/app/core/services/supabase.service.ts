@@ -368,6 +368,18 @@ export class SupabaseService {
       }
     }
 
+    // Definitive reset of every root-singleton's in-memory state: a full reload
+    // guarantees no user-scoped service (team role/permissions, injuries,
+    // settings, readiness, channels, …) can serve the previous user's cached
+    // data to the next sign-in on a shared device. Root singletons outlive the
+    // in-SPA sign-out, so per-service resets are easy to forget — a reload can't
+    // be (SOURCE_OF_TRUTH §6, the cross-user-leak class). The SW cache was
+    // cleared just above; this clears memory. Page navigates away, so nothing
+    // after this runs (callers' own post-sign-out navigation is redundant now).
+    if (typeof window !== "undefined" && window.location) {
+      window.location.assign("/login");
+    }
+
     return result;
   }
 

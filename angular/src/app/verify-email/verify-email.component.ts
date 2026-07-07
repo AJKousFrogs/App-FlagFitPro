@@ -17,7 +17,6 @@ import { LoggerService } from "../core/services/logger.service";
  */
 @Component({
   selector: "app-verify-email",
-  standalone: true,
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./verify-email.component.html",
