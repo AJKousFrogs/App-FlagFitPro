@@ -9,6 +9,7 @@ import {
   isValidDateString,
 } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
+import { supabaseAdmin } from "./utils/supabase-client.js";
 
 const DEFAULT_DAILY_ROUTINE = [
   { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -357,7 +358,7 @@ async function getSettings(supabase, userId) {
     // Try to get birth date from users table
     const { data: userData } = await supabase
       .from("users")
-      .select("date_of_birth, birth_date")
+      .select("date_of_birth, birth_date, weight_kg")
       .eq("id", userId)
       .single();
 
@@ -365,6 +366,7 @@ async function getSettings(supabase, userId) {
       primaryPosition: "wr_db",
       secondaryPosition: null,
       birthDate: userData?.date_of_birth || userData?.birth_date || null,
+      weightKg: userData?.weight_kg ?? null,
       seasonCalendar: [],
       season_calendar: [],
       availabilitySchedule: [],
@@ -380,12 +382,20 @@ async function getSettings(supabase, userId) {
     });
   }
 
+  // weight_kg lives in the users table, not athlete_training_config — fetch it.
+  const { data: userPhysicals } = await supabase
+    .from("users")
+    .select("weight_kg")
+    .eq("id", userId)
+    .single();
+
   // Transform to frontend format
   // PROMPT 2.11: Rename flag_practice_schedule to availability (non-authority)
   return createSuccessResponse({
     primaryPosition: config.primary_position,
     secondaryPosition: config.secondary_position,
     birthDate: config.birth_date,
+    weightKg: userPhysicals?.weight_kg ?? null,
     // DEPRECATED: flagPracticeSchedule renamed to availabilitySchedule
     // This is for player availability notes only, NOT authority for team activities
     availabilitySchedule: config.flag_practice_schedule || [], // Keep DB field name for now
@@ -435,6 +445,25 @@ async function saveSettings(supabase, userId, payload, log = logger) {
 
   const flagPracticeSchedule = availabilitySchedule || [];
 
+  // Derive boolean access flags from the equipment array when not explicitly provided.
+  // Onboarding sends equipment: ["Gym","Field",...] but not hasGymAccess/hasFieldAccess.
+  // Without this, warmup variant always defaults to gym+field even when the player chose neither.
+  const equipmentLower = Array.isArray(availableEquipment)
+    ? availableEquipment.map((e) => String(e).toLowerCase())
+    : [];
+  const resolvedHasGymAccess =
+    hasGymAccess !== undefined
+      ? hasGymAccess
+      : availableEquipment !== undefined
+        ? equipmentLower.includes("gym")
+        : true;
+  const resolvedHasFieldAccess =
+    hasFieldAccess !== undefined
+      ? hasFieldAccess
+      : availableEquipment !== undefined
+        ? equipmentLower.includes("field")
+        : true;
+
   // Calculate age recovery modifier if birth date provided
   let ageRecoveryModifier = 1.0;
   const acwrTargetMin = 0.8;
@@ -470,8 +499,8 @@ async function saveSettings(supabase, userId, payload, log = logger) {
         // rename migration (I6). The input is still accepted/validated but ignored.
         daily_routine: sanitizeDailyRoutine(dailyRoutine),
         max_sessions_per_week: maxSessionsPerWeek ?? 5,
-        has_gym_access: hasGymAccess !== false,
-        has_field_access: hasFieldAccess !== false,
+        has_gym_access: resolvedHasGymAccess,
+        has_field_access: resolvedHasFieldAccess,
         warmup_focus: warmupFocus || null,
         available_equipment: availableEquipment || [],
         season_calendar: Array.isArray(seasonCalendar) ? seasonCalendar : [],
@@ -498,9 +527,16 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   }
 
   // Mirror identity/physical fields onto users (onboarding collects these and the
-  // profile/roster/nutrition screens read them from users — previously only DOB
-  // was written, so jersey/height/weight/position from onboarding were lost).
-  const userUpdate = {};
+  // profile/roster/nutrition screens read them from users). Use supabaseAdmin for the
+  // upsert so the row is created if it doesn't exist yet (new user who hasn't done a
+  // wellness check-in). The user-context client's update() silently does nothing for
+  // missing rows, losing all onboarding data.
+  const userUpdate = {
+    // Always mark onboarding complete — once the profile is saved, the athlete is in.
+    onboarding_completed: true,
+    onboarding_completed_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
   if (birthDate) {
     userUpdate.date_of_birth = birthDate;
   }
@@ -528,16 +564,33 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   ) {
     userUpdate.weight_kg = Number(weightKg);
   }
-  if (Object.keys(userUpdate).length > 0) {
-    try {
-      await supabase.from("users").update(userUpdate).eq("id", userId);
-    } catch (updateError) {
-      log.warn("player_settings_user_update_warning", {
-        message: "Could not update users table",
-        err: updateError.message,
-        user_id: userId,
-      });
+
+  try {
+    // Atomically guarantee the row exists (same RPC wellness-checkin's
+    // upsert_wellness_checkin uses) before updating it — avoids the race in a
+    // separate check-then-insert (two concurrent onboarding submits both seeing
+    // "row missing" and both inserting, the second violating the id PK).
+    const { error: ensureError } = await supabaseAdmin.rpc(
+      "ensure_public_user_profile",
+      { p_user_id: userId },
+    );
+    if (ensureError) {
+      throw ensureError;
     }
+
+    const { error: updateError } = await supabaseAdmin
+      .from("users")
+      .update(userUpdate)
+      .eq("id", userId);
+    if (updateError) {
+      throw updateError;
+    }
+  } catch (updateError) {
+    log.warn("player_settings_user_update_warning", {
+      message: "Could not upsert users table",
+      err: updateError?.message,
+      user_id: userId,
+    });
   }
 
   return createSuccessResponse(

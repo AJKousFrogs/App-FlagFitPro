@@ -180,6 +180,7 @@ async function savePrimaryWellnessCheckin(
     motivation_level: payload.motivationLevel,
     mood: payload.mood,
     hydration_level: payload.hydrationLevel,
+    travel_hours: payload.travelHours ?? null,
   };
 
   const primaryResult = await supabase
@@ -214,6 +215,7 @@ async function saveWellnessCheckinTransactional(
     p_motivation_level: payload.motivationLevel ?? null,
     p_mood: payload.mood ?? null,
     p_hydration_level: payload.hydrationLevel ?? null,
+    p_travel_hours: payload.travelHours ?? null,
   });
 
   if (rpcError) {
@@ -403,10 +405,10 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     sorenessAreas,
     notes,
     readinessScore,
-    // Additional wellness fields (previously missing from daily_wellness_checkin)
     motivationLevel,
     mood,
     hydrationLevel,
+    travelHours,
   } = payload;
 
   // Reject out-of-range numeric wellness inputs up front (422, not a downstream 500).
@@ -418,6 +420,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
     ["motivationLevel", motivationLevel, 1, 10],
     ["mood", mood, 1, 10],
     ["readinessScore", readinessScore, 0, 100],
+    ["travelHours", travelHours, 0, 24],
   ];
   for (const [field, value, min, max] of rangeChecks) {
     if (
@@ -502,7 +505,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
         await supabase.from("notifications").insert({
           user_id: userId,
           notification_type: "wellness",
-          message: `Your wellness is low today (${calculatedReadiness}%). Tomorrow's training will focus on recovery - prioritize sleep, hydration, and light movement.`,
+          message: `Your wellness is low today (${Math.round(calculatedReadiness ?? 0)}%). Tomorrow's training will focus on recovery - prioritize sleep, hydration, and light movement.`,
           priority: "normal",
         });
       }
@@ -592,6 +595,7 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
       motivationLevel,
       mood,
       hydrationLevel,
+      travelHours: travelHours ?? null,
     },
   );
 
@@ -1065,7 +1069,13 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
  * Scale: Input values are on 1-5 scale (from quick check-in) or 0-10 scale (full check-in)
  */
 function calculateReadiness(data) {
-  const { sleepQuality, energyLevel, muscleSoreness, stressLevel } = data;
+  const {
+    sleepQuality,
+    energyLevel,
+    muscleSoreness,
+    stressLevel,
+    travelHours,
+  } = data;
 
   // CRITICAL: Require at least sleep quality AND energy level
   // DO NOT use defaults - user must provide real data
@@ -1119,7 +1129,13 @@ function calculateReadiness(data) {
     score = sleepScore * 0.55 + energyScore * 0.45;
   }
 
-  return Math.round(Math.max(0, Math.min(100, score)));
+  // Travel fatigue penalty: sitting for hours raises cortisol, disrupts sleep
+  // quality signal, and increases injury risk on subsequent days.
+  const travelH = typeof travelHours === "number" ? travelHours : 0;
+  const travelPenalty =
+    travelH >= 7 ? 12 : travelH >= 4 ? 7 : travelH >= 1 ? 3 : 0;
+
+  return Math.round(Math.max(0, Math.min(100, score - travelPenalty)));
 }
 
 export const testHandler = handler;

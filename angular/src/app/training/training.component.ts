@@ -28,6 +28,7 @@ interface WeekRow {
   label: string;
   isGame: boolean;
   isRest: boolean;
+  isTravel: boolean;
   rpe: number | null;
   secondSession?: { label: string; rpe: number } | null;
 }
@@ -175,6 +176,13 @@ interface WeekRow {
         width: 13px;
         height: 13px;
       }
+      /* Per-exercise video thumbnail — inline demo, tap to play. Only renders when
+         the server resolves a videoId for the exercise (DB or curated map fallback). */
+      .ex-vid {
+        margin: var(--s-1) 0;
+        border-radius: 6px;
+        overflow: hidden;
+      }
     `,
   ],
 })
@@ -296,9 +304,15 @@ export class TrainingComponent {
     if (!rx) return null;
     if (rx.weatherAdjustment?.applied)
       return { label: "weather-adjusted", cls: "caution" };
+    // Intent-specific labels take precedence over the generic recovery-emphasis
+    // badge — mirrors today.component.ts's heroBand so the same day never shows
+    // a different label on Today vs. Training.
+    if (rx.intent === "competition") return { label: "game day", cls: "info" };
+    if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
     if (rx.recoveryEmphasis === "critical")
       return { label: "recover", cls: "danger" };
-    if (rx.intent === "competition") return { label: "game day", cls: "info" };
+    if (rx.recoveryEmphasis === "high")
+      return { label: "recover", cls: "caution" };
     return { label: "today", cls: "good" };
   });
 
@@ -369,6 +383,7 @@ export class TrainingComponent {
       label: p.intentLabel,
       isGame: p.intent === "competition",
       isRest: p.intent === "rest",
+      isTravel: p.intent === "travel",
       rpe: p.targetRpe,
       secondSession: p.secondSession
         ? { label: p.secondSession.intentLabel, rpe: p.secondSession.targetRpe }

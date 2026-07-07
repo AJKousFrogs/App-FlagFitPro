@@ -86,7 +86,7 @@ const CATEGORY_LABELS: Record<string, string> = {
       .entry p {
         margin: 0;
         color: var(--text-muted);
-        font-size: var(--fs-sm);
+        font-size: var(--fs-body);
         line-height: var(--lh-body);
       }
       .ev {

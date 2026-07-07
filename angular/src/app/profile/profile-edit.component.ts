@@ -56,7 +56,7 @@ interface ProfileRead {
       <!-- photo -->
       <div class="card row">
         <span class="avatar lg"><app-avatar /></span>
-        <div class="stack" style="gap:6px;flex:1">
+        <div class="stack" style="gap:var(--s-2);flex:1">
           <b>Profile photo</b>
           <div class="inline">
             <label class="btn secondary sm">
@@ -176,7 +176,7 @@ interface ProfileRead {
       .chiprow {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: var(--s-2);
       }
       .grid2 {
         display: grid;

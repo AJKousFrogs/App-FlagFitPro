@@ -76,7 +76,7 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
       .chiprow {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: var(--s-2);
       }
     `,
   ],

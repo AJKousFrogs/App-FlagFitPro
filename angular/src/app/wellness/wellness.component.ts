@@ -55,7 +55,7 @@ import { EventTravelService } from "../core/services/event-travel.service";
       .chiprow {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: var(--s-2);
       }
     `,
   ],

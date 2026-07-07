@@ -660,7 +660,7 @@ async function getUserTrainingContext(supabase, userId, date, log = logger) {
     currentPhase,
     currentWeek,
     sessionTemplate,
-    sessionResolution, // BREACH FIX #1: Return session resolution for confidence metadata
+    sessionResolution,
     teamActivity: teamActivityResult, // PROMPT 2.10: Team activity source of truth
     // DEPRECATED: availability is informational only; team_activities is authority.
     readiness,
@@ -1142,6 +1142,7 @@ function mapIntentToSession(intent, intentLabel) {
     case "mobility":
     case "recovery":
     case "rest":
+    case "travel":
     case "competition":
       return {
         trainingFocus: "recovery",
@@ -1378,11 +1379,15 @@ async function generateProtocol(
     computeTrainingDaysLogged,
   });
 
-  // CNS 72h spacing guard: never prescribe sprint/max-CNS if the athlete did
-  // one within the last 72h. Canonical window = spacingHoursHighImpact from
-  // training-modalities.config.ts. The client AcwrService.shouldSkipSprints()
-  // is a coarse proxy (riskZone + day-of-week only); this is the server authority.
-  const CNS_SPACING_HOURS = 72;
+  // Age-scaled CNS recovery spacing — mirrors the client's cnsRecoveryHoursForAge().
+  // Older athletes recover neuromuscular fatigue more slowly: <35y → 48h, 35-39y → 60h,
+  // 40+y → 72h. Unknown age falls back to the 48h base (same as client default).
+  const CNS_SPACING_HOURS =
+    typeof context.age === "number" && context.age >= 40
+      ? 72
+      : typeof context.age === "number" && context.age >= 35
+        ? 60
+        : 48;
   const cnsBlockedAt = await getLastHighCnsSession(
     supabase,
     userId,
@@ -1390,7 +1395,7 @@ async function generateProtocol(
     CNS_SPACING_HOURS,
   );
   if (cnsBlockedAt) {
-    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥72h between max-effort sessions.`;
+    aiRationale += ` ⚡ CNS spacing guard: sprint/speed session logged ${cnsBlockedAt.slice(0, 10)} — ≥${CNS_SPACING_HOURS}h between max-effort sessions.`;
   }
 
   // COMPOSE: when the intent layer supplies the day's intent, REALIZE it —
@@ -1477,15 +1482,23 @@ async function generateProtocol(
     isSprintSession = weatherBlocksSprint ? false : composeSprint;
   }
 
-  await addWarmupBlock({
-    supabase,
-    protocolExercises,
-    context,
-    trainingFocus,
-    isPracticeDay,
-    isFilmRoomDay,
-    isSprintSession,
-  });
+  // Skip the training warmup on non-training days. Rest/travel/competition days get
+  // foam roll + morning mobility (above) but not a 25-min field/gym warmup with planks.
+  // Game-day pre-game warmup happens on the field; rest is rest; travel is travel.
+  const isNonTrainingIntent = ["rest", "travel", "competition"].includes(
+    payload.intent,
+  );
+  if (!isNonTrainingIntent) {
+    await addWarmupBlock({
+      supabase,
+      protocolExercises,
+      context,
+      trainingFocus,
+      isPracticeDay,
+      isFilmRoomDay,
+      isSprintSession,
+    });
+  }
 
   // ============================================================================
   // EVIDENCE-BASED TRAINING BLOCKS (1.5h Gym Session Structure)
@@ -2263,14 +2276,6 @@ async function completeBlock(supabase, userId, payload, headers) {
     };
   }
 
-  // Get all exercises in this block
-  const { data: exercises } = await supabase
-    .from("protocol_exercises")
-    .select("id, exercise_id")
-    .eq("protocol_id", protocolId)
-    .eq("block_type", blockType)
-    .neq("status", "complete");
-
   // Update all to complete
   const { error: updateError } = await supabase
     .from("protocol_exercises")
@@ -2296,12 +2301,6 @@ async function completeBlock(supabase, userId, payload, headers) {
       [blockCompletedField]: new Date().toISOString(),
     })
     .eq("id", protocolId);
-
-  // Log completions
-  if (exercises && exercises.length > 0) {
-    // (Per-exercise completion ledger removed — protocol_completions was never created;
-    // block status is updated above, and session load reaches ACWR via training_sessions.)
-  }
 
   return {
     statusCode: 200,
@@ -2474,9 +2473,7 @@ async function logSession(supabase, userId, payload, headers, log = logger) {
   }
 
   // Log to training_sessions table for ACWR calculation
-  // Contract: Section 3.3 - Logging APIs (execution logging)
   try {
-    // This is execution logging, not structure modification - allowed for athletes
     await supabase.from("training_sessions").insert({
       user_id: userId,
       session_date: protocol.protocol_date,

@@ -5,7 +5,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { SupabaseService } from "../core/services/supabase.service";
@@ -22,7 +22,7 @@ import { staffLaneFor } from "../core/guards/staff.guard";
 @Component({
   selector: "app-landing",
   standalone: true,
-  imports: [RouterLink, FormsModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./landing.component.html",
   styles: [
@@ -63,8 +63,12 @@ export class LandingComponent {
   private readonly route = inject(ActivatedRoute);
 
   readonly showSignIn = signal(false);
+  readonly showSignUp = signal(false);
   readonly email = signal("");
   readonly password = signal("");
+  // sign-up only
+  readonly fullName = signal("");
+  readonly confirmPassword = signal("");
   readonly busy = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -75,6 +79,63 @@ export class LandingComponent {
     const onLoginRoute = this.route.snapshot.routeConfig?.path === "login";
     if (onLoginRoute || this.route.snapshot.queryParamMap.has("returnUrl")) {
       this.showSignIn.set(true);
+    }
+  }
+
+  showSignUpForm(): void {
+    this.showSignUp.set(true);
+    this.showSignIn.set(false);
+    this.error.set(null);
+  }
+
+  async submitSignUp(): Promise<void> {
+    if (this.busy()) return;
+    const name = this.fullName().trim();
+    const email = this.email().trim();
+    const pwd = this.password();
+    const pwd2 = this.confirmPassword();
+    if (!name) {
+      this.error.set("Please enter your name.");
+      return;
+    }
+    if (!email) {
+      this.error.set("Please enter your email.");
+      return;
+    }
+    if (pwd.length < 8) {
+      this.error.set("Password must be at least 8 characters.");
+      return;
+    }
+    if (pwd !== pwd2) {
+      this.error.set("Passwords don't match.");
+      return;
+    }
+
+    this.busy.set(true);
+    this.error.set(null);
+    try {
+      const { data, error } = await this.supabase.signUp(email, pwd, {
+        fullName: name,
+      });
+      if (error) {
+        this.error.set(error.message ?? "Sign-up failed");
+        return;
+      }
+      if (data?.session) {
+        // Auto-confirmed → go straight to onboarding
+        await this.router.navigateByUrl("/onboarding");
+      } else {
+        // Email verification required — pass email via query param so the verify page
+        // can show the address and offer a resend without needing an active session.
+        await this.router.navigateByUrl(
+          `/verify-email?email=${encodeURIComponent(email)}`,
+        );
+      }
+    } catch (e) {
+      this.logger.error("signup_failed", e);
+      this.error.set("Sign-up failed — try again.");
+    } finally {
+      this.busy.set(false);
     }
   }
 

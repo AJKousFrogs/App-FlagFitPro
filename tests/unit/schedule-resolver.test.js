@@ -52,16 +52,31 @@ const now = new Date("2026-05-08T12:00:00.000Z");
 describe("netlify resolvePhase", () => {
   describe("competition window", () => {
     it("returns 'competition' when now is between starts_at and ends_at", () => {
+      // `now` (2026-05-08) is a Friday and a "peak" event registers as
+      // competition on any day of the week, not just weekends.
       const ev = event({
         startsAt: new Date(now.getTime() - 2 * ONE_HOUR_MS),
         endsAt: new Date(now.getTime() + 2 * ONE_HOUR_MS),
+        importance: "peak",
       });
       expect(netlifyResolvePhase(now, [ev], null)).toBe("competition");
     });
 
     it("returns 'competition' on a single-instant event happening now", () => {
-      const ev = event({ startsAt: now });
+      const ev = event({ startsAt: now, importance: "peak" });
       expect(netlifyResolvePhase(now, [ev], null)).toBe("competition");
+    });
+
+    it("returns 'travel' for a live regular/domestic event on a weekday (not a game day)", () => {
+      // Same window as above but importance "regular" and no international
+      // competitionLevel — a weekday leg of a club/national event is travel,
+      // not competition; only weekend days or peak/international events are.
+      const ev = event({
+        startsAt: new Date(now.getTime() - 2 * ONE_HOUR_MS),
+        endsAt: new Date(now.getTime() + 2 * ONE_HOUR_MS),
+        importance: "regular",
+      });
+      expect(netlifyResolvePhase(now, [ev], null)).toBe("travel");
     });
   });
 
@@ -155,6 +170,7 @@ describe("netlify resolvePhase", () => {
       const inEvent = event({
         startsAt: new Date(now.getTime() - 1 * ONE_HOUR_MS),
         endsAt: new Date(now.getTime() + 1 * ONE_HOUR_MS),
+        importance: "peak",
       });
       const last = event({
         startsAt: new Date(now.getTime() - 2 * ONE_DAY_MS),

@@ -51,7 +51,7 @@
   a:focus-visible {
     outline: none;
     box-shadow: var(--focus);
-    border-radius: 4px;
+    border-radius: var(--r-sm);
   }
 
   /* ---- per-screen layout (the shell owns the frame / tab bar / FAB) ---- */
@@ -212,10 +212,10 @@
     margin: 0;
   }
   .suppi {
-    font-size: 18px;
+    font-size: var(--fs-h2);
     color: var(--text-muted);
     vertical-align: -3px;
-    margin-right: 8px;
+    margin-right: var(--s-2);
   }
 
   .linkcard {
@@ -236,9 +236,9 @@
     box-shadow: var(--focus);
   } /* keyboard ring (border-color alone is too subtle) */
   .linkcard .lc-ic {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-md);
     display: grid;
     place-items: center;
     background: var(--grad-brand-soft);
@@ -260,14 +260,14 @@
     font-weight: var(--fw-semi);
     font-size: var(--fs-body);
     border-radius: var(--r-pill);
-    padding: 12px 18px;
+    padding: var(--s-3) var(--s-5);
     min-height: 44px;
     border: 1px solid transparent;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--s-2);
     transition:
       transform var(--t-fast) var(--ease),
       background var(--t-fast);
@@ -301,7 +301,7 @@
     width: 100%;
   }
   .btn.sm {
-    padding: 7px 12px;
+    padding: var(--s-2) var(--s-3);
     font-size: var(--fs-sm);
     min-height: 44px;
   }
@@ -318,10 +318,10 @@
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--s-1);
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
-    padding: 4px 10px;
+    padding: var(--s-1) var(--s-2);
     border-radius: var(--r-pill);
     background: var(--surface-2);
     color: var(--text-muted);
@@ -340,16 +340,16 @@
   .band {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: var(--s-1);
     font-size: var(--fs-xs);
     font-weight: var(--fw-bold);
-    padding: 4px 10px;
+    padding: var(--s-1) var(--s-2);
     border-radius: var(--r-pill);
     white-space: nowrap;
     flex: none;
   }
   .band::before {
-    font-size: 9px;
+    font-size: var(--fs-xs);
     line-height: 1;
   }
   .band.good::before {
@@ -766,8 +766,8 @@
   }
   .video .vtitle {
     position: absolute;
-    left: 12px;
-    bottom: 10px;
+    left: var(--s-3);
+    bottom: var(--s-2);
     color: var(--overlay-text);
     font-weight: var(--fw-semi);
     font-size: var(--fs-sm);
@@ -777,14 +777,14 @@
   }
   .video .duration {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    right: var(--s-2);
+    bottom: var(--s-2);
     background: var(--overlay-scrim-strong);
     color: var(--overlay-text);
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: var(--s-1) var(--s-2);
+    border-radius: var(--r-sm);
     z-index: 1;
   }
   /* YouTube IFrame Player fills the .video frame (global so it reaches the
@@ -860,24 +860,24 @@
   .fuel-macros {
     display: flex;
     gap: var(--s-2);
-    margin: 12px 0 10px;
+    margin: var(--s-3) 0 var(--s-2);
   }
   .fuel-macros > div {
     flex: 1;
     background: var(--surface-2);
     border-radius: var(--r-sm);
-    padding: 10px 6px;
+    padding: var(--s-2) var(--s-1);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: var(--s-1);
     text-align: center;
   }
   .fuel-macros svg.lucide {
     width: 22px;
     height: 22px;
     color: var(--accent);
-    margin-bottom: 2px;
+    margin-bottom: var(--s-1);
   }
   .fuel-macros b {
     font-family: var(--font-display);
@@ -893,18 +893,18 @@
   .fuel-foods {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--s-2);
   }
   .foodchip {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: var(--s-1);
     font-size: var(--fs-xs);
     color: var(--text-muted);
     background: var(--surface-2);
     border: 1px solid var(--border-soft);
     border-radius: var(--r-pill);
-    padding: 5px 10px;
+    padding: var(--s-1) var(--s-2);
   }
   .foodchip svg.lucide {
     width: 15px;
@@ -974,8 +974,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    font-size: 10px;
+    gap: var(--s-1);
+    font-size: var(--fs-xs);
     color: var(--text-faint);
     min-height: 44px;
     justify-content: center;

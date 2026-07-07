@@ -179,19 +179,22 @@
             >
           }
         </div>
-        <a
-          href="https://www.laprimafit.si"
-          target="_blank"
-          rel="noopener"
-          style="
-            display: block;
-            margin-top: var(--s-3);
-            font-size: var(--fs-sm);
-            color: var(--text-muted);
-          "
-        >
-          Personalised meal plan → laprimafit.si
-        </a>
+        <div class="row" style="margin-top: var(--s-3)">
+          <a class="btn ghost sm" routerLink="/wellness" style="flex: 1"
+            >Log nutrition →</a
+          >
+          <a
+            href="https://www.laprimafit.si"
+            target="_blank"
+            rel="noopener"
+            style="
+              font-size: var(--fs-sm);
+              color: var(--text-muted);
+              white-space: nowrap;
+            "
+            >meal plan →</a
+          >
+        </div>
       </div>
 
       <!-- session video — real YouTube IFrame Player (no API key) -->
@@ -219,7 +222,7 @@
   <!-- schedule entry — athlete-entered camps / tournaments / gamedays drive the plan -->
   <a class="card linkcard" routerLink="/schedule">
     <span class="lc-ic"><lucide-icon name="calendar" /></span>
-    <div class="stack" style="gap: 2px; flex: 1">
+    <div class="stack" style="gap: var(--s-1); flex: 1">
       <b>Your schedule</b>
       @if (nextEvent(); as ev) {
         <small class="muted"
@@ -234,6 +237,19 @@
     </div>
     <lucide-icon class="lc-go" name="chevron-right" />
   </a>
+  @if (eventHotelInfo(); as hotelEv) {
+    <!-- sibling, not nested in the linkcard <a> above — an <a> can't contain another <a> -->
+    <small class="muted inline" style="padding: 0 var(--s-2)">
+      <lucide-icon name="bed" />
+      {{ hotelEv.hotelName || "Team hotel" }}
+      @if (hotelEv.hotelAddress) {
+        ·
+        <a [href]="mapUrl(hotelEv.hotelAddress)" target="_blank" rel="noopener"
+          >map</a
+        >
+      }
+    </small>
+  }
 
   <!-- recovery modalities — gated by owned equipment -->
   @if (recovery().length) {
@@ -247,11 +263,17 @@
           <small class="muted">{{ r.reason }}</small>
         </div>
       }
+      <a
+        class="btn ghost sm block"
+        routerLink="/wellness"
+        style="margin-top: var(--s-1)"
+        >Log recovery →</a
+      >
     </div>
   } @else if (!hasEquipment()) {
     <a class="card linkcard" routerLink="/settings">
       <span class="lc-ic"><lucide-icon name="heart-pulse" /></span>
-      <div class="stack" style="gap: 2px; flex: 1">
+      <div class="stack" style="gap: var(--s-1); flex: 1">
         <b>Recovery</b>
         <small class="muted"
           >Add your recovery gear in Settings for tailored modalities</small

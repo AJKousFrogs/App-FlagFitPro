@@ -84,7 +84,7 @@ import { LoggerService } from "../core/services/logger.service";
       .body {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: var(--s-1);
         min-width: 0;
       }
       .meta {

@@ -4,7 +4,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { AuthFlowDataService } from "../core/services/auth-flow-data.service";
@@ -39,8 +39,13 @@ import { LoggerService } from "../core/services/logger.service";
 export class VerifyEmailComponent {
   private readonly authFlow = inject(AuthFlowDataService);
   private readonly logger = inject(LoggerService);
+  private readonly route = inject(ActivatedRoute);
 
-  readonly email = signal(this.authFlow.getPendingVerificationEmail() ?? "");
+  readonly email = signal(
+    this.route.snapshot.queryParamMap.get("email") ??
+      this.authFlow.getPendingVerificationEmail() ??
+      "",
+  );
   readonly busy = signal(false);
   readonly sent = signal(false);
   readonly error = signal<string | null>(null);

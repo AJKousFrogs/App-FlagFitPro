@@ -44,6 +44,7 @@ const INTENT_CATEGORY: Record<PrescriptionIntent, string> = {
   rest: "recovery",
   "taper-prime": "warmup",
   competition: "skills",
+  travel: "mobility",
 };
 
 /**

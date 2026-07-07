@@ -1,9 +1,22 @@
 import { describe, expect, test, vi } from "vitest";
 import { buildProtocolDecisionContext } from "./daily-protocol-decision.js";
 
+// buildProtocolDecisionContext reads readiness_gates and recovery_blocks (both
+// fall back to safe defaults on an empty result) via differently-shaped,
+// arbitrarily long .from().select()... Postgrest chains -- a Proxy stub
+// handles any method/chain shape and always resolves to an empty result
+// rather than throwing on a bare `{}`.
+function mockSupabase() {
+  const chain = new Proxy(
+    { then: (resolve) => resolve({ data: [], error: null }) },
+    { get: (target, prop) => (prop === "then" ? target.then : () => chain) },
+  );
+  return { from: () => chain };
+}
+
 describe("buildProtocolDecisionContext", () => {
   test("uses training_sessions for ACWR baseline counting and creates baseline day focus", async () => {
-    const supabase = {};
+    const supabase = mockSupabase();
     const computeReadinessDaysStale = vi.fn().mockResolvedValue(null);
     const computeTrainingDaysLogged = vi.fn().mockResolvedValue(5);
 
@@ -60,7 +73,7 @@ describe("buildProtocolDecisionContext", () => {
 
   test("keeps baseline athletes in recovery when ACWR exceeds target range", async () => {
     const result = await buildProtocolDecisionContext({
-      supabase: {},
+      supabase: mockSupabase(),
       userId: "athlete-1",
       date: "2026-04-23",
       context: {

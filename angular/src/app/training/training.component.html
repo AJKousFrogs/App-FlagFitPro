@@ -122,6 +122,14 @@
                       @if (exDose(ex); as dose) {
                         <small> — {{ dose }}</small>
                       }
+                      @if (ex.exercise?.videoId; as vid) {
+                        <div class="ex-vid">
+                          <app-yt-video
+                            [videoId]="vid"
+                            [title]="ex.exercise?.name || ''"
+                          />
+                        </div>
+                      }
                       @if (ex.exercise?.howText) {
                         <div class="ex-how">{{ ex.exercise?.howText }}</div>
                       }
@@ -207,6 +215,10 @@
               <span class="band caution"><lucide-icon name="flag" /> game</span>
             } @else if (d.isRest) {
               <span class="chip">Rest · mobility</span>
+            } @else if (d.isTravel) {
+              <span class="band neutral"
+                ><lucide-icon name="plane" /> travel</span
+              >
             } @else if (d.rpe !== null) {
               <span class="chip">RPE {{ d.rpe }}</span>
             }

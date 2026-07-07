@@ -57,6 +57,8 @@ import {
   Apple,
   Utensils,
   Clock,
+  Plane,
+  Bed,
 } from "lucide-angular";
 import { provideClientHydration } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -142,6 +144,8 @@ export const appConfig: ApplicationConfig = {
         Apple,
         Utensils,
         Clock,
+        Plane,
+        Bed,
       }),
     ),
 

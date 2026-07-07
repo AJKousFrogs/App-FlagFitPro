@@ -94,7 +94,152 @@ function applyBlitzerWarmupOverrides(plan) {
   return updated;
 }
 
+// Mandatory on every training day regardless of variant.
+// 1 min straight plank + 30s single-arm each side + 30s Copenhagen each side = 3 min total.
+const PLANK_ACTIVATION_BLOCK = [
+  {
+    name: "Straight Plank",
+    // Precise keywords — avoids matching Single Arm Plank or Copenhagen Plank
+    keywords: ["straight plank", "prone plank", "straight-plank"],
+    holdSeconds: 60,
+    durationSeconds: 60,
+    note: "1 min front plank. Brace core, squeeze glutes, neutral spine.",
+  },
+  {
+    name: "Single-Arm Plank (Left)",
+    // "single arm plank" matches DB name "Single Arm Plank" without false positives
+    keywords: ["single arm plank", "single-arm plank"],
+    holdSeconds: 30,
+    durationSeconds: 30,
+    note: "30s left arm raised. Keep hips level — resist rotation.",
+  },
+  {
+    name: "Single-Arm Plank (Right)",
+    keywords: ["single arm plank", "single-arm plank"],
+    holdSeconds: 30,
+    durationSeconds: 30,
+    note: "30s right arm raised. Keep hips level — resist rotation.",
+  },
+  {
+    name: "Copenhagen Plank (Left)",
+    keywords: ["copenhagen", "copenhagen plank", "adductor plank"],
+    holdSeconds: 30,
+    durationSeconds: 30,
+    note: "30s left side. Top foot supported on bench/partner. Adductor activation + groin injury prevention.",
+  },
+  {
+    name: "Copenhagen Plank (Right)",
+    keywords: ["copenhagen", "copenhagen plank", "adductor plank"],
+    holdSeconds: 30,
+    durationSeconds: 30,
+    note: "30s right side. Top foot supported on bench/partner. Adductor activation + groin injury prevention.",
+  },
+];
+
 function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
+  // ── RECOVERY variant ─────────────────────────────────────────────────────
+  // Low-intensity days: foam roll + mobility-led, still includes the mandatory
+  // plank activation block. No sprint mechanics or potentiation work.
+  // Total: 1500s (25 min)
+  if (variant === "recovery") {
+    return [
+      {
+        name: "Easy Walk / Light Movement",
+        keywords: ["walk", "easy jog", "light jog"],
+        durationSeconds: 180,
+        note: "Raise: gentle walk or very light jog. Nasal breathing throughout.",
+      },
+      {
+        name: "Foam Roll (Legs + Back)",
+        keywords: ["foam roll", "foam roller", "self-myofascial"],
+        durationSeconds: 180,
+        note: "Quads, hamstrings, calves, glutes, thoracic. 30–45s per region. Not painful.",
+      },
+      {
+        name: "Cat-Cow",
+        keywords: ["cat cow", "cat-cow", "spinal wave"],
+        sets: 2,
+        reps: 10,
+        durationSeconds: 60,
+        note: "Slow spinal segmentation. Exhale on cat, inhale on cow.",
+      },
+      {
+        name: "Glute Bridge",
+        keywords: ["glute bridge"],
+        sets: 2,
+        reps: 10,
+        durationSeconds: 60,
+        note: "Activate glutes with full hip extension. Hold 2s at top.",
+      },
+      ...PLANK_ACTIVATION_BLOCK,
+      {
+        name: "Hip 90/90 Stretch",
+        keywords: ["90/90", "hip rotation", "hip stretch"],
+        durationSeconds: 120,
+        note: "60s each side. External/internal rotation. Breathe into the stretch.",
+      },
+      {
+        name: "Pigeon Pose",
+        keywords: ["pigeon", "hip opener", "glute stretch"],
+        durationSeconds: 150,
+        note: "75s each side. Deep hip flexor + glute release. Breathe through tightness.",
+      },
+      {
+        name: "Seated Hamstring Stretch",
+        keywords: ["hamstring stretch", "seated stretch"],
+        durationSeconds: 90,
+        note: "45s each leg. Hinge from hip, not rounding lumbar. Soft knee.",
+      },
+      {
+        name: "Hip Flexor Lunge Stretch",
+        keywords: ["hip flexor", "lunge stretch", "kneeling lunge"],
+        durationSeconds: 90,
+        note: "45s each side. Posterior pelvic tilt to deepen the stretch.",
+      },
+      {
+        name: "Thoracic Rotations",
+        keywords: ["thoracic", "t-spine", "rotation"],
+        sets: 2,
+        reps: 8,
+        durationSeconds: 90,
+        note: "Thread-the-needle or quadruped rotation. Upper back only.",
+      },
+      {
+        name: "World's Greatest Stretch",
+        keywords: ["world's greatest", "lunge reach", "thoracic lunge"],
+        sets: 2,
+        reps: 6,
+        durationSeconds: 120,
+        note: "Hip flexor + thoracic + hamstring in one movement.",
+      },
+      {
+        name: "Slow Calf Raises",
+        keywords: ["calf raise", "soleus"],
+        sets: 2,
+        reps: 12,
+        durationSeconds: 60,
+        note: "3s up, 3s down. Achilles tendon load tolerance.",
+      },
+      {
+        name: "Lateral Band Walks",
+        keywords: ["band walk", "lateral walk", "monster walk"],
+        sets: 2,
+        reps: 10,
+        durationSeconds: 60,
+        note: "Light band. Glute medius activation. Small controlled steps.",
+      },
+      {
+        name: "Ankle Circles + Hip Circles",
+        keywords: ["ankle circle", "hip circle"],
+        durationSeconds: 60,
+        note: "Full ROM at ankle and hip. Restore joint mobility.",
+      },
+    ];
+  }
+
+  // ── FITNESS / GYM variant ────────────────────────────────────────────────
+  // Strength/power/gym days. Specific plank protocol replaces the old generic
+  // "Plank Series". Total: 1500s (25 min).
   if (variant === "fitness") {
     return [
       {
@@ -125,12 +270,7 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
         durationSeconds: 90,
         note: "Core activation with controlled breathing.",
       },
-      {
-        name: "Plank Series",
-        keywords: ["plank", "side plank"],
-        durationSeconds: 180,
-        note: "Planks total 3 minutes (front + side).",
-      },
+      ...PLANK_ACTIVATION_BLOCK,
       {
         name: "Nordic Hamstring Curl",
         keywords: ["nordic", "hamstring curl"],
@@ -204,6 +344,12 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
     ];
   }
 
+  // ── FIELD variant (default) ──────────────────────────────────────────────
+  // Sprint sessions, practice days, skill work, and everything else.
+  // Mandatory plank block inserted after glute activation.
+  // Total: 1500s (25 min).
+  // Budget: removed Ankle Rocker (60s), reduced Calf Raises 60→30s,
+  //         reduced 5-10-5 150→60s. Freed 180s → plank block.
   let plan = [
     {
       name: "Easy Jog",
@@ -236,11 +382,12 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
     {
       name: "Calf Raises",
       keywords: ["calf raise"],
-      sets: 2,
+      sets: 1,
       reps: 10,
-      durationSeconds: 60,
+      durationSeconds: 30,
       note: "Prep Achilles and ankle stiffness.",
     },
+    ...PLANK_ACTIVATION_BLOCK,
     {
       name: "Nordic Hamstring Curl",
       keywords: ["nordic", "hamstring curl"],
@@ -272,12 +419,6 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
       reps: 8,
       durationSeconds: 120,
       note: "Hip mobility + trunk control.",
-    },
-    {
-      name: "Ankle Rocker + Hip Circles",
-      keywords: ["ankle rocker", "hip circle"],
-      durationSeconds: 60,
-      note: "Restore ankle/hip range for sprinting.",
     },
     {
       name: "A-Skips",
@@ -316,7 +457,7 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
       keywords: ["5-10-5", "pro agility", "shuttle"],
       sets: 2,
       reps: 1,
-      durationSeconds: 150,
+      durationSeconds: 60,
       note: "Change of direction primer. Full recovery.",
     },
   ];
@@ -340,18 +481,12 @@ function selectWarmupVariant({
   isPracticeDay,
   trainingFocus,
 }) {
+  const focus = (trainingFocus || "").toLowerCase();
+  if (focus.includes("recovery") || focus === "rest") {
+    return "recovery";
+  }
   if (isFitnessDay) {
     return "fitness";
-  }
-  const focus = (trainingFocus || "").toLowerCase();
-  if (
-    isSprintSession ||
-    isPracticeDay ||
-    focus.includes("speed") ||
-    focus.includes("sprint") ||
-    focus.includes("agility")
-  ) {
-    return "field";
   }
   return "field";
 }

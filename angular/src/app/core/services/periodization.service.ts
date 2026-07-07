@@ -77,6 +77,8 @@ export class PeriodizationService {
   readonly seasonCalendar = signal<SeasonWindow[]>([]);
   /** Athlete primary position (drives position-specific prehab emphasis). */
   readonly position = signal<string | null>(null);
+  /** Bodyweight from the DB (users.weight_kg), populated by loadSettings(). */
+  private readonly bodyweightKgFromDb = signal<number | null>(null);
 
   /**
    * Recurring flag-football team-practice weekdays (0=Sun…6=Sat) the athlete
@@ -179,6 +181,7 @@ export class PeriodizationService {
         teamTrainingDays?: { days?: number[]; time?: string } | number[];
         primaryPosition?: string;
         primary_position?: string;
+        weightKg?: number | null;
       }>("/api/player-settings")
       .subscribe({
         next: (res) => {
@@ -188,6 +191,7 @@ export class PeriodizationService {
             teamTrainingDays?: { days?: number[]; time?: string } | number[];
             primaryPosition?: string;
             primary_position?: string;
+            weightKg?: number | null;
           };
           const cal = d.season_calendar ?? d.seasonCalendar;
           if (Array.isArray(cal)) this.seasonCalendar.set(cal);
@@ -198,6 +202,9 @@ export class PeriodizationService {
           );
           const pos = d.primaryPosition ?? d.primary_position;
           if (typeof pos === "string" && pos) this.position.set(pos);
+          const wt = typeof d.weightKg === "number" ? d.weightKg : null;
+          if (wt !== null && wt > 30 && wt < 200)
+            this.bodyweightKgFromDb.set(wt);
         },
         error: () => {
           /* no config yet → generic build week */
@@ -261,7 +268,11 @@ export class PeriodizationService {
       const d = new Date(todayStart);
       d.setDate(todayStart.getDate() + i);
       teamPracticeFlags7.push(this.isTeamPractice(d, snap.trainingDays));
-      phases7.push(this.schedule.phaseFor(d));
+      // Day 0 must agree with the `today` signal (server-computed
+      // `snap.currentPhase`) rather than re-resolving locally — the client and
+      // server phase resolvers key off different day-of-week sources (local vs
+      // UTC) and can disagree for a few hours around UTC midnight.
+      phases7.push(i === 0 ? snap.currentPhase : this.schedule.phaseFor(d));
     }
     const intentHints = planWeekIntents(teamPracticeFlags7, phases7);
 
@@ -343,7 +354,11 @@ export class PeriodizationService {
       d.setDate(today.getDate() + i);
       dates7.push(d);
       teamPracticeFlags.push(this.isTeamPractice(d, snap.trainingDays));
-      phases7.push(this.schedule.phaseFor(d));
+      // Day 0 must agree with the `today` signal (server-computed
+      // `snap.currentPhase`) rather than re-resolving locally — the client and
+      // server phase resolvers key off different day-of-week sources (local vs
+      // UTC) and can disagree for a few hours around UTC midnight.
+      phases7.push(i === 0 ? snap.currentPhase : this.schedule.phaseFor(d));
       seasonPhases7.push(macroPhaseFor(d, this.seasonCalendar()));
     }
 
@@ -454,8 +469,10 @@ export class PeriodizationService {
   }
 
   private readBodyweight(): number | null {
-    // Bodyweight lives on the user profile. We try a couple of common shapes
-    // gracefully — the periodization function falls back to 80kg if null.
+    // Priority 1: DB-sourced weight (users.weight_kg), loaded via player-settings.
+    const dbWeight = this.bodyweightKgFromDb();
+    if (dbWeight !== null) return dbWeight;
+    // Priority 2: Auth user_metadata fallback (set during onboarding on some paths).
     const user = this.supabase.currentUser?.();
     const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
     const candidates = [
@@ -465,9 +482,7 @@ export class PeriodizationService {
     ];
     for (const c of candidates) {
       const n = typeof c === "number" ? c : Number(c);
-      if (Number.isFinite(n) && n > 30 && n < 200) {
-        return n;
-      }
+      if (Number.isFinite(n) && n > 30 && n < 200) return n;
     }
     return null;
   }
@@ -525,6 +540,7 @@ const INTENT_LABELS: Record<PrescriptionIntent, string> = {
   mixed: "Mixed session",
   "taper-prime": "Pre-game prime",
   competition: "Game day",
+  travel: "Travel day",
 };
 
 /** High-CNS intents that need recovery spacing between sessions. */
@@ -882,7 +898,7 @@ function applyInjuryGuard(
   restr: PeriodizationInputs["activeRestrictions"],
 ): DailyPrescription {
   if (!restr || !restr.restrictsSprint) return p;
-  if (p.intent === "competition") return p; // a game is a game
+  if (p.intent === "competition" || p.intent === "travel") return p;
 
   const severe = restr.severity === "severe";
   const moderate = restr.severity === "moderate";
@@ -1212,7 +1228,7 @@ function decideBasePrescription(
   const hotDay =
     typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
 
-  // 1. Currently inside a competition window → game day.
+  // 1a. Currently inside a competition window → game day.
   if (phase === "competition") {
     return finalize({
       date,
@@ -1297,6 +1313,29 @@ function decideBasePrescription(
   // path so we can override the practice modifier to recovery intensity AND gate
   // non-practice days uniformly.
   const tournamentRecoveryDay = detectTournamentRecoveryDay(lastEvent, date);
+  // 4.5. Travel day — inside a club/national event window but not a game day.
+  // Deliberately placed AFTER the ACWR-danger and readiness-collapse guards
+  // (unlike competition/taper-prime, a travel day is not a fixed commitment —
+  // an athlete in the danger zone must still get the "critical" rest framing,
+  // not the generic travel message).
+  if (phase === "travel") {
+    return finalize({
+      date,
+      phase,
+      intent: "travel",
+      targetRpe: null,
+      targetMinutes: 0,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning:
+        "Travel day. Rest, stay hydrated, keep legs moving between transit. Arrive fresh.",
+      recoveryEmphasis: "high",
+      nutrition: nutritionFor("travel", bodyweight, false, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr,
+    });
+  }
 
   // 4.6 DAY TYPE = team practice. Resolved from the calendar FIRST (you're going
   // to practice regardless), then the event/season PHASE is applied as a
@@ -1953,6 +1992,10 @@ function seasonReasoning(
       return `Off-season · strength & conditioning block. Today is a ${intent} day.`;
     case "inseason":
       return `In-season · maintain strength and sharpen skills. Today is a ${intent} day.`;
+    case "peak":
+      return `Peak season · stay sharp and fresh — quality over quantity. Today is a ${intent} day.`;
+    case "postseason":
+      return `Post-season · active regeneration and aerobic base. Today is a ${intent} day.`;
     case "transition":
       return `Transition · active rest and aerobic base. Today is a ${intent} day.`;
     case "preseason":
@@ -2263,6 +2306,13 @@ function baseTargets(intent: PrescriptionIntent): {
         sprintReps: 0,
         strengthSets: 0,
       };
+    case "travel":
+      return {
+        targetRpe: null,
+        targetMinutes: 0,
+        sprintReps: 0,
+        strengthSets: 0,
+      };
   }
 }
 
@@ -2273,11 +2323,9 @@ type SessionTarget = ReturnType<typeof baseTargets>;
  * a build block (no games) can carry more volume on the LIGHTER intents than
  * in-season — e.g. mobility RPE 6/75 in pre-season vs RPE 4/45 in-season. So the
  * in-season baseline is {@link baseTargets}; these rows override the light intents
- * heavier for the build week. (Resolves audit finding M1: the divergence between
- * the season path and the old inline accumulation literals was deliberate, not
- * accidental — it is now explicit data. Values are byte-identical to the prior
- * inline targets: rest 6/0, mobility 6/75, technical 6/75; strength/sprint/mixed
- * already matched baseTargets.)
+ * heavier for the build week. `rest` is intentionally 0 minutes / null RPE — it
+ * always matches {@link baseTargets}'s rest case (a rest day isn't heavier in
+ * a build block); listed explicitly for symmetry with mobility/technical.
  */
 const BUILD_TARGET_OVERRIDES: Partial<
   Record<PrescriptionIntent, SessionTarget>
@@ -2459,6 +2507,7 @@ const CARB_PER_KG: Record<PrescriptionIntent, number> = {
   mixed: 5, // skill + conditioning, more total work
   "taper-prime": 6, // deliberate glycogen top-up, ≤24h to competition
   competition: 7, // game/tournament day: multiple games + refuel between
+  travel: 3.5, // travel day: light carbs, hydration focus
 };
 
 const PROTEIN_PER_KG = 1.8;

@@ -9,8 +9,7 @@ import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-blocks" });
 
 // FNV-1a 32-bit hash — stable across calls for deterministic exercise ordering.
-// Replaces Math.random() so the same athlete+date always produces the same
-// exercise sequence (SOT non-determinism contract / Phase-B audit finding G3).
+// Same athlete+date always produces the same exercise sequence.
 function _fnv32(str) {
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
@@ -203,7 +202,8 @@ export async function addWarmupBlock({
   const isFitnessDay =
     !isPracticeDay &&
     !isFilmRoomDay &&
-    ["strength", "power", "conditioning", "gym", "fitness", "weights"].includes(
+    // "conditioning" is field/track work — it gets the field sprint-mechanics warmup.
+    ["strength", "power", "gym", "fitness", "weights"].includes(
       trainingFocus?.toLowerCase() || "",
     );
 

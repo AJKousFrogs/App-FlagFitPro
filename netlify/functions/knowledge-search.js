@@ -65,6 +65,13 @@ const ALLOWED_SUBCATEGORIES = [
   "prevention",
 ];
 
+const formatTopic = (topic) => {
+  if (!topic || typeof topic !== "string") {
+    return null;
+  }
+  return topic.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 const normalizeKnowledgeEntry = (entry) => {
   const sourceUrl = Array.isArray(entry.supporting_articles)
     ? entry.supporting_articles[0] || null
@@ -74,7 +81,7 @@ const normalizeKnowledgeEntry = (entry) => {
 
   return {
     id: entry.id,
-    title: entry.topic || entry.question || "Knowledge Entry",
+    title: entry.question || formatTopic(entry.topic) || "Knowledge Entry",
     content: entry.answer || entry.summary || entry.question || "",
     category: entry.entry_type || "general",
     subcategory: null,
