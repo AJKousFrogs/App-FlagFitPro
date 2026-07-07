@@ -7,7 +7,7 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { createErrorResponse } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import {
   buildRequestLogContext,
@@ -284,24 +284,11 @@ const handler = async (event, context) =>
         }
 
         let payload;
-        try {
-          payload = parseJsonObjectBody(evt.body);
-        } catch (parseError) {
-          if (parseError?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(evt.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        payload = parsedBody.data;
         return saveCheckin(
           supabaseAdmin,
           userId,

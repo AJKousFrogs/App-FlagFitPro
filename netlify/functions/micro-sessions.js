@@ -28,7 +28,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   isValidId,
   parseBoundedInt,
 } from "./utils/input-validator.js";
@@ -497,18 +497,11 @@ const handler = async (event, context) => {
         // POST /api/micro-sessions/:id/follow-up - Submit follow-up
         if (method === "POST" && sessionId && action === "follow-up") {
           let body;
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            const isObjectError =
-              error.message === "Request body must be an object";
-            return createErrorResponse(
-              isObjectError ? error.message : "Invalid JSON in request body",
-              isObjectError ? 422 : 400,
-              isObjectError ? "validation_error" : "invalid_json",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          body = parsedBody.data;
 
           // Validate rating
           if (
@@ -533,18 +526,11 @@ const handler = async (event, context) => {
         // POST /api/micro-sessions - Create new session
         if (method === "POST" && !sessionId) {
           let body;
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            const isObjectError =
-              error.message === "Request body must be an object";
-            return createErrorResponse(
-              isObjectError ? error.message : "Invalid JSON in request body",
-              isObjectError ? 422 : 400,
-              isObjectError ? "validation_error" : "invalid_json",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          body = parsedBody.data;
 
           // Validate required fields
           if (
@@ -567,18 +553,11 @@ const handler = async (event, context) => {
         // PATCH /api/micro-sessions/:id - Update session
         if (method === "PATCH" && sessionId) {
           let body;
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            const isObjectError =
-              error.message === "Request body must be an object";
-            return createErrorResponse(
-              isObjectError ? error.message : "Invalid JSON in request body",
-              isObjectError ? 422 : 400,
-              isObjectError ? "validation_error" : "invalid_json",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          body = parsedBody.data;
 
           // Validate status if provided
           const validStatuses = [

@@ -12,7 +12,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 
@@ -129,24 +129,11 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (event, _context, { userId, requestId, correlationId }) => {
       let body;
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        if (error?.message === "Request body must be an object") {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
-        return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId } = body;

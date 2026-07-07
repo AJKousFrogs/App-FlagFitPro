@@ -7,7 +7,7 @@ import {
   handleNotFoundError,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.team-invite" });
@@ -190,18 +190,11 @@ const handler = async (event, context) => {
         correlationId,
       });
       let body;
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        const isObjectError =
-          error.message === "Request body must be an object";
-        return createErrorResponse(
-          isObjectError ? error.message : "Invalid JSON in request body",
-          isObjectError ? 422 : 400,
-          isObjectError ? "validation_error" : "invalid_json",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       const { teamId, email, role, position, jerseyNumber, coachMessage } =
         body;

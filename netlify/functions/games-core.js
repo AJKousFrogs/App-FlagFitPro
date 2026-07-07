@@ -6,7 +6,7 @@ import {
   VALIDATION_RULES,
 } from "./validation.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
   sanitizeObject,
 } from "./utils/input-validator.js";
@@ -927,22 +927,11 @@ const handler = async (event, context) => {
       // Parse request body
       let body = {};
       if (event.body && ["POST", "PUT", "DELETE"].includes(event.httpMethod)) {
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (error?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
       }
 
       const queryParams = event.queryStringParameters || {};

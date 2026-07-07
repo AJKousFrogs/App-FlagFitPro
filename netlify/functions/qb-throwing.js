@@ -16,7 +16,7 @@ import {
 } from "./utils/error-handler.js";
 import {
   isValidDateString,
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
 } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -41,11 +41,11 @@ const handler = async (event, context) =>
         }
 
         let payload = {};
-        try {
-          payload = parseJsonObjectBody(evt.body);
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        payload = parsedBody.data;
 
         if (endpoint === "arm-care") {
           return await markArmCareDone(supabaseAdmin, userId, payload);

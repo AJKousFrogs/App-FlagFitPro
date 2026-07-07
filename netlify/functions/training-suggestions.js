@@ -3,7 +3,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import {
   buildRequestLogContext,
@@ -363,27 +363,11 @@ async function handleRequest(
 
     // Parse request body if POST
     if (event.httpMethod === "POST" && event.body) {
-      try {
-        params = parseJsonObjectBody(event.body);
-      } catch (e) {
-        if (
-          e?.code === "INVALID_JSON_BODY" &&
-          e?.message === "Invalid JSON in request body"
-        ) {
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
-        }
-        return createErrorResponse(
-          "Request body must be an object",
-          422,
-          "validation_error",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      params = parsedBody.data;
     }
 
     // Use userId from auth if not provided

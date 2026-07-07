@@ -75,7 +75,7 @@ describe("staff-physiotherapist validation hardening", () => {
     handler = mod.handler;
   });
 
-  it("returns 400 for invalid JSON on RTP update", async () => {
+  it("returns 422 for invalid JSON on RTP update", async () => {
     const response = await handler(
       {
         httpMethod: "PUT",
@@ -87,7 +87,7 @@ describe("staff-physiotherapist validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for RTP progress outside 0-100", async () => {

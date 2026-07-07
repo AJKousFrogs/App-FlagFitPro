@@ -4,7 +4,7 @@
 
 import { supabaseAdmin } from "./supabase-client.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 
@@ -113,27 +113,11 @@ const handler = async (event, context) => {
       try {
         if (event.httpMethod === "POST") {
           let bodyData = {};
-          try {
-            bodyData = parseJsonObjectBody(event.body);
-          } catch (error) {
-            if (
-              error?.code === "INVALID_JSON_BODY" &&
-              error?.message === "Invalid JSON in request body"
-            ) {
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-                requestId,
-              );
-            }
-            return createErrorResponse(
-              error.message || "Invalid request body",
-              422,
-              "validation_error",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          bodyData = parsedBody.data;
 
           const { query, category, subcategory, limit = 10 } = bodyData;
           let sanitizedLimit;

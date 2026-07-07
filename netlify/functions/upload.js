@@ -8,7 +8,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 // Allowed file types
@@ -159,18 +159,11 @@ const handler = async (event, context) => {
       // Handle POST (upload)
       if (event.httpMethod === "POST") {
         let body = {};
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          const isObjectError =
-            error.message === "Request body must be an object";
-          return createErrorResponse(
-            isObjectError ? error.message : "Invalid JSON in request body",
-            isObjectError ? 422 : 400,
-            isObjectError ? "validation_error" : "invalid_json",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         const { file, fileType, fileName } = body;
 

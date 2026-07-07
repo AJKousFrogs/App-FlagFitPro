@@ -31,7 +31,7 @@ import {
 import { isEmbeddingServiceAvailable } from "./utils/embedding-service.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import { computeAcwrAt } from "./utils/acwr.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.ai-chat" });
@@ -1993,24 +1993,11 @@ const handler = async (event, context) => {
 
         // Parse request body
         let analysisContext;
-        try {
-          analysisContext = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (error?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        analysisContext = parsedBody.data;
 
         try {
           // Get user context for enhanced analysis
@@ -2047,24 +2034,11 @@ const handler = async (event, context) => {
 
       // Parse request body
       let body;
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        if (error?.message === "Request body must be an object") {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
-        return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       const { message, session_id, team_id, goal, time_horizon } = body;
 

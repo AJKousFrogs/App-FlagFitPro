@@ -5,7 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -331,22 +331,11 @@ const handler = async (event, context) => {
       try {
         if (event.httpMethod === "POST") {
           let body;
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            if (error?.message === "Request body must be an object") {
-              return createErrorResponse(
-                "Request body must be an object",
-                422,
-                "validation_error",
-              );
-            }
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body);
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          body = parsedBody.data;
 
           // POST /api/supplements/stack — manage the athlete's curated supplement list
           if (path.includes("/stack")) {

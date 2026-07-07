@@ -6,7 +6,7 @@ import {
 import { supabaseAdmin } from "./supabase-client.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -605,17 +605,11 @@ async function handleRequest(event, _context, { userId }) {
 
   let body = {};
   if (event.body && event.httpMethod === "POST") {
-    try {
-      body = parseJsonObjectBody(event.body);
-    } catch (error) {
-      if (
-        error?.code === "INVALID_JSON_BODY" &&
-        error?.message === "Invalid JSON in request body"
-      ) {
-        return createErrorResponse("Invalid JSON body", 400, "invalid_json");
-      }
-      return createErrorResponse(error.message, 422, "validation_error");
+    const parsedBody = tryParseJsonObjectBody(event.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
     }
+    body = parsedBody.data;
   }
 
   const queryParams = event.queryStringParameters || {};

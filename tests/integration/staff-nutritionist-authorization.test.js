@@ -78,7 +78,7 @@ describe("staff-nutritionist authorization hardening", () => {
     expect(response.statusCode).toBe(403);
   });
 
-  it("returns 400 for invalid report JSON", async () => {
+  it("returns 422 for invalid report JSON", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -90,7 +90,7 @@ describe("staff-nutritionist authorization hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for malformed days query", async () => {

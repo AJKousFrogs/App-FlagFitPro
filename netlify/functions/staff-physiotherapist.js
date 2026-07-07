@@ -4,7 +4,7 @@ import {
   createErrorResponse,
   ErrorType,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -604,16 +604,11 @@ async function handleRequest(event, _context, { userId }) {
   if (method === "PUT" && path.match(/^\/rtp\/[\w-]+$/)) {
     const injuryId = path.split("/")[2];
     let body = {};
-    try {
-      body = parseJsonObjectBody(event.body);
-    } catch (error) {
-      const isObjectError = error.message === "Request body must be an object";
-      return createErrorResponse(
-        isObjectError ? error.message : "Invalid JSON in request body",
-        isObjectError ? 422 : 400,
-        isObjectError ? "validation_error" : "invalid_json",
-      );
+    const parsedBody = tryParseJsonObjectBody(event.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
     }
+    body = parsedBody.data;
 
     const { data: injuryRecord, error: injuryError } = await supabaseAdmin
       .from("athlete_injuries")
@@ -651,16 +646,11 @@ async function handleRequest(event, _context, { userId }) {
   // POST /injuries - Log new injury
   if (method === "POST" && path === "/injuries") {
     let body = {};
-    try {
-      body = parseJsonObjectBody(event.body);
-    } catch (error) {
-      const isObjectError = error.message === "Request body must be an object";
-      return createErrorResponse(
-        isObjectError ? error.message : "Invalid JSON in request body",
-        isObjectError ? 422 : 400,
-        isObjectError ? "validation_error" : "invalid_json",
-      );
+    const parsedBody = tryParseJsonObjectBody(event.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
     }
+    body = parsedBody.data;
     if (!body.userId || !body.type || !body.location) {
       return createErrorResponse(
         "Missing required fields: userId, type, location",

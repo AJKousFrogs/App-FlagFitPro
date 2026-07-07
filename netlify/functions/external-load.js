@@ -3,7 +3,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: External Load Metrics
 // Endpoint: /api/external-load
@@ -66,15 +66,11 @@ const handler = async (event, context) => {
         }
 
         let body;
-        try {
-          body = parseJsonObjectBody(evt.body);
-        } catch (_e) {
-          return createErrorResponse(
-            "Request body must be a JSON object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
         const sessionDate = body.sessionDate ?? body.session_date;
         if (!sessionDate) {
           return createErrorResponse(

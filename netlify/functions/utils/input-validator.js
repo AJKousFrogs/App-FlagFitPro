@@ -9,7 +9,7 @@
  * - Missing required fields
  */
 
-import { handleValidationError } from "./error-handler.js";
+import { handleValidationError, createErrorResponse } from "./error-handler.js";
 
 /**
  * Common validation patterns
@@ -363,18 +363,25 @@ function parseJsonObjectBody(rawBody, { allowEmpty = true } = {}) {
   return parsed;
 }
 
-function tryParseJsonObjectBody(rawBody, options) {
+// The ONE body-parse error contract for the whole API: any invalid body (malformed
+// JSON or wrong shape) -> 422 validation_error, with the specific message. This
+// matches the codebase's dominant convention. Callers do:
+//   `const p = tryParseJsonObjectBody(body); if (!p.ok) return p.error;`.
+// `requestId` (optional in options) is threaded into the error for tracing.
+function tryParseJsonObjectBody(rawBody, options = {}) {
+  const { requestId, ...parseOpts } = options;
   try {
     return {
       ok: true,
-      data: parseJsonObjectBody(rawBody, options),
+      data: parseJsonObjectBody(rawBody, parseOpts),
       error: null,
     };
   } catch (error) {
+    const message = error?.message || "Invalid request body";
     return {
       ok: false,
       data: null,
-      error: handleValidationError(error?.message || "Invalid request body"),
+      error: createErrorResponse(message, 422, "validation_error", requestId),
     };
   }
 }

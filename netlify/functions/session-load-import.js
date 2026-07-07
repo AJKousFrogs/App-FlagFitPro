@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { getAdapter, listProviders } from "./utils/session-load-adapters.js";
 
 // Netlify Function: Session-load Import
@@ -56,15 +56,11 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (evt, _ctx, { userId }) => {
       let body;
-      try {
-        body = parseJsonObjectBody(evt.body);
-      } catch (_e) {
-        return createErrorResponse(
-          "Request body must be a JSON object",
-          422,
-          "validation_error",
-        );
+      const parsedBody = tryParseJsonObjectBody(evt.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
       const provider = String(body.provider ?? "").trim();
       const rows = Array.isArray(body.rows) ? body.rows : null;
       const adapter = getAdapter(provider);

@@ -72,7 +72,7 @@ describe("knowledge-search validation hardening", () => {
     expect(response.statusCode).toBe(422);
   });
 
-  it("returns 400 for invalid JSON body", async () => {
+  it("returns 422 for invalid JSON body", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -83,7 +83,7 @@ describe("knowledge-search validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for non-object JSON body", async () => {

@@ -1,5 +1,5 @@
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
   validateInput,
 } from "./utils/input-validator.js";
@@ -784,11 +784,11 @@ const handler = async (event, context) => {
       if (event.httpMethod === "POST") {
         // Parse and validate request body
         let sessionData = {};
-        try {
-          sessionData = parseJsonObjectBody(event.body);
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        sessionData = parsedBody.data;
 
         try {
           if (isTrainingLogPayload(sessionData)) {
@@ -846,11 +846,11 @@ const handler = async (event, context) => {
       // Handle PUT request - update session
       if (event.httpMethod === "PUT") {
         let updateData = {};
-        try {
-          updateData = parseJsonObjectBody(event.body);
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        updateData = parsedBody.data;
 
         const { sessionId, ...updates } = updateData;
 
@@ -888,11 +888,11 @@ const handler = async (event, context) => {
 
       if (event.httpMethod === "DELETE") {
         let deletePayload = {};
-        try {
-          deletePayload = parseJsonObjectBody(event.body);
-        } catch (_parseError) {
-          return handleValidationError("Invalid JSON in request body");
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        deletePayload = parsedBody.data;
 
         const sessionId =
           deletePayload.sessionId ||

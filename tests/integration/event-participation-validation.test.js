@@ -61,10 +61,10 @@ describe("event-participation validation", () => {
     expect(JSON.parse(res.body).data.pending).toHaveLength(1);
   });
 
-  it("returns 400 for malformed JSON", async () => {
+  it("returns 422 for malformed JSON", async () => {
     const res = await handler(POST("{"), {});
-    expect(res.statusCode).toBe(400);
-    expect(JSON.parse(res.body).error?.code).toBe("invalid_json");
+    expect(res.statusCode).toBe(422);
+    expect(JSON.parse(res.body).error?.code).toBe("validation_error");
   });
 
   it("returns 422 for a non-object body", async () => {

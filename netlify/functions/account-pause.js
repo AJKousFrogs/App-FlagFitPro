@@ -10,7 +10,7 @@ import {
   createSuccessResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.account-pause" });
@@ -24,15 +24,11 @@ const handler = async (event, context) =>
     handler: async (event, _context, { userId }) => {
       if (event.httpMethod === "POST") {
         let body = {};
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          return handleValidationError(
-            error.message === "Request body must be an object"
-              ? error.message
-              : "Invalid JSON in request body",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
         const { action, paused_until, reason } = body;
 
         if (typeof action !== "string" || !action.trim()) {

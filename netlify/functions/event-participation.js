@@ -4,7 +4,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Event Participation
@@ -64,24 +64,11 @@ const handler = async (event, context) =>
 
       // ── POST: record/confirm actual participation ───────────────────────────
       let body;
-      try {
-        body = parseJsonObjectBody(evt.body);
-      } catch (parseError) {
-        if (parseError?.message === "Request body must be an object") {
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-            requestId,
-          );
-        }
-        return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(evt.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       const competitionEventId =
         body.competitionEventId || body.competition_event_id;

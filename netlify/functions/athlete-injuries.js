@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Athlete Injuries / Self-reported tightness
 // Endpoint: /api/athlete-injuries
@@ -223,15 +223,11 @@ const handler = async (event, context) => {
           return createSuccessResponse({ injuries: await listActive(userId) });
         }
         let body;
-        try {
-          body = parseJsonObjectBody(evt.body);
-        } catch (_e) {
-          return createErrorResponse(
-            "Request body must be a JSON object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
         const result = await recordSelfReport(userId, body);
         if (result.validation) {
           return createErrorResponse(

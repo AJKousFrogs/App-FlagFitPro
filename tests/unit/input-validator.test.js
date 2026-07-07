@@ -12,7 +12,7 @@ describe("input-validator body parsing", () => {
     );
   });
 
-  it("returns a validation response for malformed JSON", () => {
+  it("returns 422 validation_error for malformed JSON", () => {
     const result = tryParseJsonObjectBody("{bad json");
 
     expect(result.ok).toBe(false);
@@ -23,6 +23,17 @@ describe("input-validator body parsing", () => {
     expect(body.error).toMatchObject({
       code: "validation_error",
       message: "Invalid JSON in request body",
+    });
+  });
+
+  it("returns 422 validation_error for a non-object body", () => {
+    const result = tryParseJsonObjectBody("[1,2,3]");
+
+    expect(result.ok).toBe(false);
+    expect(result.error.statusCode).toBe(422);
+    expect(JSON.parse(result.error.body).error).toMatchObject({
+      code: "validation_error",
+      message: "Request body must be an object",
     });
   });
 

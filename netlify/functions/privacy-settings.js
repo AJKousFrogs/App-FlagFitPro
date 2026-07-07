@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
-import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 /**
@@ -267,18 +267,11 @@ const handler = async (event, context) => {
       // PUT - Update privacy settings
       if (event.httpMethod === "PUT") {
         let body;
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (error?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-            );
-          }
-          return createErrorResponse("Invalid JSON body", 400, "invalid_json");
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         const { settings: newSettings, teamId, teamSettings } = body;
         if (

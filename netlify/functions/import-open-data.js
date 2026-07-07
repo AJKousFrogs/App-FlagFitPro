@@ -12,7 +12,7 @@ import {
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.import-open-data" });
@@ -260,15 +260,11 @@ const handler = async (event, context) => {
       });
       // Parse request body
       let body;
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        return handleValidationError(
-          error.message === "Request body must be an object"
-            ? error.message
-            : "Invalid JSON in request body",
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       // If athleteId not provided, use authenticated user's ID
       const {

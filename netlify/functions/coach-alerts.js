@@ -17,7 +17,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.coach-alerts" });
@@ -205,21 +205,11 @@ const handler = async (event, context) => {
       const method = event.httpMethod;
       let body = {};
       if (event.body && method === "POST") {
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (
-            error?.code === "INVALID_JSON_BODY" &&
-            error?.message === "Invalid JSON in request body"
-          ) {
-            return createErrorResponse("Invalid JSON", 400, "invalid_json");
-          }
-          return createErrorResponse(
-            error.message || "Invalid request body",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
       }
 
       try {

@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Wearable-health Ingest
 // Endpoint: /api/wearable-health-ingest
@@ -31,15 +31,11 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (evt, _ctx, { userId }) => {
       let body;
-      try {
-        body = parseJsonObjectBody(evt.body);
-      } catch (_e) {
-        return createErrorResponse(
-          "Request body must be a JSON object",
-          422,
-          "validation_error",
-        );
+      const parsedBody = tryParseJsonObjectBody(evt.body);
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
       const source = typeof body.source === "string" ? body.source.trim() : "";
       if (!source) {
         return createErrorResponse(

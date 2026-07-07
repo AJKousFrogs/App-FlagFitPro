@@ -13,7 +13,7 @@ import {
   requireAuthorization,
   logViolation,
 } from "./utils/authorization-guard.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -935,18 +935,11 @@ const handler = async (event, context) => {
       // POST: Update training progress
       if (event.httpMethod === "POST") {
         let body;
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          const isObjectError =
-            error.message === "Request body must be an object";
-          return createErrorResponse(
-            isObjectError ? error.message : "Invalid JSON in request body",
-            isObjectError ? 422 : 400,
-            isObjectError ? "validation_error" : "invalid_json",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         try {
           const requestInfo = {

@@ -5,7 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -179,22 +179,11 @@ const handler = async (event, context) => {
           // Handle POST /api/hydration/log
           if (path.includes("/log") || path.endsWith("/log")) {
             let hydrationData;
-            try {
-              hydrationData = parseJsonObjectBody(event.body);
-            } catch (error) {
-              if (error?.message === "Request body must be an object") {
-                return createErrorResponse(
-                  "Request body must be an object",
-                  422,
-                  "validation_error",
-                );
-              }
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-              );
+            const parsedBody = tryParseJsonObjectBody(event.body);
+            if (!parsedBody.ok) {
+              return parsedBody.error;
             }
+            hydrationData = parsedBody.data;
 
             const result = await logHydration(
               userId,

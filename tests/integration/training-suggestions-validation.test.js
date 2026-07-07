@@ -54,7 +54,7 @@ describe("training-suggestions validation", () => {
     handler = mod.handler;
   });
 
-  it("returns 400 for invalid JSON body", async () => {
+  it("returns 422 for invalid JSON body", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -66,7 +66,7 @@ describe("training-suggestions validation", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 403 when request body userId differs from authenticated user", async () => {

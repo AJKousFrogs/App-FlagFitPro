@@ -4,7 +4,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.coach-analytics" });
@@ -759,27 +759,11 @@ const handler = async (event, context) => {
         // POST /api/coach-analytics/refresh - Refresh cache
         if (method === "POST" && resource === "refresh") {
           let body;
-          try {
-            body = parseJsonObjectBody(event.body);
-          } catch (error) {
-            if (
-              error?.code === "INVALID_JSON_BODY" &&
-              error?.message === "Invalid JSON in request body"
-            ) {
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-                requestId,
-              );
-            }
-            return createErrorResponse(
-              error.message || "Request body must be an object",
-              422,
-              "validation_error",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          body = parsedBody.data;
           if (
             body.teamId !== undefined &&
             (typeof body.teamId !== "string" || body.teamId.trim().length === 0)

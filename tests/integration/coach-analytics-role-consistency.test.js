@@ -168,7 +168,7 @@ describe("coach-analytics role consistency", () => {
     expect(response.statusCode).toBe(422);
   });
 
-  it("rejects invalid JSON for refresh with 400", async () => {
+  it("rejects invalid JSON for refresh with 422", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -180,6 +180,6 @@ describe("coach-analytics role consistency", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 });

@@ -6,7 +6,7 @@ import {
 import { supabaseAdmin } from "./supabase-client.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
-import { parseJsonObjectBody, isValidId } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.calibration-logs" });
@@ -532,24 +532,13 @@ const handler = async (event, context) => {
           // Handle POST /api/calibration-logs/outcome
           if (path.includes("/outcome")) {
             let outcomeData;
-            try {
-              outcomeData = parseJsonObjectBody(event.body);
-            } catch (error) {
-              if (error?.message === "Request body must be an object") {
-                return createErrorResponse(
-                  "Request body must be an object",
-                  422,
-                  "validation_error",
-                  requestId,
-                );
-              }
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-                requestId,
-              );
+            const parsedBody = tryParseJsonObjectBody(event.body, {
+              requestId,
+            });
+            if (!parsedBody.ok) {
+              return parsedBody.error;
             }
+            outcomeData = parsedBody.data;
 
             // Default to the authenticated athlete for self-logging (see POST handler below).
             if (!outcomeData.athleteId) {
@@ -590,24 +579,11 @@ const handler = async (event, context) => {
 
           // Handle POST /api/calibration-logs (log recommendation)
           let recommendationData;
-          try {
-            recommendationData = parseJsonObjectBody(event.body);
-          } catch (error) {
-            if (error?.message === "Request body must be an object") {
-              return createErrorResponse(
-                "Request body must be an object",
-                422,
-                "validation_error",
-                requestId,
-              );
-            }
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
+          const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+          if (!parsedBody.ok) {
+            return parsedBody.error;
           }
+          recommendationData = parsedBody.data;
 
           // Default to the authenticated athlete for self-logging; coaches still pass
           // athleteId explicitly to log a recommendation for one of their athletes.

@@ -5,7 +5,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.user-profile-core" });
@@ -122,22 +122,11 @@ const handler = async (event, context) => {
       // ── PUT: update the caller's own editable profile fields ───────────────
       if (event.httpMethod === "PUT") {
         let body;
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (parseError) {
-          if (parseError?.message === "Request body must be an object") {
-            return createErrorResponse(
-              "Request body must be an object",
-              422,
-              "validation_error",
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
         return updateOwnProfile(userId, body);
       }
 

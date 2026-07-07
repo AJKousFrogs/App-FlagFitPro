@@ -129,7 +129,7 @@ describe("chat security validation", () => {
     expect(response.statusCode).toBe(422);
   });
 
-  it("returns 400 for invalid JSON payload on create channel", async () => {
+  it("returns 422 for invalid JSON payload on create channel", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -141,7 +141,7 @@ describe("chat security validation", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for non-object JSON payload on create channel", async () => {

@@ -48,7 +48,7 @@ describe("wellness validation hardening", () => {
     ({ handler } = await import("../../netlify/functions/wellness.js"));
   });
 
-  it("returns 400 for malformed JSON payloads", async () => {
+  it("returns 422 for malformed JSON payloads", async () => {
     const response = await handler(
       {
         httpMethod: "POST",
@@ -60,9 +60,9 @@ describe("wellness validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
     const payload = JSON.parse(response.body);
-    expect(payload.error?.code).toBe("invalid_json");
+    expect(payload.error?.code).toBe("validation_error");
   });
 
   it("returns 422 for non-object JSON payloads", async () => {

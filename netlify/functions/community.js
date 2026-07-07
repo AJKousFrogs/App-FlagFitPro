@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "./supabase-client.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   sanitizeObject,
   parseBoundedInt,
 } from "./utils/input-validator.js";
@@ -1019,27 +1019,11 @@ async function handleCommunityRequest(event, requestId, log = logger) {
       // Add comment to a post
       if (postId && comment === "true") {
         let body = {};
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (
-            error?.code === "INVALID_JSON_BODY" &&
-            error?.message === "Invalid JSON in request body"
-          ) {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
-          return createErrorResponse(
-            error.message,
-            422,
-            "validation_error",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         const newComment = await addComment(userId, postId, body.content);
         return createSuccessResponse(
@@ -1088,27 +1072,11 @@ async function handleCommunityRequest(event, requestId, log = logger) {
 
       // Create a new post
       let postData = {};
-      try {
-        postData = parseJsonObjectBody(event.body);
-      } catch (error) {
-        if (
-          error?.code === "INVALID_JSON_BODY" &&
-          error?.message === "Invalid JSON in request body"
-        ) {
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
-        }
-        return createErrorResponse(
-          error.message,
-          422,
-          "validation_error",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      postData = parsedBody.data;
 
       const newPost = await createPost(userId, postData);
       return createSuccessResponse(

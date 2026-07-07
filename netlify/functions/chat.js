@@ -5,7 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { validate } from "./validation.js";
@@ -586,35 +586,11 @@ const handler = async (event, context) => {
 
       let body = {};
       if (event.body && ["POST", "PATCH"].includes(method)) {
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (
-            error?.code === "INVALID_JSON_BODY" &&
-            error?.message === "Invalid JSON in request body"
-          ) {
-            return createErrorResponse(
-              "Invalid JSON",
-              400,
-              "invalid_json",
-              requestId,
-            );
-          }
-          if (error?.isValidation) {
-            return createErrorResponse(
-              error.message,
-              422,
-              "validation_error",
-              requestId,
-            );
-          }
-          return createErrorResponse(
-            "Invalid JSON",
-            400,
-            "invalid_json",
-            requestId,
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
       }
 
       try {

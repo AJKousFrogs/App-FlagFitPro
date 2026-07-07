@@ -120,9 +120,9 @@ describe("coach-alerts validation hardening", () => {
     handler = mod.handler;
   });
 
-  it("returns 400 for invalid JSON payload", async () => {
+  it("returns 422 for invalid JSON payload", async () => {
     const response = await handler(buildEvent("{"), {});
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
   });
 
   it("returns 422 for non-object JSON payload", async () => {

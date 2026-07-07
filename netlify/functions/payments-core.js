@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { checkTeamMembership, getUserContext } from "./utils/auth-helper.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -518,25 +518,11 @@ const handler = async (event, context) => {
       const queryParams = event.queryStringParameters || {};
       let body = {};
       if (event.body) {
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (error) {
-          if (
-            error?.code === "INVALID_JSON_BODY" &&
-            error?.message === "Invalid JSON in request body"
-          ) {
-            return createErrorResponse(
-              "Invalid JSON in request body",
-              400,
-              "invalid_json",
-            );
-          }
-          return createErrorResponse(
-            "Request body must be an object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
       }
 
       try {

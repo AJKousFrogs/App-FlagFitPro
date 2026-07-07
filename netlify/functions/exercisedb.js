@@ -5,7 +5,7 @@ import {
   handleValidationError,
 } from "./utils/error-handler.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { hasAnyRole, COACH_ROUTE_ROLES } from "./utils/role-sets.js";
@@ -524,14 +524,11 @@ const handler = async (event, context) =>
         }
 
         let body = {};
-        try {
-          body = parseJsonObjectBody(evt.body);
-        } catch (_parseError) {
-          if (_parseError instanceof SyntaxError) {
-            return handleValidationError("Invalid JSON in request body");
-          }
-          return handleValidationError(_parseError.message);
+        const parsedBody = tryParseJsonObjectBody(evt.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         if (path === "/import") {
           const result = await importExercises(body, userId);

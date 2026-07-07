@@ -4,7 +4,7 @@ import {
   createErrorResponse,
   ErrorType,
 } from "./utils/error-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import {
   ConsentDataReader,
@@ -572,25 +572,11 @@ async function handleRequest(event, _context, { userId }) {
 
   let parsedBody = {};
   if (["POST", "PUT", "PATCH"].includes(method) && event.body) {
-    try {
-      parsedBody = parseJsonObjectBody(event.body);
-    } catch (error) {
-      if (
-        error?.code === "INVALID_JSON_BODY" &&
-        error?.message === "Invalid JSON in request body"
-      ) {
-        return createErrorResponse(
-          "Invalid JSON in request body",
-          400,
-          "invalid_json",
-        );
-      }
-      return createErrorResponse(
-        "Request body must be an object",
-        422,
-        "validation_error",
-      );
+    const parseResult = tryParseJsonObjectBody(event.body);
+    if (!parseResult.ok) {
+      return parseResult.error;
     }
+    parsedBody = parseResult.data;
     if (
       !parsedBody ||
       typeof parsedBody !== "object" ||

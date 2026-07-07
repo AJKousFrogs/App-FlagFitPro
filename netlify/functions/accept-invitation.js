@@ -5,7 +5,7 @@ import {
   handleNotFoundError,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Accept Team Invitation
 // Handles accepting a team invitation and adding user to team
@@ -18,18 +18,11 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (event, _context, { userId, requestId }) => {
       let body;
-      try {
-        body = parseJsonObjectBody(event.body);
-      } catch (error) {
-        const isObjectError =
-          error.message === "Request body must be an object";
-        return createErrorResponse(
-          isObjectError ? error.message : "Invalid JSON in request body",
-          isObjectError ? 422 : 400,
-          isObjectError ? "validation_error" : "invalid_json",
-          requestId,
-        );
+      const parsedBody = tryParseJsonObjectBody(event.body, { requestId });
+      if (!parsedBody.ok) {
+        return parsedBody.error;
       }
+      body = parsedBody.data;
 
       const { token } = body;
 

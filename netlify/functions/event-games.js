@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { isStaffOfTeam, isActiveTeamMember } from "./utils/team-scope.js";
 
 // Netlify Function: Event Games (V2.0 Tournament Mode)
@@ -375,15 +375,11 @@ const handler = async (event, context) => {
         }
 
         let body;
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (_e) {
-          return createErrorResponse(
-            "Request body must be a JSON object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         if (method === "POST" && segment === "bulk") {
           const competitionEventId =

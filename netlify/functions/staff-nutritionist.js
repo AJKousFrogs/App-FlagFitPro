@@ -5,7 +5,7 @@ import {
   ErrorType,
 } from "./utils/error-handler.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
@@ -528,16 +528,11 @@ async function handleRequest(event, _context, { userId }) {
   if (method === "POST" && path.match(/^\/reports\/[\w-]+$/)) {
     const athleteId = path.split("/")[2];
     let body = {};
-    try {
-      body = parseJsonObjectBody(event.body);
-    } catch (error) {
-      const isObjectError = error.message === "Request body must be an object";
-      return createErrorResponse(
-        isObjectError ? error.message : "Invalid JSON in request body",
-        isObjectError ? 422 : 400,
-        isObjectError ? "validation_error" : "invalid_json",
-      );
+    const parsedBody = tryParseJsonObjectBody(event.body);
+    if (!parsedBody.ok) {
+      return parsedBody.error;
     }
+    body = parsedBody.data;
     const reportType = body.type || "weekly";
     if (!["weekly", "monthly"].includes(reportType)) {
       return createErrorResponse(

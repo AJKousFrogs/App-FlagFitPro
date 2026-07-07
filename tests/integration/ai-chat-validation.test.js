@@ -184,7 +184,7 @@ describe("ai-chat validation hardening", () => {
     vi.resetModules();
   });
 
-  it("returns 400 for malformed JSON body", async () => {
+  it("returns 422 for malformed JSON body", async () => {
     const { handler } = await import("../../netlify/functions/ai-chat.js");
     const response = await handler(
       {
@@ -196,9 +196,9 @@ describe("ai-chat validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
     const payload = JSON.parse(response.body);
-    expect(payload.error?.code).toBe("invalid_json");
+    expect(payload.error?.code).toBe("validation_error");
   });
 
   it("returns 422 for non-object JSON body", async () => {
@@ -270,7 +270,7 @@ describe("ai-chat validation hardening", () => {
     expect(payload.error?.code).toBe("validation_error");
   });
 
-  it("returns 400 for malformed JSON on analyze-context endpoint", async () => {
+  it("returns 422 for malformed JSON on analyze-context endpoint", async () => {
     const { handler } = await import("../../netlify/functions/ai-chat.js");
     const response = await handler(
       {
@@ -282,9 +282,9 @@ describe("ai-chat validation hardening", () => {
       {},
     );
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(422);
     const payload = JSON.parse(response.body);
-    expect(payload.error?.code).toBe("invalid_json");
+    expect(payload.error?.code).toBe("validation_error");
   });
 
   it("returns blocked-youth response with chat_session_id and message_id contract fields", async () => {

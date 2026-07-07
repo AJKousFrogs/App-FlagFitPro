@@ -4,7 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
-import { parseJsonObjectBody } from "./utils/input-validator.js";
+import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 // Netlify Function: Event Travel (V2.1, consolidated in V2.4)
 // Endpoint: /api/event-travel
@@ -239,15 +239,11 @@ const handler = async (event, context) => {
         }
 
         let body;
-        try {
-          body = parseJsonObjectBody(event.body);
-        } catch (_e) {
-          return createErrorResponse(
-            "Request body must be a JSON object",
-            422,
-            "validation_error",
-          );
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
+        body = parsedBody.data;
 
         if (method === "POST") {
           const created = await createLeg(userId, body);

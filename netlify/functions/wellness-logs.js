@@ -12,7 +12,7 @@ import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import {
-  parseJsonObjectBody,
+  tryParseJsonObjectBody,
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -273,22 +273,11 @@ const handler = async (event, context) => {
           // Handle POST /api/wellness/checkin
           if (path.includes("/checkin") || path.endsWith("/checkin")) {
             let checkinData;
-            try {
-              checkinData = parseJsonObjectBody(event.body);
-            } catch (error) {
-              if (error?.message === "Request body must be an object") {
-                return createErrorResponse(
-                  "Request body must be an object",
-                  422,
-                  "validation_error",
-                );
-              }
-              return createErrorResponse(
-                "Invalid JSON in request body",
-                400,
-                "invalid_json",
-              );
+            const parsedBody = tryParseJsonObjectBody(event.body);
+            if (!parsedBody.ok) {
+              return parsedBody.error;
             }
+            checkinData = parsedBody.data;
 
             const result = await createWellnessCheckin(
               userId,
