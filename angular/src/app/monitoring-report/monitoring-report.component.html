@@ -1,0 +1,314 @@
+@if (loading()) {
+  <div class="mr-empty">Loading report…</div>
+} @else if (report(); as r) {
+  <main class="mr" [attr.data-lens]="lens()">
+    <!-- 1 · IDENTITY + STATUS BANNER -->
+    <header class="mr-banner">
+      <div>
+        <div class="mr-eyebrow">
+          Monitoring report · {{ r.meta.requesterRole }} view
+        </div>
+        <h1 class="mr-h1">{{ r.identity?.name || "Athlete" }}</h1>
+        <div class="mr-sub">
+          @if (r.identity?.position) {
+            <span>{{ r.identity?.position }}</span>
+          }
+          @if (r.identity?.sex) {
+            <span>· {{ r.identity?.sex }}</span>
+          }
+          @if (r.daily.latest?.date) {
+            <span>· updated {{ r.daily.latest?.date }}</span>
+          }
+        </div>
+      </div>
+      <div class="mr-badges">
+        <!-- MD marker: monitoring, not diagnosis -->
+        <span class="mr-md" title="Monitoring, not prediction or diagnosis">
+          <lucide-icon name="activity" /> monitoring
+        </span>
+        @if (r.daily.flags.hooper; as hf) {
+          <span class="mr-chip tone-{{ flagTone(hf) }}">
+            <lucide-icon [name]="flagShape(hf)" /> Wellness: {{ hf }}
+          </span>
+        }
+      </div>
+    </header>
+
+    <!-- 2 · ACTIVE PHYSIO BLOCK — top precedence, suppresses load below -->
+    @if (r.physioBlock?.active) {
+      <section class="mr-block">
+        <div class="mr-block-head">
+          <lucide-icon name="shield-alert" />
+          <b>Active physio block — load &amp; sprint prescription suppressed</b>
+        </div>
+        <div class="mr-block-body">
+          @if (restrictionsText()) {
+            <span class="mr-chip tone-bad"
+              ><lucide-icon name="ban" /> No: {{ restrictionsText() }}</span
+            >
+          }
+          @if (r.physioBlock?.maxLoadPercent != null) {
+            <span class="mr-chip tone-watch"
+              >Load cap {{ r.physioBlock?.maxLoadPercent }}%</span
+            >
+          }
+          @if (r.physioBlock?.endDate) {
+            <span class="mr-muted">review {{ r.physioBlock?.endDate }}</span>
+          }
+          @if (r.physioBlock?.clinicalNote) {
+            <p class="mr-note">{{ r.physioBlock?.clinicalNote }}</p>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- 3 · ANSWER-FIRST KPI ROW -->
+    <section class="mr-kpis">
+      <div class="mr-kpi">
+        <div class="mr-kpi-label">Wellness</div>
+        @if (r.daily.hooperIndex != null) {
+          <div class="mr-stat tone-{{ flagTone(r.daily.flags.hooper) }}">
+            {{ r.daily.hooperIndex }}
+          </div>
+          <div class="mr-kpi-cap">{{ glossary["hooper"] }}</div>
+        } @else {
+          <div class="mr-prompt">No check-in — log wellness</div>
+        }
+      </div>
+      <div class="mr-kpi">
+        <div class="mr-kpi-label">Workload balance</div>
+        @if (r.weekly.acwr?.primary?.value != null) {
+          <div
+            class="mr-stat tone-{{ flagTone(r.weekly.acwr?.primary?.band) }}"
+          >
+            {{ r.weekly.acwr?.primary?.value }}
+          </div>
+          <div class="mr-kpi-cap">monitoring, not prediction</div>
+        } @else {
+          <div class="mr-prompt">Not enough load history yet</div>
+        }
+      </div>
+      <div class="mr-kpi">
+        <div class="mr-kpi-label">Recovery</div>
+        @if (r.wearable?.derivedRecovery; as rec) {
+          <div class="mr-stat tone-{{ flagTone(rec) }}">
+            <lucide-icon [name]="flagShape(rec)" /> {{ rec }}
+          </div>
+          <div class="mr-kpi-cap">{{ glossary["recovery"] }}</div>
+        } @else {
+          <div class="mr-prompt">Connect a device</div>
+        }
+      </div>
+      <div class="mr-kpi">
+        <div class="mr-kpi-label">Weekly strain</div>
+        @if (r.weekly.strain != null) {
+          <div class="mr-stat">{{ r.weekly.strain }}</div>
+          <div class="mr-kpi-cap">{{ glossary["strain"] }}</div>
+        } @else {
+          <div class="mr-prompt">—</div>
+        }
+      </div>
+    </section>
+
+    <!-- 4 · DAILY PANEL -->
+    <section class="mr-panel">
+      <h2 class="mr-h2">Daily</h2>
+      @if (r.daily.promptRequired) {
+        <div class="mr-prompt-card">
+          <lucide-icon name="clipboard-list" /> No daily check-in yet — prompt
+          the athlete to log wellness.
+        </div>
+      } @else {
+        <div class="mr-grid">
+          @if (r.daily.latest; as d) {
+            <div class="mr-cell">
+              <div class="mr-cell-h">Wellness items</div>
+              <div class="mr-items">
+                <span
+                  >Sleep <b class="mono">{{ d.sleepQuality ?? "—" }}</b></span
+                >
+                <span
+                  >Stress <b class="mono">{{ d.stress ?? "—" }}</b></span
+                >
+                <span
+                  >Energy <b class="mono">{{ d.fatigue ?? "—" }}</b></span
+                >
+                <span
+                  >Soreness <b class="mono">{{ d.soreness ?? "—" }}</b></span
+                >
+              </div>
+              @if (hooperPoints()) {
+                <svg
+                  viewBox="0 0 300 44"
+                  class="mr-spark"
+                  role="img"
+                  aria-label="Daily wellness score trend"
+                >
+                  <polyline [attr.points]="hooperPoints()" />
+                </svg>
+              }
+            </div>
+          }
+          <!-- morning readiness: raw only when the payload carries it (athlete/physio) -->
+          @if (r.wearable?.mode === "raw" && r.wearable?.latest; as w) {
+            <div class="mr-cell">
+              <div class="mr-cell-h">Morning readiness</div>
+              <div class="mr-items">
+                <span
+                  >Resting HR
+                  <b class="mono">{{ w["resting_hr"]?.value ?? "—" }}</b></span
+                >
+                <span
+                  >HRV <b class="mono">{{ w["hrv"]?.value ?? "—" }}</b></span
+                >
+                <span
+                  >Sleep
+                  <b class="mono"
+                    >{{ w["sleep_hours"]?.value ?? "—" }}h</b
+                  ></span
+                >
+              </div>
+              <div class="mr-muted">
+                vs your own device baseline · not compared across brands
+              </div>
+            </div>
+          } @else if (r.wearable?.mode === "derived") {
+            <div class="mr-cell">
+              <div class="mr-cell-h">Morning readiness</div>
+              <span
+                class="mr-chip tone-{{ flagTone(r.wearable?.derivedRecovery) }}"
+              >
+                <lucide-icon [name]="flagShape(r.wearable?.derivedRecovery)" />
+                {{ r.wearable?.derivedRecovery || "—" }}
+              </span>
+              <div class="mr-muted">
+                derived recovery signal (raw values not shared to this role)
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- 5 · WEEKLY PANEL — ACWR on a shaded reference band -->
+    <section class="mr-panel">
+      <h2 class="mr-h2">Weekly</h2>
+      @if (r.weekly.acwr; as a) {
+        <div class="mr-acwr">
+          <div class="mr-acwr-head">
+            <span>Workload balance</span>
+            <span
+              class="mono mr-acwr-val tone-{{ flagTone(a.primary.band) }}"
+              >{{ a.primary.value }}</span
+            >
+            <span class="mr-cap">monitoring, not prediction</span>
+          </div>
+          <!-- shaded sweet-spot band from payload thresholds (no threshold logic here) -->
+          <div
+            class="mr-band"
+            role="img"
+            aria-label="Workload ratio on the reference band"
+          >
+            <div
+              class="mr-band-sweet"
+              [style.left.%]="
+                bandLeftPct($any(r.thresholds['acwr'])?.sweet_low)
+              "
+              [style.width.%]="
+                bandWidthPct(
+                  $any(r.thresholds['acwr'])?.sweet_low,
+                  $any(r.thresholds['acwr'])?.sweet_high
+                )
+              "
+            ></div>
+            <div class="mr-band-mark" [style.left.%]="acwrPct(a.primary.value)">
+              <lucide-icon [name]="flagShape(a.primary.band)" />
+            </div>
+          </div>
+          <div class="mr-cmp mr-muted">
+            comparison ({{ a.comparison.label }}):
+            <b class="mono">{{ a.comparison.value ?? "—" }}</b>
+          </div>
+          <div class="mr-items" style="margin-top: 10px">
+            <span
+              >Monotony <b class="mono">{{ r.weekly.monotony ?? "—" }}</b></span
+            >
+            <span
+              >Strain <b class="mono">{{ r.weekly.strain ?? "—" }}</b></span
+            >
+          </div>
+        </div>
+      } @else {
+        <div class="mr-prompt-card">
+          <lucide-icon name="line-chart" /> Not enough load history to show a
+          workload trend yet.
+        </div>
+      }
+    </section>
+
+    <!-- 6 · BLOODWORK — role-shaped -->
+    @if (r.bloodwork !== null) {
+      <section class="mr-panel">
+        <h2 class="mr-h2">Bloodwork</h2>
+        @if (r.bloodwork?.mode === "signal") {
+          <span class="mr-chip tone-{{ flagTone(r.bloodwork?.status) }}">
+            <lucide-icon [name]="flagShape(r.bloodwork?.status)" />
+            {{ r.bloodwork?.status || "no draw on record" }}
+          </span>
+        } @else if (r.bloodwork?.mode === "raw") {
+          @if (r.bloodwork?.promptRequired) {
+            <div class="mr-prompt-card">
+              <lucide-icon name="test-tube" /> No blood panel on record —
+              <a>add a draw</a>.
+            </div>
+          } @else {
+            <div class="mr-muted">
+              drawn {{ $any(r.bloodwork).collectedDate }}
+              @if ($any(r.bloodwork).daysSinceDraw != null) {
+                · {{ $any(r.bloodwork).daysSinceDraw }}d ago
+              }
+            </div>
+            <table class="mr-table">
+              @for (m of $any(r.bloodwork).markers; track m.name) {
+                <tr>
+                  <td>{{ m.name }}</td>
+                  <td class="mono">{{ m.value ?? "—" }} {{ m.unit }}</td>
+                  <td>
+                    <span class="mr-chip tone-{{ flagTone(m.flag) }}">
+                      <lucide-icon [name]="flagShape(m.flag)" /> {{ m.flag }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </table>
+          }
+        }
+      </section>
+    }
+
+    <!-- 7 · REFERENCE FOOTER -->
+    <footer class="mr-foot">
+      <details>
+        <summary>Reference thresholds (team-editable)</summary>
+        <div class="mr-thresh">
+          @for (metric of $any(r.thresholds) | keyvalue; track metric.key) {
+            <div class="mr-thresh-row">
+              <b>{{ metric.key }}</b>
+              @for (kv of $any(metric.value) | keyvalue; track kv.key) {
+                @if (!$any(kv.key).startsWith("_")) {
+                  <span class="mono">{{ kv.key }}={{ kv.value }}</span>
+                }
+              }
+            </div>
+          }
+        </div>
+        <p class="mr-muted">
+          Values are team-configurable and drive every flag above — the report
+          renders them, it does not decide them.
+        </p>
+      </details>
+    </footer>
+  </main>
+} @else {
+  <div class="mr-empty">This report isn't available for your role.</div>
+}

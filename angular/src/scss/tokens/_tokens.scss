@@ -44,6 +44,11 @@
   /* type */
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  /* Monitoring-report typography (additive; scoped to the report surface). */
+  --font-report-heading:
+    "Archivo Narrow", "Space Grotesk", system-ui, sans-serif;
+  --font-report-ui: "Archivo", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
   --fs-display: 32px;
   --fs-h1: 24px;
   --fs-title: 21px;

@@ -159,6 +159,22 @@ export const featureRoutes: Routes = [
         title: "Stats · FlagFit",
       },
       {
+        path: "monitoring",
+        loadComponent: () =>
+          import("../../monitoring-report/monitoring-report.component").then(
+            (m) => m.MonitoringReportComponent,
+          ),
+        title: "Monitoring · FlagFit",
+      },
+      {
+        path: "monitoring/:id",
+        loadComponent: () =>
+          import("../../monitoring-report/monitoring-report.component").then(
+            (m) => m.MonitoringReportComponent,
+          ),
+        title: "Monitoring · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../more/more.component").then((m) => m.MoreComponent),
