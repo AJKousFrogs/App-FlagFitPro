@@ -12,6 +12,14 @@ import { ApiService } from "../../core/services/api.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { staffLaneFor } from "../../core/guards/staff.guard";
+import {
+  ExternalLoadService,
+  ExternalLoadMetric,
+} from "../../core/services/external-load.service";
+import {
+  BloodworkService,
+  BloodworkPanel,
+} from "../../core/services/bloodwork.service";
 
 type Lane = "coach" | "physio" | "nutrition" | "psych";
 
@@ -74,6 +82,8 @@ export class AthleteDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly membership = inject(TeamMembershipService);
   private readonly logger = inject(LoggerService);
+  private readonly externalLoadService = inject(ExternalLoadService);
+  private readonly bloodworkService = inject(BloodworkService);
 
   readonly id = this.route.snapshot.paramMap.get("id") ?? "";
   private readonly nav = (inject(Router).getCurrentNavigation()?.extras.state ??
@@ -102,6 +112,8 @@ export class AthleteDetailComponent {
   readonly body = signal<BodyTrend[]>([]);
   readonly mental = signal<MentalLog[]>([]);
   readonly wellness = signal<WellnessPt[]>([]);
+  readonly externalLoad = signal<ExternalLoadMetric[]>([]);
+  readonly bloodwork = signal<BloodworkPanel[]>([]);
 
   constructor() {
     const lane = this.lane();
@@ -132,6 +144,15 @@ export class AthleteDetailComponent {
               ? `Phase ${proto[0].phase_number}`
               : null,
           );
+          // Monitoring feature: external-load + bloodwork are separate,
+          // RLS-gated endpoints (empty unless the athlete has data + the
+          // caller is permitted). Failures resolve to [] inside the services.
+          this.externalLoadService
+            .list(this.id)
+            .subscribe((rows) => this.externalLoad.set(rows));
+          this.bloodworkService
+            .list(this.id)
+            .subscribe((panels) => this.bloodwork.set(panels));
         } else if (lane === "nutrition") {
           this.body.set((d["trends"] as BodyTrend[]) ?? []);
         } else {

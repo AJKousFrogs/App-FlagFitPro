@@ -236,6 +236,58 @@
             <lucide-icon name="plus" /> Log injury
           </button>
         }
+
+        <!-- EXTERNAL LOAD (monitoring) — RLS gates on load role + training consent -->
+        @if (externalLoad().length) {
+          <div class="section-h"><h3>External load</h3></div>
+          <div class="card">
+            @for (m of externalLoad().slice(0, 6); track m.id) {
+              <div class="lrow">
+                <div>
+                  <b>{{ m.sessionDate }}</b>
+                  <div class="muted" style="font-size: var(--fs-sm)">
+                    @if (m.playerLoad != null) {
+                      PL {{ m.playerLoad }}
+                    }
+                    @if (m.totalDistanceM != null) {
+                      · {{ m.totalDistanceM }} m
+                    }
+                    @if (m.highSpeedDistanceM != null) {
+                      · HSR {{ m.highSpeedDistanceM }} m
+                    }
+                  </div>
+                </div>
+                <span class="band neutral">{{ m.source }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- BLOODWORK (monitoring) — RLS medical lane only (physio/admin/owner) -->
+        @if (bloodwork().length) {
+          <div class="section-h"><h3>Bloodwork</h3></div>
+          @for (p of bloodwork(); track p.id) {
+            <div class="card">
+              <div class="lrow">
+                <b>{{ p.panelType || "Panel" }}</b>
+                <span class="muted" style="font-size: var(--fs-sm)">{{
+                  p.collectedDate
+                }}</span>
+              </div>
+              @for (mk of p.markers; track mk.id) {
+                <div class="lrow">
+                  <span>{{ mk.markerName }}</span>
+                  <span
+                    class="band {{
+                      mk.flag === 'normal' || !mk.flag ? 'neutral' : 'caution'
+                    }}"
+                    >{{ mk.value }}{{ mk.unit ? " " + mk.unit : "" }}</span
+                  >
+                </div>
+              }
+            </div>
+          }
+        }
       }
 
       <!-- NUTRITION: body comp + generate report -->
