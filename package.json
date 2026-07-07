@@ -154,7 +154,7 @@
     "glob": "^13.0.6",
     "globals": "^17.3.0",
     "jws": "^4.0.1",
-    "netlify-cli": "^23.15.1",
+    "netlify-cli": "^26.2.0",
     "playwright": "^1.61.1",
     "prettier": "^3.8.4",
     "sass": "^1.101.0",
