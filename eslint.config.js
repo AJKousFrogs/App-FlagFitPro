@@ -26,6 +26,9 @@ export default [
       "*.min.js",
       "coverage/**",
       ".netlify/**",
+      // Generated bundle (esbuild output of the TS periodization engine); parity
+      // is guarded by tests, and it is regenerated via build:periodization-engine.
+      "netlify/functions/utils/periodization-engine.js",
       "**/*.ts",
       "**/*.tsx",
       "**/*.jsx",

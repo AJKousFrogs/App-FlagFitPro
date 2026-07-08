@@ -1,0 +1,1390 @@
+// GENERATED — do not edit by hand. Source of truth: angular/src/app/core/services/periodization-engine.ts. Regenerate: npm run build:periodization-engine. Parity guarded by tests/unit/periodization-port-parity.test.js.
+
+// angular/src/app/core/config/position-volume.config.ts
+var POSITION_VOLUME = {
+  qb: {
+    position: "qb",
+    label: "Quarterback",
+    perSession: { throws: { min: 40, max: 60 }, sprints: 8 },
+    perGameWorstCase: { throws: 53, snaps: 55, sprints: 12 },
+    perWeek: { throws: { min: 200, max: 280 } },
+    worstCase: "~40\u201360 throws/session; ~320 throws across a 6\u20138 game tournament (\u224840\u201353/game). The cumulative tournament throw count is the real worst case \u2014 not any single game.",
+    periodization: "Off-season rebuild from ~80\u2013120 throws/wk (no max-velocity); pre-season overload ~10%/wk toward 55\u201360/session and rehearse back-to-back high-throw days for tournament arm load; in-season maintain 40\u201350/session, deload throws 48\u201372h pre-game; taper ~30\u201340% the week before a tournament so the arm banks ~320 throws fresh.",
+    primaryInjuryRisk: "Cumulative throwing load to the shoulder (cuff, posterior capsule, labrum) and medial elbow (UCL). Budget by TOURNAMENT total + acute:chronic throw tracking, not single-game limits."
+  },
+  wr: {
+    position: "wr",
+    label: "Wide Receiver",
+    perSession: { catches: { min: 120, max: 180 }, sprints: 25 },
+    perGameWorstCase: { sprints: 35, catches: 14, decels: 40 },
+    perWeek: { catches: 1e3, sprints: { min: 150, max: 200 } },
+    worstCase: "~1000 catches/week and 30\u201335 sprints/game \xD7 up to 8 games/day. The binding game load is high-speed sprint + deceleration, not catch count.",
+    periodization: "Off-season build max sprint speed + eccentric hamstring (Nordics) from low volume; pre-season ramp catches toward ~1000/wk and accumulate high-speed running so game sprints sit inside trained range; in-season hold catches but cap max-velocity reps near game day (keep 1\u20132 top-speed exposures/wk); taper running but retain a short max-velocity exposure ~3\u20134 days out.",
+    primaryInjuryRisk: "Hamstring strain from max-velocity sprinting + decelerations; ankle/knee on cuts. Periodise sprint volume SEPARATELY from catches \u2014 different tissues."
+  },
+  db: {
+    position: "db",
+    label: "Defensive Back",
+    perSession: { backpedals: { min: 200, max: 320 }, sprints: 25 },
+    perGameWorstCase: { sprints: 35, backpedals: 70, decels: 40 },
+    perWeek: {
+      backpedals: { min: 800, max: 1200 },
+      sprints: { min: 150, max: 200 }
+    },
+    worstCase: "Up to ~320 backpedals/session (5\u201310 yd) plus WR-like 30\u201335 sprints/game. The backpedal-to-sprint hip-flip transition is the highest-strain action \u2014 count transitions, not just backpedals.",
+    periodization: "Off-season develop hip mobility, posterior-chain/COD strength, eccentric hamstring + adductor capacity; pre-season load backpedal volume toward ~320/session and chain backpedal\u2192plant\u2192turn-and-run; in-season distribute the ceiling across 3\u20134 sessions (progressive, not spiky), cap near game day.",
+    primaryInjuryRisk: "Hamstring + adductor on the hip-flip transition and max-velocity sprint; ankle/knee on plant-and-drive."
+  },
+  center: {
+    position: "center",
+    label: "Center (snapper)",
+    perSession: {
+      catches: { min: 120, max: 180 },
+      snaps: { min: 50, max: 80 },
+      sprints: 22
+    },
+    perGameWorstCase: { snaps: 55, sprints: 35, catches: 12 },
+    perWeek: { catches: 1e3, snaps: { min: 300, max: 450 } },
+    worstCase: "~1000 catches/week, snaps on essentially every play (~55/game, 50\u201380/session), AND WR-level 30\u201335 sprints/game. A dual one-arm-snap + sprint/route load.",
+    periodization: "Off-season condition the one-arm snapping chain (wrist flexors, forearm, posterior shoulder/scapular) + anti-rotation/lumbar from a low base, plus WR catch & base speed; pre-season progressively overload snap volume like a throwing pattern; in-season maintain, protect the arm, keep snap reps progressive.",
+    primaryInjuryRisk: "Repetitive one-arm snapping: wrist/forearm, posterior shoulder, medial elbow, and repeated lumbar flexion. Load the snap like a throw \u2014 count reps, build tolerance."
+  },
+  blitzer: {
+    position: "blitzer",
+    label: "Blitzer / Rusher",
+    perSession: {
+      explosiveSprints: { min: 25, max: 35 },
+      changeOfDirection: 50
+    },
+    perGameWorstCase: { explosiveSprints: 42, decels: 45, maxAccels: 42 },
+    perWeek: { explosiveSprints: { min: 120, max: 180 } },
+    worstCase: "Highest count of true max-effort accelerations of any position (~42/game) \u2014 nearly every defensive snap triggers a rush or pursuit. A high-CNS channel that fatigues faster than it feels.",
+    periodization: "Off-season max strength/power (squat/hinge/jumps, accel mechanics), eccentric hamstring base, reactive plyometrics, low-volume accelerations; pre-season load explosive-start volume + repeated-sprint ability with FULL recovery between max efforts; in-season cap weekly max-effort accelerations as the primary monitored metric.",
+    primaryInjuryRisk: "Hamstring + calf on repeated max-effort starts; knee/ankle on hard braking. Acceleration/deceleration COUNT is the limiting load \u2014 quality over count."
+  },
+  wr_db: {
+    position: "wr_db",
+    label: "Receiver / Defensive back (both ways)",
+    perSession: {
+      catches: { min: 120, max: 180 },
+      backpedals: { min: 200, max: 320 },
+      sprints: 25
+    },
+    perGameWorstCase: { sprints: 35, catches: 14, backpedals: 70, decels: 40 },
+    perWeek: {
+      catches: 1e3,
+      backpedals: { min: 800, max: 1200 },
+      sprints: { min: 150, max: 200 }
+    },
+    worstCase: "Plays BOTH ways: ~1000 catches/week, up to ~320 backpedals/session, and 30\u201335 sprints/game \xD7 up to 8 games/day. The most running- and cutting-loaded role.",
+    periodization: "Combine the WR and DB plans: build eccentric hamstring + adductor + COD capacity off-season; ramp catch and backpedal volume pre-season; in-season cap max-velocity near game day. Sprint volume is the shared limiter.",
+    primaryInjuryRisk: "Hamstring/adductor from sprinting, decelerating and the backpedal-to-sprint transition; ankle/knee on cuts."
+  }
+};
+
+// angular/src/app/core/services/periodization-engine.ts
+var FALLBACK_BODYWEIGHT_KG = 80;
+var FALLBACK_READINESS = 70;
+var ACWR_DANGER = 1.5;
+var ACWR_ELEVATED = 1.3;
+var ACWR_UNDER = 0.8;
+var READINESS_LOW = 55;
+var DENSITY_HEAVY_GAMES_14D = 10;
+var DENSITY_CONGESTED_DAY_GAMES = 3;
+var INTENT_LABELS = {
+  rest: "Rest + daily mobility",
+  recovery: "Active recovery",
+  mobility: "Mobility & technique",
+  technical: "Skills focus",
+  sprint: "Sprint focus",
+  strength: "Strength session",
+  mixed: "Mixed session",
+  "taper-prime": "Pre-game prime",
+  competition: "Game day",
+  travel: "Travel day"
+};
+var HIGH_CNS_INTENTS = /* @__PURE__ */ new Set(["sprint", "mixed"]);
+var CNS_RECOVERY_HOURS = 48;
+function cnsRecoveryHoursForAge(ageYears) {
+  if (typeof ageYears !== "number" || !Number.isFinite(ageYears) || ageYears < 16) {
+    return CNS_RECOVERY_HOURS;
+  }
+  if (ageYears >= 40) return 72;
+  if (ageYears >= 35) return 60;
+  return CNS_RECOVERY_HOURS;
+}
+var FLAG_DRILL_HIGH_CNS_PATTERN = /\b(?:route|routes|post|fade|hook|evade|evasion|flag.?pull)\b/i;
+function isHighCnsSessionType(type, rpe) {
+  const t = type || "";
+  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(t))
+    return true;
+  if (FLAG_DRILL_HIGH_CNS_PATTERN.test(t)) {
+    return rpe == null || rpe >= 6;
+  }
+  return false;
+}
+function applySprintRecoveryGuard(p, recentSessions, date, ageYears) {
+  if (!HIGH_CNS_INTENTS.has(p.intent)) return p;
+  if (!recentSessions || recentSessions.length === 0) return p;
+  const windowHours = cnsRecoveryHoursForAge(ageYears);
+  const now = date.getTime();
+  const windowMs = windowHours * 36e5;
+  let mostRecent = null;
+  for (const s of recentSessions) {
+    if (!isHighCnsSessionType(s.type, s.rpe ?? null)) continue;
+    const t = new Date(s.at).getTime();
+    if (!Number.isFinite(t) || t >= now) continue;
+    if (now - t > windowMs) continue;
+    if (mostRecent === null || t > mostRecent) mostRecent = t;
+  }
+  if (mostRecent === null) return p;
+  const hoursSince = Math.round((now - mostRecent) / 36e5);
+  return {
+    ...p,
+    intent: "technical",
+    intentLabel: "Mobility & technique",
+    sprintReps: 0,
+    targetRpe: p.targetRpe != null ? Math.min(p.targetRpe, 5) : p.targetRpe,
+    reasoning: `Sprinted ${hoursSince}h ago \u2014 ${windowHours}h CNS recovery; today is mobility + technique.`,
+    cnsRecoveryAdjustment: {
+      hoursSinceLastHighCns: hoursSince,
+      windowHours,
+      originalIntent: p.intent
+    }
+  };
+}
+function prescribeFor(inputs) {
+  const base = decideBasePrescription(inputs);
+  const spaced = applySprintRecoveryGuard(
+    base,
+    inputs.recentSessions ?? null,
+    inputs.date,
+    inputs.ageYears ?? null
+  );
+  const guarded = applyWeatherGuard(
+    spaced,
+    inputs.weather ?? null,
+    inputs.coachOverride ?? false,
+    inputs.acclimatizationDay ?? null
+  );
+  const arrivalGuarded = applyArrivalDayGuard(
+    guarded,
+    inputs.arrivalDayTravelHours ?? null
+  );
+  const physioGuarded = applyInjuryGuard(
+    arrivalGuarded,
+    inputs.activeRestrictions ?? null
+  );
+  return withPositionEmphasis(
+    physioGuarded,
+    inputs.position ?? null,
+    inputs.activeRestrictions?.restrictsThrowing ?? false
+  );
+}
+function positionBucket(position) {
+  const p = (position ?? "").toLowerCase();
+  if (!p) return null;
+  if (/\bqb\b|quarterback/.test(p)) return "qb";
+  if (/center|long.?snap|snapper/.test(p)) return "center";
+  if (/blitz|rush/.test(p)) return "blitzer";
+  if (/wr.?db|wr\/db|both.?way|hybrid|two.?way/.test(p)) return "wr_db";
+  if (/\bwr\b|receiver|wide.?out|wideout/.test(p)) return "wr";
+  if (/\bdb\b|corner|safety|defensive.?back|cornerback/.test(p)) return "db";
+  return null;
+}
+function fmtDemand(v) {
+  if (v == null) return null;
+  return typeof v === "number" ? `${v}` : `${v.min}\u2013${v.max}`;
+}
+function volumeFor(bucket) {
+  const v = POSITION_VOLUME[bucket];
+  const targets = [];
+  const wkCatches = fmtDemand(v.perWeek["catches"]);
+  if (wkCatches) targets.push(`~${wkCatches} catches/week`);
+  const throws = fmtDemand(v.perSession["throws"]);
+  if (throws) targets.push(`${throws} throws/session`);
+  const snaps = fmtDemand(v.perSession["snaps"]);
+  if (snaps) targets.push(`${snaps} snaps/session`);
+  const backped = fmtDemand(v.perSession["backpedals"]);
+  if (backped) targets.push(`up to ${backped} backpedals/session`);
+  const sprints = fmtDemand(v.perGameWorstCase["sprints"]);
+  if (sprints) targets.push(`up to ${sprints} sprints/game`);
+  const accels = fmtDemand(v.perGameWorstCase["explosiveSprints"]);
+  if (accels) targets.push(`~${accels} max sprints/game`);
+  if (bucket === "qb") targets.push("~320 throws/tournament");
+  return { worstCase: v.worstCase, targets };
+}
+function withPositionEmphasis(p, position, restrictsThrowing = false) {
+  const bucket = positionBucket(position);
+  if (!bucket || p.intent === "rest") {
+    return { ...p, positionEmphasis: null };
+  }
+  const volume = volumeFor(bucket);
+  const pv = POSITION_VOLUME[bucket];
+  if (restrictsThrowing && (bucket === "qb" || bucket === "center")) {
+    const verb = bucket === "qb" ? "throwing" : "snapping";
+    return {
+      ...p,
+      positionEmphasis: {
+        position: bucket,
+        label: pv.label,
+        focus: [
+          "Protect the arm/shoulder",
+          "Gentle pain-free ROM only",
+          `No ${verb} reps today`
+        ],
+        note: `Your ${verb} arm/shoulder is flagged \u2014 skip ${verb} work today and protect it. Lower-body and trunk work is fine if pain-free.`,
+        restricted: true,
+        volume
+      }
+    };
+  }
+  const focusByPosition = {
+    qb: [
+      "Rotator-cuff & scapular control",
+      "Thoracic rotation mobility",
+      "Rotational core power"
+    ],
+    wr: [
+      "Eccentric hamstring (Nordic)",
+      "Deceleration & landing mechanics",
+      "Ankle & calf resilience"
+    ],
+    db: [
+      "Eccentric hamstring & adductor",
+      "Backpedal-to-sprint hip-flip control",
+      "Deceleration mechanics"
+    ],
+    center: [
+      "Wrist & forearm care",
+      "Shoulder & scapular control",
+      "Anti-rotation core brace"
+    ],
+    blitzer: [
+      "Max-effort accel mechanics",
+      "Eccentric hamstring & calf",
+      "Hard-braking deceleration"
+    ],
+    wr_db: [
+      "Eccentric hamstring & adductor",
+      "Deceleration & cut mechanics",
+      "Ankle & calf resilience"
+    ]
+  };
+  return {
+    ...p,
+    positionEmphasis: {
+      position: bucket,
+      label: pv.label,
+      focus: focusByPosition[bucket],
+      note: pv.primaryInjuryRisk,
+      volume
+    }
+  };
+}
+var ARRIVAL_DAY_LOAD_CAP_HOURS = 3;
+var ARRIVAL_DAY_EXEMPT_INTENTS = /* @__PURE__ */ new Set([
+  "rest",
+  "recovery",
+  "mobility",
+  "taper-prime",
+  "competition"
+]);
+function applyArrivalDayGuard(rx, arrivalDayTravelHours) {
+  if (arrivalDayTravelHours === null || arrivalDayTravelHours < ARRIVAL_DAY_LOAD_CAP_HOURS) {
+    return rx;
+  }
+  if (ARRIVAL_DAY_EXEMPT_INTENTS.has(rx.intent)) {
+    return rx;
+  }
+  return {
+    ...rx,
+    intent: "mobility",
+    intentLabel: "Arrival-day activation",
+    targetRpe: rx.targetRpe === null ? null : Math.min(rx.targetRpe, 4),
+    targetMinutes: Math.min(rx.targetMinutes, 30),
+    sprintReps: 0,
+    strengthSets: 0,
+    reasoning: `${Math.round(arrivalDayTravelHours)}h of travel today \u2014 activation only, no new fatigue on top of the trip. ${rx.reasoning}`
+  };
+}
+var INJURY_RESPONSE = {
+  severe: { rpe: 3, minutes: 30, sets: 0 },
+  moderate: { rpe: 3, maxMinutes: 40, maxSets: 3 },
+  minor: { maxRpe: 6 }
+};
+function applyInjuryGuard(p, restr) {
+  if (!restr || !restr.restrictsSprint) return p;
+  if (p.intent === "competition" || p.intent === "travel") return p;
+  const severe = restr.severity === "severe";
+  const moderate = restr.severity === "moderate";
+  const hasSprintWork = p.sprintReps > 0 || p.intent === "sprint";
+  if (!hasSprintWork && !severe && !moderate) return p;
+  const regionLabel = restr.regions.length ? restr.regions.join(", ") : "soft tissue";
+  let intent = p.intent;
+  let intentLabel = p.intentLabel;
+  let targetRpe = p.targetRpe;
+  let targetMinutes = p.targetMinutes;
+  let strengthSets = p.strengthSets;
+  let reasoning = p.reasoning;
+  if (severe) {
+    intent = "recovery";
+    intentLabel = "Active recovery";
+    targetRpe = INJURY_RESPONSE.severe.rpe;
+    targetMinutes = INJURY_RESPONSE.severe.minutes;
+    strengthSets = INJURY_RESPONSE.severe.sets;
+    reasoning = `Reported ${regionLabel} issue \u2014 recovery only today. Injury precedence over training.`;
+  } else if (moderate) {
+    intent = "recovery";
+    intentLabel = "Active recovery";
+    targetRpe = INJURY_RESPONSE.moderate.rpe;
+    targetMinutes = Math.min(
+      p.targetMinutes,
+      INJURY_RESPONSE.moderate.maxMinutes
+    );
+    strengthSets = Math.min(p.strengthSets, INJURY_RESPONSE.moderate.maxSets);
+    reasoning = `Reported ${regionLabel} tightness \u2014 sprints pulled, easy session only. Injury precedence over training.`;
+  } else {
+    intent = p.intent === "sprint" ? "mobility" : p.intent;
+    intentLabel = p.intent === "sprint" ? "Mobility & technique" : `${p.intentLabel} (modified)`;
+    targetRpe = p.targetRpe != null ? Math.min(p.targetRpe, INJURY_RESPONSE.minor.maxRpe) : p.targetRpe;
+    reasoning = `${regionLabel} tightness \u2014 sprint/high-intensity work pulled for that region; keep it controlled.`;
+  }
+  return {
+    ...p,
+    intent,
+    intentLabel,
+    targetRpe,
+    targetMinutes,
+    sprintReps: 0,
+    strengthSets,
+    reasoning,
+    injuryAdjustment: {
+      regions: restr.regions,
+      severity: restr.severity ?? "minor",
+      summary: `${p.intentLabel} \u2192 ${intentLabel}; sprints ${p.sprintReps}\u21920`
+    }
+  };
+}
+var PRACTICE_PHASE_MODIFIERS = {
+  accumulation: {
+    intent: "mixed",
+    rpe: 7,
+    minutes: 90,
+    recoveryEmphasis: "low",
+    nutritionIntent: "mixed",
+    framing: "own"
+  },
+  transition: {
+    intent: "mixed",
+    rpe: 7,
+    minutes: 90,
+    recoveryEmphasis: "low",
+    nutritionIntent: "mixed",
+    framing: "own"
+  },
+  // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
+  // glycogen top-up (top-up is only the final day, handled by the taper branch).
+  taper: {
+    intent: "mixed",
+    rpe: 6,
+    minutes: 60,
+    recoveryEmphasis: "medium",
+    nutritionIntent: "mixed",
+    framing: "sharp"
+  },
+  // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
+  taper_final: {
+    intent: "mixed",
+    rpe: 5,
+    minutes: 45,
+    recoveryEmphasis: "medium",
+    nutritionIntent: "taper-prime",
+    framing: "sharp"
+  },
+  // Post-tournament recovery day that is ALSO a declared practice day: honour the
+  // practice (the athlete is going) but at recovery intensity — the calendar fact
+  // is modified by the recovery context, not discarded (audit finding 1.1). Same
+  // RPE3/30min as the recovery default, so intensity is unchanged; only the label
+  // and framing now acknowledge the practice.
+  recovery: {
+    intent: "recovery",
+    rpe: 3,
+    minutes: 30,
+    recoveryEmphasis: "high",
+    nutritionIntent: "recovery",
+    framing: "recovery"
+  }
+};
+var TAPER_CONFIG = {
+  /** ≤ this many hours to the game → taper-prime (very short, sharp). */
+  taperPrimeHours: 24,
+  /** ≤ this many days out = the lighter "final third" of a taper. */
+  finalThirdDaysOut: 2,
+  /** Default day-of-taper when hours-to-event is unknown. */
+  defaultDayOfTaper: 7,
+  /** Individual (non-practice) taper session targets. */
+  individual: {
+    regular: {
+      intent: "sprint",
+      rpe: 6,
+      minutes: 45,
+      sprintReps: 6
+    },
+    final: {
+      intent: "mobility",
+      rpe: 4,
+      minutes: 30,
+      sprintReps: 4
+    }
+  }
+};
+function practiceModifierFor(phase, daysOut) {
+  const key = phase === "taper" && daysOut !== null && daysOut <= TAPER_CONFIG.finalThirdDaysOut ? "taper_final" : phase;
+  return PRACTICE_PHASE_MODIFIERS[key] ?? null;
+}
+var TOURNAMENT_RECOVERY_GAMES = 4;
+var TOURNAMENT_RECOVERY_WINDOW_DAYS = 2;
+function detectTournamentRecoveryDay(lastEvent, date) {
+  if (!lastEvent) return null;
+  if ((lastEvent.expectedGameCount ?? 0) < TOURNAMENT_RECOVERY_GAMES)
+    return null;
+  const eventEnd = new Date(lastEvent.endsAt ?? lastEvent.startsAt);
+  const msAfterEnd = date.getTime() - eventEnd.getTime();
+  if (msAfterEnd <= 0) return null;
+  const dayAfterEnd = Math.ceil(msAfterEnd / 864e5);
+  return dayAfterEnd <= TOURNAMENT_RECOVERY_WINDOW_DAYS ? dayAfterEnd : null;
+}
+function applyPostTournamentRecovery(inputs, dayAfterTournament) {
+  const { date, bodyweightKg, acwr, seasonPhase, upcoming, lastEvent } = inputs;
+  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const gameCount = lastEvent.expectedGameCount ?? 0;
+  const eventName = lastEvent.competitionShortName ?? lastEvent.competitionName ?? "your tournament";
+  const hoursUntilNext = nextEventHours(date, upcoming);
+  const intent = dayAfterTournament === 1 ? "recovery" : "mobility";
+  return finalize({
+    date,
+    phase: inputs.phase,
+    intent,
+    targetRpe: dayAfterTournament === 1 ? 3 : 4,
+    targetMinutes: dayAfterTournament === 1 ? 30 : 45,
+    sprintReps: 0,
+    strengthSets: 0,
+    reasoning: dayAfterTournament === 1 ? `Day 1 after ${eventName} (${gameCount} games) \u2014 recovery only. Acute neuromuscular damage is still being repaired; no sprint or strength today.` : `Day 2 after ${eventName} (${gameCount} games) \u2014 light mobility only; neuromuscular recovery is still active.`,
+    recoveryEmphasis: dayAfterTournament === 1 ? "critical" : "high",
+    nutrition: nutritionFor("recovery", bodyweight, false, false),
+    driverEvent: lastEvent,
+    hoursUntilNextEvent: hoursUntilNext,
+    acwrAtIssue: acwr,
+    seasonPhase: seasonPhase ?? null,
+    tournamentRecoveryAdjustment: {
+      dayAfterTournament,
+      gamesPlayed: gameCount,
+      tournamentName: eventName
+    }
+  });
+}
+function modulateIntentForLoad(intent, acwr, heavyDensity, weeklyProgressionUnsafe) {
+  let i = intent;
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (i === "sprint" || i === "strength") i = "mobility";
+    else if (i === "mixed") i = "technical";
+  }
+  if (heavyDensity && i !== "rest") {
+    if (i === "strength") i = "technical";
+    if (i === "mixed") i = "mobility";
+  }
+  if (weeklyProgressionUnsafe && (i === "sprint" || i === "strength" || i === "mixed")) {
+    i = "technical";
+  }
+  return i;
+}
+function decideBasePrescription(inputs) {
+  const {
+    date,
+    phase,
+    upcoming,
+    lastEvent,
+    acwr,
+    readiness,
+    bodyweightKg,
+    density14d,
+    seasonPhase = null
+  } = inputs;
+  const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
+  const hoursUntilNext = nextEventHours(date, upcoming);
+  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const effectiveReadiness = readiness ?? FALLBACK_READINESS;
+  const heavyDensity = !!density14d && (density14d.totalGames >= DENSITY_HEAVY_GAMES_14D || (density14d.peakDayGameCount ?? 0) >= DENSITY_CONGESTED_DAY_GAMES);
+  const apparentTemp = inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
+  const hotDay = typeof apparentTemp === "number" && apparentTemp >= HEAT_CAUTION_C;
+  if (phase === "competition") {
+    return finalize({
+      date,
+      phase,
+      intent: "competition",
+      targetRpe: null,
+      targetMinutes: 60,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: "Game day. Activate, play, refuel between games, sleep tonight.",
+      recoveryEmphasis: "critical",
+      nutrition: nutritionFor("competition", bodyweight, heavyDensity, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr
+    });
+  }
+  if (hoursUntilNext !== null && hoursUntilNext <= TAPER_CONFIG.taperPrimeHours) {
+    return finalize({
+      date,
+      phase,
+      intent: "taper-prime",
+      targetRpe: 4,
+      targetMinutes: 25,
+      sprintReps: 4,
+      strengthSets: 0,
+      reasoning: "Game inside 24 hours. Stay loose and primed \u2014 no new fatigue.",
+      recoveryEmphasis: "high",
+      nutrition: nutritionFor("taper-prime", bodyweight, heavyDensity, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr
+    });
+  }
+  if (acwr !== null && acwr > ACWR_DANGER) {
+    return finalize({
+      date,
+      phase,
+      intent: "rest",
+      targetRpe: 2,
+      targetMinutes: 15,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: `ACWR ${acwr.toFixed(2)} is in the danger zone \u2014 full rest today. Gentle 15-min mobility and stretching only; no cardio or loading.`,
+      recoveryEmphasis: "critical",
+      nutrition: nutritionFor("rest", bodyweight, heavyDensity, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr
+    });
+  }
+  if (effectiveReadiness < READINESS_LOW) {
+    return finalize({
+      date,
+      phase,
+      intent: "recovery",
+      targetRpe: 3,
+      targetMinutes: 30,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: `Readiness ${Math.round(effectiveReadiness)}/100 is low. Active recovery only.`,
+      recoveryEmphasis: "high",
+      nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr
+    });
+  }
+  const tournamentRecoveryDay = detectTournamentRecoveryDay(lastEvent, date);
+  if (phase === "travel") {
+    return finalize({
+      date,
+      phase,
+      intent: "travel",
+      targetRpe: null,
+      targetMinutes: 0,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: "Travel day. Rest, stay hydrated, keep legs moving between transit. Arrive fresh.",
+      recoveryEmphasis: "high",
+      nutrition: nutritionFor("travel", bodyweight, false, hotDay),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr
+    });
+  }
+  const practiceDaysOut = hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : null;
+  const practiceMod = inputs.isTeamPractice ? tournamentRecoveryDay !== null ? PRACTICE_PHASE_MODIFIERS["recovery"] : practiceModifierFor(phase, practiceDaysOut) : null;
+  if (practiceMod) {
+    const eventName = driverEvent ? driverEvent.competitionShortName ?? driverEvent.competitionName : null;
+    const practiceReasoning = tournamentRecoveryDay !== null ? `Practice today, but you're in post-tournament recovery (day ${tournamentRecoveryDay} after ${eventName ?? "your tournament"}) \u2014 active recovery and mobility only; no hard reps.` : practiceMod.framing === "recovery" ? "Practice today, but you're in post-game recovery \u2014 keep it very light: active recovery and mobility only, no hard reps." : practiceMod.framing === "sharp" ? `Practice today is your session${practiceDaysOut !== null ? ` \u2014 ${practiceDaysOut} day${practiceDaysOut === 1 ? "" : "s"} to ${eventName ?? "your next game"}` : ""}. Keep it sharp, not heavy: crisp reps, full recovery, no grinding.` : "Team practice today \u2014 that's your main session. Keep any extra individual work light (mobility / activation).";
+    return finalize({
+      date,
+      phase,
+      intent: practiceMod.intent,
+      intentLabel: "Flag football practice",
+      targetRpe: practiceMod.rpe,
+      targetMinutes: practiceMod.minutes,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: practiceReasoning,
+      recoveryEmphasis: practiceMod.recoveryEmphasis,
+      nutrition: nutritionFor(
+        practiceMod.nutritionIntent,
+        bodyweight,
+        heavyDensity,
+        hotDay
+      ),
+      driverEvent,
+      hoursUntilNextEvent: hoursUntilNext,
+      acwrAtIssue: acwr,
+      seasonPhase: seasonPhase ?? null,
+      tournamentRecoveryAdjustment: tournamentRecoveryDay !== null ? {
+        dayAfterTournament: tournamentRecoveryDay,
+        gamesPlayed: lastEvent?.expectedGameCount ?? 0,
+        tournamentName: eventName
+      } : null
+    });
+  }
+  if (tournamentRecoveryDay !== null && !inputs.isTeamPractice) {
+    return applyPostTournamentRecovery(inputs, tournamentRecoveryDay);
+  }
+  switch (phase) {
+    case "recovery":
+      return finalize({
+        date,
+        phase,
+        intent: "recovery",
+        targetRpe: 3,
+        targetMinutes: 30,
+        sprintReps: 0,
+        strengthSets: 0,
+        reasoning: postEventReasoning(lastEvent),
+        recoveryEmphasis: "high",
+        nutrition: nutritionFor("recovery", bodyweight, heavyDensity, hotDay),
+        driverEvent,
+        hoursUntilNextEvent: hoursUntilNext,
+        acwrAtIssue: acwr
+      });
+    case "taper": {
+      const dayOfTaper = hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : TAPER_CONFIG.defaultDayOfTaper;
+      const t = dayOfTaper <= TAPER_CONFIG.finalThirdDaysOut ? TAPER_CONFIG.individual.final : TAPER_CONFIG.individual.regular;
+      return finalize({
+        date,
+        phase,
+        intent: t.intent,
+        targetRpe: t.rpe,
+        targetMinutes: t.minutes,
+        sprintReps: t.sprintReps,
+        strengthSets: 0,
+        reasoning: taperReasoning(driverEvent, dayOfTaper),
+        recoveryEmphasis: "medium",
+        nutrition: nutritionFor("taper", bodyweight, heavyDensity, hotDay),
+        driverEvent,
+        hoursUntilNextEvent: hoursUntilNext,
+        acwrAtIssue: acwr
+      });
+    }
+    case "transition":
+      return finalize({
+        date,
+        phase,
+        intent: heavyDensity ? "mobility" : "mixed",
+        targetRpe: 5,
+        targetMinutes: 45,
+        sprintReps: 0,
+        strengthSets: 3,
+        reasoning: "Off-season window. Maintain GPP base \u2014 easy aerobic + lift.",
+        recoveryEmphasis: "low",
+        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+        driverEvent,
+        hoursUntilNextEvent: hoursUntilNext,
+        acwrAtIssue: acwr
+      });
+    case "accumulation":
+    default: {
+      const weekHint = inputs.weeklyIntentHint ?? null;
+      const weeklyUnsafe = inputs.weeklyProgressionUnsafe ?? false;
+      if (seasonPhase && seasonPhase !== "preseason") {
+        let intent2 = weekHint !== null ? modulateIntentForLoad(weekHint, acwr, heavyDensity, weeklyUnsafe) : seasonShapedIntent(date, seasonPhase, acwr, heavyDensity);
+        if (weekHint === null && weeklyUnsafe && (intent2 === "sprint" || intent2 === "strength" || intent2 === "mixed")) {
+          intent2 = "technical";
+        }
+        const t2 = baseTargets(intent2);
+        return finalize({
+          date,
+          phase,
+          intent: intent2,
+          targetRpe: t2.targetRpe,
+          targetMinutes: t2.targetMinutes,
+          sprintReps: t2.sprintReps,
+          strengthSets: t2.strengthSets,
+          reasoning: seasonReasoning(seasonPhase, intent2),
+          recoveryEmphasis: heavyDensity ? "medium" : "low",
+          nutrition: nutritionFor(intent2, bodyweight, heavyDensity, hotDay),
+          driverEvent,
+          hoursUntilNextEvent: hoursUntilNext,
+          acwrAtIssue: acwr,
+          seasonPhase
+        });
+      }
+      let intent = weekHint !== null ? modulateIntentForLoad(weekHint, acwr, heavyDensity, weeklyUnsafe) : pickAccumulationIntent(date, acwr, heavyDensity);
+      if (weekHint === null && weeklyUnsafe && (intent === "sprint" || intent === "strength" || intent === "mixed")) {
+        intent = "technical";
+      }
+      const t = buildTargets(intent);
+      return finalize({
+        date,
+        phase,
+        intent,
+        targetRpe: t.targetRpe,
+        targetMinutes: t.targetMinutes,
+        sprintReps: t.sprintReps,
+        strengthSets: t.strengthSets,
+        reasoning: accumulationReasoning(intent, acwr, heavyDensity),
+        recoveryEmphasis: heavyDensity ? "medium" : "low",
+        nutrition: nutritionFor(intent, bodyweight, heavyDensity, hotDay),
+        driverEvent,
+        hoursUntilNextEvent: hoursUntilNext,
+        acwrAtIssue: acwr,
+        seasonPhase: seasonPhase ?? null
+      });
+    }
+  }
+}
+function macroPhaseFor(date, windows) {
+  if (!windows || windows.length === 0) {
+    return null;
+  }
+  const iso = toIsoDate(date);
+  const md = iso.slice(5);
+  for (const w of windows) {
+    if (w && w.from && w.to && inSeasonWindow(iso, md, w.from, w.to)) {
+      return w.phase;
+    }
+  }
+  return null;
+}
+function inSeasonWindow(iso, md, from, to) {
+  const recurring = from.length === 5 && to.length === 5;
+  if (recurring) {
+    return from <= to ? md >= from && md <= to : md >= from || md <= to;
+  }
+  const f = from.slice(0, 10);
+  const t = to.slice(0, 10);
+  return f <= t ? iso >= f && iso <= t : iso >= f || iso <= t;
+}
+function planWeekIntents(teamPracticeFlags, phases) {
+  const intents = new Array(7).fill(null);
+  const isGameDay = phases.map(
+    (p) => p === "competition" || p === "taper" || p === "recovery"
+  );
+  const isLocked = Array.from(
+    { length: 7 },
+    (_, i) => teamPracticeFlags[i] || isGameDay[i]
+  );
+  const freeDays = Array.from({ length: 7 }, (_, i) => i).filter(
+    (i) => !isLocked[i] && phases[i] === "accumulation"
+  );
+  if (!freeDays.length) return intents;
+  const nearestBefore = (idx, flags) => {
+    for (let d = 1; d <= idx; d++) if (flags[idx - d]) return d;
+    return 99;
+  };
+  const nearestAfter = (idx, flags) => {
+    for (let d = 1; d < 7 - idx; d++) if (flags[idx + d]) return d;
+    return 99;
+  };
+  const slots = freeDays.map((idx) => {
+    const gameB = nearestBefore(idx, isGameDay);
+    const gameA = nearestAfter(idx, isGameDay);
+    const pracB = nearestBefore(idx, teamPracticeFlags);
+    const pracA = nearestAfter(idx, teamPracticeFlags);
+    const minGame = Math.min(gameB, gameA);
+    const minPrac = Math.min(pracB, pracA);
+    const maxPrac = Math.max(pracB, pracA);
+    const quality = minGame * 1e3 + minPrac * 10 + maxPrac;
+    return { idx, gameB, gameA, pracB, pracA, quality };
+  });
+  const mandatoryCount = isLocked.filter(Boolean).length;
+  const budget = Math.max(0, 5 - mandatoryCount);
+  const sorted = [...slots].sort((a, b) => b.quality - a.quality);
+  const trainingIdxs = /* @__PURE__ */ new Set();
+  for (const { idx } of sorted) {
+    if (trainingIdxs.size >= budget) break;
+    if ([...trainingIdxs].some((t) => Math.abs(t - idx) === 1)) continue;
+    trainingIdxs.add(idx);
+  }
+  for (const { idx } of slots) {
+    if (!trainingIdxs.has(idx)) intents[idx] = "rest";
+  }
+  let strengthAssigned = 0;
+  let sprintAssigned = 0;
+  for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
+    const s = slots.find((sl) => sl.idx === idx);
+    const minGameDist = Math.min(s.gameB, s.gameA);
+    if (minGameDist <= 1) {
+      intents[idx] = "rest";
+      continue;
+    }
+    if (s.pracA === 1) {
+      intents[idx] = "technical";
+      continue;
+    }
+    if (s.pracB === 1) {
+      intents[idx] = "strength";
+      strengthAssigned++;
+      continue;
+    }
+    if (Math.min(s.pracB, s.pracA) >= 2) {
+      if (sprintAssigned < strengthAssigned && sprintAssigned < 2) {
+        intents[idx] = "sprint";
+        sprintAssigned++;
+      } else {
+        intents[idx] = "strength";
+        strengthAssigned++;
+      }
+      continue;
+    }
+    intents[idx] = "technical";
+  }
+  return intents;
+}
+var DEMOTION_PRIORITY = [
+  "taper-prime",
+  "mobility",
+  "technical",
+  "mixed",
+  "sprint",
+  "strength"
+];
+function enforceWeeklyRestMinimum(prescriptions, teamPracticeFlags) {
+  const MIN_REST = 2;
+  const restCount = prescriptions.filter((p) => p.intent === "rest").length;
+  if (restCount >= MIN_REST) return prescriptions;
+  const needed = MIN_REST - restCount;
+  const demotable = prescriptions.map((p, i) => ({ i, p, priority: DEMOTION_PRIORITY.indexOf(p.intent) })).filter(
+    ({ p, i, priority }) => !teamPracticeFlags[i] && p.intent !== "rest" && p.intent !== "recovery" && p.intent !== "competition" && priority !== -1
+    // taper-prime is no longer excluded — in a loaded week the pre-game slot
+    // is the most natural rest day. DEMOTION_PRIORITY already ranks it first,
+    // so it's only chosen when there's truly no better candidate.
+  ).sort((a, b) => a.priority - b.priority);
+  const toRest = new Set(demotable.slice(0, needed).map((d) => d.i));
+  return prescriptions.map(
+    (p, i) => toRest.has(i) ? {
+      ...p,
+      intent: "rest",
+      intentLabel: INTENT_LABELS["rest"],
+      targetRpe: 2,
+      targetMinutes: 15,
+      sprintReps: 0,
+      strengthSets: 0,
+      reasoning: "Rest day \u2014 2 full rest days per week are non-negotiable for adaptation. Complete your 15-min daily mobility and stretching routine.",
+      recoveryEmphasis: "low",
+      secondSession: null
+    } : p
+  );
+}
+function addSecondSessions(prescriptions, teamPracticeFlags, competitionPhases, todayReadiness, todayAcwr) {
+  const isHighLoad = competitionPhases.map(
+    (p) => p === "competition" || p === "taper" || p === "recovery"
+  );
+  return prescriptions.map((p, i) => {
+    const phase = p.seasonPhase;
+    if (phase !== "preseason" && phase !== "offseason") return p;
+    if (teamPracticeFlags[i]) return p;
+    if (p.intent !== "strength") return p;
+    if (p.targetRpe === null) return p;
+    const nearestHighLoad = Array.from(
+      { length: 7 },
+      (_, j) => isHighLoad[j] ? Math.abs(i - j) : 99
+    ).reduce((min, d) => Math.min(min, d), 99);
+    if (nearestHighLoad < 2) return p;
+    if (i === 0) {
+      if ((todayReadiness ?? 70) < 75) return p;
+      if (todayAcwr !== null && todayAcwr > 1.2) return p;
+    }
+    const practiceFollowsTomorrow = i + 1 < 7 && teamPracticeFlags[i + 1];
+    const secondIntent = practiceFollowsTomorrow ? "technical" : "sprint";
+    return {
+      ...p,
+      secondSession: {
+        intent: secondIntent,
+        intentLabel: INTENT_LABELS[secondIntent],
+        targetRpe: Math.max(5, (p.targetRpe ?? 7) - 1),
+        targetMinutes: secondIntent === "sprint" ? 40 : 45,
+        reasoning: secondIntent === "sprint" ? "PM speed session \u2014 6 h after morning strength. Short, high-quality sprints while CNS is primed and pre-fatigue is low." : "PM technical session \u2014 skills and route running at low metabolic cost; capitalises on strength stimulus without CNS overlap."
+      }
+    };
+  });
+}
+function seasonShapedIntent(date, season, acwr, heavyDensity) {
+  const dow = date.getDay();
+  let week;
+  switch (season) {
+    case "offseason":
+      week = [
+        "rest",
+        "strength",
+        "mixed",
+        "rest",
+        "strength",
+        "technical",
+        "mixed"
+      ];
+      break;
+    case "inseason":
+      week = [
+        "rest",
+        "strength",
+        "technical",
+        "rest",
+        "technical",
+        "strength",
+        "mixed"
+      ];
+      break;
+    case "peak":
+      week = [
+        "rest",
+        "sprint",
+        "technical",
+        "rest",
+        "technical",
+        "sprint",
+        "recovery"
+      ];
+      break;
+    case "postseason":
+    // active regeneration; easy movement only
+    case "transition":
+      week = [
+        "rest",
+        "recovery",
+        "mobility",
+        "rest",
+        "mobility",
+        "recovery",
+        "mobility"
+      ];
+      break;
+    case "preseason":
+    default:
+      return pickAccumulationIntent(date, acwr, heavyDensity);
+  }
+  let intent = week[dow];
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (intent === "sprint" || intent === "strength") intent = "mobility";
+    else if (intent === "mixed") intent = "technical";
+  }
+  if (heavyDensity && intent !== "rest") {
+    if (intent === "strength") intent = "technical";
+    if (intent === "mixed") intent = "mobility";
+  }
+  return intent;
+}
+function seasonReasoning(season, intent) {
+  switch (season) {
+    case "offseason":
+      return `Off-season \xB7 strength & conditioning block. Today is a ${intent} day.`;
+    case "inseason":
+      return `In-season \xB7 maintain strength and sharpen skills. Today is a ${intent} day.`;
+    case "peak":
+      return `Peak season \xB7 stay sharp and fresh \u2014 quality over quantity. Today is a ${intent} day.`;
+    case "postseason":
+      return `Post-season \xB7 active regeneration and aerobic base. Today is a ${intent} day.`;
+    case "transition":
+      return `Transition \xB7 active rest and aerobic base. Today is a ${intent} day.`;
+    case "preseason":
+    default:
+      return `Pre-season build \u2014 progressing load toward the season. Today is a ${intent} day.`;
+  }
+}
+var HEAT_CAUTION_C = 28;
+var HEAT_REDUCE_C = 32;
+var HEAT_AVOID_C = 35;
+var HEAT_STOP_C = 38;
+var COLD_CAUTION_C = 4;
+var COLD_AVOID_C = -5;
+var WIND_UNRELIABLE_KMH = 40;
+var RAIN_PRECIP_MM = 0.5;
+var RAIN_WEATHER_CODE = 61;
+var STORM_CODE_MIN = 95;
+var STORM_CODE_MAX = 99;
+var HEAT_LOAD_FACTOR_REDUCE = 1.1;
+var HEAT_LOAD_FACTOR_AVOID = 1.2;
+var HEAT_VOLUME_CUT = 0.8;
+var ACCLIMATIZATION_WINDOW_DAYS = 14;
+var ACCLIMATIZATION_MAX_SHIFT_C = 4;
+function acclimatizationShiftC(acclimatizationDay) {
+  if (acclimatizationDay === null || acclimatizationDay < 0 || acclimatizationDay >= ACCLIMATIZATION_WINDOW_DAYS) {
+    return 0;
+  }
+  return ACCLIMATIZATION_MAX_SHIFT_C * (1 - acclimatizationDay / ACCLIMATIZATION_WINDOW_DAYS);
+}
+var OUTDOOR_INTENSE = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime"]);
+function substituteForWet(intent) {
+  return intent === "taper-prime" ? "mobility" : "strength";
+}
+function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null) {
+  if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
+    return rx;
+  }
+  const apparent = typeof weather.apparentC === "number" ? weather.apparentC : typeof weather.tempC === "number" ? weather.tempC : null;
+  const code = weather.weatherCode;
+  const storm = code !== null && code >= STORM_CODE_MIN && code <= STORM_CODE_MAX;
+  const wet = code !== null && code >= RAIN_WEATHER_CODE && code < STORM_CODE_MIN || weather.precipMm !== null && weather.precipMm > RAIN_PRECIP_MM;
+  const wind = weather.windKmh;
+  const shift = acclimatizationShiftC(acclimatizationDay);
+  const acclimatizing = shift > 0;
+  const heatStopEff = HEAT_STOP_C - shift;
+  const heatAvoidEff = HEAT_AVOID_C - shift;
+  const heatReduceEff = HEAT_REDUCE_C - shift;
+  const heatCautionEff = HEAT_CAUTION_C - shift;
+  const coldAvoidEff = COLD_AVOID_C + shift;
+  const coldCautionEff = COLD_CAUTION_C + shift;
+  const acclimNote = acclimatizing ? ` Still acclimatizing (day ${acclimatizationDay} at this climate) \u2014 extra caution applied.` : "";
+  const original = rx.intent;
+  const heatLoadFactor = apparent === null ? 1 : apparent >= heatAvoidEff ? HEAT_LOAD_FACTOR_AVOID : apparent >= heatReduceEff ? HEAT_LOAD_FACTOR_REDUCE : 1;
+  const t = (n) => Math.round(n);
+  let action = "none";
+  let adjusted = original;
+  let reason = "";
+  if (storm) {
+    action = "stop";
+    adjusted = "recovery";
+    reason = "Thunderstorm \u2014 lightning risk. Outdoor training stopped; move indoors or rest.";
+  } else if (apparent !== null && apparent >= heatStopEff) {
+    action = "stop";
+    adjusted = "recovery";
+    reason = `${t(apparent)}\xB0C feels-like \u2014 too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatAvoidEff) {
+    action = "relocate";
+    adjusted = "mobility";
+    reason = `${t(apparent)}\xB0C feels-like \u2014 no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
+  } else if (wet) {
+    action = "substitute";
+    adjusted = substituteForWet(original);
+    reason = "Wet grass \u2014 slip/ACL risk on sprints & cuts. Moved indoors to a tempo + strength session.";
+  } else if (apparent !== null && apparent <= coldAvoidEff) {
+    action = "substitute";
+    adjusted = "mobility";
+    reason = `${t(apparent)}\xB0C feels-like \u2014 no outdoor max-effort in the cold. Indoor low-intensity mobility instead.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatReduceEff) {
+    action = "scale";
+    reason = `${t(apparent)}\xB0C feels-like \u2014 cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
+  } else if (apparent !== null && apparent >= heatCautionEff) {
+    reason = `${t(apparent)}\xB0C \u2014 warm. Add hydration and breaks; session unchanged.${acclimNote}`;
+  } else if (apparent !== null && apparent <= coldCautionEff) {
+    reason = `${t(apparent)}\xB0C \u2014 cold muscles. Extend your warm-up; ease into max-velocity work.${acclimNote}`;
+  } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
+    reason = `${t(wind)} km/h wind \u2014 throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
+  } else {
+    return rx;
+  }
+  if (coachOverride) {
+    const note = storm ? "Coach override: training as planned \u2014 but lightning is present, take shelter if it nears." : `Coach override: training as planned despite conditions \u2014 ${reason}`;
+    return {
+      ...rx,
+      weatherAdjustment: {
+        applied: false,
+        action: "none",
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason: note
+      }
+    };
+  }
+  if (action === "none") {
+    return {
+      ...rx,
+      weatherAdjustment: {
+        applied: false,
+        action: "none",
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason
+      }
+    };
+  }
+  if (action === "scale") {
+    return {
+      ...rx,
+      targetMinutes: t(rx.targetMinutes * HEAT_VOLUME_CUT),
+      sprintReps: t(rx.sprintReps * HEAT_VOLUME_CUT),
+      reasoning: `${reason} ${rx.reasoning}`,
+      weatherAdjustment: {
+        applied: true,
+        action,
+        originalIntent: original,
+        adjustedIntent: original,
+        heatLoadFactor,
+        reason
+      }
+    };
+  }
+  const nt = baseTargets(adjusted);
+  return {
+    ...rx,
+    intent: adjusted,
+    intentLabel: INTENT_LABELS[adjusted],
+    targetRpe: nt.targetRpe,
+    targetMinutes: nt.targetMinutes,
+    sprintReps: nt.sprintReps,
+    strengthSets: nt.strengthSets,
+    reasoning: `${reason} ${rx.reasoning}`,
+    weatherAdjustment: {
+      applied: true,
+      action,
+      originalIntent: original,
+      adjustedIntent: adjusted,
+      heatLoadFactor,
+      reason
+    }
+  };
+}
+function baseTargets(intent) {
+  switch (intent) {
+    case "rest":
+      return {
+        targetRpe: 2,
+        targetMinutes: 15,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+    case "recovery":
+      return {
+        targetRpe: 3,
+        targetMinutes: 30,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+    case "mobility":
+      return {
+        targetRpe: 4,
+        targetMinutes: 45,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+    case "technical":
+      return {
+        targetRpe: 5,
+        targetMinutes: 60,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+    case "sprint":
+      return {
+        targetRpe: 8,
+        targetMinutes: 60,
+        sprintReps: 10,
+        strengthSets: 0
+      };
+    case "strength":
+      return {
+        targetRpe: 7,
+        targetMinutes: 75,
+        sprintReps: 0,
+        strengthSets: 18
+      };
+    case "mixed":
+      return {
+        targetRpe: 6,
+        targetMinutes: 75,
+        sprintReps: 6,
+        strengthSets: 8
+      };
+    case "taper-prime":
+      return {
+        targetRpe: 4,
+        targetMinutes: 25,
+        sprintReps: 4,
+        strengthSets: 0
+      };
+    case "competition":
+      return {
+        targetRpe: null,
+        targetMinutes: 60,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+    case "travel":
+      return {
+        targetRpe: null,
+        targetMinutes: 0,
+        sprintReps: 0,
+        strengthSets: 0
+      };
+  }
+}
+var BUILD_TARGET_OVERRIDES = {
+  // rest is rest in any phase: no structured training, just daily mobility.
+  // Previous value (RPE 6) was a stale pre-refactor literal and is corrected here.
+  rest: { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 },
+  mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+  technical: {
+    targetRpe: 6,
+    targetMinutes: 75,
+    sprintReps: 0,
+    strengthSets: 0
+  }
+};
+function buildTargets(intent) {
+  return BUILD_TARGET_OVERRIDES[intent] ?? baseTargets(intent);
+}
+function finalize(partial) {
+  return {
+    ...partial,
+    date: toIsoDate(partial.date),
+    intentLabel: partial.intentLabel ?? INTENT_LABELS[partial.intent]
+  };
+}
+function toIsoDate(d) {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function pickDriverEvent(date, upcoming, lastEvent) {
+  const next = upcoming.find(
+    (e) => new Date(e.endsAt ?? e.startsAt).getTime() >= date.getTime()
+  );
+  if (next) {
+    return next;
+  }
+  return lastEvent;
+}
+function nextEventHours(date, upcoming) {
+  const next = upcoming.find(
+    (e) => new Date(e.endsAt ?? e.startsAt).getTime() >= date.getTime()
+  );
+  if (!next) {
+    return null;
+  }
+  const diffMs = new Date(next.startsAt).getTime() - date.getTime();
+  if (diffMs <= 0) {
+    return 0;
+  }
+  return Math.round(diffMs / 36e5);
+}
+function postEventReasoning(lastEvent) {
+  if (!lastEvent) {
+    return "Recovery focus today \u2014 light blood flow only.";
+  }
+  const games = lastEvent.expectedGameCount ?? 1;
+  const eventName = lastEvent.competitionShortName ?? lastEvent.competitionName;
+  return `Just played ${games} game${games === 1 ? "" : "s"} at ${eventName}. Body is repairing \u2014 easy day.`;
+}
+function taperReasoning(event, daysOut) {
+  if (!event) {
+    return "Taper week. Keep nervous system sharp at low volume.";
+  }
+  const games = event.expectedGameCount ?? 1;
+  const eventName = event.competitionShortName ?? event.competitionName;
+  return `${daysOut} day${daysOut === 1 ? "" : "s"} to ${eventName} (${games} games). Sharp, not heavy.`;
+}
+function accumulationReasoning(intent, acwr, heavyDensity) {
+  if (heavyDensity) {
+    return "Dense competition window ahead \u2014 modulating load now to arrive fresh.";
+  }
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    return `ACWR ${acwr.toFixed(2)} is elevated \u2014 reduced volume on a ${intent} focus.`;
+  }
+  if (acwr !== null && acwr < ACWR_UNDER) {
+    return `Under-trained (ACWR ${acwr.toFixed(2)}) \u2014 building load with a ${intent} session.`;
+  }
+  if (intent === "rest") {
+    return "Build phase rest day \u2014 no structured training. Complete your 15-min daily mobility and stretching routine.";
+  }
+  return `Build phase. Today is a ${intent} day.`;
+}
+function pickAccumulationIntent(date, acwr, heavyDensity) {
+  const dow = date.getDay();
+  const standard = [
+    "rest",
+    // Sun — post-week full rest
+    "strength",
+    // Mon — neuromuscular block
+    "sprint",
+    // Tue — speed / agility quality
+    "rest",
+    // Wed — mid-week full rest
+    "strength",
+    // Thu — second neuromuscular block
+    "technical",
+    // Fri — skills / routes (low CNS demand)
+    "mixed"
+    // Sat — integrated flag-football session
+  ];
+  let intent = standard[dow];
+  if (acwr !== null && acwr > ACWR_ELEVATED) {
+    if (intent === "sprint" || intent === "strength") {
+      intent = "mobility";
+    } else if (intent === "mixed") {
+      intent = "technical";
+    }
+  }
+  if (heavyDensity && intent !== "rest") {
+    if (intent === "strength") intent = "technical";
+    if (intent === "mixed") intent = "mobility";
+  }
+  return intent;
+}
+var CARB_PER_KG = {
+  rest: 3,
+  recovery: 3.5,
+  mobility: 3.5,
+  technical: 4,
+  sprint: 4.5,
+  // short, high-intensity, low-volume → light–moderate band
+  strength: 4.5,
+  mixed: 5,
+  // skill + conditioning, more total work
+  "taper-prime": 6,
+  // deliberate glycogen top-up, ≤24h to competition
+  competition: 7,
+  // game/tournament day: multiple games + refuel between
+  travel: 3.5
+  // travel day: light carbs, hydration focus
+};
+var PROTEIN_PER_KG = 1.8;
+var FLUID_BASE_ML_PER_KG = 35;
+var FLUID_COMPETITION_BONUS_L = 1.5;
+function nutritionFor(intent, bodyweightKg, heavyDensity, hotDay = false) {
+  const key = intent === "taper" ? "sprint" : intent === "transition" ? "mixed" : intent;
+  const carbsG = Math.round(CARB_PER_KG[key] * bodyweightKg);
+  const proteinG = Math.round(PROTEIN_PER_KG * bodyweightKg);
+  let hydrationL = FLUID_BASE_ML_PER_KG * bodyweightKg / 1e3;
+  if (key === "competition") {
+    hydrationL += FLUID_COMPETITION_BONUS_L;
+  }
+  if (heavyDensity && key !== "rest") {
+    hydrationL += 0.5;
+  }
+  if (hotDay && key !== "rest") {
+    hydrationL += 0.5;
+  }
+  return {
+    carbsG,
+    proteinG,
+    hydrationL: Math.round(hydrationL * 10) / 10,
+    rationale: key === "competition" ? "Game-day fueling: carbs every game, hydrate aggressively, protein after final game." : key === "rest" ? "Lower carb day. Protein steady to support repair." : key === "taper-prime" ? "Top up glycogen tonight. Hydrate well \u2014 game window opens soon." : `Daily targets at ${CARB_PER_KG[key]}g/kg carbs, ${PROTEIN_PER_KG}g/kg protein.`
+  };
+}
+var __periodization__ = {
+  prescribeFor,
+  nutritionFor,
+  pickAccumulationIntent,
+  macroPhaseFor,
+  applyWeatherGuard,
+  seasonShapedIntent,
+  baseTargets,
+  CARB_PER_KG,
+  cnsRecoveryHoursForAge,
+  isHighCnsSessionType,
+  planWeekIntents,
+  detectTournamentRecoveryDay,
+  modulateIntentForLoad
+};
+export {
+  __periodization__,
+  addSecondSessions,
+  applyWeatherGuard,
+  enforceWeeklyRestMinimum,
+  macroPhaseFor,
+  planWeekIntents,
+  prescribeFor
+};
