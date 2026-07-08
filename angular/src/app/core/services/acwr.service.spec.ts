@@ -13,6 +13,7 @@ import { AcwrService } from "./acwr.service";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { ReadinessService, ReadinessResponse } from "./readiness.service";
 import { TrainingSession } from "../models/acwr.models";
 
 // Mock services
@@ -597,6 +598,92 @@ describe("AcwrService", () => {
       expect(rangeSessions.length).toBe(1);
       expect(service.acwrRatio()).toBeNull(); // Insufficient data
     });
+  });
+});
+
+/**
+ * 2026-07-08 reusability audit F1: acwrRatio() must prefer the server's canonical
+ * value (readiness_scores.acwr, the same number the prescription engine consumes)
+ * over the client's own independent EWMA, falling back to it only when the server
+ * hasn't answered. This is a SEPARATE describe block with its own TestBed so the
+ * mocked ReadinessService doesn't affect the "insufficient data" assertions above
+ * (which rely on ReadinessService.current() defaulting to null).
+ */
+describe("AcwrService — server-preferred acwrRatio (audit F1)", () => {
+  let service: AcwrService;
+  let mockReadinessCurrent: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-16T12:00:00Z"));
+    mockReadinessCurrent = vi.fn(() => null);
+    TestBed.configureTestingModule({
+      providers: [
+        AcwrService,
+        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: LoggerService, useValue: mockLoggerService },
+        { provide: EvidenceConfigService, useValue: mockEvidenceConfigService },
+        {
+          provide: ReadinessService,
+          useValue: { current: mockReadinessCurrent },
+        },
+      ],
+    });
+    service = TestBed.inject(AcwrService);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    TestBed.resetTestingModule();
+  });
+
+  it("prefers the server's ACWR when present and positive", () => {
+    mockReadinessCurrent.mockImplementation(
+      () => ({ acwr: 1.42 }) as ReadinessResponse,
+    );
+    expect(service.acwrRatio()).toBe(1.42);
+  });
+
+  it("falls back to the local EWMA when the server has no value yet", () => {
+    // ReadinessService.current() -> null (default mock) -> falls through to
+    // localAcwrRatio(), which is null with no sessions loaded (insufficient data).
+    expect(service.acwrRatio()).toBeNull();
+  });
+
+  function freshServiceWithServerAcwr(acwr: number) {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AcwrService,
+        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: LoggerService, useValue: mockLoggerService },
+        { provide: EvidenceConfigService, useValue: mockEvidenceConfigService },
+        {
+          provide: ReadinessService,
+          useValue: { current: vi.fn(() => ({ acwr }) as ReadinessResponse) },
+        },
+      ],
+    });
+    return TestBed.inject(AcwrService);
+  }
+
+  it("falls back to local when the server value is zero", () => {
+    expect(freshServiceWithServerAcwr(0).acwrRatio()).toBeNull();
+  });
+
+  it("falls back to local when the server value is negative", () => {
+    expect(freshServiceWithServerAcwr(-1).acwrRatio()).toBeNull();
+  });
+
+  it("falls back to local when the server value is NaN", () => {
+    expect(freshServiceWithServerAcwr(NaN).acwrRatio()).toBeNull();
+  });
+
+  it("the server value drives riskZone classification too (not just acwrRatio)", () => {
+    mockReadinessCurrent.mockImplementation(
+      () => ({ acwr: 1.6 }) as ReadinessResponse,
+    );
+    expect(service.riskZone().level).toBe("danger-zone");
   });
 });
 

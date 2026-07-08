@@ -53,6 +53,7 @@ import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { CorrelationContextService } from "./correlation-context.service";
 import { RemoteTelemetryService } from "./remote-telemetry.service";
+import { ReadinessService } from "./readiness.service";
 import type {
   RealtimeChannel,
   RealtimePostgresInsertPayload,
@@ -113,6 +114,7 @@ export class AcwrService {
   private logger = inject(LoggerService);
   private readonly correlation = inject(CorrelationContextService);
   private readonly remoteTelemetry = inject(RemoteTelemetryService);
+  private readonly readinessService = inject(ReadinessService);
 
   // Realtime subscription channel
   private realtimeChannel: RealtimeChannel | null = null;
@@ -479,7 +481,15 @@ export class AcwrService {
    * null ("no data yet") from a low numeric ratio ("under-training").
    * Use sufficientDataForACWR to guard before reading this value numerically.
    */
-  public acwrRatio: Signal<number | null> = computed(() => {
+  /**
+   * The client's own EWMA, computed from locally-tracked session history.
+   * Still the source of truth for `predictNextSessionLoad`'s hypothetical
+   * "what if I train at X today" projection (that math evaluates a session
+   * that doesn't exist yet, so it can never come from the server) and the
+   * fallback for `acwrRatio` below when no server value is available yet
+   * (offline, not-yet-fetched, or insufficient server-side history).
+   */
+  private localAcwrRatio: Signal<number | null> = computed(() => {
     const acute = this.acuteLoad();
     const chronic = this.chronicLoad();
     const { sufficient } = this.hasSufficientData();
@@ -490,16 +500,46 @@ export class AcwrService {
   });
 
   /**
+   * Reactive signal: the athlete's current ACWR. Prefers the server's
+   * canonical value (utils/acwr.js's computeAcwrAt, stored on
+   * readiness_scores.acwr — the same number the prescription engine reads)
+   * over the client's independent EWMA, falling back to it when the server
+   * value isn't available yet. Reusability audit F1 (2026-07-08): this
+   * service used to compute its OWN ACWR unconditionally, meaning the
+   * ACWR/Stats display could show a different number than the one actually
+   * driving load-prescription decisions. Same preference order
+   * periodization.service.ts's private readAcwr() already used internally —
+   * promoted here so the whole app (not just the prescription engine) is
+   * consistent.
+   */
+  public acwrRatio: Signal<number | null> = computed(() => {
+    const serverAcwr = this.readinessService.current()?.acwr;
+    if (
+      typeof serverAcwr === "number" &&
+      Number.isFinite(serverAcwr) &&
+      serverAcwr > 0
+    ) {
+      return serverAcwr;
+    }
+    return this.localAcwrRatio();
+  });
+
+  /**
    * Reactive signal: Determine risk zone based on ACWR
    * Uses evidence-based thresholds from Gabbett (2016) and later syntheses
    */
   public riskZone: Signal<RiskZone> = computed(() => {
     const ratio = this.acwrRatio();
     const cfg = this.config();
-    const { sufficient } = this.hasSufficientData();
 
-    // Check data sufficiency first — ratio null means insufficient history
-    if (!sufficient || ratio === null) {
+    // `ratio === null` already fully captures "no usable ACWR from either
+    // source" — acwrRatio() itself now prefers the server value and only
+    // falls back to hasSufficientData()-gated local data when the server has
+    // none (audit F1, 2026-07-08). A SEPARATE `!sufficient` check here used
+    // to gate on local-only history even when the server DID have a valid
+    // number (e.g. a fresh device with no local session cache yet) — showing
+    // "Insufficient Data" next to what was actually a real, correct ratio.
+    if (ratio === null) {
       return {
         level: "no-data",
         color: "gray",
@@ -746,7 +786,6 @@ export class AcwrService {
       historyCutoff.setDate(
         historyCutoff.getDate() - ACWR_MEMORY_LIMITS.MAX_HISTORICAL_ACWR_DAYS,
       );
-
 
       // Filter by date and then cap by count for memory safety
       const filteredHistory = history
