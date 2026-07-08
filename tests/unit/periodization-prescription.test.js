@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { __test__ } from "../../netlify/functions/periodization-prescription.js";
+import { normalizeSeverity } from "../../netlify/functions/utils/periodization-input-helpers.js";
 
 const {
   resolveActiveRestrictions,
   resolveAgeYears,
   isTeamPractice,
-  normalizeSeverity,
   travelFieldsFromLeg,
 } = __test__;
 

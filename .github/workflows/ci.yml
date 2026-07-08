@@ -63,6 +63,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Type-check periodization-prescription.js against PeriodizationInputs/DailyPrescription
+        run: npm run typecheck:functions
       - name: Backend unit suite (pure, no DB)
         run: npm run test:unit:backend
       - name: Backend integration suite (mocked, no DB)

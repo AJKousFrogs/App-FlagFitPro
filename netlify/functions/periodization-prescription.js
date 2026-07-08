@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Server-side daily prescription — the backend-authoritative counterpart to the
  * client's `periodization.service.ts` "today" signal.
@@ -38,59 +39,37 @@ import {
 import { getActiveInjuries } from "./utils/active-injuries.js";
 import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
 import { prescribeFor, macroPhaseFor } from "./utils/periodization-engine.js";
+import {
+  deriveRestrictions,
+  isTeamPractice,
+} from "./utils/periodization-input-helpers.js";
 
+// @ts-expect-error — structured-logger.js is intentionally outside this file's
+// @ts-check scope (see tsconfig.typecheck.json), so its createLogger({service})
+// signature is loosely inferred rather than precisely typed. Runtime-correct
+// (every other function in this codebase calls it the same way); if
+// structured-logger.js is ever typed properly this line will start erroring
+// "unused @ts-expect-error", which is exactly the signal to remove it.
 const logger = createLogger({ service: "netlify.periodization-prescription" });
 
-const SPRINT_RESTRICTING = new Set([
-  "sprint",
-  "high_intensity",
-  "plyometric",
-  "agility",
-]);
-const THROWING_RESTRICTING = new Set(["throwing", "upper_strength"]);
-const SEV_RANK = { minor: 1, moderate: 2, severe: 3 };
-
-// athlete_injuries.injury_grade stores "Grade 1/2/3" (clinical) or the legacy
-// minor/moderate/severe vocab — same mapping as utils/active-injuries.js's
-// injuriesPainLevel, applied to the "minor"/"moderate"/"severe" domain instead.
-function normalizeSeverity(grade) {
-  const map = {
-    "Grade 1": "minor",
-    "Grade 2": "moderate",
-    "Grade 3": "severe",
-    minor: "minor",
-    moderate: "moderate",
-    severe: "severe",
-  };
-  return map[grade] ?? "minor";
-}
-
 /**
- * Mirrors the client's InjuryService.restrictions() computed exactly: which
- * restriction TYPES are active across all current injuries, and the worst
- * severity/region set among the ones that actually restrict sprint or throwing.
+ * Adapts raw athlete_injuries rows (snake_case) to the shared
+ * NormalizedInjury shape and calls the SAME deriveRestrictions the client's
+ * InjuryService.restrictions() uses (via periodization-input-helpers, ported
+ * from periodization-input-helpers.ts — reusability audit F8, 2026-07-08).
+ * This used to be an independently hand-copied, only parity-tested-to-match
+ * implementation; consolidating it surfaced and fixed a real client-side bug
+ * (see that module's header comment) — severity grade normalization now
+ * happens identically on both sides because it's literally the same code.
  */
 function resolveActiveRestrictions(injuries) {
-  const sprintInjuries = injuries.filter((i) =>
-    (i.activity_restrictions ?? []).some((r) => SPRINT_RESTRICTING.has(r)),
+  return deriveRestrictions(
+    injuries.map((i) => ({
+      region: i.injury_location ?? null,
+      restrictionTypes: i.activity_restrictions ?? [],
+      severityGrade: i.injury_grade,
+    })),
   );
-  const throwingInjuries = injuries.filter((i) =>
-    (i.activity_restrictions ?? []).some((r) => THROWING_RESTRICTING.has(r)),
-  );
-  const restrictsSprint = sprintInjuries.length > 0;
-  const restrictsThrowing = throwingInjuries.length > 0;
-  if (!restrictsSprint && !restrictsThrowing) {
-    return null;
-  }
-  const flagged = [...sprintInjuries, ...throwingInjuries];
-  const regions = [
-    ...new Set(flagged.map((i) => i.injury_location).filter(Boolean)),
-  ];
-  const severity = flagged.reduce((worst, i) => {
-    const s = normalizeSeverity(i.injury_grade);
-    return !worst || SEV_RANK[s] > SEV_RANK[worst] ? s : worst;
-  }, null);
-  return { restrictsSprint, restrictsThrowing, regions, severity };
 }
 
 function resolveAgeYears(dob) {
@@ -108,14 +87,6 @@ function resolveAgeYears(dob) {
     age -= 1;
   }
   return age >= 16 && age <= 80 ? age : null;
-}
-
-function isTeamPractice(date, recurringDays, scheduleTrainingDays) {
-  if (recurringDays.includes(date.getDay())) {
-    return true;
-  }
-  const iso = date.toISOString().slice(0, 10);
-  return scheduleTrainingDays.includes(iso);
 }
 
 /**
@@ -260,43 +231,57 @@ async function assemblePeriodizationInputs(userId, now) {
     rpe: typeof r.rpe === "number" ? r.rpe : null,
   }));
 
-  return {
-    error: null,
-    inputs: {
-      date: now,
-      phase: snap.currentPhase,
-      upcoming: snap.upcoming,
-      lastEvent: snap.lastEvent,
-      acwr:
-        typeof readinessRow.data?.acwr === "number"
-          ? readinessRow.data.acwr
-          : null,
-      readiness:
-        typeof readinessRow.data?.score === "number"
-          ? readinessRow.data.score
-          : null,
-      bodyweightKg: weightKg,
-      density14d: snap.density14d
-        ? {
-            totalGames: snap.density14d.totalGames,
-            hasPeakImportance: snap.density14d.hasPeakImportance,
-            peakDayGameCount: snap.density14d.peakDayGameCount,
-          }
-        : null,
-      seasonPhase: macroPhaseFor(now, seasonCalendar),
-      weather,
-      recentSessions,
-      ageYears: resolveAgeYears(
-        userRow.data?.date_of_birth ?? userRow.data?.birth_date ?? null,
+  // Typed against the SAME interface the client engine's prescribeFor()
+  // requires (reusability audit F4, 2026-07-08): TypeScript checks this object
+  // literal's shape against PeriodizationInputs at build time (npm run
+  // typecheck:functions) — if the interface gains/renames/removes a field,
+  // this fails to compile instead of silently drifting at runtime. No .d.ts
+  // generation step needed: `checkJs` resolves the type straight from the .ts
+  // source via the import() path below.
+  /** @type {import("../../angular/src/app/core/models/prescription.models").PeriodizationInputs} */
+  const inputs = {
+    date: now,
+    // schedule.js's resolvePhase (see schedule-resolver-parity.test.js) always
+    // returns one of the 6 CompetitionPhase literals — narrowing here since
+    // schedule.js is outside this file's @ts-check scope, so its return type is
+    // loosely inferred as `string` rather than the precise union.
+    phase:
+      /** @type {import("../../angular/src/app/core/models/schedule.models").CompetitionPhase} */ (
+        snap.currentPhase
       ),
-      position: configRow.data?.primary_position ?? null,
-      isTeamPractice: isTeamPractice(now, recurringDays, snap.trainingDays),
-      activeRestrictions: resolveActiveRestrictions(activeInjuries),
-      acclimatizationDay: travel.acclimatizationDay,
-      arrivalDayTravelHours: travel.arrivalDayTravelHours,
-      coachOverride: false,
-    },
+    upcoming: snap.upcoming,
+    lastEvent: snap.lastEvent,
+    acwr:
+      typeof readinessRow.data?.acwr === "number"
+        ? readinessRow.data.acwr
+        : null,
+    readiness:
+      typeof readinessRow.data?.score === "number"
+        ? readinessRow.data.score
+        : null,
+    bodyweightKg: weightKg,
+    density14d: snap.density14d
+      ? {
+          totalGames: snap.density14d.totalGames,
+          hasPeakImportance: snap.density14d.hasPeakImportance,
+          peakDayGameCount: snap.density14d.peakDayGameCount,
+        }
+      : null,
+    seasonPhase: macroPhaseFor(now, seasonCalendar),
+    weather,
+    recentSessions,
+    ageYears: resolveAgeYears(
+      userRow.data?.date_of_birth ?? userRow.data?.birth_date ?? null,
+    ),
+    position: configRow.data?.primary_position ?? null,
+    isTeamPractice: isTeamPractice(now, recurringDays, snap.trainingDays),
+    activeRestrictions: resolveActiveRestrictions(activeInjuries),
+    acclimatizationDay: travel.acclimatizationDay,
+    arrivalDayTravelHours: travel.arrivalDayTravelHours,
+    coachOverride: false,
   };
+
+  return { error: null, inputs };
 }
 
 async function handleRequest(event, _context, { userId }) {
@@ -324,6 +309,7 @@ async function handleRequest(event, _context, { userId }) {
     );
   }
 
+  /** @type {import("../../angular/src/app/core/models/prescription.models").DailyPrescription} */
   const prescription = prescribeFor(inputs);
   return createSuccessResponse({ prescription });
 }
@@ -341,7 +327,6 @@ export const __test__ = {
   resolveActiveRestrictions,
   resolveAgeYears,
   isTeamPractice,
-  normalizeSeverity,
   travelFieldsFromLeg,
   assemblePeriodizationInputs,
 };
