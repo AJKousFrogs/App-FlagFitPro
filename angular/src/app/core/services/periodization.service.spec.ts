@@ -14,7 +14,7 @@ import {
   prescribeFor,
   macroPhaseFor,
   __periodization__,
-} from "./periodization.service";
+} from "./periodization-engine";
 import {
   PeriodizationInputs,
   WeatherInput,
