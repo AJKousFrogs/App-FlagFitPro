@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
   throwFromError: false,
+  lastOrFilter: null,
 }));
 
 function createFakeSupabase() {
@@ -12,7 +13,8 @@ function createFakeSupabase() {
     eq() {
       return this;
     }
-    or() {
+    or(filter) {
+      state.lastOrFilter = filter;
       return this;
     }
     order() {
@@ -54,8 +56,50 @@ describe("knowledge-search validation hardening", () => {
   beforeEach(async () => {
     vi.resetModules();
     state.throwFromError = false;
+    state.lastOrFilter = null;
     const mod = await import("../../netlify/functions/knowledge-search.js");
     handler = mod.handler;
+  });
+
+  async function search(query) {
+    return handler(
+      {
+        httpMethod: "POST",
+        path: "/.netlify/functions/knowledge-search",
+        headers: {},
+        body: JSON.stringify({ query }),
+      },
+      {},
+    );
+  }
+
+  // Security (wknw01 extraction): raw `query` was interpolated into a PostgREST
+  // `.or()` filter without metacharacter sanitization — an injection vector.
+  describe("PostgREST .or() injection hardening", () => {
+    it("strips filter metacharacters (,.()%*) before building the .or() clause", async () => {
+      const res = await search("hydration,injected.column.eq.secret");
+      expect(res.statusCode).toBe(200);
+      // No injected filter metacharacters survive into the filter string —
+      // only the sanitized alphanumeric/space/hyphen text is interpolated.
+      expect(state.lastOrFilter).not.toContain("injected.column.eq");
+      expect(state.lastOrFilter).not.toContain(",injected");
+      // The sanitized tokens (letters/numbers/space) are still searched.
+      expect(state.lastOrFilter).toContain("hydrationinjectedcolumneqsecret");
+    });
+
+    it("percent/paren wildcards cannot break out of the ilike clause", async () => {
+      await search("recovery%),(nutrition");
+      // The structural metacharacters are gone; the ilike template's own % remain.
+      expect(state.lastOrFilter).not.toContain("%),(");
+      expect(state.lastOrFilter).toContain("recoverynutrition");
+    });
+
+    it("a query of only metacharacters short-circuits to empty results, never hitting .or()", async () => {
+      const res = await search(",.()%*\\");
+      expect(res.statusCode).toBe(200);
+      expect(JSON.parse(res.body).data.total).toBe(0);
+      expect(state.lastOrFilter).toBeNull();
+    });
   });
 
   it("returns 422 for malformed search limit", async () => {
