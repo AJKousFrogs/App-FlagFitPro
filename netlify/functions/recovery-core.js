@@ -27,6 +27,28 @@ const logger = createLogger({ service: "netlify.recovery-core" });
 // =============================================================================
 
 // =============================================================================
+// RECOVERY TRIGGER THRESHOLDS (2026-07-08, reusability audit F6)
+// Were hardcoded inline in the priority/next-day-recovery branches below —
+// extracted to named constants so the trigger points are visible in one place
+// instead of buried in `if` conditions. Same team-wide values for every athlete
+// today (not yet team-configurable like monitoring_config's Hooper thresholds —
+// that would be a product decision about whether coaches should be able to tune
+// this, not a mechanical extraction, so it's flagged, not silently added here).
+// =============================================================================
+const RECOVERY_TRIGGERS = {
+  // Session-priority classification (intensity/soreness 1-10 scale)
+  HIGH_INTENSITY: 8,
+  HIGH_INTENSITY_NEAR_NEXT_SESSION: 6,
+  NEAR_NEXT_SESSION_DAYS: 1,
+  CRITICAL_INTENSITY: 9,
+  CRITICAL_SORENESS: 7,
+  LOW_INTENSITY: 4,
+  // Next-day active-recovery trigger
+  NEXT_DAY_SORENESS: 5,
+  NEXT_DAY_INTENSITY: 7,
+};
+
+// =============================================================================
 // RECOVERY PROTOCOL DEFINITIONS
 // =============================================================================
 
@@ -640,11 +662,18 @@ function generateRecoveryRecommendations(params) {
   };
 
   // Determine recovery priority based on intensity and time until next session
-  if (intensity >= 8 || (intensity >= 6 && daysUntilNextSession <= 1)) {
+  if (
+    intensity >= RECOVERY_TRIGGERS.HIGH_INTENSITY ||
+    (intensity >= RECOVERY_TRIGGERS.HIGH_INTENSITY_NEAR_NEXT_SESSION &&
+      daysUntilNextSession <= RECOVERY_TRIGGERS.NEAR_NEXT_SESSION_DAYS)
+  ) {
     recommendations.priority = "high";
-  } else if (intensity >= 9 || soreness >= 7) {
+  } else if (
+    intensity >= RECOVERY_TRIGGERS.CRITICAL_INTENSITY ||
+    soreness >= RECOVERY_TRIGGERS.CRITICAL_SORENESS
+  ) {
     recommendations.priority = "critical";
-  } else if (intensity <= 4) {
+  } else if (intensity <= RECOVERY_TRIGGERS.LOW_INTENSITY) {
     recommendations.priority = "low";
   }
 
@@ -743,7 +772,10 @@ function generateRecoveryRecommendations(params) {
   }
 
   // Next day recovery
-  if (soreness >= 5 || intensity >= 7) {
+  if (
+    soreness >= RECOVERY_TRIGGERS.NEXT_DAY_SORENESS ||
+    intensity >= RECOVERY_TRIGGERS.NEXT_DAY_INTENSITY
+  ) {
     recommendations.nextDay.push({
       protocol: "active_recovery",
       technique: "Light Activity",
