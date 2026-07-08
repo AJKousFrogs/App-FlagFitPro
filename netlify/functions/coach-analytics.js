@@ -4,6 +4,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
+import { mapKnownHandlerError } from "./utils/handler-errors.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
 
@@ -809,24 +810,9 @@ const handler = async (event, context) => {
           requestId,
         );
       } catch (error) {
-        if (error.code === "invalid_json") {
-          return createErrorResponse(
-            "Invalid JSON in request body",
-            400,
-            "invalid_json",
-            requestId,
-          );
-        }
-        if (
-          error.message?.includes("must be an integer between") ||
-          error.message?.includes("Request body must be an object")
-        ) {
-          return createErrorResponse(
-            error.message,
-            422,
-            "validation_error",
-            requestId,
-          );
+        const known = mapKnownHandlerError(error, requestId);
+        if (known) {
+          return known;
         }
         requestLogger.error("coach_analytics_handler_failed", error, {
           http_method: method,
