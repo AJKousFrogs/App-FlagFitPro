@@ -10,9 +10,14 @@
  * EWMA Formula:
  *   Load = RPE × Duration (minutes)
  *   λ_acute = 2 / (7 + 1) = 0.25
- *   λ_chronic = 2 / (28 + 1) ≈ 0.069
+ *   λ_chronic = 2 / (21 + 1) ≈ 0.0909
  *   EWMA = Σ (λ × load_i × (1 - λ)^(days_ago))
- *   ACWR = EWMA_acute / max(EWMA_chronic, 100)
+ *   ACWR = EWMA_acute / max(EWMA_chronic, 50)
+ *
+ * NOTE: this file REIMPLEMENTS the formula to check internal consistency; it does
+ * NOT import the real engine. The authoritative FE↔BE drift guard (imports both
+ * real sources) is tests/unit/acwr-config-drift.test.js — keep these values in sync
+ * with netlify/functions/utils/acwr.js.
  *
  * Risk Zones:
  *   - under-training: ACWR < 0.8
@@ -73,19 +78,20 @@ async function describe(name, fn) {
 // =============================================================================
 
 /**
- * ACWR Configuration (matches FE AcwrService)
+ * ACWR Configuration — mirrors the backend authority netlify/functions/utils/acwr.js
+ * (adult baseline). The real FE↔BE guard is tests/unit/acwr-config-drift.test.js.
  */
 const ACWR_CONFIG = {
   acuteWindowDays: 7,
-  chronicWindowDays: 28,
+  chronicWindowDays: 21,
   acuteLambda: 2 / (7 + 1), // ~0.25
-  chronicLambda: 2 / (28 + 1), // ~0.069
+  chronicLambda: 2 / (21 + 1), // ~0.0909
   thresholds: {
     sweetSpotLow: 0.8,
     sweetSpotHigh: 1.3,
     dangerHigh: 1.5,
   },
-  minChronicLoad: 100,
+  minChronicLoad: 50,
   minDaysForChronic: 21,
   minSessionsForChronic: 12,
 };
@@ -247,9 +253,9 @@ async function testEWMACalculation() {
       );
       assertCloseTo(
         ACWR_CONFIG.chronicLambda,
-        0.069,
+        0.0909,
         0.001,
-        "Chronic lambda should be 2/(28+1)",
+        "Chronic lambda should be 2/(21+1)",
       );
     });
 
@@ -518,17 +524,17 @@ async function testConfigurationConstants() {
       );
     });
 
-    await test("Chronic window is 28 days", async () => {
+    await test("Chronic window is 21 days (uncoupled)", async () => {
       assert(
-        ACWR_CONFIG.chronicWindowDays === 28,
-        `Chronic window should be 28 days, got ${ACWR_CONFIG.chronicWindowDays}`,
+        ACWR_CONFIG.chronicWindowDays === 21,
+        `Chronic window should be 21 days, got ${ACWR_CONFIG.chronicWindowDays}`,
       );
     });
 
-    await test("Minimum chronic load is 100", async () => {
+    await test("Minimum chronic load is 50", async () => {
       assert(
-        ACWR_CONFIG.minChronicLoad === 100,
-        `Min chronic load should be 100, got ${ACWR_CONFIG.minChronicLoad}`,
+        ACWR_CONFIG.minChronicLoad === 50,
+        `Min chronic load should be 50, got ${ACWR_CONFIG.minChronicLoad}`,
       );
     });
 

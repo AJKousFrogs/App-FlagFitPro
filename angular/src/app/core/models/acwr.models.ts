@@ -274,12 +274,12 @@ export interface LoadAlert {
  */
 export interface ACWRConfig {
   // Window sizes for acute and chronic load calculation
-  acuteWindowDays: number; // Default: 7 (Gabbett 2016)
-  chronicWindowDays: number; // Default: 28 (Gabbett 2016)
+  acuteWindowDays: number; // Default: 7 (mirrors backend utils/acwr.js)
+  chronicWindowDays: number; // Default: 21, uncoupled (mirrors backend utils/acwr.js)
 
   // EWMA decay factors
-  acuteLambda: number; // Default: 0.2 (more weight to recent days)
-  chronicLambda: number; // Default: 0.05 (smoother for chronic load)
+  acuteLambda: number; // Default: 0.25 = 2/(7+1) (mirrors backend utils/acwr.js)
+  chronicLambda: number; // Default: ~0.0909 = 2/(21+1) (mirrors backend utils/acwr.js)
 
   // Evidence-based thresholds (Gabbett 2016, later syntheses)
   thresholds: {
