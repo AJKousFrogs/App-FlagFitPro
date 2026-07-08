@@ -45,6 +45,7 @@ import {
   enforceWeeklyRestMinimum,
   addSecondSessions,
 } from "./periodization-engine";
+import { isTeamPractice as isTeamPracticeShared } from "./periodization-input-helpers";
 
 /**
  * PeriodizationService — turns the schedule into prescriptions.
@@ -573,11 +574,11 @@ export class PeriodizationService {
    * recurring set OR a one-off training event falls on it (snapshot.trainingDays).
    */
   private isTeamPractice(date: Date, trainingDays?: string[]): boolean {
-    if (this.teamTrainingDays().includes(date.getDay())) {
-      return true;
-    }
-    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    return (trainingDays ?? []).includes(iso);
+    return isTeamPracticeShared(
+      date,
+      this.teamTrainingDays(),
+      trainingDays ?? [],
+    );
   }
 
   // ---------------------------------------------------------------------------

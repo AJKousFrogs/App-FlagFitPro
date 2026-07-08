@@ -29,6 +29,8 @@ export default [
       // Generated bundle (esbuild output of the TS periodization engine); parity
       // is guarded by tests, and it is regenerated via build:periodization-engine.
       "netlify/functions/utils/periodization-engine.js",
+      // Generated bundle (esbuild output of periodization-input-helpers.ts).
+      "netlify/functions/utils/periodization-input-helpers.js",
       "**/*.ts",
       "**/*.tsx",
       "**/*.jsx",

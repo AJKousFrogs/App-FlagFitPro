@@ -3,6 +3,10 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import {
+  deriveRestrictions,
+  type NormalizedInjury,
+} from "./periodization-input-helpers";
 
 export type InjurySeverity = "minor" | "moderate" | "severe";
 
@@ -33,46 +37,20 @@ export class InjuryService {
   readonly active = signal<ActiveInjury[]>([]);
   readonly loading = signal(false);
 
-  private static readonly SPRINT_RESTRICTING = new Set([
-    "sprint",
-    "high_intensity",
-    "plyometric",
-    "agility",
-  ]);
-  private static readonly THROWING_RESTRICTING = new Set([
-    "throwing",
-    "upper_strength",
-  ]);
-  private static readonly SEV_RANK: Record<string, number> = {
-    minor: 1,
-    moderate: 2,
-    severe: 3,
-  };
-
   /** Restriction summary the engine keys on. */
   readonly restrictions = computed(() => {
-    const sprintInjuries = this.active().filter((i) =>
-      (i.restrictions ?? []).some((r) =>
-        InjuryService.SPRINT_RESTRICTING.has(r),
-      ),
-    );
-    const throwingInjuries = this.active().filter((i) =>
-      (i.restrictions ?? []).some((r) =>
-        InjuryService.THROWING_RESTRICTING.has(r),
-      ),
-    );
-    const restrictsSprint = sprintInjuries.length > 0;
-    const restrictsThrowing = throwingInjuries.length > 0;
     // Regions span everything currently flagged (lower-limb, core, AND upper)
-    // so the plan can name a shoulder issue, not just sprint-restricting ones.
-    const flagged = [...sprintInjuries, ...throwingInjuries];
-    const regions = [...new Set(flagged.map((i) => i.region).filter(Boolean))];
-    const severity = flagged.reduce<InjurySeverity | null>((max, i) => {
-      const s = (i.severity as InjurySeverity) ?? "minor";
-      const rank = InjuryService.SEV_RANK[s] ?? 1;
-      return !max || rank > (InjuryService.SEV_RANK[max] ?? 0) ? s : max;
-    }, null);
-    return { restrictsSprint, restrictsThrowing, regions, severity };
+    // so the plan can name a shoulder issue, not just sprint-restricting ones —
+    // deriveRestrictions (shared with the server, audit F8) preserves that.
+    // Adapt ActiveInjury's camelCase shape to the shared NormalizedInjury shape
+    // (the periodization-prescription.js server-side call site does the same
+    // adaptation from its raw snake_case DB rows).
+    const normalized: NormalizedInjury[] = this.active().map((i) => ({
+      region: i.region,
+      restrictionTypes: i.restrictions ?? [],
+      severityGrade: i.severity,
+    }));
+    return deriveRestrictions(normalized);
   });
 
   async load(): Promise<void> {
