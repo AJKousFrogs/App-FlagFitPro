@@ -5,6 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { sessionWorkload } from "./utils/session-load.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.weekend-games" });
@@ -138,7 +139,7 @@ const handler = async (event, context) =>
           "validation_error",
         );
       }
-      const workload = Math.round(totalMinutes * rpe); // Foster sRPE AU
+      const workload = sessionWorkload(totalMinutes, rpe); // Foster sRPE AU
 
       // Default the game date to the most recent Saturday (the typical game day);
       // accept an explicit ISO date if provided.

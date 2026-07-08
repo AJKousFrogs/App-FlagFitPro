@@ -22,7 +22,22 @@ import {
   standardDeviation,
   ACWR_PRECISION,
 } from "./utils/precision.js";
-import { computeAcwrAt } from "./utils/acwr.js";
+import {
+  computeAcwrAt,
+  classifyAcwrZone,
+  ACWR_RISK_ZONES,
+} from "./utils/acwr.js";
+
+// Athlete-facing copy per ACWR zone (load-management-specific; the zone boundaries
+// and injury-risk multiplier come from ACWR_RISK_ZONES — the single source of truth).
+const ACWR_ZONE_RECOMMENDATIONS = Object.freeze({
+  detraining: "Training load is too low. Consider increasing volume gradually.",
+  safe: "Training load is in the optimal 'sweet spot'. Maintain current progression.",
+  caution: "Training load is elevated. Monitor for signs of fatigue.",
+  danger: "Training load spike detected. Consider reducing volume.",
+  critical:
+    "CRITICAL: Very high injury risk. Immediate load reduction recommended.",
+});
 import { baseHandler } from "./utils/base-handler.js";
 import { LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
@@ -440,32 +455,12 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     };
   }
 
-  // Risk zones based on Gabbett's research
-  let riskZone, injuryRiskMultiplier, recommendation;
-  if (acwr < 0.8) {
-    riskZone = "detraining";
-    injuryRiskMultiplier = 1.2;
-    recommendation =
-      "Training load is too low. Consider increasing volume gradually.";
-  } else if (acwr >= 0.8 && acwr <= 1.3) {
-    riskZone = "safe";
-    injuryRiskMultiplier = 1.0;
-    recommendation =
-      "Training load is in the optimal 'sweet spot'. Maintain current progression.";
-  } else if (acwr > 1.3 && acwr <= 1.5) {
-    riskZone = "caution";
-    injuryRiskMultiplier = 1.5;
-    recommendation = "Training load is elevated. Monitor for signs of fatigue.";
-  } else if (acwr > 1.5 && acwr < 1.8) {
-    riskZone = "danger";
-    injuryRiskMultiplier = 2.0;
-    recommendation = "Training load spike detected. Consider reducing volume.";
-  } else {
-    riskZone = "critical";
-    injuryRiskMultiplier = 4.2;
-    recommendation =
-      "CRITICAL: Very high injury risk. Immediate load reduction recommended.";
-  }
+  // Risk zone + injury-risk multiplier from the single source of truth
+  // (classifyAcwrZone / ACWR_RISK_ZONES, Gabbett's research). Boundaries and
+  // multipliers are no longer duplicated here.
+  const riskZone = classifyAcwrZone(acwr) ?? "safe";
+  const injuryRiskMultiplier = ACWR_RISK_ZONES[riskZone].risk;
+  const recommendation = ACWR_ZONE_RECOMMENDATIONS[riskZone];
 
   return {
     acwr,

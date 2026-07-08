@@ -4,6 +4,7 @@ import {
   createSuccessResponse,
 } from "./utils/error-handler.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { sessionWorkload } from "./utils/session-load.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.import-process" });
@@ -50,7 +51,7 @@ async function persistMappedRows(supabase, userId, rows, mappings) {
     const sessionDate =
       `${row.date || ""}`.trim() || new Date().toISOString().split("T")[0];
     const sessionType = `${row.trainingType || "imported_session"}`.trim();
-    const workload = Math.round(duration * rpe);
+    const workload = sessionWorkload(duration, rpe);
 
     const result = await supabase.rpc("log_training_session", {
       p_user_id: userId,

@@ -14,6 +14,7 @@ import {
   logViolation,
 } from "./utils/authorization-guard.js";
 import { guardMerlinRequest } from "./utils/merlin-guard.js";
+import { sessionWorkload } from "./utils/session-load.js";
 import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
@@ -486,7 +487,7 @@ async function createTrainingLogSession(
         mergedDuration !== null &&
         mergedDuration !== undefined
       ) {
-        updatePayload.workload = mergedRpe * mergedDuration;
+        updatePayload.workload = sessionWorkload(mergedDuration, mergedRpe);
       }
       if (cleaned.notes !== null && cleaned.notes !== undefined) {
         updatePayload.notes = cleaned.notes;
