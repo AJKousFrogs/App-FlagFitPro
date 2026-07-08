@@ -287,10 +287,11 @@ function handleAuthorizationError(message = "Permission denied") {
  * @param {string|array} errors - Validation errors
  * @returns {object} 400 response
  */
-function handleValidationError(errors) {
+function handleValidationError(errors, requestId) {
   const errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
   return createErrorResponse(errorMessage, 422, ErrorType.VALIDATION, {
     details: Array.isArray(errors) ? errors : [errors],
+    ...(requestId ? { requestId } : {}),
   });
 }
 

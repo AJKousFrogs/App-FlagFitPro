@@ -54,6 +54,14 @@ const VALIDATORS = {
   },
 
   number: (value, options = {}) => {
+    // strictType (2026-07-08, reusability audit F7): by default this coerces a
+    // numeric STRING via parseFloat before checking (e.g. "7" passes) — some
+    // call sites' pre-existing contract requires the JSON value to already be a
+    // number (rejecting "7"). Opt-in so existing schemas keep the lenient
+    // default; only a caller migrating a strict manual check sets this.
+    if (options.strictType && typeof value !== "number") {
+      return "must be a number";
+    }
     const num = typeof value === "string" ? parseFloat(value) : value;
     if (typeof num !== "number" || isNaN(num)) {
       return "must be a number";

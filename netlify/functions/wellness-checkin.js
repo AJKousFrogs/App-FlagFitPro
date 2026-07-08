@@ -8,8 +8,14 @@ import {
 import { detectPainTrigger } from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { createErrorResponse } from "./utils/error-handler.js";
-import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import {
+  createErrorResponse,
+  handleValidationError,
+} from "./utils/error-handler.js";
+import {
+  tryParseJsonObjectBody,
+  validateInput,
+} from "./utils/input-validator.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
 import {
   buildRequestLogContext,
@@ -17,6 +23,29 @@ import {
 } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.wellness-checkin" });
+
+// 2026-07-08 reusability audit F7: migrated from a hand-written range-check loop
+// to the shared validateInput/COMMON_SCHEMAS-style DSL (utils/input-validator.js) —
+// one of only 5 functions using it before this change, despite the DSL already
+// fully supporting this case (type:"number", min, max). strictType:true on every
+// field preserves the original manual check's contract exactly (a JSON string like
+// "7" is rejected, not silently coerced — the DSL's default `number` validator
+// parses numeric strings, which the old manual check never did). The one
+// intentional, non-functional difference: error MESSAGE TEXT changes from
+// "X must be a number between A and B" to the DSL's "X must be at least A" / "X
+// must be at most B" (same status 422, same code validation_error, same
+// requestId) — accept/reject decisions are byte-identical, verified in
+// tests/unit/wellness-checkin-range-validation.test.js.
+const WELLNESS_RANGE_SCHEMA = {
+  sleepQuality: { type: "number", min: 1, max: 10, strictType: true },
+  energyLevel: { type: "number", min: 1, max: 10, strictType: true },
+  muscleSoreness: { type: "number", min: 1, max: 10, strictType: true },
+  stressLevel: { type: "number", min: 1, max: 10, strictType: true },
+  motivationLevel: { type: "number", min: 1, max: 10, strictType: true },
+  mood: { type: "number", min: 1, max: 10, strictType: true },
+  readinessScore: { type: "number", min: 0, max: 100, strictType: true },
+  travelHours: { type: "number", min: 0, max: 24, strictType: true },
+};
 
 function isOptionalSchemaError(error) {
   const code = error?.code;
@@ -401,32 +430,9 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
   } = payload;
 
   // Reject out-of-range numeric wellness inputs up front (422, not a downstream 500).
-  const rangeChecks = [
-    ["sleepQuality", sleepQuality, 1, 10],
-    ["energyLevel", energyLevel, 1, 10],
-    ["muscleSoreness", muscleSoreness, 1, 10],
-    ["stressLevel", stressLevel, 1, 10],
-    ["motivationLevel", motivationLevel, 1, 10],
-    ["mood", mood, 1, 10],
-    ["readinessScore", readinessScore, 0, 100],
-    ["travelHours", travelHours, 0, 24],
-  ];
-  for (const [field, value, min, max] of rangeChecks) {
-    if (
-      value !== undefined &&
-      value !== null &&
-      (typeof value !== "number" ||
-        Number.isNaN(value) ||
-        value < min ||
-        value > max)
-    ) {
-      return createErrorResponse(
-        `${field} must be a number between ${min} and ${max}`,
-        422,
-        "validation_error",
-        requestId,
-      );
-    }
+  const rangeValidation = validateInput(payload, WELLNESS_RANGE_SCHEMA);
+  if (!rangeValidation.valid) {
+    return handleValidationError(rangeValidation.errors, requestId);
   }
 
   const targetDate = date || new Date().toISOString().split("T")[0];
