@@ -88,10 +88,10 @@ config drift guard in CI; 716 backend + 469 Angular tests green. **Not yet run:*
 runtime log→recalc→refetch→display walkthrough per metric (needs a live session);
 the #1/#8/#10 fixes should land first or the walkthrough will just re-document them.
 
-## Priority fix list (ranked)
+## Priority fix list (ranked) — status
 
-1. **❌ Delete/rebuild `acwr-spike-detection.service.ts`** — dead writes to a dropped table; illusory safety feature. (small)
-2. **⚠️ Unify readiness formula** — `wellness-checkin.js` must reuse `calc-readiness` scoring. (medium; changes alert-threshold behavior — snapshot the deltas)
-3. **⚠️ Single high-CNS classifier** for cns-spacing + engine. (small)
-4. **⚠️ Batch 2b/3 continuation** — client consumes server ACWR + periodization; population-aware thresholds. (the migration plan of record)
-5. Shared `sessionWorkload(duration, rpe)` helper; `load-management.js` imports `ACWR_RISK_ZONES`. (cosmetic-to-small)
+1. **✅ DONE (`c26dfb6c`)** Deleted the dead `acwr-spike-detection.service.ts` (wrote to the dropped `load_caps`; already neutered). Cap-on-spike is handled live by the engine's ACWR modulation.
+2. **✅ DONE (`485feb13`) — reassessed.** The two are NOT a mechanical duplicate: composite readiness vs a check-in wellness estimate with a deliberate scale-inversion safeguard (S6). Blind-merging would reintroduce that hazard. Instead: extracted the canonical wellness-index scorer to `utils/readiness-score.js` (pure move) and documented the intentional split + hazard. TRUE formula unification deferred — it's a sports-science decision needing before/after delta validation, flagged for the product.
+3. **✅ DONE (`cd1a015f`)** One canonical `isHighCnsSessionType` (now incl. `competition`), consumed by both cns-spacing.js and the engine. Client↔port parity 29/29.
+4. **▶ IN PROGRESS** — the backend-authoritative migration. Batch 1 (drift guard) + Batch 2 (pure engine extraction + golden parity harness) + Batch 3.1 (server port, 28/28 parity) shipped. Remaining: population-aware thresholds → server endpoint (server-side input assembly) → client consumes → §5a rewrite.
+5. **✅ DONE (`4252065f`)** Shared `sessionWorkload()` (utils/session-load.js) across the 3 log paths; `load-management.js` now classifies via `classifyAcwrZone`/`ACWR_RISK_ZONES` instead of a hand-copied zone block.
