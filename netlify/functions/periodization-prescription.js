@@ -15,11 +15,13 @@
  * readBodyweight/readAgeYears/isTeamPractice helpers) and calls the identical
  * `prescribeFor`. Fully wired: schedule/phase, ACWR, readiness, season phase,
  * position, age, bodyweight, team-practice, injury restrictions, recent sessions
- * (CNS spacing). Deliberately left null for v1 (each is already a documented
- * null-safe "no guard" default in the engine, not a corner cut): weather,
- * acclimatizationDay, arrivalDayTravelHours, coachOverride, weeklyIntentHint,
- * weeklyProgressionUnsafe. Wiring those is a straightforward follow-up, not a
- * blocker to shipping the core safety-relevant path (ACWR/readiness/injury/CNS).
+ * (CNS spacing), weather (reuses weather.js's resolveTeamHomeCity/getWeatherData —
+ * same team-home-city resolution and Open-Meteo call the client's /api/weather
+ * consumes), travel/acclimatization (most recent past athlete_travel_log leg,
+ * mirroring EventTravelService's daysSinceArrival/arrivalDayTravelHours exactly).
+ * Still left null/false (each is the engine's own documented "no guard" default,
+ * not a corner cut — these are genuinely secondary to load/injury safety):
+ * coachOverride, weeklyIntentHint, weeklyProgressionUnsafe.
  */
 import { supabaseAdmin } from "./supabase-client.js";
 import { baseHandler } from "./utils/base-handler.js";
@@ -34,6 +36,7 @@ import {
   DEFAULT_LOOKBACK_DAYS,
 } from "./schedule.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
+import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
 import { prescribeFor, macroPhaseFor } from "./utils/periodization-engine.js";
 
 const logger = createLogger({ service: "netlify.periodization-prescription" });
@@ -115,6 +118,73 @@ function isTeamPractice(date, recurringDays, scheduleTrainingDays) {
   return scheduleTrainingDays.includes(iso);
 }
 
+/**
+ * Live weather at the athlete's team home city — same resolution the client's
+ * /api/weather consumes. Never fabricates a location: no home_city on file ->
+ * null (engine's own documented "no guard" fallback), matching weather.js's own
+ * "no location -> available:false, never a default city" contract.
+ */
+async function resolveWeather(userId) {
+  const city = await resolveTeamHomeCity(userId);
+  if (!city) {
+    return null;
+  }
+  const data = await getWeatherData(null, null, city);
+  if (data.temp === null || data.temp === undefined) {
+    return null;
+  }
+  return {
+    tempC: data.temp ?? null,
+    apparentC: data.apparentC ?? data.temp ?? null,
+    condition: data.condition ?? null,
+    weatherCode: data.weatherCode ?? null,
+    precipMm: data.precipMm ?? null,
+    windKmh: data.windKmh ?? null,
+  };
+}
+
+/**
+ * Pure date math for the most recent COMPLETED travel leg — mirrors
+ * EventTravelService's daysSinceArrival / arrivalDayTravelHours exactly
+ * (0 = arrival day; hours only computed ON the arrival day itself).
+ */
+function travelFieldsFromLeg(leg, now) {
+  if (!leg) {
+    return { acclimatizationDay: null, arrivalDayTravelHours: null };
+  }
+  const daysSinceArrival = Math.floor(
+    (now.getTime() - new Date(leg.arrive_at).getTime()) / 86_400_000,
+  );
+  const arrivalDayTravelHours =
+    daysSinceArrival === 0
+      ? Math.round(
+          (new Date(leg.arrive_at).getTime() -
+            new Date(leg.depart_at).getTime()) /
+            3_600_000,
+        )
+      : null;
+  return { acclimatizationDay: daysSinceArrival, arrivalDayTravelHours };
+}
+
+/**
+ * Acclimatization/arrival-day inputs from the most recent COMPLETED travel leg
+ * (arrive_at in the past).
+ */
+async function resolveTravel(userId, now) {
+  const { data, error } = await supabaseAdmin
+    .from("athlete_travel_log")
+    .select("depart_at, arrive_at")
+    .eq("user_id", userId)
+    .lte("arrive_at", now.toISOString())
+    .order("arrive_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data) {
+    return { acclimatizationDay: null, arrivalDayTravelHours: null };
+  }
+  return travelFieldsFromLeg(data, now);
+}
+
 async function assemblePeriodizationInputs(userId, now) {
   const dayStr = now.toISOString().slice(0, 10);
   const recentSince = new Date(now.getTime() - 4 * 86_400_000).toISOString();
@@ -126,6 +196,8 @@ async function assemblePeriodizationInputs(userId, now) {
     configRow,
     recentSessionsRes,
     activeInjuries,
+    weather,
+    travel,
   ] = await Promise.all([
     getScheduleSnapshot(supabaseAdmin, userId, {
       from: new Date(now.getTime() - DEFAULT_LOOKBACK_DAYS * 86_400_000),
@@ -157,6 +229,8 @@ async function assemblePeriodizationInputs(userId, now) {
       .gte("completed_at", recentSince)
       .order("completed_at", { ascending: false }),
     getActiveInjuries(userId, dayStr),
+    resolveWeather(userId),
+    resolveTravel(userId, now),
   ]);
 
   if (scheduleResult.error) {
@@ -210,7 +284,7 @@ async function assemblePeriodizationInputs(userId, now) {
           }
         : null,
       seasonPhase: macroPhaseFor(now, seasonCalendar),
-      weather: null,
+      weather,
       recentSessions,
       ageYears: resolveAgeYears(
         userRow.data?.date_of_birth ?? userRow.data?.birth_date ?? null,
@@ -218,8 +292,8 @@ async function assemblePeriodizationInputs(userId, now) {
       position: configRow.data?.primary_position ?? null,
       isTeamPractice: isTeamPractice(now, recurringDays, snap.trainingDays),
       activeRestrictions: resolveActiveRestrictions(activeInjuries),
-      acclimatizationDay: null,
-      arrivalDayTravelHours: null,
+      acclimatizationDay: travel.acclimatizationDay,
+      arrivalDayTravelHours: travel.arrivalDayTravelHours,
       coachOverride: false,
     },
   };
@@ -268,5 +342,6 @@ export const __test__ = {
   resolveAgeYears,
   isTeamPractice,
   normalizeSeverity,
+  travelFieldsFromLeg,
   assemblePeriodizationInputs,
 };

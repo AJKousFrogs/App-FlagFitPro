@@ -6,6 +6,7 @@ const {
   resolveAgeYears,
   isTeamPractice,
   normalizeSeverity,
+  travelFieldsFromLeg,
 } = __test__;
 
 /**
@@ -132,6 +133,38 @@ describe("periodization-prescription: input-assembly helpers", () => {
     it("neither recurring nor one-off -> false", () => {
       const date = new Date("2026-07-15T12:00:00Z");
       expect(isTeamPractice(date, [], [])).toBe(false);
+    });
+  });
+
+  describe("travelFieldsFromLeg", () => {
+    it("no leg -> both null (engine's own 'no travel' fallback)", () => {
+      expect(travelFieldsFromLeg(null, new Date())).toEqual({
+        acclimatizationDay: null,
+        arrivalDayTravelHours: null,
+      });
+    });
+
+    it("arrival TODAY: acclimatizationDay=0 and travel hours computed from the leg", () => {
+      const now = new Date("2026-07-15T20:00:00Z");
+      const leg = {
+        depart_at: "2026-07-15T12:00:00Z",
+        arrive_at: "2026-07-15T18:00:00Z",
+      };
+      expect(travelFieldsFromLeg(leg, now)).toEqual({
+        acclimatizationDay: 0,
+        arrivalDayTravelHours: 6,
+      });
+    });
+
+    it("arrival several days ago: acclimatizationDay > 0, hours null (only computed ON arrival day)", () => {
+      const now = new Date("2026-07-18T12:00:00Z");
+      const leg = {
+        depart_at: "2026-07-15T12:00:00Z",
+        arrive_at: "2026-07-15T18:00:00Z",
+      };
+      const result = travelFieldsFromLeg(leg, now);
+      expect(result.acclimatizationDay).toBe(2);
+      expect(result.arrivalDayTravelHours).toBeNull();
     });
   });
 });
