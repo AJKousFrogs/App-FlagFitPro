@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../supabase-client.js";
+import { normalizeSeverity } from "./periodization-input-helpers.js";
 
 /**
  * THE injury authority for rehab gating (SOT Law 5a). The backend resolvers used
@@ -38,26 +39,27 @@ export async function getActiveInjuries(
   );
 }
 
+// Worst-injury pain level (2–4) for RTP sizing, keyed off the ONE canonical
+// grade→tier classifier (normalizeSeverity, shared with the periodization engine
+// and calc-readiness — 2026-07-08 consistency audit C1). Previously this carried
+// its own "Grade 1/2/3" + legacy-vocab map, a third independent copy of that
+// knowledge; now it only owns the tier→pain-level domain mapping.
+const PAIN_LEVEL_BY_TIER = { minor: 2, moderate: 3, severe: 4 };
+
 /**
  * Map the worst active-injury severity to a 2–4 pain level for RTP sizing.
- * athlete_injuries.injury_grade stores "Grade 1/2/3" (clinical text).
- * Both that format and the legacy "minor/moderate/severe" vocab are accepted
- * so callers never silently fall back to the minimum level off a format mismatch.
+ * athlete_injuries.injury_grade stores "Grade 1/2/3" (clinical text) or the
+ * legacy "minor/moderate/severe" vocab; normalizeSeverity accepts both and
+ * defaults unknown/missing to "minor" (level 2) so callers never silently fall
+ * back off a format mismatch.
  */
 export function injuriesPainLevel(injuries) {
-  const rank = {
-    // clinical format (athlete_injuries.injury_grade)
-    "Grade 1": 2,
-    "Grade 2": 3,
-    "Grade 3": 4,
-    // legacy/vocab aliases
-    minor: 2,
-    moderate: 3,
-    severe: 4,
-  };
   let level = 2;
   for (const i of injuries || []) {
-    level = Math.max(level, rank[i.injury_grade] ?? 2);
+    level = Math.max(
+      level,
+      PAIN_LEVEL_BY_TIER[normalizeSeverity(i.injury_grade)],
+    );
   }
   return level;
 }

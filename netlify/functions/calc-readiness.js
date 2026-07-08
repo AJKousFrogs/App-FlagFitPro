@@ -19,6 +19,7 @@ import {
 } from "./utils/structured-logger.js";
 import { computeAcwrAt } from "./utils/acwr.js";
 import { calculateWellnessIndex } from "./utils/readiness-score.js";
+import { normalizeSeverity } from "./utils/periodization-input-helpers.js";
 
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
@@ -724,11 +725,14 @@ const handler = async (event, context) => {
           ) {
             continue;
           }
-          const g = inj.injury_grade;
-          if (g === "severe" || g === "Grade 3") {
+          // Grade→tier via the ONE canonical classifier (2026-07-08 audit C1);
+          // this used to inline `=== "severe" || === "Grade 3"` etc, a third
+          // copy of the grade-string knowledge normalizeSeverity now owns.
+          const tier = normalizeSeverity(inj.injury_grade);
+          if (tier === "severe") {
             injuryPenalty = Math.max(injuryPenalty, 20);
             injuryForcedModerate = true;
-          } else if (g === "moderate" || g === "Grade 2") {
+          } else if (tier === "moderate") {
             injuryPenalty = Math.max(injuryPenalty, 10);
           } else {
             injuryPenalty = Math.max(injuryPenalty, 5);
