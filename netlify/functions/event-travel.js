@@ -5,6 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { validationError, parseIso } from "./utils/event-fields.js";
 
 // Netlify Function: Event Travel (V2.1, consolidated in V2.4)
 // Endpoint: /api/event-travel
@@ -25,25 +26,8 @@ import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 const MODES = new Set(["bus", "car", "plane", "train", "other"]);
 
-const validationError = (message) => {
-  const error = new Error(message);
-  error.isValidation = true;
-  return error;
-};
-
-function parseIso(value, field, { required }) {
-  if (value === undefined || value === null || value === "") {
-    if (required) {
-      throw validationError(`${field} is required`);
-    }
-    return null;
-  }
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) {
-    throw validationError(`${field} must be a valid date/time`);
-  }
-  return d.toISOString();
-}
+// validationError + parseIso: shared with athlete-events.js
+// (utils/event-fields.js, reuse audit R2).
 
 function buildRow(body, { partial }) {
   const row = {};
