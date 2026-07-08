@@ -1,16 +1,31 @@
-// CANONICAL wellness-index scorer — the single source of truth for the wellness
-// component (30%) of the composite readiness score computed in calc-readiness.js.
+// CANONICAL wellness scoring — the single source of truth for how sleep / soreness /
+// energy / mood / stress combine into a 0-100 wellness signal, used by BOTH:
+//   1. calc-readiness.js's composite Today readiness (30% weight) — calculateWellnessIndex.
+//   2. wellness-checkin.js's check-in-time estimate — calculateWellnessScore.
 //
-// SCOPE: this scores WELLNESS from the daily check-in fields (sleep/soreness/energy
-// + optional mood/stress) on the DB's 1-10 storage scale (scaleTo1to5 maps 1-10 -> 1-5).
+// 2026-07-08 unification: these were two independently-tuned formulas (calc-readiness's
+// evidence-cited 1-5-bucketed index vs the check-in's own .3/.25/.25/.2 weights, mood
+// unused). They now share ONE weighting scheme (WELLNESS_REQUIRED_WEIGHTS /
+// WELLNESS_OPTIONAL_WEIGHTS / WELLNESS_REQUIRED_BLEND below) — the audit-flagged drift
+// is resolved at the level that mattered (relative importance of each input).
 //
-// NOT the same as wellness-checkin.js `calculateReadiness()`. That is a SEPARATE,
-// deliberately-tuned CHECK-IN-TIME estimate with EXPLICIT form-scale handling (1-5 vs
-// 0-10, the "S6" fix) so a bad 0-10 day is never misread as a good 1-5 day. The two
-// have INCOMPATIBLE scale assumptions on purpose — do NOT naively merge them onto this
-// function, or you reintroduce the scale-inversion hazard S6 fixed. Any real
-// unification is a sports-science decision (which weighting is canonical) + must be
-// validated with a before/after delta, not a mechanical dedupe.
+// The two functions still differ in HOW they turn a raw value into 0-100, and that
+// difference stays intentional, not drift:
+//   - calculateWellnessIndex assumes its DB-sourced inputs are already on a 1-10 scale
+//     (verified: the live Angular wellness UI only ever submits 1-10; a scale marker is
+//     not persisted) and buckets to 1-5 (`scaleTo1to5`) before scoring — UNCHANGED here,
+//     to avoid any risk to the live canonical Today number.
+//   - calculateWellnessScore requires an EXPLICIT scale (the "S6" fix: a bad 0-10 day
+//     must never be misread as a good 1-5 day) and normalizes directly to 0-100 (more
+//     precise — no 1-5 bucket-quantization loss). This is defense-in-depth: the live UI
+//     doesn't exercise the 1-5 path today, but the check-in endpoint's contract still
+//     accepts it, so it must stay scale-safe regardless of what the current UI sends.
+// Do not collapse this remaining difference without re-verifying the live Angular UI
+// still never submits scale:5 — that's the fact this design depends on.
+
+const WELLNESS_REQUIRED_WEIGHTS = { sleep: 0.4, soreness: 0.3, energy: 0.3 };
+const WELLNESS_OPTIONAL_WEIGHTS = { mood: 0.5, stress: 0.5 };
+const WELLNESS_REQUIRED_BLEND = 0.6; // required 60% / optional 40% when optional present
 
 /**
  * Convert 1-10 scale to 1-5 scale (standard athlete monitoring scale)
@@ -39,15 +54,27 @@ function calculateWellnessIndex(wellness) {
   // always equalled soreness, so soreness carried 65% of this subscore. ENERGY is
   // the real recovery/fatigue signal (energy_level) and is promoted to required.
   const requiredFields = [
-    { value: sleepQuality, weight: 0.4, name: "sleepQuality" },
-    { value: soreness, weight: 0.3, name: "soreness" },
-    { value: energy, weight: 0.3, name: "energy" },
+    {
+      value: sleepQuality,
+      weight: WELLNESS_REQUIRED_WEIGHTS.sleep,
+      name: "sleepQuality",
+    },
+    {
+      value: soreness,
+      weight: WELLNESS_REQUIRED_WEIGHTS.soreness,
+      name: "soreness",
+    },
+    {
+      value: energy,
+      weight: WELLNESS_REQUIRED_WEIGHTS.energy,
+      name: "energy",
+    },
   ];
 
   // Optional fields (mood, stress)
   const optionalFields = [
-    { value: mood, weight: 0.5, name: "mood" },
-    { value: stress, weight: 0.5, name: "stress" },
+    { value: mood, weight: WELLNESS_OPTIONAL_WEIGHTS.mood, name: "mood" },
+    { value: stress, weight: WELLNESS_OPTIONAL_WEIGHTS.stress, name: "stress" },
   ];
 
   // Calculate completeness
@@ -107,7 +134,9 @@ function calculateWellnessIndex(wellness) {
     // Blend required (60%) and optional (40%)
     const requiredScore = requiredSubscore / requiredWeightSum;
     const optionalScore = optionalSubscore / optionalWeightSum;
-    subscore = requiredScore * 0.6 + optionalScore * 0.4;
+    subscore =
+      requiredScore * WELLNESS_REQUIRED_BLEND +
+      optionalScore * (1 - WELLNESS_REQUIRED_BLEND);
   } else {
     // Use required fields only
     subscore = requiredSubscore / requiredWeightSum;
@@ -124,4 +153,91 @@ function calculateWellnessIndex(wellness) {
   };
 }
 
-export { calculateWellnessIndex };
+/**
+ * Calculate a 0-100 wellness score directly from raw check-in values on an EXPLICIT
+ * scale — the check-in-time-safe counterpart to calculateWellnessIndex. Same weighting
+ * scheme (WELLNESS_REQUIRED_WEIGHTS / WELLNESS_OPTIONAL_WEIGHTS / WELLNESS_REQUIRED_BLEND),
+ * but normalizes straight to 0-100 (no 1-5 bucket loss) and NEVER guesses the scale —
+ * the "S6" fix: a bad 0-10 day must not be misread as a good 1-5 day. `scale` defaults
+ * to 10 (the safe direction: a 1-5 input misread as 0-10 is over-conservative, never the
+ * over-optimistic inversion).
+ *
+ * Requires sleep AND energy (minimum for a non-fabricated result, Spec Law 7) — stricter
+ * than calculateWellnessIndex, which can score from soreness alone. soreness/mood/stress
+ * are each optional and reweight gracefully when absent, same as calculateWellnessIndex.
+ *
+ * @param {{sleep:number|null, energy:number|null, soreness?:number|null, mood?:number|null, stress?:number|null}} values
+ * @param {{scale?: 5|10}} [options]
+ * @returns {number|null} 0-100, or null if sleep/energy are missing
+ */
+function calculateWellnessScore(values, { scale = 10 } = {}) {
+  const s = scale === 5 ? 5 : 10;
+  const { sleep, energy, soreness, mood, stress } = values;
+
+  if (
+    sleep === null ||
+    sleep === undefined ||
+    energy === null ||
+    energy === undefined
+  ) {
+    return null;
+  }
+
+  // Direct-to-100 normalization (no 1-5 bucket quantization): higher-is-better fields
+  // map value/scale*100; higher-is-worse fields (soreness, stress) invert first.
+  const norm = (v) => (v / s) * 100;
+  const normInverted = (v) => ((s - v) / s) * 100;
+
+  const requiredFields = [
+    { value: sleep, weight: WELLNESS_REQUIRED_WEIGHTS.sleep, norm },
+    {
+      value: soreness,
+      weight: WELLNESS_REQUIRED_WEIGHTS.soreness,
+      norm: normInverted,
+    },
+    { value: energy, weight: WELLNESS_REQUIRED_WEIGHTS.energy, norm },
+  ];
+  const optionalFields = [
+    { value: mood, weight: WELLNESS_OPTIONAL_WEIGHTS.mood, norm },
+    {
+      value: stress,
+      weight: WELLNESS_OPTIONAL_WEIGHTS.stress,
+      norm: normInverted,
+    },
+  ];
+
+  let requiredSubscore = 0;
+  let requiredWeightSum = 0;
+  for (const f of requiredFields) {
+    if (f.value !== null && f.value !== undefined) {
+      requiredSubscore += f.norm(f.value) * f.weight;
+      requiredWeightSum += f.weight;
+    }
+  }
+
+  let optionalSubscore = 0;
+  let optionalWeightSum = 0;
+  for (const f of optionalFields) {
+    if (f.value !== null && f.value !== undefined) {
+      optionalSubscore += f.norm(f.value) * f.weight;
+      optionalWeightSum += f.weight;
+    }
+  }
+
+  const requiredScore = requiredSubscore / requiredWeightSum;
+  const score =
+    optionalWeightSum > 0
+      ? requiredScore * WELLNESS_REQUIRED_BLEND +
+        (optionalSubscore / optionalWeightSum) * (1 - WELLNESS_REQUIRED_BLEND)
+      : requiredScore;
+
+  return Math.round(Math.max(0, Math.min(100, score)));
+}
+
+export {
+  calculateWellnessIndex,
+  calculateWellnessScore,
+  WELLNESS_REQUIRED_WEIGHTS,
+  WELLNESS_OPTIONAL_WEIGHTS,
+  WELLNESS_REQUIRED_BLEND,
+};

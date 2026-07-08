@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "./supabase-client.js";
+import { calculateWellnessScore } from "./utils/readiness-score.js";
+import { travelReadinessPenalty } from "./calc-readiness.js";
 import {
   canCoachViewWellness,
   filterWellnessDataForCoach,
@@ -1040,29 +1042,26 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
 }
 
 /**
- * Calculate readiness score from wellness data
+ * Calculate readiness score from wellness data (CHECK-IN-TIME estimate).
  *
  * IMPORTANT: Returns null if required data is missing.
  * DO NOT use default values - readiness must be calculated from real user input.
  *
  * Required: sleepQuality AND energyLevel (minimum for valid calculation)
  *
- * Evidence-based weights (team-sport optimized):
- * - Sleep Quality: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
- * - Energy Level: 25% (correlates with perceived performance)
- * - Stress Level: 25% (inverted - lower stress = better readiness)
- * - Muscle Soreness: 20% (inverted - lower soreness = better readiness)
- *
- * Scale: Input values are on 1-5 scale (from quick check-in) or 0-10 scale (full check-in)
+ * Weighting (2026-07-08 unified with calc-readiness.js's composite wellness index —
+ * see utils/readiness-score.js WELLNESS_REQUIRED_WEIGHTS/WELLNESS_OPTIONAL_WEIGHTS):
+ * Sleep 40% / Soreness 30% / Energy 30% (required, evidence: Halson 2014, Fullagar
+ * et al. 2015), blended 60/40 with Mood 50% / Stress 50% (optional) when present.
+ * Each field reweights gracefully when a required field is absent.
  *
  * DISTINCT from the composite readiness in calc-readiness.js (workload 35% / wellness
- * 30% / sleep 20% / game 15%) and from its canonical wellness-index scorer in
- * utils/readiness-score.js. This is the CHECK-IN-TIME estimate: it only has the check-in
- * sliders (no ACWR / sleep-hours / game proximity), and it handles the form scale
- * EXPLICITLY (the "S6" fix) so a bad 0-10 day is never misread as a good 1-5 day — a
- * safety property the 1-10-only canonical scorer does not have. Keep these two separate;
- * unifying them is a sports-science decision, not a mechanical dedupe (see the header of
- * utils/readiness-score.js).
+ * 30% / sleep 20% / game 15%): this is the CHECK-IN-TIME estimate — it only has the
+ * check-in sliders (no ACWR / sleep-hours / game proximity), and it handles the form
+ * scale EXPLICITLY (the "S6" fix) so a bad 0-10 day is never misread as a good 1-5 day
+ * — a safety property calc-readiness's DB-sourced index doesn't need (verified: the
+ * live UI only ever submits 1-10). Travel penalty is shared with calc-readiness.js
+ * (`travelReadinessPenalty`, imported) rather than a second divergent formula.
  */
 function calculateReadiness(data) {
   const {
@@ -1070,19 +1069,9 @@ function calculateReadiness(data) {
     energyLevel,
     muscleSoreness,
     stressLevel,
+    mood,
     travelHours,
   } = data;
-
-  // CRITICAL: Require at least sleep quality AND energy level
-  // DO NOT use defaults - user must provide real data
-  if (
-    sleepQuality === null ||
-    sleepQuality === undefined ||
-    energyLevel === null ||
-    energyLevel === undefined
-  ) {
-    return null;
-  }
 
   // Scale is a property of the FORM (1–5 quick check-in vs 0–10 full check-in),
   // passed explicitly — NEVER inferred from the values (S6). The old 'max ≤ 5 ⇒
@@ -1093,43 +1082,24 @@ function calculateReadiness(data) {
   // read as 0–10 is over-conservative, never the over-optimistic inversion).
   const scale = data.scale === 5 || data.scale === 10 ? data.scale : 10;
 
-  // Normalize all values to 0-100
-  const sleepScore = (sleepQuality / scale) * 100;
-  const energyScore = (energyLevel / scale) * 100;
-
-  const hasStress = stressLevel !== null && stressLevel !== undefined;
-  const hasSoreness = muscleSoreness !== null && muscleSoreness !== undefined;
-
-  let score;
-
-  if (hasStress && hasSoreness) {
-    // Full calculation with all 4 metrics
-    // Invert stress and soreness (lower = better)
-    const stressScore = ((scale - stressLevel) / scale) * 100;
-    const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
-    score =
-      sleepScore * 0.3 +
-      energyScore * 0.25 +
-      stressScore * 0.25 +
-      sorenessScore * 0.2;
-  } else if (hasStress) {
-    // Sleep, energy, stress (redistribute soreness weight)
-    const stressScore = ((scale - stressLevel) / scale) * 100;
-    score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
-  } else if (hasSoreness) {
-    // Sleep, energy, soreness (redistribute stress weight)
-    const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
-    score = sleepScore * 0.4 + energyScore * 0.333 + sorenessScore * 0.267;
-  } else {
-    // Minimal: sleep and energy only
-    score = sleepScore * 0.55 + energyScore * 0.45;
+  const score = calculateWellnessScore(
+    {
+      sleep: sleepQuality,
+      energy: energyLevel,
+      soreness: muscleSoreness,
+      stress: stressLevel,
+      mood,
+    },
+    { scale },
+  );
+  if (score === null) {
+    return null;
   }
 
   // Travel fatigue penalty: sitting for hours raises cortisol, disrupts sleep
   // quality signal, and increases injury risk on subsequent days.
   const travelH = typeof travelHours === "number" ? travelHours : 0;
-  const travelPenalty =
-    travelH >= 7 ? 12 : travelH >= 4 ? 7 : travelH >= 1 ? 3 : 0;
+  const travelPenalty = travelReadinessPenalty(travelH);
 
   return Math.round(Math.max(0, Math.min(100, score - travelPenalty)));
 }
