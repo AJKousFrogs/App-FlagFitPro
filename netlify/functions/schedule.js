@@ -335,33 +335,33 @@ function rowToEvent(row) {
   };
 }
 
-async function getSchedule(event, _context, { userId }) {
-  const now = new Date();
-  const params = event.queryStringParameters ?? {};
-
-  const from = parseIsoDate(
-    params.from,
-    new Date(now.getTime() - DEFAULT_LOOKBACK_DAYS * 86_400_000),
-  );
-  const to = clampWindow(
-    from,
-    parseIsoDate(
-      params.to,
-      new Date(now.getTime() + DEFAULT_LOOKAHEAD_DAYS * 86_400_000),
-    ),
-  );
-
+/**
+ * Assemble the athlete's schedule snapshot (upcoming/lastEvent/density/currentPhase/
+ * trainingDays) for `now`. Pure data assembly — no HTTP concerns — so it is reusable
+ * by any server-side caller that needs the same schedule state the client's
+ * ScheduleService reads via GET /api/schedule (e.g. a server-side prescription
+ * endpoint), without a second implementation of phase/density resolution.
+ *
+ * @param {object} supabase
+ * @param {string} userId
+ * @param {{from: Date, to: Date, now?: Date}} window
+ */
+async function getScheduleSnapshot(
+  supabase,
+  userId,
+  { from, to, now = new Date() },
+) {
   // Team/competition events (shared spine) + athlete-entered events (personal,
   // domestic, national) are read in parallel and merged into one timeline.
   const [teamRes, athleteRes] = await Promise.all([
-    supabaseAdmin
+    supabase
       .from("v_athlete_schedule")
       .select("*")
       .eq("user_id", userId)
       .gte("starts_at", from.toISOString())
       .lte("starts_at", to.toISOString())
       .order("starts_at", { ascending: true }),
-    supabaseAdmin
+    supabase
       .from("athlete_events")
       .select("*")
       .eq("user_id", userId)
@@ -376,7 +376,7 @@ async function getSchedule(event, _context, { userId }) {
       error: teamRes.error.message,
       code: teamRes.error.code,
     });
-    return createErrorResponse("Failed to read schedule", 500, "server_error");
+    return { error: teamRes.error };
   }
   // Athlete-entered events are additive; a read failure there must not blank the
   // whole schedule, so log and continue with the team events alone.
@@ -427,18 +427,49 @@ async function getSchedule(event, _context, { userId }) {
     past[past.length - 1] ?? null,
   );
 
-  return createSuccessResponse({
-    athleteId: userId,
-    generatedAt: now.toISOString(),
-    upcoming,
-    lastEvent,
-    nextEvent: upcoming[0] ?? null,
-    density7d,
-    density14d,
-    density28d,
-    currentPhase,
-    trainingDays,
+  return {
+    error: null,
+    snapshot: {
+      athleteId: userId,
+      generatedAt: now.toISOString(),
+      upcoming,
+      lastEvent,
+      nextEvent: upcoming[0] ?? null,
+      density7d,
+      density14d,
+      density28d,
+      currentPhase,
+      trainingDays,
+    },
+  };
+}
+
+async function getSchedule(event, _context, { userId }) {
+  const now = new Date();
+  const params = event.queryStringParameters ?? {};
+
+  const from = parseIsoDate(
+    params.from,
+    new Date(now.getTime() - DEFAULT_LOOKBACK_DAYS * 86_400_000),
+  );
+  const to = clampWindow(
+    from,
+    parseIsoDate(
+      params.to,
+      new Date(now.getTime() + DEFAULT_LOOKAHEAD_DAYS * 86_400_000),
+    ),
+  );
+
+  const { error, snapshot } = await getScheduleSnapshot(supabaseAdmin, userId, {
+    from,
+    to,
+    now,
   });
+  if (error) {
+    return createErrorResponse("Failed to read schedule", 500, "server_error");
+  }
+
+  return createSuccessResponse(snapshot);
 }
 
 export const handler = async (event, context) => {
@@ -450,10 +481,16 @@ export const handler = async (event, context) => {
   });
 };
 
+// Reusable by other server-side callers that need the same schedule state as
+// GET /api/schedule (e.g. the prescription endpoint) without a second phase/density
+// resolver.
+export { getScheduleSnapshot, DEFAULT_LOOKAHEAD_DAYS, DEFAULT_LOOKBACK_DAYS };
+
 // Exported for unit testing (pure functions; no auth needed)
 export const __test__ = {
   resolvePhase,
   densityFor,
   eventDayCount,
   effectiveImportance,
+  getScheduleSnapshot,
 };

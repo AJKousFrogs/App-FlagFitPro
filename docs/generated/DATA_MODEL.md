@@ -278,7 +278,7 @@ Touched by: `nutrition`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_training_config`
-Touched by: `daily-protocol`, `player-settings`
+Touched by: `daily-protocol`, `periodization-prescription`, `player-settings`
 
 - `user_id` uuid · not null
 - `primary_position` text · not null
@@ -2052,7 +2052,7 @@ Touched by: _(no endpoint references this table)_
 - `is_active` boolean · not null
 
 ### `readiness_scores`
-Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `readiness-history`
+Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `periodization-prescription`, `readiness-history`
 
 - `id` uuid · not null
 - `sleep_score` numeric
@@ -2723,7 +2723,7 @@ Touched by: `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_sessions`
-Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-training`, `dashboard`, `import-open-data`, `load-management`, `performance-heatmap`, `performance-metrics`, `qb-throwing`, `smart-training-recommendations`, `training-complete`, `training-metrics`, `training-plan`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile-core`, `weekend-games`
+Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-training`, `dashboard`, `import-open-data`, `load-management`, `performance-heatmap`, `performance-metrics`, `periodization-prescription`, `qb-throwing`, `smart-training-recommendations`, `training-complete`, `training-metrics`, `training-plan`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile-core`, `weekend-games`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2916,7 +2916,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `parental-consent`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `parental-consent`, `periodization-prescription`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null

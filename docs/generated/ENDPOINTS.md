@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-08**
 
-**120 functions: 116 exercised, 4 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**121 functions: 116 exercised, 5 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -132,5 +132,6 @@
 |---|---|---|---|
 | `auth-reset-password` | — | _(no /api redirect)_ | — |
 | `exercisedb` | GET, POST | /api/exercisedb/*<br>/api/exercisedb | team_members, exercisedb_exercises, ff_exercise_mappings, exercisedb_import_logs |
+| `periodization-prescription` | GET | /api/periodization-prescription | readiness_scores, users, athlete_training_config, training_sessions |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
