@@ -9,7 +9,7 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Subject, throwError } from "rxjs";
+import { Observable, Subject, throwError } from "rxjs";
 import { provideRouter, Router } from "@angular/router";
 import { OnboardingComponent } from "./onboarding.component";
 import { ApiService } from "../core/services/api.service";
@@ -17,11 +17,18 @@ import { LoggerService } from "../core/services/logger.service";
 
 const mockLogger = { error: vi.fn(), info: vi.fn(), warn: vi.fn() };
 
-function buildApiMock(observable: Subject<unknown>) {
+// Structural mock type: `post` may return any observable — a Subject (driven
+// manually in the success/timing tests) or throwError()'s Observable<never>
+// (the write-failure tests). Typed loosely so both call patterns type-check.
+interface OnboardingApiMock {
+  post: (...args: unknown[]) => Observable<unknown>;
+}
+
+function buildApiMock(observable: Subject<unknown>): OnboardingApiMock {
   return { post: vi.fn(() => observable) };
 }
 
-async function mountComponent(apiMock: ReturnType<typeof buildApiMock>) {
+async function mountComponent(apiMock: OnboardingApiMock) {
   TestBed.configureTestingModule({
     imports: [OnboardingComponent],
     providers: [

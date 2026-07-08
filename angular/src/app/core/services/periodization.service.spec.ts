@@ -37,6 +37,8 @@ function event(overrides: Partial<CompetitionEvent> = {}): CompetitionEvent {
     label: "Round 1",
     location: null,
     venue: null,
+    hotelName: null,
+    hotelAddress: null,
     notes: null,
     status: "scheduled",
     competitionName: "Slovenian Cup 2026",

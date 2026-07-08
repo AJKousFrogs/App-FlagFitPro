@@ -47,6 +47,7 @@
     "lint:css": "node ../node_modules/stylelint/bin/stylelint.mjs --config ../stylelint.config.js --ignore-path ../.stylelintignore \"src/**/*.{css,scss}\"",
     "lint:css:fix": "node ../node_modules/stylelint/bin/stylelint.mjs --config ../stylelint.config.js --ignore-path ../.stylelintignore \"src/**/*.{css,scss}\" --fix",
     "type-check": "tsc --noEmit",
+    "type-check:spec": "tsc --noEmit -p tsconfig.spec.json",
     "audit:a11y": "npx tsx src/scripts/accessibility-audit.ts",
     "audit:a11y:ci": "BASE_URL=${BASE_URL:-http://127.0.0.1:4200} npm run audit:a11y",
     "check:ngmodel-cva": "node scripts/check-no-bidirectional-ngmodel.mjs"

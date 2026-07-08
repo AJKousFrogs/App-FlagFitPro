@@ -213,6 +213,12 @@ jobs:
 
       - name: TypeScript type check
         run: npx tsc --noEmit
+      - name: TypeScript type check (spec files)
+        # tsconfig.json excludes **/*.spec.ts, so the check above never sees test
+        # files — vitest runs them via esbuild with no type-checking. This gates
+        # the spec sources against the same strict config so type errors in tests
+        # (stale fixtures, wrong mock shapes) fail CI instead of silently passing.
+        run: npm run type-check:spec
 
   unit-tests:
     name: Unit Tests
