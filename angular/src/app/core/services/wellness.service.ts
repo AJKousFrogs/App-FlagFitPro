@@ -27,7 +27,10 @@ export interface AcwrCalculationResult {
 }
 
 export interface WellnessData {
-  id?: number;
+  // uuid (daily_wellness_checkin.id). Was `number` — but the id is a uuid, so
+  // the realtime broadcast path's Number() coercion produced NaN and silently
+  // broke UPDATE/DELETE matching (NaN !== NaN). 2026-07-08 audit D1.
+  id?: string;
   userId?: string;
   date: string;
   sleep?: number;
@@ -74,7 +77,7 @@ export interface WellnessResponse {
 
 // Interface for daily_wellness_checkin table (canonical source)
 interface DailyWellnessCheckinEntry {
-  id: number;
+  id: string; // uuid — see WellnessData.id note (audit D1)
   user_id: string;
   checkin_date: string;
   sleep_quality?: number;
@@ -580,7 +583,7 @@ export class WellnessService {
     record: Record<string, unknown>,
   ): DailyWellnessCheckinEntry {
     return {
-      id: Number(record["id"]),
+      id: String(record["id"] ?? ""),
       user_id: String(record["user_id"]),
       checkin_date: String(record["checkin_date"] ?? record["date"] ?? ""),
       sleep_hours: Number(

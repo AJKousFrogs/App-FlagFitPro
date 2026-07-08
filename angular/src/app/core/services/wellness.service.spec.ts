@@ -18,7 +18,7 @@ import { NORMAL_ATHLETE } from "../../../testing/athlete-fixtures";
 
 // Mock data
 const MOCK_WELLNESS_ENTRY: WellnessData = {
-  id: 1,
+  id: "wch-1",
   userId: "user-123",
   date: "2024-01-15",
   sleep: 8,
@@ -34,7 +34,7 @@ const MOCK_WELLNESS_ENTRY: WellnessData = {
 const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
   MOCK_WELLNESS_ENTRY,
   {
-    id: 2,
+    id: "wch-2",
     userId: "user-123",
     date: "2024-01-14",
     sleep: 7,
@@ -46,7 +46,7 @@ const MOCK_WELLNESS_ENTRIES: WellnessData[] = [
     hydration: 7,
   },
   {
-    id: 3,
+    id: "wch-3",
     userId: "user-123",
     date: "2024-01-13",
     sleep: 6,
@@ -671,7 +671,7 @@ describe("WellnessService", () => {
                 Promise.resolve({
                   data: [
                     {
-                      id: 10,
+                      id: "wch-10",
                       user_id: "user-123",
                       checkin_date: "2024-01-15",
                       sleep_quality: 8,
@@ -699,6 +699,10 @@ describe("WellnessService", () => {
 
       expect(response.success).toBe(true);
       expect(response.data[0]).toMatchObject({
+        // Regression (audit D1): id is a uuid and must survive mapping as a
+        // string, not be Number()-coerced to NaN (which broke realtime
+        // UPDATE/DELETE matching, since NaN !== NaN).
+        id: "wch-10",
         sleep: 8,
         sleepHours: 7.5,
         energy: 7,
@@ -709,6 +713,9 @@ describe("WellnessService", () => {
         hydration: 6,
         readinessScore: 82,
       });
+      expect(Number.isNaN(response.data[0].id as unknown as number)).toBe(
+        false,
+      );
     });
   });
 
