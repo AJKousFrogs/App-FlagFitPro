@@ -37,6 +37,7 @@ import {
   DEFAULT_LOOKBACK_DAYS,
 } from "./schedule.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
+import { ageFromDob } from "./utils/age.js";
 import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
 import { prescribeFor, macroPhaseFor } from "./utils/periodization-engine.js";
 import {
@@ -72,21 +73,14 @@ function resolveActiveRestrictions(injuries) {
   );
 }
 
+// Age for the CNS-window base spacing, via the ONE canonical ageFromDob
+// (utils/age.js — 2026-07-08 audit B1; this used to re-implement the same
+// month/day-adjusted year calc F2 already consolidated everywhere else). Adds
+// only the CNS-specific 16–80 plausibility bound: outside it -> null, so the
+// engine falls back to its 48h base window rather than trusting a fabricated age.
 function resolveAgeYears(dob) {
-  if (!dob) {
-    return null;
-  }
-  const born = new Date(dob);
-  if (Number.isNaN(born.getTime())) {
-    return null;
-  }
-  const now = new Date();
-  let age = now.getFullYear() - born.getFullYear();
-  const m = now.getMonth() - born.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < born.getDate())) {
-    age -= 1;
-  }
-  return age >= 16 && age <= 80 ? age : null;
+  const age = ageFromDob(dob);
+  return age !== null && age >= 16 && age <= 80 ? age : null;
 }
 
 /**
