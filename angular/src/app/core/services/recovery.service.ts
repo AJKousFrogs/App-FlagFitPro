@@ -6,6 +6,7 @@ import { PeriodizationService } from "./periodization.service";
 import { InjuryService } from "./injury.service";
 import { ReadinessService } from "./readiness.service";
 import { ScheduleService } from "./schedule.service";
+import { READINESS_LOW } from "./periodization-engine";
 import {
   recommendModalities,
   RecoveryContext,
@@ -77,7 +78,7 @@ export class RecoveryService {
         ...new Set(injuries.map((i) => i.region).filter(Boolean)),
       ],
       severity: sev,
-      lowReadiness: readinessScore != null && readinessScore < 55,
+      lowReadiness: readinessScore != null && readinessScore < READINESS_LOW,
     };
   });
 

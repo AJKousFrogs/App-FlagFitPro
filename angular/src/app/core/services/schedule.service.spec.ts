@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { resolvePhase, effectiveImportance } from "./schedule.service";
+import { resolvePhase, effectiveImportance } from "./schedule-resolver";
 import { CompetitionEvent } from "../models/schedule.models";
 
 const ONE_HOUR_MS = 3_600_000;

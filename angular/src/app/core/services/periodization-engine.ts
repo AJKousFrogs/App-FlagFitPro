@@ -15,6 +15,7 @@ import {
   type PositionKey,
   type RangeDemand,
 } from "../config/position-volume.config";
+import { ADULT_FLAG_COMPETITIVE_V1 } from "../config/evidence-presets";
 
 // =============================================================================
 // PURE PERIODIZATION ALGORITHM
@@ -24,10 +25,14 @@ import {
 
 const FALLBACK_BODYWEIGHT_KG = 80;
 const FALLBACK_READINESS = 70;
-const ACWR_DANGER = 1.5;
-const ACWR_ELEVATED = 1.3;
-const ACWR_UNDER = 0.8;
-const READINESS_LOW = 55;
+// Single-sourced from the adult evidence preset's ACWR thresholds (itself CI
+// drift-guarded against the backend's ACWR_RISK_ZONES, tests/unit/
+// acwr-config-drift.test.js) instead of a third independently-declared copy of
+// the same 0.8/1.3/1.5 boundaries (reusability audit F9, 2026-07-08).
+const ACWR_UNDER = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotLow;
+const ACWR_ELEVATED = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotHigh;
+const ACWR_DANGER = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.dangerHigh;
+export const READINESS_LOW = 55;
 const DENSITY_HEAVY_GAMES_14D = 10;
 /** Games in a single day that count as a congested (tournament) day. */
 const DENSITY_CONGESTED_DAY_GAMES = 3;
