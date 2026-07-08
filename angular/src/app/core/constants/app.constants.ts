@@ -246,7 +246,12 @@ export const TRAINING = {
   MIN_DURATION_MINUTES: 5,
   MAX_DURATION_MINUTES: 240,
 
-  // ACWR (Acute:Chronic Workload Ratio)
+  // ACWR (Acute:Chronic Workload Ratio). NOTE: the canonical source for live
+  // risk classification is evidence-presets' ADULT_FLAG_COMPETITIVE_V1.acwr
+  // .thresholds (sweetSpotLow/High/dangerHigh) — see acwr.service.ts /
+  // periodization-engine.ts (F9). These constants exist only for
+  // validateAllConstants()'s ordering sanity check; a drift guard
+  // (acwr-threshold-drift.spec.ts) keeps them in lockstep with the preset.
   ACWR_SAFE_RANGE_MIN: 0.8,
   ACWR_SAFE_RANGE_MAX: 1.3,
   ACWR_WARNING_THRESHOLD: 1.5,
