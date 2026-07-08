@@ -301,7 +301,7 @@ Touched by: `daily-protocol`, `periodization-prescription`, `player-settings`
 - `team_training_days` jsonb · not null
 
 ### `athlete_travel_log`
-Touched by: `event-travel`
+Touched by: `event-travel`, `periodization-prescription`
 
 - `id` uuid · not null
 - `user_id` uuid · not null

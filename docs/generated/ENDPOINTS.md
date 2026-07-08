@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-08**
 
-**121 functions: 116 exercised, 5 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**121 functions: 117 exercised, 4 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -75,6 +75,7 @@
 | `performance-data` | GET, POST, PUT, PATCH, DELETE | _(router submodule)_ | team_members, physical_measurements, performance_tests, daily_wellness_checkin, supplement_logs, v_injuries_unified |
 | `performance-heatmap` | GET | _(router submodule)_ | training_sessions |
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
+| `periodization-prescription` | GET | /api/periodization-prescription | athlete_travel_log, readiness_scores, users, athlete_training_config, training_sessions |
 | `player-programs` | GET, POST, PUT | _(router submodule)_ | player_programs, training_programs |
 | `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers, ensure_public_user_profile() |
 | `player-stats` | GET | _(router submodule)_ | games, game_events |
@@ -132,6 +133,5 @@
 |---|---|---|---|
 | `auth-reset-password` | — | _(no /api redirect)_ | — |
 | `exercisedb` | GET, POST | /api/exercisedb/*<br>/api/exercisedb | team_members, exercisedb_exercises, ff_exercise_mappings, exercisedb_import_logs |
-| `periodization-prescription` | GET | /api/periodization-prescription | readiness_scores, users, athlete_training_config, training_sessions |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
