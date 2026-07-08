@@ -1089,6 +1089,138 @@ export type Database = {
           },
         ]
       }
+      bloodwork_baselines: {
+        Row: {
+          baseline_value: number
+          established_on: string
+          id: string
+          marker_name: string
+          notes: string | null
+          source_panel_id: string | null
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          baseline_value: number
+          established_on?: string
+          id?: string
+          marker_name: string
+          notes?: string | null
+          source_panel_id?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          baseline_value?: number
+          established_on?: string
+          id?: string
+          marker_name?: string
+          notes?: string | null
+          source_panel_id?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bloodwork_baselines_source_panel_id_fkey"
+            columns: ["source_panel_id"]
+            isOneToOne: false
+            referencedRelation: "bloodwork_panels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bloodwork_markers: {
+        Row: {
+          created_at: string
+          flag: string | null
+          id: string
+          marker_name: string
+          panel_id: string
+          reference_high: number | null
+          reference_low: number | null
+          unit: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          flag?: string | null
+          id?: string
+          marker_name: string
+          panel_id: string
+          reference_high?: number | null
+          reference_low?: number | null
+          unit?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          flag?: string | null
+          id?: string
+          marker_name?: string
+          panel_id?: string
+          reference_high?: number | null
+          reference_low?: number | null
+          unit?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bloodwork_markers_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "bloodwork_panels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bloodwork_panels: {
+        Row: {
+          collected_date: string
+          created_at: string
+          id: string
+          lab_name: string | null
+          notes: string | null
+          ordered_by: string | null
+          panel_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          collected_date: string
+          created_at?: string
+          id?: string
+          lab_name?: string | null
+          notes?: string | null
+          ordered_by?: string | null
+          panel_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          collected_date?: string
+          created_at?: string
+          id?: string
+          lab_name?: string | null
+          notes?: string | null
+          ordered_by?: string | null
+          panel_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bloodwork_panels_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calibration_logs: {
         Row: {
           acwr: number | null
@@ -2349,6 +2481,54 @@ export type Database = {
         }
         Relationships: []
       }
+      device_pairings: {
+        Row: {
+          device_identifier: string | null
+          external_athlete_id: string | null
+          id: string
+          is_active: boolean
+          paired_at: string
+          provider_id: string
+          team_id: string | null
+          user_id: string
+        }
+        Insert: {
+          device_identifier?: string | null
+          external_athlete_id?: string | null
+          id?: string
+          is_active?: boolean
+          paired_at?: string
+          provider_id: string
+          team_id?: string | null
+          user_id: string
+        }
+        Update: {
+          device_identifier?: string | null
+          external_athlete_id?: string | null
+          id?: string
+          is_active?: boolean
+          paired_at?: string
+          provider_id?: string
+          team_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_pairings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "monitoring_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "device_pairings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       emergency_medical_records: {
         Row: {
           created_at: string
@@ -3054,6 +3234,94 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: []
+      }
+      external_load_metrics: {
+        Row: {
+          accelerations: number | null
+          avg_heart_rate: number | null
+          created_at: string
+          decelerations: number | null
+          device_name: string | null
+          duration_minutes: number | null
+          high_speed_distance_m: number | null
+          id: string
+          max_heart_rate: number | null
+          max_velocity_kmh: number | null
+          notes: string | null
+          player_load: number | null
+          session_date: string
+          source: string
+          sprint_distance_m: number | null
+          total_distance_m: number | null
+          training_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accelerations?: number | null
+          avg_heart_rate?: number | null
+          created_at?: string
+          decelerations?: number | null
+          device_name?: string | null
+          duration_minutes?: number | null
+          high_speed_distance_m?: number | null
+          id?: string
+          max_heart_rate?: number | null
+          max_velocity_kmh?: number | null
+          notes?: string | null
+          player_load?: number | null
+          session_date: string
+          source?: string
+          sprint_distance_m?: number | null
+          total_distance_m?: number | null
+          training_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accelerations?: number | null
+          avg_heart_rate?: number | null
+          created_at?: string
+          decelerations?: number | null
+          device_name?: string | null
+          duration_minutes?: number | null
+          high_speed_distance_m?: number | null
+          id?: string
+          max_heart_rate?: number | null
+          max_velocity_kmh?: number | null
+          notes?: string | null
+          player_load?: number | null
+          session_date?: string
+          source?: string
+          sprint_distance_m?: number | null
+          total_distance_m?: number | null
+          training_session_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_load_metrics_training_session_id_fkey"
+            columns: ["training_session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_load_metrics_training_session_id_fkey"
+            columns: ["training_session_id"]
+            isOneToOne: false
+            referencedRelation: "v_training_sessions_consent"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_load_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ff_exercise_mappings: {
         Row: {
@@ -4106,6 +4374,80 @@ export type Database = {
         }
         Relationships: []
       }
+      monitoring_config: {
+        Row: {
+          citation: string | null
+          id: string
+          is_active: boolean
+          key: string
+          metric: string
+          sex: string | null
+          team_id: string | null
+          unit: string | null
+          updated_at: string
+          updated_by: string | null
+          value: number
+        }
+        Insert: {
+          citation?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          metric: string
+          sex?: string | null
+          team_id?: string | null
+          unit?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          value: number
+        }
+        Update: {
+          citation?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          metric?: string
+          sex?: string | null
+          team_id?: string | null
+          unit?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitoring_config_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monitoring_providers: {
+        Row: {
+          display_name: string
+          id: string
+          is_active: boolean
+          key: string
+          kind: string
+        }
+        Insert: {
+          display_name: string
+          id?: string
+          is_active?: boolean
+          key: string
+          kind: string
+        }
+        Update: {
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          key?: string
+          kind?: string
+        }
+        Relationships: []
+      }
       movement_patterns: {
         Row: {
           created_at: string | null
@@ -4913,6 +5255,72 @@ export type Database = {
           weight?: number | null
         }
         Relationships: []
+      }
+      physio_blocks: {
+        Row: {
+          authored_by: string | null
+          block_type: string | null
+          body_region: string | null
+          clinical_note: string | null
+          created_at: string
+          end_date: string | null
+          id: string
+          injury_id: string | null
+          is_active: boolean
+          max_load_percent: number | null
+          restrictions: string[]
+          start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          authored_by?: string | null
+          block_type?: string | null
+          body_region?: string | null
+          clinical_note?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          injury_id?: string | null
+          is_active?: boolean
+          max_load_percent?: number | null
+          restrictions?: string[]
+          start_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          authored_by?: string | null
+          block_type?: string | null
+          body_region?: string | null
+          clinical_note?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          injury_id?: string | null
+          is_active?: boolean
+          max_load_percent?: number | null
+          restrictions?: string[]
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "physio_blocks_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "physio_blocks_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       player_achievements: {
         Row: {
@@ -6999,6 +7407,171 @@ export type Database = {
           },
         ]
       }
+      session_load: {
+        Row: {
+          accel_band1_count: number | null
+          accel_band2_count: number | null
+          accel_band3_count: number | null
+          accel_total: number | null
+          cod_band1_count: number | null
+          cod_band2_count: number | null
+          cod_band3_count: number | null
+          cod_planned: number | null
+          cod_reactive: number | null
+          cod_total: number | null
+          created_at: string
+          decel_accel_ratio: number | null
+          decel_band1_count: number | null
+          decel_band2_count: number | null
+          decel_band3_count: number | null
+          decel_total: number | null
+          high_ima: number | null
+          hr_avg: number | null
+          hr_max: number | null
+          hr_z1_seconds: number | null
+          hr_z2_seconds: number | null
+          hr_z3_seconds: number | null
+          hr_z4_seconds: number | null
+          hr_z5_seconds: number | null
+          hrr: number | null
+          hrv: number | null
+          hsr_distance_m: number | null
+          id: string
+          jump_count: number | null
+          landing_asymmetry_pct: number | null
+          landing_count: number | null
+          max_velocity_kmh: number | null
+          notes: string | null
+          player_load: number | null
+          player_load_per_min: number | null
+          provider: string
+          recorded_at: string
+          resting_hr: number | null
+          session_context: string | null
+          session_id: string
+          sprint_count: number | null
+          sprint_distance_m: number | null
+          total_distance_m: number | null
+          training_session_id: string | null
+          trimp: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accel_band1_count?: number | null
+          accel_band2_count?: number | null
+          accel_band3_count?: number | null
+          accel_total?: number | null
+          cod_band1_count?: number | null
+          cod_band2_count?: number | null
+          cod_band3_count?: number | null
+          cod_planned?: number | null
+          cod_reactive?: number | null
+          cod_total?: number | null
+          created_at?: string
+          decel_accel_ratio?: number | null
+          decel_band1_count?: number | null
+          decel_band2_count?: number | null
+          decel_band3_count?: number | null
+          decel_total?: number | null
+          high_ima?: number | null
+          hr_avg?: number | null
+          hr_max?: number | null
+          hr_z1_seconds?: number | null
+          hr_z2_seconds?: number | null
+          hr_z3_seconds?: number | null
+          hr_z4_seconds?: number | null
+          hr_z5_seconds?: number | null
+          hrr?: number | null
+          hrv?: number | null
+          hsr_distance_m?: number | null
+          id?: string
+          jump_count?: number | null
+          landing_asymmetry_pct?: number | null
+          landing_count?: number | null
+          max_velocity_kmh?: number | null
+          notes?: string | null
+          player_load?: number | null
+          player_load_per_min?: number | null
+          provider?: string
+          recorded_at: string
+          resting_hr?: number | null
+          session_context?: string | null
+          session_id: string
+          sprint_count?: number | null
+          sprint_distance_m?: number | null
+          total_distance_m?: number | null
+          training_session_id?: string | null
+          trimp?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accel_band1_count?: number | null
+          accel_band2_count?: number | null
+          accel_band3_count?: number | null
+          accel_total?: number | null
+          cod_band1_count?: number | null
+          cod_band2_count?: number | null
+          cod_band3_count?: number | null
+          cod_planned?: number | null
+          cod_reactive?: number | null
+          cod_total?: number | null
+          created_at?: string
+          decel_accel_ratio?: number | null
+          decel_band1_count?: number | null
+          decel_band2_count?: number | null
+          decel_band3_count?: number | null
+          decel_total?: number | null
+          high_ima?: number | null
+          hr_avg?: number | null
+          hr_max?: number | null
+          hr_z1_seconds?: number | null
+          hr_z2_seconds?: number | null
+          hr_z3_seconds?: number | null
+          hr_z4_seconds?: number | null
+          hr_z5_seconds?: number | null
+          hrr?: number | null
+          hrv?: number | null
+          hsr_distance_m?: number | null
+          id?: string
+          jump_count?: number | null
+          landing_asymmetry_pct?: number | null
+          landing_count?: number | null
+          max_velocity_kmh?: number | null
+          notes?: string | null
+          player_load?: number | null
+          player_load_per_min?: number | null
+          provider?: string
+          recorded_at?: string
+          resting_hr?: number | null
+          session_context?: string | null
+          session_id?: string
+          sprint_count?: number | null
+          sprint_distance_m?: number | null
+          total_distance_m?: number | null
+          training_session_id?: string | null
+          trimp?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_load_training_session_id_fkey"
+            columns: ["training_session_id"]
+            isOneToOne: false
+            referencedRelation: "training_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_load_training_session_id_fkey"
+            columns: ["training_session_id"]
+            isOneToOne: false
+            referencedRelation: "v_training_sessions_consent"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_version_history: {
         Row: {
           athlete_viewed_at: string | null
@@ -7537,6 +8110,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "team_invitations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_member_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_member_roles_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -8873,6 +9478,72 @@ export type Database = {
           },
         ]
       }
+      wearable_consent: {
+        Row: {
+          granted_at: string | null
+          revoked_at: string | null
+          source: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string | null
+          revoked_at?: string | null
+          source: string
+          state?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          granted_at?: string | null
+          revoked_at?: string | null
+          source?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wearable_health: {
+        Row: {
+          consent_state: string
+          created_at: string
+          id: string
+          metric: string
+          recorded_at: string
+          source: string
+          source_device: string | null
+          unit: string | null
+          user_id: string
+          value: number | null
+        }
+        Insert: {
+          consent_state?: string
+          created_at?: string
+          id?: string
+          metric: string
+          recorded_at: string
+          source: string
+          source_device?: string | null
+          unit?: string | null
+          user_id: string
+          value?: number | null
+        }
+        Update: {
+          consent_state?: string
+          created_at?: string
+          id?: string
+          metric?: string
+          recorded_at?: string
+          source?: string
+          source_device?: string | null
+          unit?: string | null
+          user_id?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
       weather_substitution_rules: {
         Row: {
           condition: string
@@ -9238,6 +9909,14 @@ export type Database = {
         Args: { p_team_id: string; p_tournament_id: string }
         Returns: number
       }
+      can_role_read_athlete: {
+        Args: { p_athlete: string; p_roles: string[] }
+        Returns: boolean
+      }
+      can_staff_read_athlete: {
+        Args: { p_athlete: string; p_consent_kind?: string; p_roles: string[] }
+        Returns: boolean
+      }
       can_view_health_data: {
         Args: { p_team_id: string; p_user_id: string }
         Returns: boolean
@@ -9470,6 +10149,10 @@ export type Database = {
         Returns: boolean
       }
       has_role: { Args: { required_role: string }; Returns: boolean }
+      has_team_role: {
+        Args: { p_role: string; p_team: string }
+        Returns: boolean
+      }
       increment_comment_likes_count: {
         Args: { comment_id: string }
         Returns: undefined
@@ -9576,6 +10259,14 @@ export type Database = {
       }
       require_ai_consent: { Args: { p_user_id: string }; Returns: boolean }
       resume_account: { Args: { p_user_id: string }; Returns: boolean }
+      roster_medical_status: {
+        Args: { p_team: string }
+        Returns: {
+          flag_categories: string[]
+          status: string
+          user_id: string
+        }[]
+      }
       set_event_availability: {
         Args: {
           p_competition_event_id: string
@@ -9613,6 +10304,7 @@ export type Database = {
         Args: { p_auth_user: Database["public"]["Tables"]["users"]["Row"] }
         Returns: undefined
       }
+      team_roles_for: { Args: { p_team: string }; Returns: string[] }
       update_player_streak: {
         Args: {
           p_activity_date: string

@@ -1,6 +1,6 @@
 {
-  "generatedOn": "2026-07-06",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP; 2026-07-06: 19 dead tables dropped (see SOURCE_OF_TRUTH \u00a76), removed here surgically \u2014 snapshot otherwise still reflects the 2026-06-23 introspection and is stale for late-June/July additions (hotel-info cols, event_games, athlete_travel_log extension, seeds).",
+  "generatedOn": "2026-07-08",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP; full refresh capturing the monitoring-feature migrations (team_member_roles, bloodwork_*, session_load, wearable_health, physio_blocks, monitoring_config/providers, device_pairings, wearable_consent) and audit-fix migrations applied 2026-07-07/08.",
   "tables": {
     "account_deletion_requests": [
       {
@@ -803,6 +803,11 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "tier",
+        "type": "text",
+        "nullable": true
       }
     ],
     "athlete_hydration_logs": [
@@ -1061,11 +1066,6 @@
         "col": "flag_practice_schedule",
         "type": "jsonb",
         "nullable": false
-      },
-      {
-        "col": "preferred_training_days_deprecated",
-        "type": "ARRAY",
-        "nullable": true
       },
       {
         "col": "daily_routine",
@@ -1352,6 +1352,147 @@
       },
       {
         "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "bloodwork_baselines": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "marker_name",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "baseline_value",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "unit",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "established_on",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "source_panel_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "bloodwork_markers": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "panel_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "marker_name",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "value",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "unit",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "reference_low",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "reference_high",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "flag",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "bloodwork_panels": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "collected_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "panel_type",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "lab_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "ordered_by",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
       }
@@ -2194,6 +2335,16 @@
         "col": "game_format",
         "type": "character varying",
         "nullable": true
+      },
+      {
+        "col": "hotel_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "hotel_address",
+        "type": "text",
+        "nullable": true
       }
     ],
     "competitions": [
@@ -2743,11 +2894,6 @@
         "nullable": true
       },
       {
-        "col": "motivation",
-        "type": "integer",
-        "nullable": true
-      },
-      {
         "col": "travel_hours",
         "type": "integer",
         "nullable": true
@@ -2835,6 +2981,48 @@
         "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": true
+      }
+    ],
+    "device_pairings": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "provider_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "external_athlete_id",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "device_identifier",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "paired_at",
+        "type": "timestamp with time zone",
+        "nullable": false
       }
     ],
     "emergency_medical_records": [
@@ -2996,6 +3184,88 @@
         "nullable": true
       }
     ],
+    "event_games": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "competition_event_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "game_number",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "game_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "kickoff_time",
+        "type": "time without time zone",
+        "nullable": false
+      },
+      {
+        "col": "expected_duration_minutes",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "opponent",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "field",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "bracket_stage",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "is_provisional",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "status",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "result",
+        "type": "jsonb",
+        "nullable": true
+      },
+      {
+        "col": "created_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "event_participation": [
       {
         "col": "id",
@@ -3080,6 +3350,11 @@
       {
         "col": "updated_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "game_id",
+        "type": "uuid",
         "nullable": true
       }
     ],
@@ -3553,6 +3828,103 @@
         "col": "is_high_intensity",
         "type": "boolean",
         "nullable": true
+      }
+    ],
+    "external_load_metrics": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "session_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "source",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "device_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "total_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "high_speed_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "sprint_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "player_load",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "accelerations",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decelerations",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "max_velocity_kmh",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "avg_heart_rate",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "max_heart_rate",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "duration_minutes",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "training_session_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
       }
     ],
     "ff_exercise_mappings": [
@@ -4879,6 +5251,90 @@
         "nullable": true
       }
     ],
+    "monitoring_config": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "metric",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "key",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "sex",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "value",
+        "type": "numeric",
+        "nullable": false
+      },
+      {
+        "col": "unit",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "citation",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "updated_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "monitoring_providers": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "key",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "display_name",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "kind",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      }
+    ],
     "movement_patterns": [
       {
         "col": "id",
@@ -5962,6 +6418,78 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": true
+      }
+    ],
+    "physio_blocks": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "body_region",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "block_type",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "restrictions",
+        "type": "ARRAY",
+        "nullable": false
+      },
+      {
+        "col": "max_load_percent",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "injury_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "start_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "end_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "is_active",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "authored_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "clinical_note",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
       }
     ],
     "player_achievements": [
@@ -7451,18 +7979,8 @@
         "nullable": true
       },
       {
-        "col": "wellness_score",
-        "type": "numeric",
-        "nullable": true
-      },
-      {
         "col": "acwr",
         "type": "numeric",
-        "nullable": true
-      },
-      {
-        "col": "notes",
-        "type": "text",
         "nullable": true
       },
       {
@@ -8500,6 +9018,243 @@
         "nullable": true
       }
     ],
+    "session_load": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "session_id",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "provider",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "recorded_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "training_session_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "player_load",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "player_load_per_min",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "high_ima",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "jump_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "landing_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "landing_asymmetry_pct",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "cod_total",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "cod_planned",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "cod_reactive",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "cod_band1_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "cod_band2_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "cod_band3_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "accel_total",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "accel_band1_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "accel_band2_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "accel_band3_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decel_total",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decel_band1_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decel_band2_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decel_band3_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "decel_accel_ratio",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "total_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "hsr_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "max_velocity_kmh",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "sprint_count",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "sprint_distance_m",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "hr_max",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_avg",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "resting_hr",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hrv",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "trimp",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "hrr",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_z1_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_z2_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_z3_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_z4_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "hr_z5_seconds",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "session_context",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "session_version_history": [
       {
         "col": "version_id",
@@ -9132,6 +9887,33 @@
       },
       {
         "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "team_member_roles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "team_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "role",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": false
       }
@@ -9892,11 +10674,6 @@
       {
         "col": "xp_earned",
         "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "verification_confidence_deprecated",
-        "type": "numeric",
         "nullable": true
       },
       {
@@ -10834,6 +11611,90 @@
         "nullable": true
       }
     ],
+    "wearable_consent": [
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "source",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "state",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "granted_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "revoked_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "wearable_health": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "source",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "source_device",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "metric",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "value",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "unit",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "recorded_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "consent_state",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "weather_substitution_rules": [
       {
         "col": "id",
@@ -10961,88 +11822,6 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": true
-      }
-    ],
-    "event_games": [
-      {
-        "col": "id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "competition_event_id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "team_id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "game_number",
-        "type": "integer",
-        "nullable": false
-      },
-      {
-        "col": "game_date",
-        "type": "date",
-        "nullable": false
-      },
-      {
-        "col": "kickoff_time",
-        "type": "time without time zone",
-        "nullable": false
-      },
-      {
-        "col": "expected_duration_minutes",
-        "type": "integer",
-        "nullable": false
-      },
-      {
-        "col": "opponent",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "field",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "bracket_stage",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "is_provisional",
-        "type": "boolean",
-        "nullable": false
-      },
-      {
-        "col": "status",
-        "type": "text",
-        "nullable": false
-      },
-      {
-        "col": "result",
-        "type": "jsonb",
-        "nullable": true
-      },
-      {
-        "col": "created_by",
-        "type": "uuid",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp with time zone",
-        "nullable": false
-      },
-      {
-        "col": "updated_at",
-        "type": "timestamp with time zone",
-        "nullable": false
       }
     ]
   },
@@ -11270,6 +12049,16 @@
       {
         "col": "user_id",
         "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "hotel_name",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "hotel_address",
+        "type": "text",
         "nullable": true
       }
     ],
