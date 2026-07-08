@@ -116,7 +116,7 @@ function cnsRecoveryHoursForAge(ageYears) {
 var FLAG_DRILL_HIGH_CNS_PATTERN = /\b(?:route|routes|post|fade|hook|evade|evasion|flag.?pull)\b/i;
 function isHighCnsSessionType(type, rpe) {
   const t = type || "";
-  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(t))
+  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound|competition/i.test(t))
     return true;
   if (FLAG_DRILL_HIGH_CNS_PATTERN.test(t)) {
     return rpe == null || rpe >= 6;
@@ -1384,6 +1384,7 @@ export {
   addSecondSessions,
   applyWeatherGuard,
   enforceWeeklyRestMinimum,
+  isHighCnsSessionType,
   macroPhaseFor,
   planWeekIntents,
   prescribeFor

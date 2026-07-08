@@ -95,9 +95,14 @@ const FLAG_DRILL_HIGH_CNS_PATTERN =
  * intensity (RPE ≥ 6) or when RPE is unknown — conservative to prevent
  * under-firing the guard due to missing data.
  */
-function isHighCnsSessionType(type: string, rpe?: number | null): boolean {
+export function isHighCnsSessionType(
+  type: string,
+  rpe?: number | null,
+): boolean {
   const t = type || "";
-  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound/i.test(t))
+  // `competition` = a game: maximal CNS load, always spacing-worthy. (Included so
+  // the server cns-spacing guard, which consumes this, agrees with the engine.)
+  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound|competition/i.test(t))
     return true;
   if (FLAG_DRILL_HIGH_CNS_PATTERN.test(t)) {
     // Unknown RPE → conservative (treat as high-CNS).

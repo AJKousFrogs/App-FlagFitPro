@@ -115,6 +115,15 @@ const RAW_CASES = [
       recentSessions: [{ at: "2026-07-14T18:00:00Z", type: "sprint", rpe: 8 }],
     },
   ],
+  [
+    "cns-recent-competition",
+    {
+      ageYears: 25,
+      recentSessions: [
+        { at: "2026-07-14T18:00:00Z", type: "competition", rpe: 8 },
+      ],
+    },
+  ],
   // Practice day
   ["practice-day", { isTeamPractice: true }],
 ];

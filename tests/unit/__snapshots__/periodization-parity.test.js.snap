@@ -181,6 +181,32 @@ exports[`periodization engine — golden parity fixtures > prescription is stabl
 }
 `;
 
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: cns-recent-competition 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
 exports[`periodization engine — golden parity fixtures > prescription is stable for case: cns-recent-sprint-older 1`] = `
 {
   "acwrAtIssue": 1,
