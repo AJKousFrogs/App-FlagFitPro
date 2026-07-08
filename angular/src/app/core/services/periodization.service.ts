@@ -36,6 +36,8 @@ import { SupabaseService } from "./supabase.service";
 import { ApiService } from "./api.service";
 import { InjuryService } from "./injury.service";
 import { EventTravelService } from "./event-travel.service";
+import { RemoteTelemetryService } from "./remote-telemetry.service";
+import { firstValueFrom } from "rxjs";
 import {
   prescribeFor,
   macroPhaseFor,
@@ -64,6 +66,9 @@ export class PeriodizationService {
   private readonly api = inject(ApiService);
   private readonly injury = inject(InjuryService);
   private readonly eventTravel = inject(EventTravelService);
+  private readonly remoteTelemetry = inject(RemoteTelemetryService);
+  /** Shadow-mode dedup: only compare once per rendered day, not on every recompute. */
+  private lastShadowComparedDate: string | null = null;
 
   /**
    * The athlete's declared season calendar (athlete_training_config.season_calendar),
@@ -172,6 +177,77 @@ export class PeriodizationService {
           /* no weather → guard stays off (fail-safe) */
         },
       });
+
+    // SHADOW MODE (2026-07-08, temporary — backend-authoritative migration
+    // verification, step 2/3). Compares the client-computed prescription against
+    // the server's ported engine (/api/periodization-prescription) on real usage,
+    // logging any divergence to `frontend_logs` (best-effort, read-only — NEVER
+    // affects what renders; a failed/slow comparison call is silently dropped).
+    // Once this has run clean across real athlete traffic, the client switches to
+    // consume the server directly (step 3) and this comparison is deleted — see
+    // docs/SOURCE_OF_TRUTH.md §5a.
+    effect(() => {
+      const prescription = this.today();
+      if (!prescription || this.lastShadowComparedDate === prescription.date) {
+        return;
+      }
+      this.lastShadowComparedDate = prescription.date;
+      void this.shadowCompareToServer(prescription);
+    });
+  }
+
+  /**
+   * Fire-and-forget: fetch the server's prescription for the same date and log
+   * whether the CORE decision fields (intent/targets/volume) agree. Never throws,
+   * never blocks, never alters `clientPrescription` or anything rendered from it.
+   */
+  private async shadowCompareToServer(
+    clientPrescription: DailyPrescription,
+  ): Promise<void> {
+    try {
+      const res = await firstValueFrom(
+        this.api.get<{ prescription: DailyPrescription }>(
+          "/api/periodization-prescription",
+          { date: clientPrescription.date },
+        ),
+      );
+      const server = res?.data?.prescription;
+      if (!server) {
+        return;
+      }
+
+      const summarize = (p: DailyPrescription) => ({
+        intent: p.intent,
+        targetRpe: p.targetRpe,
+        targetMinutes: p.targetMinutes,
+        sprintReps: p.sprintReps,
+        strengthSets: p.strengthSets,
+        hasWeatherAdjustment: Boolean(p.weatherAdjustment),
+        hasInjuryAdjustment: Boolean(p.injuryAdjustment),
+        hasCnsAdjustment: Boolean(p.cnsRecoveryAdjustment),
+      });
+      const clientSummary = summarize(clientPrescription);
+      const serverSummary = summarize(server);
+      const coreMismatch =
+        clientSummary.intent !== serverSummary.intent ||
+        clientSummary.targetRpe !== serverSummary.targetRpe ||
+        clientSummary.targetMinutes !== serverSummary.targetMinutes ||
+        clientSummary.sprintReps !== serverSummary.sprintReps ||
+        clientSummary.strengthSets !== serverSummary.strengthSets;
+
+      const context = {
+        date: clientPrescription.date,
+        client: clientSummary,
+        server: serverSummary,
+      };
+      if (coreMismatch) {
+        this.remoteTelemetry.warn("periodization_shadow_mismatch", context);
+      } else {
+        this.remoteTelemetry.info("periodization_shadow_match", context);
+      }
+    } catch {
+      // Best-effort verification only — never surfaces to the athlete.
+    }
   }
 
   /**
