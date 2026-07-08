@@ -1,0 +1,730 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: acclimatization-heat-arrival 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: acwr-danger 1`] = `
+{
+  "acwrAtIssue": 1.6,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "ACWR 1.60 is in the danger zone — full rest today. Gentle 15-min mobility and stretching only; no cardio or loading.",
+  "recoveryEmphasis": "critical",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: acwr-elevated 1`] = `
+{
+  "acwrAtIssue": 1.35,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: acwr-null 1`] = `
+{
+  "acwrAtIssue": null,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: acwr-under 1`] = `
+{
+  "acwrAtIssue": 0.7,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: arrival-day-long-trip 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: baseline 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: cns-recent-sprint-older 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: cns-recent-sprint-young 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: injury-severe-sprint 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "injuryAdjustment": {
+    "regions": [
+      "hamstring",
+    ],
+    "severity": "severe",
+    "summary": "Rest + daily mobility → Active recovery; sprints 0→0",
+  },
+  "intent": "recovery",
+  "intentLabel": "Active recovery",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Reported hamstring issue — recovery only today. Injury precedence over training.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 30,
+  "targetRpe": 3,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: injury-throwing-qb 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: phase-competition 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "competition",
+  "intentLabel": "Game day",
+  "nutrition": {
+    "carbsG": 560,
+    "hydrationL": 4.3,
+    "proteinG": 144,
+    "rationale": "Game-day fueling: carbs every game, hydrate aggressively, protein after final game.",
+  },
+  "phase": "competition",
+  "positionEmphasis": null,
+  "reasoning": "Game day. Activate, play, refuel between games, sleep tonight.",
+  "recoveryEmphasis": "critical",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 60,
+  "targetRpe": null,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: phase-recovery 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "recovery",
+  "intentLabel": "Active recovery",
+  "nutrition": {
+    "carbsG": 280,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 3.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "recovery",
+  "positionEmphasis": null,
+  "reasoning": "Recovery focus today — light blood flow only.",
+  "recoveryEmphasis": "high",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 30,
+  "targetRpe": 3,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: phase-taper 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "sprint",
+  "intentLabel": "Sprint focus",
+  "nutrition": {
+    "carbsG": 360,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 4.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "taper",
+  "positionEmphasis": null,
+  "reasoning": "Taper week. Keep nervous system sharp at low volume.",
+  "recoveryEmphasis": "medium",
+  "sprintReps": 6,
+  "strengthSets": 0,
+  "targetMinutes": 45,
+  "targetRpe": 6,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: phase-transition 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "mixed",
+  "intentLabel": "Mixed session",
+  "nutrition": {
+    "carbsG": 400,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "transition",
+  "positionEmphasis": null,
+  "reasoning": "Off-season window. Maintain GPP base — easy aerobic + lift.",
+  "recoveryEmphasis": "low",
+  "sprintReps": 0,
+  "strengthSets": 3,
+  "targetMinutes": 45,
+  "targetRpe": 5,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: phase-travel 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "travel",
+  "intentLabel": "Travel day",
+  "nutrition": {
+    "carbsG": 280,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 3.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "travel",
+  "positionEmphasis": null,
+  "reasoning": "Travel day. Rest, stay hydrated, keep legs moving between transit. Arrive fresh.",
+  "recoveryEmphasis": "high",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 0,
+  "targetRpe": null,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: practice-day 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "mixed",
+  "intentLabel": "Flag football practice",
+  "nutrition": {
+    "carbsG": 400,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Team practice today — that's your main session. Keep any extra individual work light (mobility / activation).",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 90,
+  "targetRpe": 7,
+  "tournamentRecoveryAdjustment": null,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: readiness-high 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: readiness-low 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "recovery",
+  "intentLabel": "Active recovery",
+  "nutrition": {
+    "carbsG": 280,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 3.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Readiness 40/100 is low. Active recovery only.",
+  "recoveryEmphasis": "high",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 30,
+  "targetRpe": 3,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: readiness-null 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: season-offseason 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Off-season · strength & conditioning block. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "offseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: season-peak 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Peak season · stay sharp and fresh — quality over quantity. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "peak",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: season-postseason 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Post-season · active regeneration and aerobic base. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "postseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: season-preseason 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "Build phase rest day — no structured training. Complete your 15-min daily mobility and stretching routine.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "preseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: weather-cold 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: weather-heat 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: weather-storm 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
+
+exports[`periodization engine — golden parity fixtures > prescription is stable for case: weather-storm-coach-override 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-15",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "rest",
+  "intentLabel": "Rest + daily mobility",
+  "nutrition": {
+    "carbsG": 240,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Lower carb day. Protein steady to support repair.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a rest day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 0,
+  "targetMinutes": 15,
+  "targetRpe": 2,
+}
+`;
