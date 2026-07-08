@@ -4,6 +4,7 @@ import {
   createErrorResponse,
 } from "./utils/error-handler.js";
 import { getSupabaseClient } from "./supabase-client.js";
+import { ageFromDob } from "./utils/age.js";
 import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -237,11 +238,15 @@ const handler = async (event, context) => {
           .single();
 
         if (user?.date_of_birth) {
-          const birthDate = new Date(user.date_of_birth);
-          const today = new Date();
-          const age = today.getFullYear() - birthDate.getFullYear();
+          // BUG FIX (2026-07-08, reusability audit F2): this was a raw
+          // getFullYear() diff with no month/day correction, over/under-counting
+          // age by up to 1 year — a real compliance bug since it gates the
+          // GDPR/COPPA parental-consent requirement below. ageFromDob is the
+          // same correct calculation already used at privacy-settings.service.ts
+          // (client), player-settings.js, parental-consent.js, sleep-data.js.
+          const age = ageFromDob(user.date_of_birth);
 
-          if (age >= 13 && age < 18) {
+          if (age !== null && age >= 13 && age < 18) {
             const { data: consent } = await supabase
               .from("parental_consent")
               .select("*")

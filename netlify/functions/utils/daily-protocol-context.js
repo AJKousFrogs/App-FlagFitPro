@@ -1,3 +1,5 @@
+import { ageFromDob } from "./age.js";
+
 function computeOverride({
   rehabActive,
   injuries,
@@ -62,20 +64,7 @@ function computeOverride({
   return null;
 }
 
-function calculateAge(birthDate) {
-  if (!birthDate) {
-    return null;
-  }
-
-  const today = new Date();
-  const birth = new Date(birthDate);
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
-}
+const calculateAge = ageFromDob;
 
 const POSITION_TO_MODIFIER_KEY = {
   QB: "quarterback",

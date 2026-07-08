@@ -1,4 +1,5 @@
 import { baseHandler } from "./utils/base-handler.js";
+import { ageFromDob } from "./utils/age.js";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -470,7 +471,7 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   let acwrTargetMax = 1.3;
 
   if (birthDate) {
-    const age = calculateAge(birthDate);
+    const age = ageFromDob(birthDate);
     const { data: modifier } = await supabase
       .from("age_recovery_modifiers")
       .select("recovery_modifier, acwr_max_adjustment")
@@ -668,20 +669,6 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     200,
     "Settings saved successfully",
   );
-}
-
-/**
- * Calculate age from birth date
- */
-function calculateAge(birthDateStr) {
-  const today = new Date();
-  const birth = new Date(birthDateStr);
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
 }
 
 export const testHandler = handler;
