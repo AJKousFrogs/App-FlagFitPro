@@ -52,7 +52,6 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { CorrelationContextService } from "./correlation-context.service";
-import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
 import { RemoteTelemetryService } from "./remote-telemetry.service";
 import type {
   RealtimeChannel,
@@ -112,7 +111,6 @@ export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
-  private acwrSpikeDetection = inject(AcwrSpikeDetectionService);
   private readonly correlation = inject(CorrelationContextService);
   private readonly remoteTelemetry = inject(RemoteTelemetryService);
 
@@ -749,27 +747,6 @@ export class AcwrService {
         historyCutoff.getDate() - ACWR_MEMORY_LIMITS.MAX_HISTORICAL_ACWR_DAYS,
       );
 
-      // Check for ACWR spike and create load cap if needed
-      if (currentRatio > 1.5 && session.playerId) {
-        this.acwrSpikeDetection
-          .checkAndCapLoad(session.playerId, currentRatio)
-          .catch((error) => {
-            this.logger.error("acwr_spike_check_failed", error, {
-              playerId: session.playerId,
-            });
-          });
-      }
-
-      // Decrement load cap if session was logged
-      if (session.playerId && session.completed) {
-        this.acwrSpikeDetection
-          .decrementLoadCap(session.playerId)
-          .catch((error) => {
-            this.logger.error("acwr_load_cap_decrement_failed", error, {
-              playerId: session.playerId,
-            });
-          });
-      }
 
       // Filter by date and then cap by count for memory safety
       const filteredHistory = history
@@ -1286,18 +1263,15 @@ export class AcwrService {
     try {
       // load_monitoring (the ACWR/load cache) was dropped (Phase 8, 2026-05-29);
       // it was never written and the canonical ratio is recomputed live from
-      // training_sessions. There is nothing to persist here anymore — but we
-      // still act on the live ratio for spike detection / load capping.
+      // training_sessions. There is nothing to persist here anymore. Load capping
+      // on an ACWR spike is handled by the prescription engine's live ACWR
+      // modulation (modulateIntentForLoad down-regulates at >1.3/>1.5), not a
+      // separate cap record.
       this.logger.debug("acwr_load_monitoring_persist_skipped", {
         userId,
         ratio: acwrRatio,
         riskLevel: acwrData.riskZone.label,
       });
-
-      // Check for ACWR spike and create load cap if needed
-      if (acwrRatio > 1.5) {
-        await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrRatio);
-      }
 
       return { ok: true };
     } catch (error: unknown) {
