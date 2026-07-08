@@ -1054,6 +1054,15 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
  * - Muscle Soreness: 20% (inverted - lower soreness = better readiness)
  *
  * Scale: Input values are on 1-5 scale (from quick check-in) or 0-10 scale (full check-in)
+ *
+ * DISTINCT from the composite readiness in calc-readiness.js (workload 35% / wellness
+ * 30% / sleep 20% / game 15%) and from its canonical wellness-index scorer in
+ * utils/readiness-score.js. This is the CHECK-IN-TIME estimate: it only has the check-in
+ * sliders (no ACWR / sleep-hours / game proximity), and it handles the form scale
+ * EXPLICITLY (the "S6" fix) so a bad 0-10 day is never misread as a good 1-5 day — a
+ * safety property the 1-10-only canonical scorer does not have. Keep these two separate;
+ * unifying them is a sports-science decision, not a mechanical dedupe (see the header of
+ * utils/readiness-score.js).
  */
 function calculateReadiness(data) {
   const {
