@@ -5,10 +5,9 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ApiService } from "../core/services/api.service";
@@ -38,9 +37,8 @@ interface AchievementsData {
   selector: "app-achievements",
   imports: [
     NgOptimizedImage,
-    AvatarComponent,
+    TopbarComponent,
     SkeletonComponent,
-    RouterLink,
     LucideAngularModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,9 +7,8 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -42,7 +41,7 @@ const FALLBACK_BODYWEIGHT_KG = 80;
  */
 @Component({
   selector: "app-supplements",
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [TopbarComponent, LucideAngularModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./supplements.component.html",

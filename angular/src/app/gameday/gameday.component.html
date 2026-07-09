@@ -1,5 +1,4 @@
-<header class="topbar">
-  <div>
+<app-topbar>
     <div class="eyebrow">
       @if (nextEvent(); as ev) {
         {{ ev.competitionShortName || ev.competitionName }} ·
@@ -9,16 +8,7 @@
       }
     </div>
     <h1 class="inline"><lucide-icon name="flag" /> Game day</h1>
-  </div>
-  <div class="inline">
-    <a class="icon-btn" routerLink="/notifications" aria-label="Notifications"
-      ><lucide-icon name="bell" /><span class="dot"></span
-    ></a>
-    <a class="avatar" routerLink="/profile" aria-label="Profile"
-      ><app-avatar
-    /></a>
-  </div>
-</header>
+  </app-topbar>
 
 <main class="screen">
   <div class="screen-hero">

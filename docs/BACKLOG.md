@@ -12,7 +12,10 @@ Tournament Mode V2.0–V2.4 landed: `event_games` per-game timeline + gap engine
 game-day caffeine timing, multi-tier competition calendar + global climate, QB
 arm-care lane wired. From the UI/UX audit: dead viz deps removed, `standalone:true`
 cleanup, shared `event.utils`, Stats "Performance" honest empty state, Today
-readiness card tappable, short-viewport hero collapse.
+readiness card tappable, short-viewport hero collapse. Shared chart components:
+`app-acwr-trend` (was duplicated in acwr + stats) and `app-readiness-trend`
+(unified, `days`/`autoLoad` inputs). Shared `app-topbar` (bell + avatar were
+copy-pasted into 11 screens; left side projected, one implementation now).
 
 ## UI — bounded, safe, still worth doing
 
@@ -21,21 +24,20 @@ readiness card tappable, short-viewport hero collapse.
   `acwr` per athlete); this consolidates the two partial overviews into one. Marginal
   now that the Cycle tab already renders trend micro-bars — do it when coach density
   is revisited.
-- **Shared `app-trend-chart` component** — the ACWR sweet-spot SVG is duplicated in
-  `acwr.component.html` + `stats.component.html`, the readiness line in
-  `stats.component.html` + `readiness-trend.component.ts` (4 copies). Extract one
-  component (inputs: points, reference lines/band, color token), then add tap-to-scrub.
-  Deferred only because it touches charts and the visual-regression baselines are
-  Linux-CI-only (can't verify a byte-identical extraction locally).
+- **Chart tap-to-scrub** — the shared `app-acwr-trend` / `app-readiness-trend` are now
+  single implementations (extraction shipped); the remaining un-built polish is a
+  tap-to-scrub interaction to read a specific day's value off the sparkline.
 - **Staff athlete-detail parity** — coach view is 2 static chips; embed the trend
-  charts for consented athletes. Needs `readiness-trend.component` refactored to take
-  input data instead of reading `ReadinessService.history()` directly.
+  charts for consented athletes. `app-acwr-trend` is already presentational (takes
+  `points`/`lastX`/`lastY`), so the ACWR half is a straight reuse; the readiness half
+  needs a presentational variant (today's `app-readiness-trend` reads the logged-in
+  user's `ReadinessService.history()`, not an arbitrary athlete's) plus a consent-gated
+  fetch of the athlete's series (`/api/monitoring-report?athleteId=` already returns it).
 - **Daily-load calendar heatmap** (Stats + coach) — month grid colored by daily AU
   from the `calc-readiness` daily-load map; answers "when did the ACWR spike," not
   just "am I safe." CSS grid + 4-step ramp.
-- **Extract `app-topbar`** (bell + avatar copy-pasted into every screen); touch-target
-  axe assertions (`@axe-core/playwright` already installed); gameday high-contrast
-  outdoor toggle.
+- Touch-target axe assertions (`@axe-core/playwright` already installed); gameday
+  high-contrast outdoor toggle.
 
 ## Product / engine — larger future features (from the V2 proposal)
 

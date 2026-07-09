@@ -10,7 +10,7 @@ import {
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 
 /** Shape of a row from GET /api/supplements/recent. */
@@ -38,7 +38,7 @@ import { EventTravelService } from "../core/services/event-travel.service";
   selector: "app-wellness",
   imports: [
     NgOptimizedImage,
-    AvatarComponent,
+    TopbarComponent,
     ReadinessTrendComponent,
     RouterLink,
     LucideAngularModule,

@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { AIService, MerlinSuggestedAction } from "../core/services/ai.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
@@ -78,7 +78,7 @@ interface Turn {
  */
 @Component({
   selector: "app-chat",
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [TopbarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./chat.component.html",
   styles: [

@@ -7,7 +7,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 
 import { AcwrService } from "../core/services/acwr.service";
 import { IdentityService } from "../core/services/identity.service";
@@ -22,7 +22,7 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-more",
-  imports: [NgOptimizedImage, AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [NgOptimizedImage, TopbarComponent, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./more.component.html",
   styles: [

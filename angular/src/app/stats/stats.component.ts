@@ -8,7 +8,7 @@ import {
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 import { AcwrTrendComponent } from "../shared/acwr-trend.component";
@@ -35,7 +35,7 @@ const clamp = (v: number, lo: number, hi: number) =>
   selector: "app-stats",
   imports: [
     NgOptimizedImage,
-    AvatarComponent,
+    TopbarComponent,
     SkeletonComponent,
     ReadinessTrendComponent,
     AcwrTrendComponent,

@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
@@ -32,7 +32,7 @@ import { CompetitionEvent } from "../core/models/schedule.models";
 @Component({
   selector: "app-today",
   imports: [
-    AvatarComponent,
+    TopbarComponent,
     YtVideoComponent,
     SkeletonComponent,
     RouterLink,

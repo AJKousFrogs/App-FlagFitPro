@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 import { QbArmCareCardComponent } from "../shared/qb-arm-care-card.component";
@@ -43,7 +43,7 @@ interface WeekRow {
 @Component({
   selector: "app-training",
   imports: [
-    AvatarComponent,
+    TopbarComponent,
     YtVideoComponent,
     SkeletonComponent,
     QbArmCareCardComponent,

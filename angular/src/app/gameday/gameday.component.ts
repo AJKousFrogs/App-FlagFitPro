@@ -8,10 +8,9 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
-import { AvatarComponent } from "../shared/avatar.component";
+import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
 import { ScheduleService } from "../core/services/schedule.service";
@@ -40,9 +39,8 @@ import { TournamentPlanBlock } from "../core/models/tournament-plan.models";
   selector: "app-gameday",
   imports: [
     NgOptimizedImage,
-    AvatarComponent,
+    TopbarComponent,
     SkeletonComponent,
-    RouterLink,
     LucideAngularModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
