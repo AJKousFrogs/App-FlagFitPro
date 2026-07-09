@@ -68,6 +68,11 @@ async function authenticateRequest(event) {
       user: {
         id: user.id,
         email: user.email,
+        // NOT AUTHORITATIVE — informational only. Team roles live in
+        // team_members, NOT user_metadata (which is empty for team-based roles,
+        // so this defaults every coach/physio to "player"). NEVER gate authz on
+        // this field; use getUserRole()/team_members. (Reading it for a routing
+        // decision is exactly what sent coaches to the athlete app — 2026-07-09.)
         role: user.user_metadata?.role || "player",
         name: user.user_metadata?.name || user.email,
         emailVerified: user.email_confirmed_at !== null,

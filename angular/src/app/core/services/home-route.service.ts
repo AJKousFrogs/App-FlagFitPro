@@ -1,36 +1,24 @@
-import { Injectable, inject } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
+import { Injectable } from "@angular/core";
 import { STAFF_ROLES } from "../guards/staff.guard";
 import { TeamRole } from "./team-membership.service";
 
 /**
- * Resolves the post-login home route from the user's role: staff/coaches →
+ * Resolves the post-login home route from the user's TEAM role: staff/coaches →
  * `/staff`, everyone else → `/today`. Staff detection reuses the guard's
- * `STAFF_ROLES` (single source of truth; the guard also safely bounces any
- * non-staff back to `/today`). Previously returned legacy routes —
- * `/todays-practice`, `/coach/dashboard`, `/superadmin` — that no longer exist,
- * so every login silently fell through the router catch-all to `/today`.
+ * `STAFF_ROLES` (single source of truth).
+ *
+ * IMPORTANT: the caller must pass the role from the authoritative source —
+ * `team_members` (via TeamMembershipService), NOT the auth user object. An
+ * earlier `getHomeRouteForUser(user)` helper read `user.role ??
+ * user.user_metadata.role`, which is empty for team_members-based roles, so
+ * every coach/physio was silently sent to the athlete `/today`. That helper was
+ * removed to stop the trap from being reused; only the role-in role-out method
+ * remains.
  */
 @Injectable({
   providedIn: "root",
 })
 export class HomeRouteService {
-  private readonly supabase = inject(SupabaseService);
-
-  getHomeRoute(): string {
-    return this.getHomeRouteForUser(this.supabase.currentUser());
-  }
-
-  getHomeRouteForUser(
-    user: {
-      role?: string | null;
-      user_metadata?: { role?: string } | null;
-    } | null,
-  ): string {
-    const role = user?.role ?? user?.user_metadata?.role;
-    return this.getHomeRouteForRole(role);
-  }
-
   getHomeRouteForRole(role: string | null | undefined): string {
     return role != null && STAFF_ROLES.has(role as TeamRole)
       ? "/staff"
