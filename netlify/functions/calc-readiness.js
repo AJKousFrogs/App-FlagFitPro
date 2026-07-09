@@ -17,7 +17,7 @@ import {
   buildRequestLogContext,
   createLogger,
 } from "./utils/structured-logger.js";
-import { computeAcwrAt } from "./utils/acwr.js";
+import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 import { calculateWellnessIndex } from "./utils/readiness-score.js";
 import { normalizeSeverity } from "./utils/periodization-input-helpers.js";
 
@@ -127,6 +127,29 @@ function estimateGameLoads(events, startDate, endDate) {
     }
   }
   return out;
+}
+
+/**
+ * Build the daily internal-load Map (session-RPE AU) from training sessions,
+ * summed by `session_date`, via the CANONICAL `computeSessionLoad` (utils/acwr.js)
+ * — single source of truth (§4). Pure; game loads are folded in by the caller.
+ */
+export function buildLoadsByDay(sessions) {
+  const loadsByDay = new Map();
+  for (const s of sessions ?? []) {
+    if (!s?.session_date) {
+      continue;
+    }
+    const load = computeSessionLoad(s);
+    if (load <= 0) {
+      continue;
+    }
+    loadsByDay.set(
+      s.session_date,
+      (loadsByDay.get(s.session_date) || 0) + load,
+    );
+  }
+  return loadsByDay;
 }
 
 /** Read PAST games from the schedule spine and estimate their daily load. Fails
@@ -458,33 +481,13 @@ const handler = async (event, context) => {
         session_count: sessions?.length || 0,
       });
 
-      // Calculate daily loads (session-RPE = RPE × duration)
-      // Use rpe if available, fallback to intensity_level (assuming 1-10 scale maps to RPE)
-      // Handle empty sessions gracefully (no crash, degrade to wellness-only scoring)
-      const loadsByDay = new Map();
-
-      if (sessions && sessions.length > 0) {
-        for (const s of sessions) {
-          const sessionDate = s.session_date;
-          const duration = s.duration_minutes;
-          // Use rpe if available, otherwise use intensity_level as fallback
-          const rpe =
-            s.rpe !== null && s.rpe !== undefined
-              ? s.rpe
-              : s.intensity_level || 0;
-
-          if (!duration || !sessionDate) {
-            continue;
-          }
-          if (rpe === 0 || rpe === null) {
-            continue;
-          } // Skip if no RPE/intensity data
-
-          const load = duration * rpe; // session-RPE
-          const key = sessionDate;
-          loadsByDay.set(key, (loadsByDay.get(key) || 0) + load);
-        }
-      }
+      // Daily loads via the CANONICAL session-load definition (utils/acwr.js) —
+      // single source of truth (§4). Previously this block re-derived load inline
+      // as `duration * rpe`, which (a) ignored a stored `workload` and (b) treated
+      // `intensity_level` as an RPE substitute — diverging from every other
+      // load/ACWR consumer. `computeSessionLoad` = `workload` if real, else
+      // `rpe × minutes`, else 0. Game loads are folded in below.
+      const loadsByDay = buildLoadsByDay(sessions);
 
       // Inject estimated load for PAST games so a tournament's acute load (and
       // ACWR) rises instead of reading falsely safe — games usually aren't
