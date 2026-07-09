@@ -151,7 +151,14 @@ interface WeekRow {
       }
       .bc__ex li {
         font-size: var(--fs-sm);
-        margin: 2px 0;
+        margin: 0;
+      }
+      /* Divider between consecutive exercises so a multi-exercise block reads as
+         distinct steps rather than one run-on wall of text/video. */
+      .bc__ex li + li {
+        border-top: 1px solid var(--border);
+        margin-top: var(--s-3);
+        padding-top: var(--s-3);
       }
       .bc__ex small {
         color: var(--text-faint);
