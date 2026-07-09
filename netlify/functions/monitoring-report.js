@@ -116,6 +116,26 @@ function markerFlag(name, value, t) {
 }
 
 // ── role resolution (server-side gate) ──────────────────────────────────────
+// ⚠️ SECURITY LANDMINE — read before "fixing" (SOURCE_OF_TRUTH §6, 2026-07-09).
+// This resolves the requester's lens from `team_member_roles` (head_coach /
+// sc_coach / physio), which is EMPTY in the live DB with no sync from
+// `team_members` → every non-self caller resolves to role:null → 403. So the
+// single-athlete report is currently dark for ALL staff (only an athlete viewing
+// their OWN data works). That is fail-closed and INTENTIONAL until the exposure
+// decision below is made.
+//
+// DO NOT "fix the dark report" by pointing this at `team_members` on its own.
+// This endpoint runs as `supabaseAdmin` (service role → BYPASSES RLS), and this
+// role check is its ONLY authorization: there is NO app-layer athlete-consent
+// gate (only `buildWearableRaw` self-filters on consent_state). Switching the
+// role source alone would emit an athlete's load / bloodwork / wearable / physio
+// data to any same-team staff WITHOUT their consent. Enabling staff requires,
+// together: (1) authoritative role from `team_members`, (2) an app-layer consent
+// gate per data section (canCoachViewWellness/Readiness/Performance — the
+// explicit-viewer helpers the working /team-monitoring squad table uses, since
+// can_staff_read_athlete relies on auth.uid() which is null under service role),
+// and (3) a product/legal decision on the coach exposure lens (does a coach see
+// this report at all, and how deep — raw medical is never in the head_coach lens).
 async function resolveRequesterRole(callerId, athleteId) {
   const { data: ath } = await supabaseAdmin
     .from("team_member_roles")
