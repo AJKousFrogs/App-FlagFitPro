@@ -9,16 +9,6 @@ export const COACH_ROUTE_ROLES = [
   "manager",
 ];
 
-export const ROSTER_MANAGEMENT_ROLES = [
-  "owner",
-  "admin",
-  "head_coach",
-  "coach",
-  "offense_coordinator",
-  "defense_coordinator",
-  "assistant_coach",
-];
-
 export const STAFF_ROUTE_ROLES = [
   ...COACH_ROUTE_ROLES,
   "physiotherapist",
