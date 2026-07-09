@@ -38,52 +38,18 @@
         <span class="band {{ acwrBand()!.cls }}">{{ acwrBand()!.label }}</span>
         <small>lowest injury risk in the sweet spot</small>
       </div>
-      <svg
-        width="100%"
-        height="120"
-        viewBox="0 0 360 120"
-        preserveAspectRatio="none"
-        style="margin-top: var(--s-3)"
-        role="img"
-        [attr.aria-label]="
-          'Acute-to-chronic workload ratio trend. Current: ' +
-          acwrBand()!.label +
-          '. Sweet spot is 0.8 to 1.3; danger above 1.5.'
-        "
-      >
-        <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)" />
-        <text x="6" y="59" font-size="10" fill="var(--text-faint)">
-          sweet 0.8–1.3
-        </text>
-        <line
-          x1="0"
-          y1="35"
-          x2="360"
-          y2="35"
-          stroke="var(--danger)"
-          stroke-dasharray="5 3"
-          opacity=".7"
+      <div style="margin-top: var(--s-3)">
+        <app-acwr-trend
+          [points]="acwrChart()!.points"
+          [lastX]="acwrChart()!.last.x"
+          [lastY]="acwrChart()!.last.y"
+          [ariaLabel]="
+            'Acute-to-chronic workload ratio trend. Current: ' +
+            acwrBand()!.label +
+            '. Sweet spot is 0.8 to 1.3; danger above 1.5.'
+          "
         />
-        <text x="6" y="31" font-size="10" fill="var(--text-faint)">
-          danger 1.5
-        </text>
-        <polyline
-          fill="none"
-          stroke="var(--accent)"
-          stroke-width="2.5"
-          [attr.points]="acwrChart()!.points"
-        />
-        <circle
-          [attr.cx]="acwrChart()!.last.x"
-          [attr.cy]="acwrChart()!.last.y"
-          r="4"
-          fill="var(--accent)"
-        />
-      </svg>
-      <!-- V4: name the y-axis. -->
-      <small class="muted" style="display: block; margin-top: var(--s-2)">
-        Acute:chronic workload ratio · 7-day load vs 28-day average
-      </small>
+      </div>
     </div>
   } @else {
     <div class="empty">

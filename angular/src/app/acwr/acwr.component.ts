@@ -9,6 +9,7 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
+import { AcwrTrendComponent } from "../shared/acwr-trend.component";
 
 import { AcwrService } from "../core/services/acwr.service";
 import { ReadinessService } from "../core/services/readiness.service";
@@ -29,7 +30,13 @@ const clamp = (v: number, lo: number, hi: number) =>
  */
 @Component({
   selector: "app-acwr",
-  imports: [NgOptimizedImage, AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [
+    NgOptimizedImage,
+    AvatarComponent,
+    AcwrTrendComponent,
+    RouterLink,
+    LucideAngularModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./acwr.component.html",
 })
