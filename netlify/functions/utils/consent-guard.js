@@ -87,6 +87,31 @@ async function canCoachViewWellness(coachId, athleteId) {
 }
 
 /**
+ * Check if a coach can view an athlete's PERFORMANCE / training-load data
+ * (RPE, workload, sRPE, ACWR, session notes). Reuses the DB function
+ * can_view_player_performance — the SAME gate v_training_sessions_consent
+ * applies (active team coach AND check_performance_sharing for that team). This
+ * is a DIFFERENT consent from wellness/readiness: an athlete can share wellness
+ * but not performance, so load columns must be gated on THIS, not on
+ * canCoachViewWellness (2026-07-09 RLS audit — the base training_sessions table
+ * exposes these columns to team coaches without the performance-sharing check,
+ * so callers must gate them here).
+ */
+async function canCoachViewPerformance(coachId, athleteId) {
+  const { data, error } = await supabaseAdmin.rpc(
+    "can_view_player_performance",
+    { p_viewer_id: coachId, p_player_id: athleteId },
+  );
+  if (error) {
+    return { allowed: false, reason: "CONSENT_CHECK_FAILED", error };
+  }
+  return {
+    allowed: data === true,
+    reason: data === true ? "CONSENT_GRANTED" : "NO_CONSENT",
+  };
+}
+
+/**
  * Filter wellness data based on consent
  * Returns compliance-only data if consent not granted
  */
@@ -131,6 +156,7 @@ function filterReadinessForCoach(readinessData, hasConsent, safetyOverride) {
 export {
   canCoachViewReadiness,
   canCoachViewWellness,
+  canCoachViewPerformance,
   filterWellnessDataForCoach,
   filterReadinessForCoach,
 };

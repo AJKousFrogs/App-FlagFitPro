@@ -6,7 +6,10 @@ import {
 import { getUserTeamId } from "./utils/auth-helper.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, HEALTH_DATA_ACCESS_ROLES } from "./utils/role-sets.js";
-import { canCoachViewWellness } from "./utils/consent-guard.js";
+import {
+  canCoachViewWellness,
+  canCoachViewPerformance,
+} from "./utils/consent-guard.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createLogger } from "./utils/structured-logger.js";
 
@@ -18,9 +21,11 @@ const logger = createLogger({ service: "netlify.team-monitoring" });
 // ACWR and readiness flags + an action. TWO gates, both reusing already-vetted
 // code so this exposes NOTHING new:
 //   1. the caller must hold a HEALTH_DATA_ACCESS_ROLES role on the team, and
-//   2. each athlete row is gated by canCoachViewWellness (the SAME per-athlete
-//      consent check that protects the single-athlete monitoring report) —
-//      no consent → the athlete appears by name only, with no health data.
+//   2. each athlete's columns are gated by the SAME per-athlete consent checks
+//      the rest of the app uses — wellness/readiness under canCoachViewWellness,
+//      RPE/sRPE/ACWR under canCoachViewPerformance (check_performance_sharing).
+//      An athlete can share one and not the other; ungated columns come back
+//      null, and an athlete sharing NEITHER appears by name only.
 
 function displayName(u, fallback = "Athlete") {
   return (
@@ -87,9 +92,18 @@ async function rosterAthletes(teamId) {
 }
 
 async function buildRow(callerId, athlete) {
-  // Per-athlete consent gate (reused verbatim from the single-athlete report).
-  const consent = await canCoachViewWellness(callerId, athlete.id);
-  if (!consent.allowed) {
+  // TWO independent consents (2026-07-09 RLS audit): wellness/readiness are
+  // HEALTH data (canCoachViewWellness); RPE/sRPE/ACWR are PERFORMANCE data
+  // (canCoachViewPerformance → check_performance_sharing, the same gate
+  // v_training_sessions_consent uses). An athlete can grant one and not the
+  // other, so the columns are gated separately — not all on wellness consent.
+  const [wellnessConsent, perfConsent] = await Promise.all([
+    canCoachViewWellness(callerId, athlete.id),
+    canCoachViewPerformance(callerId, athlete.id),
+  ]);
+  const canWellness = wellnessConsent.allowed;
+  const canPerf = perfConsent.allowed;
+  if (!canWellness && !canPerf) {
     return {
       athleteId: athlete.id,
       name: athlete.name,
@@ -126,12 +140,18 @@ async function buildRow(callerId, athlete) {
       .maybeSingle(),
   ]);
 
-  const w = wellnessRes.data;
-  const s = sessionRes.data;
-  const r = readinessRes.data;
+  // Wellness/readiness columns only under wellness consent.
+  const w = canWellness ? wellnessRes.data : null;
+  const readiness = canWellness
+    ? (w?.readiness_score ??
+      w?.calculated_readiness ??
+      readinessRes.data?.score ??
+      null)
+    : null;
 
-  const readiness =
-    w?.readiness_score ?? w?.calculated_readiness ?? r?.score ?? null;
+  // Load/ACWR columns only under performance consent.
+  const s = canPerf ? sessionRes.data : null;
+  const r = canPerf ? readinessRes.data : null;
   const rpe = typeof s?.rpe === "number" ? s.rpe : null;
   const durationMin =
     typeof s?.duration_minutes === "number" ? s.duration_minutes : null;
@@ -139,8 +159,9 @@ async function buildRow(callerId, athlete) {
     rpe !== null && durationMin !== null ? Math.round(rpe * durationMin) : null;
   const acwr =
     typeof r?.acwr === "number" ? Math.round(r.acwr * 100) / 100 : null;
-  const wFlag = wellnessFlag(readiness);
-  const lFlag = loadFlag(acwr);
+
+  const wFlag = canWellness ? wellnessFlag(readiness) : "—";
+  const lFlag = canPerf ? loadFlag(acwr) : "—";
 
   return {
     athleteId: athlete.id,
@@ -148,7 +169,9 @@ async function buildRow(callerId, athlete) {
     jersey: athlete.jersey,
     position: athlete.position,
     consentPending: false,
-    safetyOverride: consent.reason === "SAFETY_OVERRIDE",
+    safetyOverride: wellnessConsent.reason === "SAFETY_OVERRIDE",
+    canWellness,
+    canPerformance: canPerf,
     wellness: {
       sleep: w?.sleep_quality ?? null,
       energy: w?.energy_level ?? null,
