@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../../core/services/api.service";
@@ -73,7 +73,7 @@ const RTP_PHASES = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Cleared"];
  */
 @Component({
   selector: "app-athlete-detail",
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./athlete-detail.component.html",
 })

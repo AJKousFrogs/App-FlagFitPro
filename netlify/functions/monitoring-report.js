@@ -116,33 +116,42 @@ function markerFlag(name, value, t) {
 }
 
 // ── role resolution (server-side gate) ──────────────────────────────────────
-// ⚠️ SECURITY LANDMINE — read before "fixing" (SOURCE_OF_TRUTH §6, 2026-07-09).
-// This resolves the requester's lens from `team_member_roles` (head_coach /
-// sc_coach / physio), which is EMPTY in the live DB with no sync from
-// `team_members` → every non-self caller resolves to role:null → 403. So the
-// single-athlete report is currently dark for ALL staff (only an athlete viewing
-// their OWN data works). That is fail-closed and INTENTIONAL until the exposure
-// decision below is made.
+// Resolves the requester's monitoring lens from the AUTHORITATIVE `team_members`
+// (2026-07-09: fixed — previously read `team_member_roles`, which is empty in the
+// live DB with no sync from team_members, so the report was dark for all staff;
+// see SOURCE_OF_TRUTH §6). This endpoint runs as `supabaseAdmin` (service role,
+// BYPASSES RLS), so this role check is the authorization — hence it must read the
+// same authoritative source (`team_members`) the rest of the app gates on.
 //
-// DO NOT "fix the dark report" by pointing this at `team_members` on its own.
-// This endpoint runs as `supabaseAdmin` (service role → BYPASSES RLS), and this
-// role check is its ONLY authorization: there is NO app-layer athlete-consent
-// gate (only `buildWearableRaw` self-filters on consent_state). Switching the
-// role source alone would emit an athlete's load / bloodwork / wearable / physio
-// data to any same-team staff WITHOUT their consent. Enabling staff requires,
-// together: (1) authoritative role from `team_members`, (2) an app-layer consent
-// gate per data section (canCoachViewWellness/Readiness/Performance — the
-// explicit-viewer helpers the working /team-monitoring squad table uses, since
-// can_staff_read_athlete relies on auth.uid() which is null under service role),
-// and (3) a product/legal decision on the coach exposure lens (does a coach see
-// this report at all, and how deep — raw medical is never in the head_coach lens).
+// Per the 2026-07-09 club-owner directive, physiotherapists AND coaches get the
+// FULL clinical lens ("physio") — all data, same as the athlete's own view. The
+// other staff roles (nutritionist / psychologist) use their dedicated lanes, not
+// this report, so they resolve to null (403).
+//
+// ⚠️ HEALTH-DATA EXPOSURE: the "physio" lens emits RAW bloodwork / wearable /
+// clinical notes with NO per-athlete consent gate (clinical duty-of-care model).
+// Granting it to coaches means any active same-team coach sees an athlete's GDPR
+// special-category medical data. This is intentional per the owner directive; if
+// athlete-level consent control is later required, gate the medical sections here
+// (a bloodwork/wearable consent flag) — the load/wellness helpers already exist
+// in consent-guard.js.
+
+/** team_members roles (of the caller, on the athlete's team) → monitoring lens.
+ *  Pure + exported for tests. physiotherapist|coach → full clinical; else null. */
+export function lensForRoles(roleSet) {
+  if (roleSet.has("physiotherapist") || roleSet.has("coach")) {
+    return "physio";
+  }
+  return null;
+}
+
 async function resolveRequesterRole(callerId, athleteId) {
-  const { data: ath } = await supabaseAdmin
-    .from("team_member_roles")
+  const { data: subject } = await supabaseAdmin
+    .from("team_members")
     .select("team_id")
     .eq("user_id", athleteId)
-    .eq("role", "athlete");
-  const teamIds = (ath ?? []).map((r) => r.team_id);
+    .eq("status", "active");
+  const teamIds = (subject ?? []).map((r) => r.team_id).filter(Boolean);
   const teamId = teamIds[0] ?? null;
   if (callerId === athleteId) {
     return { role: "self", teamId };
@@ -151,19 +160,13 @@ async function resolveRequesterRole(callerId, athleteId) {
     return { role: null, teamId: null };
   }
   const { data: caller } = await supabaseAdmin
-    .from("team_member_roles")
+    .from("team_members")
     .select("role")
     .eq("user_id", callerId)
+    .eq("status", "active")
     .in("team_id", teamIds);
-  const roles = new Set((caller ?? []).map((r) => r.role));
-  const role = roles.has("physio")
-    ? "physio"
-    : roles.has("sc_coach")
-      ? "sc_coach"
-      : roles.has("head_coach")
-        ? "head_coach"
-        : null;
-  return { role, teamId };
+  const roleSet = new Set((caller ?? []).map((r) => r.role));
+  return { role: lensForRoles(roleSet), teamId };
 }
 
 // ── layers ──────────────────────────────────────────────────────────────────

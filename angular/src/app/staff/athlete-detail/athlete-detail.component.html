@@ -22,6 +22,16 @@
     </div>
   </div>
 
+  @if (lane() === "coach" || lane() === "physio") {
+    <a
+      class="btn secondary block"
+      [routerLink]="['/monitoring', id]"
+      style="margin-bottom: var(--s-3)"
+    >
+      <lucide-icon name="activity" /> Full monitoring report
+    </a>
+  }
+
   @if (toast(); as t) {
     <div
       class="card"
