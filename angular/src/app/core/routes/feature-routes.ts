@@ -175,6 +175,14 @@ export const featureRoutes: Routes = [
         title: "Monitoring · FlagFit",
       },
       {
+        path: "team-monitoring",
+        loadComponent: () =>
+          import("../../team-monitoring/team-monitoring.component").then(
+            (m) => m.TeamMonitoringComponent,
+          ),
+        title: "Squad monitoring · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../more/more.component").then((m) => m.MoreComponent),

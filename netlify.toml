@@ -266,6 +266,13 @@
   status = 200
   force = true
 
+# API Route for the squad-wide Team Monitoring table (read; coach/physio, monitoring feature)
+[[redirects]]
+  from = "/api/team-monitoring"
+  to = "/.netlify/functions/team-monitoring"
+  status = 200
+  force = true
+
 # API Route for the server-side periodization prescription (read; not yet consumed
 # by the client — see docs/SOURCE_OF_TRUTH.md §5a)
 [[redirects]]

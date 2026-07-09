@@ -9,6 +9,23 @@
 </header>
 
 <main class="screen">
+  <!-- Coach/physio entry point to the squad-wide monitoring table. The target
+       gates by role, so athletes who tap it just see the staff-only notice. -->
+  <a
+    class="card row"
+    routerLink="/team-monitoring"
+    style="margin-bottom: var(--s-3)"
+  >
+    <div>
+      <b class="inline"><lucide-icon name="users" /> Squad monitoring</b>
+      <div class="muted" style="font-size: var(--fs-sm)">
+        Coaches &amp; physios: every athlete's wellness, load & readiness at a
+        glance
+      </div>
+    </div>
+    <lucide-icon name="chevron-right" />
+  </a>
+
   <div class="chips">
     <button
       type="button"

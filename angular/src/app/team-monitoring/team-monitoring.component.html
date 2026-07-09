@@ -1,0 +1,136 @@
+<header class="topbar">
+  <div>
+    <div class="eyebrow">coach · physio</div>
+    <h1>Squad monitoring</h1>
+  </div>
+  <a class="avatar" routerLink="/profile" aria-label="Profile"
+    ><app-avatar
+  /></a>
+</header>
+
+<main class="screen">
+  @if (!loaded()) {
+    <p class="note">Loading squad…</p>
+  } @else if (forbidden()) {
+    <div class="empty">
+      <b>Staff only</b>
+      <p class="note">
+        Squad monitoring is available to coaching and medical staff. If you're a
+        coach or physio and see this, check your team role.
+      </p>
+    </div>
+  } @else if (!hasTeam() || rows().length === 0) {
+    <div class="empty">
+      <b>No squad yet</b>
+      <p class="note">
+        Add athletes to your team and they'll appear here once they log wellness
+        and sessions.
+      </p>
+    </div>
+  } @else {
+    <p class="note" style="margin-bottom: var(--s-3)">
+      {{ visibleCount() }} of {{ rows().length }} athletes sharing data.
+      Wellness items are the latest daily check-in; load is the last completed
+      session.
+    </p>
+
+    <div class="tm-scroll" role="region" aria-label="Squad monitoring table">
+      <table class="tm">
+        <thead>
+          <tr class="grp">
+            <th class="sticky" scope="col">Athlete</th>
+            <th colspan="5" scope="colgroup">Pre-session wellness</th>
+            <th colspan="3" scope="colgroup">Internal load</th>
+            <th scope="col">ACWR</th>
+            <th colspan="3" scope="colgroup">Readiness flags</th>
+          </tr>
+          <tr class="sub">
+            <th class="sticky" scope="col"></th>
+            <th scope="col">Sleep</th>
+            <th scope="col">Energy</th>
+            <th scope="col">Stress</th>
+            <th scope="col">Sore</th>
+            <th scope="col">Ready</th>
+            <th scope="col">RPE</th>
+            <th scope="col">Min</th>
+            <th scope="col">sRPE</th>
+            <th scope="col">ratio</th>
+            <th scope="col">Wellness</th>
+            <th scope="col">Load</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of rows(); track r.athleteId) {
+            @if (r.consentPending) {
+              <tr class="pending">
+                <th class="sticky" scope="row">
+                  {{ r.name }}
+                  @if (r.jersey !== null) {
+                    <small class="muted">#{{ r.jersey }}</small>
+                  }
+                </th>
+                <td colspan="12" class="consent">
+                  <lucide-icon name="lock" /> Not sharing wellness data
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <th class="sticky" scope="row">
+                  {{ r.name }}
+                  @if (r.jersey !== null) {
+                    <small class="muted">#{{ r.jersey }}</small>
+                  }
+                </th>
+                <td>{{ num(r.wellness?.sleep) }}</td>
+                <td>{{ num(r.wellness?.energy) }}</td>
+                <td>{{ num(r.wellness?.stress) }}</td>
+                <td>{{ num(r.wellness?.soreness) }}</td>
+                <td class="strong">{{ num(r.wellness?.readiness) }}</td>
+                <td>{{ num(r.load?.rpe) }}</td>
+                <td>{{ num(r.load?.durationMin) }}</td>
+                <td class="strong">{{ num(r.load?.srpe) }}</td>
+                <td class="strong">{{ num(r.acwr) }}</td>
+                <td>
+                  <span class="flag {{ flagTone(r.flags?.wellness) }}">{{
+                    r.flags?.wellness
+                  }}</span>
+                </td>
+                <td>
+                  <span class="flag {{ flagTone(r.flags?.load) }}">{{
+                    r.flags?.load
+                  }}</span>
+                </td>
+                <td class="action">{{ r.flags?.action }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+        @if (mean(); as m) {
+          <tfoot>
+            <tr>
+              <th class="sticky" scope="row">Mean</th>
+              <td>{{ num(m.sleep) }}</td>
+              <td>{{ num(m.energy) }}</td>
+              <td>{{ num(m.stress) }}</td>
+              <td>{{ num(m.soreness) }}</td>
+              <td class="strong">{{ num(m.readiness) }}</td>
+              <td>{{ num(m.rpe) }}</td>
+              <td>{{ num(m.durationMin) }}</td>
+              <td class="strong">{{ num(m.srpe) }}</td>
+              <td class="strong">{{ num(m.acwr) }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        }
+      </table>
+    </div>
+
+    <p class="note" style="margin-top: var(--s-3)">
+      Tap an athlete's name in the roster to open their full role-shaped report.
+      Readiness &lt; 55 flags low; ACWR sweet spot 0.8–1.3, danger &gt; 1.5.
+    </p>
+  }
+</main>

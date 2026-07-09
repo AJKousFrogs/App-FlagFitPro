@@ -1,0 +1,116 @@
+// Dense squad-monitoring table. Horizontal scroll on narrow screens; the
+// athlete-name column stays pinned so a coach can scan wellness→load→flags
+// without losing who's who.
+.tm-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  -webkit-overflow-scrolling: touch;
+}
+
+.tm {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+
+  th,
+  td {
+    padding: var(--s-2) var(--s-3);
+    text-align: center;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  thead .grp th {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+  }
+  thead .sub th {
+    background: var(--surface);
+    color: var(--text-faint);
+    font-weight: var(--fw-semi);
+    position: sticky;
+    top: 0;
+  }
+
+  // Pinned athlete column (name), left-aligned.
+  .sticky {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    text-align: left;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+
+    small {
+      margin-left: var(--s-1);
+      font-weight: var(--fw-reg);
+    }
+  }
+
+  tbody tr:hover .sticky {
+    background: var(--surface-2);
+  }
+  tbody tr:hover td {
+    background: color-mix(in srgb, var(--surface-2) 40%, transparent);
+  }
+
+  .strong {
+    font-weight: var(--fw-bold);
+    color: var(--text-strong);
+  }
+  .action {
+    text-align: left;
+    color: var(--text-muted);
+  }
+
+  tr.pending .consent {
+    text-align: left;
+    color: var(--text-faint);
+    font-size: var(--fs-xs);
+
+    lucide-icon {
+      vertical-align: -2px;
+      margin-right: var(--s-1);
+    }
+  }
+
+  tfoot th,
+  tfoot td {
+    background: var(--surface-2);
+    font-weight: var(--fw-bold);
+    border-top: 2px solid var(--border);
+    border-bottom: none;
+  }
+}
+
+// Flag pills — colour AND text token (never colour alone).
+.flag {
+  display: inline-block;
+  min-width: 46px;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  border: 1px solid transparent;
+
+  &.good {
+    color: var(--good);
+    background: var(--good-soft);
+  }
+  &.watch {
+    color: var(--warn);
+    background: color-mix(in srgb, var(--warn) 16%, transparent);
+  }
+  &.bad {
+    color: var(--danger);
+    background: color-mix(in srgb, var(--danger) 16%, transparent);
+  }
+  &.none {
+    color: var(--text-faint);
+  }
+}
