@@ -89,6 +89,10 @@ interface WeekRow {
       @media (min-width: 768px) {
         .bc-list {
           grid-template-columns: 1fr 1fr;
+          /* Each block sizes to its own content — without this, a 1-exercise
+             block stretches to match a 5-exercise block beside it, becoming a
+             giant mostly-empty card. */
+          align-items: start;
         }
       }
       .bc {
