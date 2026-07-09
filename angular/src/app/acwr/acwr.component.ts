@@ -115,5 +115,21 @@ export class AcwrComponent {
     };
   });
 
+  /**
+   * Screen-reader description of the ACWR trend chart (audit V1). The svg
+   * previously had no role/aria-label at all, so the app's most safety-critical
+   * visualization was invisible to assistive tech. Announces the current value +
+   * zone + the reference thresholds so the chart conveys the same information
+   * non-visually.
+   */
+  readonly chartAria = computed(() => {
+    const r = this.ratio();
+    const b = this.band();
+    if (r == null || !b) {
+      return "Acute-to-chronic workload ratio trend chart. Not enough history yet.";
+    }
+    return `Acute-to-chronic workload ratio trend. Current ratio ${r.toFixed(2)}, ${b.label}. Sweet spot is 0.8 to 1.3; danger above 1.5.`;
+  });
+
   readonly weeklyPct = computed(() => Math.round(this.weekly().changePercent));
 }
