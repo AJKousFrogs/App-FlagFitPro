@@ -133,12 +133,26 @@
         </button>
       </div>
     </div>
-    <p class="note">
-      Merlin is AI-consent-gated —
-      <a routerLink="/settings" style="color: var(--accent)"
-        >enable AI personalisation in Settings → Privacy</a
+    <div class="enable-merlin">
+      <p class="note" style="margin: 0 0 var(--s-2)">
+        Merlin is off. Turning it on lets Merlin read your training data
+        (injuries, ACWR, sessions, wellness, schedule) to answer your questions.
+      </p>
+      <button
+        class="btn primary sm"
+        type="button"
+        (click)="enableMerlin()"
+        [disabled]="enabling()"
+        [attr.aria-disabled]="enabling()"
       >
-      to turn it on.
-    </p>
+        {{ enabling() ? "Enabling…" : "Enable Merlin" }}
+      </button>
+      <p class="note" style="margin: var(--s-2) 0 0">
+        You can turn it back off anytime in
+        <a routerLink="/settings" style="color: var(--accent)"
+          >Settings → Privacy</a
+        >.
+      </p>
+    </div>
   }
 </main>

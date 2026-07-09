@@ -198,6 +198,7 @@ export class ChatComponent implements AfterViewChecked {
   readonly draft = signal("");
   readonly busy = signal(false);
   readonly prefsLoaded = signal(false);
+  readonly enabling = signal(false);
   readonly aiEnabled = this.privacy.aiProcessingEnabled;
   readonly canSend = computed(
     () => this.aiEnabled() && !this.busy() && this.draft().trim().length > 0,
@@ -293,6 +294,22 @@ export class ChatComponent implements AfterViewChecked {
         this.autoScroll = true;
       },
     });
+  }
+
+  /**
+   * One-tap consent-and-enable from the chat itself (the composer is gated off
+   * until AI personalisation is on). This IS the explicit affirmative GDPR
+   * consent action — updateAiProcessing records the consent date — so the user
+   * doesn't have to hunt through Settings just to start Merlin. On success the
+   * aiProcessingEnabled signal flips and the composer activates.
+   */
+  enableMerlin(): void {
+    if (this.enabling()) return;
+    this.enabling.set(true);
+    void this.privacy
+      .updateAiProcessing(true)
+      .catch(() => null)
+      .finally(() => this.enabling.set(false));
   }
 
   runAction(action: MerlinSuggestedAction): void {
