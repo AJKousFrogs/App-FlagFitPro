@@ -1,7 +1,7 @@
 <app-topbar>
-    <div class="eyebrow">Last 28 days</div>
-    <h1>Stats</h1>
-  </app-topbar>
+  <div class="eyebrow">Last 28 days</div>
+  <h1>Stats</h1>
+</app-topbar>
 
 <main class="screen">
   <div class="screen-hero">
@@ -60,6 +60,26 @@
       </div>
       {{ daysLogged() }} / 21 days logged · keep training and it'll appear.
       <small>(null ≠ low — we never show a fake "under-training".)</small>
+    </div>
+  }
+
+  <!-- Daily load calendar -->
+  <div class="section-h"><h2>Daily load</h2></div>
+  @if (loadLoading()) {
+    <app-skeleton variant="chart" label="daily load" />
+  } @else if (hasLoad()) {
+    <div class="card">
+      <app-load-calendar
+        [series]="loadSeries()"
+        [maxLoad]="loadMax()"
+        [endDate]="loadEnd()"
+        [days]="loadDays()"
+      />
+    </div>
+  } @else {
+    <div class="empty">
+      Log training sessions and your day-by-day load appears here — spot when
+      load spiked, not just today's ratio.
     </div>
   }
 

@@ -273,6 +273,13 @@
   status = 200
   force = true
 
+# API Route for the athlete's own daily training-load calendar (read; self only)
+[[redirects]]
+  from = "/api/daily-load"
+  to = "/.netlify/functions/daily-load"
+  status = 200
+  force = true
+
 # API Route for the server-side periodization prescription (read; not yet consumed
 # by the client — see docs/SOURCE_OF_TRUTH.md §5a)
 [[redirects]]

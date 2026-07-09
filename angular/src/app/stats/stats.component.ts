@@ -12,13 +12,23 @@ import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 import { AcwrTrendComponent } from "../shared/acwr-trend.component";
+import { LoadCalendarComponent } from "../shared/load-calendar.component";
+import { LoadDay } from "../shared/utils/load-calendar.util";
 
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
+import { ApiService } from "../core/services/api.service";
 
 interface Spark {
   points: string;
   last: { x: number; y: number };
+}
+
+interface DailyLoadResp {
+  series: LoadDay[];
+  maxLoad: number;
+  endDate: string;
+  days: number;
 }
 
 const clamp = (v: number, lo: number, hi: number) =>
@@ -39,6 +49,7 @@ const clamp = (v: number, lo: number, hi: number) =>
     SkeletonComponent,
     ReadinessTrendComponent,
     AcwrTrendComponent,
+    LoadCalendarComponent,
     RouterLink,
     LucideAngularModule,
   ],
@@ -48,8 +59,17 @@ const clamp = (v: number, lo: number, hi: number) =>
 export class StatsComponent {
   private readonly readinessSvc = inject(ReadinessService);
   private readonly acwrSvc = inject(AcwrService);
+  private readonly api = inject(ApiService);
 
   readonly history = this.readinessSvc.history;
+
+  // Daily-load calendar — the athlete's own session-RPE AU by day (self only).
+  readonly loadSeries = signal<LoadDay[]>([]);
+  readonly loadMax = signal(0);
+  readonly loadEnd = signal(new Date().toISOString().slice(0, 10));
+  readonly loadDays = signal(35);
+  readonly loadLoading = signal(true);
+  readonly hasLoad = computed(() => this.loadSeries().length > 0);
   readonly daysLogged = signal(0);
   /** True until the 28-day history fetch settles — drives the readiness chart
    * skeleton. Without it the chart falls to its "building up" empty state on
@@ -70,6 +90,21 @@ export class StatsComponent {
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
+    });
+
+    // Own daily-load series for the calendar heatmap (canonical AU, server-side).
+    this.api.get<DailyLoadResp>("/api/daily-load").subscribe({
+      next: (res) => {
+        const d = res?.data;
+        if (d) {
+          this.loadSeries.set(d.series ?? []);
+          this.loadMax.set(d.maxLoad ?? 0);
+          this.loadEnd.set(d.endDate || this.loadEnd());
+          this.loadDays.set(d.days ?? 35);
+        }
+        this.loadLoading.set(false);
+      },
+      error: () => this.loadLoading.set(false),
     });
   }
 
