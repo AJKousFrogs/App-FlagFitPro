@@ -88,6 +88,11 @@ const clamp = (v: number, lo: number, hi: number) =>
         <small class="muted">{{ firstLabel() }}</small>
         <small class="muted">today</small>
       </div>
+      <!-- V4: name the y-axis + its scale/direction (the 55/75 reference lines
+           alone don't say "of what"). -->
+      <small class="rt-cap muted"
+        >Readiness score · 0–100, higher is better</small
+      >
     } @else {
       <p class="note" style="margin:0">
         Your readiness trend builds here once you’ve logged a few days of
@@ -161,6 +166,11 @@ const clamp = (v: number, lo: number, hi: number) =>
         display: flex;
         justify-content: space-between;
         margin-top: 4px;
+      }
+      .rt-cap {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.7rem;
       }
     `,
   ],
