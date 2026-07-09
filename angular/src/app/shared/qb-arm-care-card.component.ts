@@ -79,7 +79,11 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
             />
 
             <div><small>Throws by distance (optional)</small></div>
-            <div style="display:flex;gap:var(--s-2)" role="group" aria-label="Throws by distance">
+            <div
+              style="display:flex;gap:var(--s-2)"
+              role="group"
+              aria-label="Throws by distance"
+            >
               <input
                 class="input"
                 type="number"

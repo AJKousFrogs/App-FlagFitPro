@@ -1,14 +1,14 @@
 <app-topbar>
-    <div class="eyebrow">
-      @if (nextEvent(); as ev) {
-        {{ ev.competitionShortName || ev.competitionName }} ·
-        {{ ev.expectedGameCount }} games
-      } @else {
-        Game day
-      }
-    </div>
-    <h1 class="inline"><lucide-icon name="flag" /> Game day</h1>
-  </app-topbar>
+  <div class="eyebrow">
+    @if (nextEvent(); as ev) {
+      {{ ev.competitionShortName || ev.competitionName }} ·
+      {{ ev.expectedGameCount }} games
+    } @else {
+      Game day
+    }
+  </div>
+  <h1 class="inline"><lucide-icon name="flag" /> Game day</h1>
+</app-topbar>
 
 <main class="screen">
   <div class="screen-hero">
