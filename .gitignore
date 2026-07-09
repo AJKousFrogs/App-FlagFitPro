@@ -5,6 +5,11 @@ node_modules.old/
 .claude/worktrees/
 # self-correct.sh run logs
 .claude/loop-*.log
+# Third-party skills installed via `skills add` (not project source; run with
+# full agent permissions — keep them out of the repo)
+.claude/skills/
+.agents/
+skills-lock.json
 
 # Local Netlify folder
 .netlify
