@@ -128,13 +128,14 @@ function markerFlag(name, value, t) {
 // other staff roles (nutritionist / psychologist) use their dedicated lanes, not
 // this report, so they resolve to null (403).
 //
-// ⚠️ HEALTH-DATA EXPOSURE: the "physio" lens emits RAW bloodwork / wearable /
-// clinical notes with NO per-athlete consent gate (clinical duty-of-care model).
-// Granting it to coaches means any active same-team coach sees an athlete's GDPR
-// special-category medical data. This is intentional per the owner directive; if
-// athlete-level consent control is later required, gate the medical sections here
-// (a bloodwork/wearable consent flag) — the load/wellness helpers already exist
-// in consent-guard.js.
+// ⚠️ HEALTH-DATA EXPOSURE: the "physio" full-clinical lens (coach + physio) is
+// consent-aware for the most sensitive data — RAW bloodwork requires the
+// athlete's health-sharing consent (2026-07-09: check_health_sharing →
+// shapeBloodwork's `consent_required` state; the athlete always sees their own),
+// and wearable rows are already filtered to consent_state='granted'. Load /
+// wellness / physio restrictions ride the full lens without a separate gate
+// (clinical duty-of-care model, per the owner directive). If those should also be
+// athlete-gated, add the check here (helpers exist in consent-guard.js).
 
 /** team_members roles (of the caller, on the athlete's team) → monitoring lens.
  *  Pure + exported for tests. physiotherapist|coach → full clinical; else null. */
@@ -143,6 +144,17 @@ export function lensForRoles(roleSet) {
     return "physio";
   }
   return null;
+}
+
+/** The athlete's health-sharing consent (team override → global default → false),
+ *  via the DB `check_health_sharing`. Explicit args so it works under the service
+ *  role (RLS bypassed). Null team → global default. */
+async function checkHealthSharing(athleteId, teamId) {
+  const { data, error } = await supabaseAdmin.rpc("check_health_sharing", {
+    p_player_id: athleteId,
+    p_team_id: teamId,
+  });
+  return !error && data === true;
 }
 
 async function resolveRequesterRole(callerId, athleteId) {
@@ -404,7 +416,14 @@ function shapePhysioBlock(raw, role) {
   }
   return operational; // head_coach / sc_coach: operational only, no clinical detail
 }
-function shapeBloodwork(raw, role, medicalSignal) {
+/** Raw bloodwork is the athlete's OWN to see; a staff viewer (coach/physio on
+ *  the full clinical lens) needs the athlete's health-sharing consent. Pure +
+ *  exported for tests. */
+export function canSeeRawBloodwork(role, hasHealthConsent) {
+  return role === "self" || hasHealthConsent === true;
+}
+
+function shapeBloodwork(raw, role, medicalSignal, canSeeRaw) {
   if (role === "sc_coach") {
     return null;
   } // none
@@ -416,7 +435,15 @@ function shapeBloodwork(raw, role, medicalSignal) {
       promptRequired: isNil(medicalSignal.status),
     };
   }
-  return { mode: "raw", ...raw }; // physio / self
+  // physio / self (full clinical lens). Raw bloodwork is GDPR special-category
+  // medical data: a staff viewer sees the values only with the athlete's
+  // health-sharing consent (Settings → "Share health & blood results with
+  // staff" → privacy_settings.health_sharing_default / team override, via
+  // check_health_sharing). The athlete always sees their own. 2026-07-09.
+  if (!canSeeRaw) {
+    return { mode: "consent_required" };
+  }
+  return { mode: "raw", ...raw };
 }
 function shapeWearable(raw, role) {
   if (!raw) {
@@ -485,6 +512,10 @@ const handler = async (event, context) => {
             buildPhysioBlock(athleteId),
           ]);
         const medicalSignal = medicalSignalFrom(physioBlockRaw, bloodworkRaw);
+        // Raw bloodwork gate: the athlete always sees their own; a staff viewer
+        // needs the athlete's health-sharing consent (2026-07-09).
+        const healthConsent =
+          role === "self" ? true : await checkHealthSharing(athleteId, teamId);
 
         return createSuccessResponse({
           meta: {
@@ -506,7 +537,12 @@ const handler = async (event, context) => {
           physioBlock: shapePhysioBlock(physioBlockRaw, role),
           daily,
           weekly,
-          bloodwork: shapeBloodwork(bloodworkRaw, role, medicalSignal),
+          bloodwork: shapeBloodwork(
+            bloodworkRaw,
+            role,
+            medicalSignal,
+            canSeeRawBloodwork(role, healthConsent),
+          ),
           wearable: shapeWearable(wearableRaw, role),
           thresholds: t,
         });

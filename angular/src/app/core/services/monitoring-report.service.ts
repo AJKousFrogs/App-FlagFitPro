@@ -83,6 +83,7 @@ export interface MonitoringReport {
         categories: string[];
         promptRequired: boolean;
       }
+    | { mode: "consent_required" }
     | null;
   wearable:
     | {

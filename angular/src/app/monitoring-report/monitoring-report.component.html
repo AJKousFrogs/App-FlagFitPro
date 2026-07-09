@@ -282,6 +282,13 @@
               }
             </table>
           }
+        } @else if (r.bloodwork?.mode === "consent_required") {
+          <div class="mr-muted">
+            <lucide-icon name="lock" /> {{ r.identity?.name || "The athlete" }}
+            hasn't shared their blood test results. They can enable this in
+            Settings → Privacy → "Share health &amp; blood test results with
+            staff".
+          </div>
         }
       </section>
     }
