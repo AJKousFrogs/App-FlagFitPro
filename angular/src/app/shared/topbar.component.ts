@@ -19,6 +19,12 @@ import { AvatarComponent } from "./avatar.component";
   selector: "app-topbar",
   imports: [RouterLink, LucideAngularModule, AvatarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // display:contents so this wrapper generates no box — the <header> stays a
+  // layout child of the screen root exactly as before extraction. Critical:
+  // .topbar is position:sticky/top:0, and a wrapper box would become its sticky
+  // containing block (header-height), un-pinning it. contents keeps the header
+  // sticky relative to the real scroll container and renders pixel-identically.
+  styles: [":host { display: contents; }"],
   template: `
     <header class="topbar">
       <div><ng-content /></div>
