@@ -30,3 +30,21 @@ export function parseIso(value, field, { required }) {
   }
   return d.toISOString();
 }
+
+/**
+ * Trim an optional free-text field to a string, enforcing a max length. Empty /
+ * whitespace-only → null; over `max` → throws a validation Error.
+ */
+export function str(value, field, max) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  const s = String(value).trim();
+  if (s.length === 0) {
+    return null;
+  }
+  if (s.length > max) {
+    throw validationError(`${field} must be ${max} characters or less`);
+  }
+  return s;
+}

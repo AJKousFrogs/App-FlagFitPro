@@ -6,6 +6,7 @@ import {
 import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { isStaffOfTeam, isActiveTeamMember } from "./utils/team-scope.js";
+import { validationError, str } from "./utils/event-fields.js";
 
 // Netlify Function: Event Games (V2.0 Tournament Mode)
 // Endpoint: /api/event-games
@@ -29,12 +30,9 @@ const BRACKET_STAGES = new Set([
 ]);
 const STATUSES = new Set(["scheduled", "in_progress", "final", "cancelled"]);
 
-const validationError = (message) => {
-  const error = new Error(message);
-  error.isValidation = true;
-  return error;
-};
-
+// validationError + str: shared with athlete-events.js / event-travel.js
+// (utils/event-fields.js, reuse audit R2). parseTime/parseDate below are
+// event-games-specific.
 function parseTime(value, field) {
   if (typeof value !== "string" || !/^\d{2}:\d{2}(:\d{2})?$/.test(value)) {
     throw validationError(`${field} must be HH:MM (24h, venue-local)`);
@@ -47,20 +45,6 @@ function parseDate(value, field) {
     throw validationError(`${field} must be YYYY-MM-DD`);
   }
   return value;
-}
-
-function str(value, field, max) {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const s = String(value).trim();
-  if (s.length === 0) {
-    return null;
-  }
-  if (s.length > max) {
-    throw validationError(`${field} must be ${max} characters or less`);
-  }
-  return s;
 }
 
 // Build one event_games row from an incoming payload. `partial` allows PATCH

@@ -5,7 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
-import { validationError, parseIso } from "./utils/event-fields.js";
+import { validationError, parseIso, str } from "./utils/event-fields.js";
 
 // Netlify Function: Athlete Events (personal schedule)
 // Endpoint: /api/athlete-events
@@ -36,22 +36,8 @@ const STATUSES = new Set([
   "postponed",
 ]);
 
-// validationError + parseIso: shared with event-travel.js (utils/event-fields.js,
-// reuse audit R2).
-
-function str(value, field, max) {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  const s = String(value).trim();
-  if (s.length === 0) {
-    return null;
-  }
-  if (s.length > max) {
-    throw validationError(`${field} must be ${max} characters or less`);
-  }
-  return s;
-}
+// validationError / parseIso / str: shared with event-travel.js + event-games.js
+// (utils/event-fields.js, reuse audit R2).
 
 // Build the DB row from an incoming payload. `partial` allows PUT to send a
 // subset of fields (only provided keys are returned).
