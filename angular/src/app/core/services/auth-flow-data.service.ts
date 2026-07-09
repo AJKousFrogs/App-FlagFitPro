@@ -3,6 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { HomeRouteService } from "./home-route.service";
 import { PlatformService } from "./platform.service";
 import { SupabaseService } from "./supabase.service";
+import { TeamMembershipService } from "./team-membership.service";
 
 @Injectable({
   providedIn: "root",
@@ -11,6 +12,7 @@ export class AuthFlowDataService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly homeRouteService = inject(HomeRouteService);
   private readonly platform = inject(PlatformService);
+  private readonly teamMembership = inject(TeamMembershipService);
   private usersTableUnavailable = false;
   private readonly postOnboardingRedirectKey = "postOnboardingRedirect";
   private readonly pendingVerificationEmailKey = "pendingVerificationEmail";
@@ -108,9 +110,22 @@ export class AuthFlowDataService {
     fallbackRoute?: string;
   }): Promise<string> {
     const user = this.getCurrentUser();
+    // The role that decides athlete-shell vs staff-shell lives in team_members,
+    // NOT on the auth user object (see getUserRole / team-membership.service) —
+    // reading user.role sent every coach/physio to the athlete /today. Resolve
+    // it from the membership service instead; any failure falls back to /today.
+    let roleRoute = "/";
+    if (user) {
+      let role: string | null = null;
+      try {
+        role = (await this.teamMembership.loadMembership())?.role ?? null;
+      } catch {
+        role = null;
+      }
+      roleRoute = this.homeRouteService.getHomeRouteForRole(role);
+    }
     const fallbackRoute =
-      this.normalizeInternalRoute(options?.fallbackRoute) ??
-      (user ? this.homeRouteService.getHomeRouteForUser(user) : "/");
+      this.normalizeInternalRoute(options?.fallbackRoute) ?? roleRoute;
     const returnUrl = this.normalizeInternalRoute(options?.returnUrl);
 
     if (!user) {

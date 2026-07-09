@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { ShellComponent } from "../../shell/shell.component";
-import { staffGuard } from "../guards/staff.guard";
+import { staffGuard, homeRedirectGuard } from "../guards/staff.guard";
 import { authGuard } from "../guards/auth.guard";
 
 /**
@@ -123,6 +123,16 @@ export const featureRoutes: Routes = [
         title: "More · FlagFit",
       },
     ],
+  },
+  // Bare root: send staff to the staff shell, everyone else to the athlete app.
+  // Full-match so only "/" hits this — /today, /training, … fall through to the
+  // athlete shell below. Role lives in team_members, hence a guard not a static
+  // redirect (see homeRedirectGuard).
+  {
+    path: "",
+    pathMatch: "full",
+    canActivate: [authGuard, homeRedirectGuard],
+    children: [],
   },
   {
     path: "",

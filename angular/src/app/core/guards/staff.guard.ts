@@ -54,3 +54,24 @@ export const staffGuard: CanActivateFn = async () => {
     ? true
     : router.createUrlTree(["/today"]);
 };
+
+/**
+ * Root ("/") redirect: staff → the staff shell, everyone else → the athlete app.
+ * The role lives in team_members (not the auth user object), so a static
+ * `redirectTo` can't decide this — a coach hitting the bare root would otherwise
+ * land on the athlete /today. Any load failure falls back to /today.
+ */
+export const homeRedirectGuard: CanActivateFn = async () => {
+  const membership = inject(TeamMembershipService);
+  const router = inject(Router);
+  let role: TeamRole | null = null;
+  try {
+    await membership.loadMembership();
+    role = membership.role();
+  } catch {
+    role = null;
+  }
+  return role && STAFF_ROLES.has(role)
+    ? router.createUrlTree(["/staff"])
+    : router.createUrlTree(["/today"]);
+};
