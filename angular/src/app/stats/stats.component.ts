@@ -10,6 +10,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
 import { AvatarComponent } from "../shared/avatar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
+import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
@@ -35,6 +36,7 @@ const clamp = (v: number, lo: number, hi: number) =>
     NgOptimizedImage,
     AvatarComponent,
     SkeletonComponent,
+    ReadinessTrendComponent,
     RouterLink,
     LucideAngularModule,
   ],

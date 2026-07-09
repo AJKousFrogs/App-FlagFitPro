@@ -4,13 +4,14 @@ import {
   OnInit,
   computed,
   inject,
+  input,
 } from "@angular/core";
 import { ReadinessService } from "../core/services/readiness.service";
 
 interface TrendChart {
   points: string;
   area: string;
-  last: { x: number; y: number; cls: string };
+  last: { x: number; y: number; cls: string; score: number };
 }
 
 const W = 320;
@@ -22,9 +23,19 @@ const clamp = (v: number, lo: number, hi: number) =>
 
 /**
  * Readiness trend — a small SVG line chart of the athlete's daily readiness
- * score over the last N days. Reads ReadinessService.history (server-canonical;
- * never re-derives the score). Honest empty state until there are ≥2 days. The
- * full-width SVG uses non-scaling strokes so the line stays crisp when stretched.
+ * score. Reads ReadinessService.history (server-canonical; never re-derives the
+ * score). Honest empty state until there are ≥2 days.
+ *
+ * Canonical shared chart (2026-07-09 data-viz audit V2): stats.component used to
+ * carry its own near-identical inline readiness SVG. This component is now the
+ * single implementation — configurable via `days` (fetch window) and `autoLoad`
+ * (set false when the parent already populates ReadinessService.history, e.g.
+ * stats' 28-day fetch) so both callers share one rendering.
+ *
+ * Accessibility: the reference lines are labeled (55 / 75), the aria-label is
+ * dynamic (latest value + zone + trend, V1), and the current score is shown as
+ * an end-of-line data label so zone is conveyed by the NUMBER, not by dot hue
+ * alone — readable for red-green colorblind users (~8% of men, V3).
  */
 @Component({
   selector: "app-readiness-trend",
@@ -36,9 +47,9 @@ const clamp = (v: number, lo: number, hi: number) =>
         preserveAspectRatio="none"
         class="rt-svg"
         role="img"
-        aria-label="Readiness over time"
+        [attr.aria-label]="ariaLabel()"
       >
-        <!-- high (75) / low (55) reference lines -->
+        <!-- high (75) / low (55) reference lines, labeled -->
         <line
           x1="0"
           [attr.y1]="y(75)"
@@ -46,6 +57,7 @@ const clamp = (v: number, lo: number, hi: number) =>
           [attr.y2]="y(75)"
           class="rt-grid"
         />
+        <text x="3" [attr.y]="y(75) - 3" class="rt-axis">75</text>
         <line
           x1="0"
           [attr.y1]="y(55)"
@@ -53,6 +65,7 @@ const clamp = (v: number, lo: number, hi: number) =>
           [attr.y2]="y(55)"
           class="rt-grid"
         />
+        <text x="3" [attr.y]="y(55) - 3" class="rt-axis">55</text>
         <polygon [attr.points]="c.area" class="rt-area" />
         <polyline [attr.points]="c.points" class="rt-line" />
         <circle
@@ -61,6 +74,15 @@ const clamp = (v: number, lo: number, hi: number) =>
           r="4"
           class="rt-dot {{ c.last.cls }}"
         />
+        <!-- V3: the score value itself (non-color encoder of the zone) -->
+        <text
+          [attr.x]="c.last.x - 7"
+          [attr.y]="c.last.y - 7"
+          text-anchor="end"
+          class="rt-value {{ c.last.cls }}"
+        >
+          {{ c.last.score }}
+        </text>
       </svg>
       <div class="rt-x">
         <small class="muted">{{ firstLabel() }}</small>
@@ -90,6 +112,10 @@ const clamp = (v: number, lo: number, hi: number) =>
         stroke-dasharray: 3 5;
         vector-effect: non-scaling-stroke;
       }
+      .rt-axis {
+        font-size: 10px;
+        fill: var(--text-faint);
+      }
       .rt-line {
         fill: none;
         stroke: var(--accent);
@@ -117,6 +143,20 @@ const clamp = (v: number, lo: number, hi: number) =>
       .rt-dot.good {
         fill: var(--good);
       }
+      .rt-value {
+        font-size: 12px;
+        font-weight: 700;
+        fill: var(--text-strong);
+      }
+      .rt-value.danger {
+        fill: var(--danger);
+      }
+      .rt-value.caution {
+        fill: var(--warn);
+      }
+      .rt-value.good {
+        fill: var(--good);
+      }
       .rt-x {
         display: flex;
         justify-content: space-between;
@@ -127,6 +167,12 @@ const clamp = (v: number, lo: number, hi: number) =>
 })
 export class ReadinessTrendComponent implements OnInit {
   private readonly readiness = inject(ReadinessService);
+
+  /** Fetch/plot window in days (default 14). */
+  readonly days = input(14);
+  /** When false, the parent already populated ReadinessService.history — the
+   * component only renders (no self-fetch). */
+  readonly autoLoad = input(true);
 
   readonly viewBox = `0 0 ${W} ${H}`;
   readonly w = W;
@@ -147,6 +193,17 @@ export class ReadinessTrendComponent implements OnInit {
     });
   });
 
+  /** Dynamic screen-reader description (V1): latest value + zone + direction. */
+  readonly ariaLabel = computed(() => {
+    const s = this.series();
+    if (s.length < 2) return "Readiness trend, not enough data yet.";
+    const last = Math.round(s[s.length - 1].score);
+    const prev = s[s.length - 2].score;
+    const dir = last > prev ? "up" : last < prev ? "down" : "steady";
+    const zone = last < 55 ? "low" : last <= 75 ? "moderate" : "good";
+    return `Readiness over the last ${s.length} check-ins. Latest ${last} of 100, ${zone}, trending ${dir}. Reference lines at 55 and 75.`;
+  });
+
   readonly chart = computed<TrendChart | null>(() => {
     const s = this.series();
     const n = s.length;
@@ -160,12 +217,20 @@ export class ReadinessTrendComponent implements OnInit {
     const lastScore = s[n - 1].score;
     const cls =
       lastScore < 55 ? "danger" : lastScore <= 75 ? "caution" : "good";
-    return { points, area, last: { ...pts[n - 1], cls } };
+    return {
+      points,
+      area,
+      last: { ...pts[n - 1], cls, score: Math.round(lastScore) },
+    };
   });
 
   ngOnInit(): void {
-    // server scopes by auth; 14-day window
-    this.readiness.getHistory("", 14).subscribe({ error: () => undefined });
+    // server scopes by auth; parent may own the fetch (autoLoad=false)
+    if (this.autoLoad()) {
+      this.readiness
+        .getHistory("", this.days())
+        .subscribe({ error: () => undefined });
+    }
   }
 
   /** Map a 0–100 score to the SVG y (100 → top, 0 → bottom). */
