@@ -91,6 +91,25 @@ export const featureRoutes: Routes = [
         title: "Athlete · FlagFit",
       },
       {
+        // Single-athlete monitoring report + squad table, hosted INSIDE the staff
+        // shell so staff keep their nav/context (previously these linked to the
+        // athlete-shell copies and stranded staff there — 2026-07-10 E2E audit).
+        path: "monitoring/:id",
+        loadComponent: () =>
+          import("../../monitoring-report/monitoring-report.component").then(
+            (m) => m.MonitoringReportComponent,
+          ),
+        title: "Monitoring · FlagFit",
+      },
+      {
+        path: "team-monitoring",
+        loadComponent: () =>
+          import("../../team-monitoring/team-monitoring.component").then(
+            (m) => m.TeamMonitoringComponent,
+          ),
+        title: "Squad monitoring · FlagFit",
+      },
+      {
         path: "alerts",
         loadComponent: () =>
           import("../../staff/alerts/alerts.component").then(
