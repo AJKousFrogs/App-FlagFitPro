@@ -182,8 +182,10 @@
 }
 .mr-spark polyline {
   fill: none;
-  stroke: var(--accent);
+  stroke: url(#mrSparkLine);
   stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
 }
 
 .mr-acwr-head {

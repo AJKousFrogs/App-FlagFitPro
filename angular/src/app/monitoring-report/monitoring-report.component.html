@@ -144,6 +144,18 @@
                   role="img"
                   aria-label="Daily wellness score trend"
                 >
+                  <defs>
+                    <linearGradient id="mrSparkLine" x1="0" y1="0" x2="1" y2="0">
+                      <stop
+                        offset="0"
+                        style="stop-color: var(--chart-stroke-a)"
+                      />
+                      <stop
+                        offset="1"
+                        style="stop-color: var(--chart-stroke-b)"
+                      />
+                    </linearGradient>
+                  </defs>
                   <polyline [attr.points]="hooperPoints()" />
                 </svg>
               }
