@@ -60,7 +60,7 @@ describe("OnboardingComponent finish()", () => {
   });
 
   it("player: joins team, saves profile, navigates to /today on success", async () => {
-    const post = vi.fn(() => of({ success: true }));
+    const post = vi.fn((..._args: unknown[]) => of({ success: true }));
     const fixture = await mountComponent({ get: () => of(ONE_TEAM), post });
     const navigate = vi
       .spyOn(TestBed.inject(Router), "navigate")
@@ -77,7 +77,7 @@ describe("OnboardingComponent finish()", () => {
   });
 
   it("staff: joins team, skips player-settings, navigates to /staff", async () => {
-    const post = vi.fn(() => of({ success: true }));
+    const post = vi.fn((..._args: unknown[]) => of({ success: true }));
     const fixture = await mountComponent({ get: () => of(ONE_TEAM), post });
     const comp = fixture.componentInstance as unknown as FinishComp;
     comp.setRole("coach");
