@@ -38,6 +38,12 @@ function toInt(v) {
 
 const handler = async (event, context) =>
   baseHandler(event, context, {
+    // functionName is REQUIRED — baseHandler throws before its try/catch if it's
+    // missing, which crashed this function with a 502 on every call (2026-07-10).
+    functionName: "weekend-games",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: "CREATE",
+    requireAuth: true,
     handler: async (evt, _ctx, meta) => {
       const userId = meta?.userId;
       if (!userId) {

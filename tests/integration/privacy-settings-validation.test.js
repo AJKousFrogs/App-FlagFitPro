@@ -66,6 +66,9 @@ vi.mock("../../netlify/functions/supabase-client.js", () => {
 
   return {
     getSupabaseClient: () => supabaseClient,
+    // The endpoint now uses the service-role client (was the anon client, which
+    // RLS denied → 500 on save). Mock both so the test tracks the real import.
+    supabaseAdmin: supabaseClient,
   };
 });
 

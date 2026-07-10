@@ -9,7 +9,13 @@ import { supabaseAdmin } from "./supabase-client.js";
 
 export const handler = async (event, context) =>
   baseHandler(event, context, {
-    allowUnauthenticated: true,
+    // functionName is REQUIRED (baseHandler throws → 502 without it). Password
+    // reset is public, so requireAuth:false — the prior `allowUnauthenticated`
+    // key was not a real baseHandler option (ignored, leaving requireAuth=true).
+    functionName: "auth-reset-password",
+    allowedMethods: ["POST"],
+    rateLimitType: "AUTH",
+    requireAuth: false,
     handler: async (evt, _ctx, _meta) => {
       const { valid, data } = validateRequestBody(evt.body);
 

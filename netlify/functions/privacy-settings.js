@@ -3,7 +3,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { getSupabaseClient } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { ageFromDob } from "./utils/age.js";
 import { tryParseJsonObjectBody, isValidId } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
@@ -176,7 +176,13 @@ const handler = async (event, context) => {
     rateLimitType,
     requireAuth: true, // P0-005: Explicitly require authentication for privacy settings
     handler: async (event, context, { userId, requestId }) => {
-      const supabase = getSupabaseClient();
+      // Service-role client: this endpoint authenticates the caller (requireAuth)
+      // and writes rows scoped to the trusted `userId` (privacy_settings) or a
+      // team-authorized `teamId`. The anon client used previously has no RLS
+      // policy on privacy_settings (policies are authenticated-only, user_id =
+      // auth.uid()), so every read/write was denied → 500 on save (2026-07-10).
+      // Matches player-settings.js and the rest of the user-write endpoints.
+      const supabase = supabaseAdmin;
 
       // GET - Retrieve privacy settings
       if (event.httpMethod === "GET") {
