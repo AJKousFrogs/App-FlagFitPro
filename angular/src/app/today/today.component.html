@@ -205,6 +205,7 @@
             </div>
             <div class="cover-legend">
               <span><i class="csw csw--done"></i>Done</span>
+              <span><i class="csw csw--partial"></i>Partial</span>
               <span><i class="csw csw--miss"></i>Missed</span>
               <span><i class="csw csw--future"></i>Upcoming</span>
               <span><i class="csw csw--today"></i>Today</span>
@@ -212,8 +213,11 @@
             <div class="cover-meta">
               <span
                 ><strong>{{ cov.pct }}% coverage</strong> ·
-                {{ cov.missed }} missed</span
-              >
+                {{ cov.missed }} missed
+                @if (cov.partial) {
+                  · {{ cov.partial }} partial
+                }
+              </span>
               <span
                 >streak <strong>{{ cov.streak }} days</strong></span
               >

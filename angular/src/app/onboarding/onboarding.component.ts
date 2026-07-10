@@ -1,17 +1,34 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { retry } from "rxjs";
+import { firstValueFrom, retry } from "rxjs";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { SeasonPhase, SeasonWindow } from "../core/models/prescription.models";
+
+/** A team the user can join, from GET /api/team-join. */
+interface TeamOption {
+  id: string;
+  name: string;
+  homeCity: string | null;
+}
+
+/** A role the user can self-select in onboarding. `staff` roles skip the
+ *  athlete-only steps and join as pending_approval (report access stays
+ *  consent-gated); players join approved and see only their own data. */
+interface RoleOption {
+  value: string;
+  label: string;
+  staff: boolean;
+}
 
 /**
  * Onboarding — the multi-step setup. Ported from
@@ -89,8 +106,69 @@ export class OnboardingComponent {
   private readonly router = inject(Router);
   private readonly logger = inject(LoggerService);
 
-  readonly STEPS = 4;
+  constructor() {
+    // Load joinable teams for the first step. A user arriving here without an
+    // invitation would otherwise never get a team — this is what lets them pick
+    // one (e.g. "International Frogs").
+    this.api.get<{ teams: TeamOption[] }>("/api/team-join").subscribe({
+      next: (res) => {
+        const teams = res?.data?.teams ?? [];
+        this.teams.set(teams);
+        // Single-club convenience: preselect when there's only one option.
+        if (teams.length === 1) this.selectedTeamId.set(teams[0].id);
+      },
+      error: (e) => {
+        this.logger.error("onboarding_teams_load_failed", e);
+        this.teams.set([]);
+      },
+    });
+  }
+
   readonly step = signal(0);
+
+  // step 0 — team & role
+  readonly teams = signal<TeamOption[]>([]);
+  readonly selectedTeamId = signal<string | null>(null);
+  readonly role = signal("player");
+  readonly roleOptions: RoleOption[] = [
+    { value: "player", label: "Player", staff: false },
+    { value: "head_coach", label: "Head coach", staff: true },
+    { value: "coach", label: "Coach", staff: true },
+    { value: "physiotherapist", label: "Physiotherapist", staff: true },
+    { value: "nutritionist", label: "Nutritionist", staff: true },
+    { value: "psychologist", label: "Sport psychologist", staff: true },
+    { value: "strength_conditioning_coach", label: "S&C coach", staff: true },
+    { value: "manager", label: "Team manager", staff: true },
+  ];
+  readonly isPlayer = computed(() => this.role() === "player");
+
+  // Player fills the full athlete profile; staff just pick team + role then a
+  // short confirm. The step sequence (and the progress dots) follow from that.
+  readonly stepKeys = computed<string[]>(() =>
+    this.isPlayer()
+      ? ["team", "position", "physicals", "season", "training"]
+      : ["team", "staff"],
+  );
+  readonly totalSteps = computed(() => this.stepKeys().length);
+  readonly currentKey = computed(() => this.stepKeys()[this.step()] ?? "team");
+  readonly roleLabel = computed(
+    () =>
+      this.roleOptions.find((r) => r.value === this.role())?.label ?? "Member",
+  );
+  readonly selectedTeamName = computed(
+    () =>
+      this.teams().find((t) => t.id === this.selectedTeamId())?.name ??
+      "your team",
+  );
+
+  setRole(value: string): void {
+    this.role.set(value);
+    // Changing role changes how many steps there are — clamp so we never point
+    // past the end of the (now shorter) staff sequence.
+    if (this.step() > this.totalSteps() - 1) {
+      this.step.set(this.totalSteps() - 1);
+    }
+  }
 
   // step 1 — identity
   readonly position = signal("QB");
@@ -139,8 +217,14 @@ export class OnboardingComponent {
   readonly error = signal<string | null>(null);
 
   next(): void {
-    if (this.step() < this.STEPS - 1) this.step.update((s) => s + 1);
-    else this.finish();
+    // Can't leave the first step without a team chosen.
+    if (this.currentKey() === "team" && !this.selectedTeamId()) {
+      this.error.set("Pick your team to continue.");
+      return;
+    }
+    this.error.set(null);
+    if (this.step() < this.totalSteps() - 1) this.step.update((s) => s + 1);
+    else void this.finish();
   }
   back(): void {
     if (this.step() > 0) this.step.update((s) => s - 1);
@@ -173,37 +257,65 @@ export class OnboardingComponent {
     );
   }
 
-  private finish(): void {
+  private async finish(): Promise<void> {
     if (this.saving()) return;
+    const teamId = this.selectedTeamId();
+    if (!teamId) {
+      this.error.set("Pick your team first.");
+      this.step.set(0);
+      return;
+    }
     this.saving.set(true);
     this.error.set(null);
-    this.api
-      .post("/api/player-settings", {
-        position: this.position(),
-        jerseyNumber: this.jersey(),
-        heightCm: this.heightCm(),
-        weightKg: this.weightKg(),
-        dateOfBirth: this.dob() || null,
-        equipment: Object.keys(this.equipment()).filter(
-          (k) => this.equipment()[k],
-        ),
-        preferredTime: this.preferredTime(),
-        seasonCalendar: this.season().filter((w) => w.from && w.to),
-      })
-      .pipe(retry({ count: 1, delay: 2000 }))
-      .subscribe({
-        next: () => this.router.navigate(["/today"]),
-        error: (e) => {
-          this.logger.error("onboarding_save_failed", e);
-          // Onboarding's whole job is to persist the profile the engine needs
-          // (position, DOB, season). Proceeding on a save failure would drop the
-          // athlete into the app with no profile and no way back in — so surface
-          // the error and let them retry rather than silently losing their setup.
-          this.saving.set(false);
-          this.error.set(
-            "Couldn't save your profile — check your connection and tap Finish again.",
-          );
-        },
-      });
+    try {
+      // 1. Join the team with the chosen role. This creates the membership that
+      //    every downstream feature keys off (roster, weather via home_city,
+      //    season plan, reports). Staff join as pending_approval; players as
+      //    approved — the endpoint owns that policy.
+      await firstValueFrom(
+        this.api
+          .post("/api/team-join", {
+            teamId,
+            role: this.role(),
+            position: this.isPlayer() ? this.position() : undefined,
+          })
+          .pipe(retry({ count: 1, delay: 2000 })),
+      );
+
+      // 2. Players also persist the athlete profile the engine needs (position,
+      //    DOB, season) — this call is what marks their onboarding complete.
+      //    Staff have no such profile; team-join marked them complete already.
+      if (this.isPlayer()) {
+        await firstValueFrom(
+          this.api
+            .post("/api/player-settings", {
+              position: this.position(),
+              jerseyNumber: this.jersey(),
+              heightCm: this.heightCm(),
+              weightKg: this.weightKg(),
+              dateOfBirth: this.dob() || null,
+              equipment: Object.keys(this.equipment()).filter(
+                (k) => this.equipment()[k],
+              ),
+              preferredTime: this.preferredTime(),
+              seasonCalendar: this.season().filter((w) => w.from && w.to),
+            })
+            .pipe(retry({ count: 1, delay: 2000 })),
+        );
+      }
+
+      // 3. Route to the right home for the role (staff shell vs athlete /today).
+      await this.router.navigate([this.isPlayer() ? "/today" : "/staff"]);
+    } catch (e) {
+      this.logger.error("onboarding_save_failed", e);
+      // Onboarding's whole job is to persist the team + profile the app needs.
+      // Proceeding on a failure would drop the user into the app half-configured
+      // and stuck — so surface the error and let them retry rather than silently
+      // losing their setup.
+      this.saving.set(false);
+      this.error.set(
+        "Couldn't finish setup — check your connection and tap Finish again.",
+      );
+    }
   }
 }
