@@ -143,12 +143,13 @@ test.describe("Critical Flow - Morning Training Block", () => {
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(/.*(today|staff).*/, { timeout: 10000 });
 
-    // The rebuilt Today screen always renders its greeting header; with a
-    // generated daily protocol it also shows the plan, otherwise the "no plan
-    // yet" empty state (the expected terminal when no API/data is available).
-    const greeting = page.locator(".topbar h1").first();
-    const emptyState = page.locator(".empty").first();
-    await expect(greeting.or(emptyState)).toBeVisible({ timeout: 15000 });
+    // The Today screen always renders its greeting heading (hero band
+    // "Good <part>, <name>"), and the staff path renders its own heading — either
+    // way a heading is visible once the shell mounts. (Redesign 2026-07-10 moved
+    // the greeting from .topbar h1 into the hero band .pagehead h1.)
+    await expect(page.getByRole("heading").first()).toBeVisible({
+      timeout: 15000,
+    });
 
     // Step 3 — when a protocol block is present (full-stack run with data),
     // exercise it: open the block and tick the first exercise.
