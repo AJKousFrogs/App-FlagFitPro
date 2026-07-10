@@ -305,18 +305,16 @@
     align-items: center;
     justify-content: center;
     gap: var(--s-2);
-    transition:
-      transform var(--t-fast) var(--ease),
-      background var(--t-fast);
+    /* transition comes from the baseline interaction layer (element rules) */
   }
-  .btn:active {
+  .btn:not(:disabled):not([aria-disabled="true"]):active {
     transform: scale(0.98);
   }
   .btn.primary {
     background: var(--accent);
     color: var(--on-accent);
   }
-  .btn.primary:hover {
+  .btn.primary:not(:disabled):not([aria-disabled="true"]):hover {
     background: var(--accent-press);
   }
   .btn.secondary {
@@ -324,14 +322,25 @@
     color: var(--text-strong);
     border-color: var(--border);
   }
+  .btn.secondary:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--surface-2);
+    border-color: var(--text-faint);
+  }
   .btn.ghost {
     background: transparent;
     color: var(--text);
     border-color: var(--border);
   }
+  .btn.ghost:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--surface-2);
+    color: var(--text-strong);
+  }
   .btn.danger {
     background: var(--danger-soft);
     color: var(--danger);
+  }
+  .btn.danger:not(:disabled):not([aria-disabled="true"]):hover {
+    border-color: var(--danger);
   }
   .btn.block {
     display: flex;
@@ -370,6 +379,14 @@
     color: var(--accent);
     border-color: var(--accent);
   } /* selected (filters, format, equipment) */
+  .chip:not(.sel):hover {
+    background: var(--surface-raised);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .chip:active {
+    transform: scale(0.96);
+  }
   .chip:focus-visible {
     outline: none;
     box-shadow: var(--focus);
