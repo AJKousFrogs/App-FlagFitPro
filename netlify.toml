@@ -1259,6 +1259,19 @@
   status = 200
   force = true
 
+# API Routes for Team Join (onboarding: list joinable teams + self-join)
+[[redirects]]
+  from = "/api/team-join"
+  to = "/.netlify/functions/team-join"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/team-join/*"
+  to = "/.netlify/functions/team-join"
+  status = 200
+  force = true
+
 # API Routes for Achievements
 [[redirects]]
   from = "/api/achievements"
