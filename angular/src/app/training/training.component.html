@@ -1,314 +1,465 @@
-<app-topbar>
-  <div class="eyebrow">{{ seasonLabel() }}</div>
-  <h1>Training</h1>
-</app-topbar>
+<div class="tr">
+  <!-- ============ APP BAR ============ -->
+  <header class="appbar">
+    <div class="appbar-title">
+      <div class="eyebrow">{{ seasonLabel() }}</div>
+      <h1>Training</h1>
+    </div>
+    <nav class="tabs" aria-label="Training sections">
+      @for (t of tabs; track t) {
+        <button
+          type="button"
+          class="tab"
+          [class.is-active]="tab() === t"
+          (click)="tab.set(t)"
+        >
+          {{ t }}
+        </button>
+      }
+    </nav>
+  </header>
 
-<main class="screen">
-  <!-- section tabs (Today populated; the rest land as the port continues) -->
-  <nav class="tt-tabs" aria-label="Training sections">
-    @for (t of tabs; track t) {
-      <button
-        type="button"
-        class="tt-tab"
-        [class.on]="tab() === t"
-        (click)="tab.set(t)"
-      >
-        {{ t }}
-      </button>
-    }
-  </nav>
-
+  <!-- ============ TODAY TAB — session runner ============ -->
   @if (tab() === "Today") {
-    @if (loading()) {
-      <app-skeleton variant="hero" label="today's session" />
-    } @else if (rx(); as p) {
-      <div class="hero">
-        <div class="row">
-          <h1>{{ p.intentLabel }}</h1>
-          @if (heroBand(); as b) {
-            <span class="band {{ b.cls }}">{{ b.label }}</span>
+    <div class="layout">
+      <section class="col-main">
+        <!-- session hero -->
+        <div class="card hero">
+          @if (loading()) {
+            <p class="muted">Loading today's session…</p>
+          } @else if (rx(); as p) {
+            <div class="hero-top">
+              @if (heroBand(); as b) {
+                <span class="pill pill--{{ b.cls }}">{{ b.label }}</span>
+              }
+              <span class="pill pill--ghost">{{ dateLabel() }}</span>
+              @if (weatherRaw(); as w) {
+                <span class="geo-chip">
+                  <span class="geo-dot"></span>
+                  <span>{{ w.location || "Your location" }}</span>
+                  <span class="geo-temp"
+                    ><lucide-icon [name]="weatherIcon()" />{{ w.tempC }}°</span
+                  >
+                </span>
+              }
+            </div>
+
+            <h2>{{ p.intentLabel }}</h2>
+            <p class="sub">{{ p.reasoning }}</p>
+
+            <div class="hero-stats">
+              <div class="stat-chip">
+                <span class="v">{{ rpeLabel() }}</span
+                ><span class="k">Target RPE</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ p.targetMinutes }}</span
+                ><span class="k">Min</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ p.sprintReps }}</span
+                ><span class="k">Sprints</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ fluidTarget() }}L</span
+                ><span class="k">Fluid</span>
+              </div>
+            </div>
+
+            @if (totalExercises()) {
+              <div class="session-progress">
+                <div class="row">
+                  <span>Session progress</span>
+                  <span
+                    ><strong>{{ doneExercises() }}</strong> /
+                    {{ totalExercises() }} exercises</span
+                  >
+                </div>
+                <div class="bar"><i [style.width.%]="sessionPct()"></i></div>
+              </div>
+            }
+          } @else {
+            <p class="muted" style="margin: 0 0 var(--sp-3)">
+              No session yet — log a check-in and we'll build today's plan.
+            </p>
+            <a class="btn btn--primary" routerLink="/wellness">Check in →</a>
           }
         </div>
-        <p style="margin: var(--s-2) 0 0; color: var(--text)">
-          {{ p.reasoning }}
-        </p>
-        @if (weather(); as w) {
-          <p
-            class="faint"
-            style="margin: var(--s-1) 0 0; font-size: var(--fs-sm)"
-          >
-            <lucide-icon name="cloud-rain" /> {{ w.reason }}
-          </p>
-        }
 
-        <div style="margin: var(--s-4) 0">
-          <app-yt-video
-            [videoId]="sessionVideoId()"
-            title="Watch the full session"
-            [duration]="sessionVideoDuration()"
-          />
-        </div>
-
-        @for (blk of blocks(); track blk.title) {
-          <div style="margin-bottom: var(--s-3)">
-            <div class="row" style="margin-bottom: var(--s-2)">
-              <b>{{ blk.title }}</b
-              ><small>{{ blk.meta }}</small>
-            </div>
-            <app-yt-video
-              [videoId]="blk.video?.youtubeId ?? null"
-              [poster]="
-                blk.video?.thumbnail ||
-                'assets/images/rebuild/video-session.jpg'
-              "
-              [title]="blk.title"
-              [duration]="blk.video?.duration || ''"
-            />
-          </div>
-        }
-
-        <!-- Realized exercises for today's intent (daily-protocol, composed under
-             the intent layer). Only shows once the protocol resolves. -->
+        <!-- session blocks -->
         @if (protocol.loading()) {
-          <div class="row">
-            <small class="muted">Loading today's exercises…</small>
+          <div class="section-header"><h3>Session blocks</h3></div>
+          <div class="card" style="padding: var(--sp-5)">
+            <p class="muted">Building your exercises…</p>
           </div>
-        } @else if (protocol.blocks().length) {
-          <div class="section-h" style="margin-top: var(--s-3)">
-            <h2>Today's exercises</h2>
+        } @else if (blocks().length) {
+          <div class="section-header">
+            <h3>Session blocks</h3>
+            <span class="meta"
+              >{{ blocks().length }} blocks ·
+              {{ totalExercises() }} exercises</span
+            >
+            <span class="spacer"></span>
+            <button type="button" class="link-btn" (click)="collapseAll()">
+              Collapse all
+            </button>
           </div>
-          <div class="bc-list">
-            @for (b of protocol.blocks(); track b.type; let i = $index) {
-              <article class="bc">
-                <div class="bc__head">
-                  <span
-                    class="bc__idx"
-                    [class.done]="(b.progressPercent ?? 0) >= 100"
-                    >{{ i + 1 }}</span
+
+          <div class="blocks">
+            @for (b of blocks(); track $index; let bi = $index) {
+              <div
+                class="block"
+                [class.is-open]="isOpen(bi)"
+                [class.is-done]="blockIsDone(bi)"
+                [class.is-active]="activeBlock() === bi"
+              >
+                <button
+                  type="button"
+                  class="block-head"
+                  [attr.aria-expanded]="isOpen(bi)"
+                  (click)="toggleBlock(bi)"
+                >
+                  <span class="block-num">
+                    @if (blockIsDone(bi)) {
+                      <lucide-icon name="check" />
+                    } @else {
+                      {{ bi + 1 }}
+                    }
+                  </span>
+                  <span class="block-title-wrap">
+                    <span class="block-title"
+                      >{{ b.title }}
+                      @if (activeBlock() === bi && !blockIsDone(bi)) {
+                        <span class="tag-next">Up next</span>
+                      }
+                    </span>
+                    <span class="block-meta">{{ blockMeta(b) }}</span>
+                  </span>
+                  <span class="block-count"
+                    >{{ blockDoneCount(bi) }}/{{
+                      b.exercises?.length ?? 0
+                    }}</span
                   >
-                  <span class="bc__title">{{ b.title }}</span>
-                  @if (blockStatus(b); as st) {
-                    <span class="band {{ st.cls }}">{{ st.label }}</span>
-                  }
-                </div>
-                <div class="bc__meta">
-                  {{ b.exercises?.length || 0 }} ex
-                  @if (b.estimatedDurationMinutes) {
-                    · ~{{ b.estimatedDurationMinutes }} min
-                  }
-                  @if (b.totalCount) {
-                    · {{ b.completedCount || 0 }}/{{ b.totalCount }}
-                  }
-                </div>
-                @if ((b.progressPercent ?? 0) > 0) {
-                  <div class="bc__bar">
-                    <i [style.width.%]="b.progressPercent"></i>
+                  <span class="caret"><lucide-icon name="chevron-down" /></span>
+                </button>
+
+                @if (isOpen(bi)) {
+                  <div class="block-body">
+                    @for (
+                      ex of b.exercises ?? [];
+                      track $index;
+                      let ei = $index
+                    ) {
+                      <div class="ex" [class.is-done]="isChecked(bi, ei)">
+                        <div class="ex-row">
+                          <button
+                            type="button"
+                            class="check"
+                            [attr.aria-pressed]="isChecked(bi, ei)"
+                            [attr.aria-label]="
+                              'Mark ' +
+                              (ex.exercise?.name ?? 'exercise') +
+                              ' done'
+                            "
+                            (click)="toggleCheck(bi, ei)"
+                          >
+                            <lucide-icon name="check" />
+                          </button>
+                          <button
+                            type="button"
+                            class="ex-name-wrap"
+                            (click)="toggleExpand(bi, ei)"
+                          >
+                            <span class="ex-name">{{
+                              ex.exercise?.name ?? "Exercise"
+                            }}</span>
+                            <span class="ex-dose">{{ exDose(ex) }}</span>
+                          </button>
+                          <span class="ex-actions">
+                            @if (ex.exercise?.videoId) {
+                              <button
+                                type="button"
+                                class="chip-btn"
+                                (click)="openVideo(ex)"
+                              >
+                                <lucide-icon name="play" /> Video
+                              </button>
+                            }
+                            <button
+                              type="button"
+                              class="ex-caret"
+                              [class.is-open]="isExpanded(bi, ei)"
+                              aria-label="Show details"
+                              (click)="toggleExpand(bi, ei)"
+                            >
+                              <lucide-icon name="chevron-down" />
+                            </button>
+                          </span>
+                        </div>
+                        @if (isExpanded(bi, ei)) {
+                          <div class="ex-detail">
+                            @if (ex.exercise?.howText) {
+                              <p class="desc">{{ ex.exercise?.howText }}</p>
+                            }
+                            @if (ex.exercise?.feelText) {
+                              <p class="ex-cue">
+                                <span class="ic"
+                                  ><lucide-icon name="activity"
+                                /></span>
+                                {{ ex.exercise?.feelText }}
+                              </p>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                   </div>
                 }
-                <ul class="bc__ex">
-                  @for (ex of b.exercises; track $index) {
-                    <li>
-                      <b>{{ ex.exercise?.name || "Exercise" }}</b>
-                      @if (exDose(ex); as dose) {
-                        <small> — {{ dose }}</small>
-                      }
-                      @if (ex.exercise?.videoId; as vid) {
-                        <div class="ex-vid">
-                          <app-yt-video
-                            [videoId]="vid"
-                            [title]="ex.exercise?.name || ''"
-                          />
-                        </div>
-                      }
-                      @if (ex.exercise?.howText) {
-                        <div class="ex-how">{{ ex.exercise?.howText }}</div>
-                      }
-                      @if (ex.exercise?.feelText) {
-                        <div class="ex-feel">
-                          <lucide-icon name="activity" />
-                          {{ ex.exercise?.feelText }}
-                        </div>
-                      }
-                    </li>
-                  }
-                </ul>
-              </article>
+              </div>
             }
+          </div>
+        } @else if (rx()) {
+          <div class="section-header"><h3>Session blocks</h3></div>
+          <div class="card" style="padding: var(--sp-5)">
+            <p class="muted">
+              No specific exercises for today's plan — follow the session
+              guidance above.
+            </p>
           </div>
         }
 
-        <div class="slider">
-          <label for="rpe">Actual RPE</label>
-          <input
-            class="rng"
-            id="rpe"
-            type="range"
-            min="1"
-            max="10"
-            [value]="actualRpe()"
-            (input)="actualRpe.set(+$any($event.target).value)"
-            aria-label="Actual RPE 1 to 10"
-          />
-          <span class="val">{{ actualRpe() }}</span>
-        </div>
-        <div class="slider">
-          <label for="dur">Duration</label>
-          <input
-            class="rng"
-            id="dur"
-            type="range"
-            min="0"
-            max="120"
-            step="5"
-            [value]="duration()"
-            (input)="duration.set(+$any($event.target).value)"
-            aria-label="Duration in minutes"
-          />
-          <span class="val">{{ duration() }}</span>
+        <!-- QB arm-care (self-gates on position === qb) -->
+        <div class="qb-slot"><app-qb-arm-care-card /></div>
+      </section>
+
+      <!-- ============ RIGHT RAIL ============ -->
+      <aside class="rail">
+        @if (weatherRaw(); as w) {
+          <div class="card rail-card">
+            <h3>Conditions</h3>
+            <div class="cond-now">
+              <span class="wx-ic"><lucide-icon [name]="weatherIcon()" /></span>
+              <div>
+                <div class="big">{{ w.tempC }}°</div>
+                <div class="desc">
+                  {{ w.condition || "Current conditions" }}
+                  @if (w.location) {
+                    · {{ w.location }}
+                  }
+                </div>
+              </div>
+              @if (w.suitability) {
+                <span
+                  class="pill pill--{{
+                    w.suitability === 'excellent' || w.suitability === 'good'
+                      ? 'ok'
+                      : w.suitability === 'poor'
+                        ? 'warn'
+                        : 'ghost'
+                  }}"
+                  style="margin-left: auto"
+                  >{{ w.suitability }}</span
+                >
+              }
+            </div>
+            <p class="cond-foot">{{ condAdvice() }}</p>
+          </div>
+        }
+
+        <div class="card rail-card">
+          <h3>Fuel &amp; hydration</h3>
+          <p class="rail-note">
+            Targets, the hydration log and the supplement stack live on
+            <strong>Today</strong> — one source, no drift. Session fluid target:
+            <strong>{{ fluidTarget() }}L</strong>.
+          </p>
+          <a class="btn btn--ghost" routerLink="/today">Open Today → Fuel</a>
         </div>
 
-        @if (completed()) {
-          <button class="btn secondary block" type="button" disabled>
-            <lucide-icon name="check" /> Session logged
-          </button>
-        } @else {
+        <div class="card rail-card">
+          <h3>This week</h3>
+          @if (week().length) {
+            <div class="week">
+              @for (r of week(); track $index; let i = $index) {
+                <div class="week-row" [class.is-today]="i === todayIndex">
+                  <span class="day"
+                    ><strong>{{ r.day }}</strong> · {{ r.label }}</span
+                  >
+                  <span class="load-pill load-pill--{{ weekLoad(r) }}">{{
+                    weekPill(r)
+                  }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="muted">Your week fills in as the plan resolves.</p>
+          }
+        </div>
+      </aside>
+    </div>
+
+    <!-- ============ STICKY COMPLETION BAR ============ -->
+    @if (rx(); as p) {
+      <div class="donebar">
+        <div class="donebar-inner">
+          <div class="prog">
+            <div class="row">
+              <span>{{ p.intentLabel }} · {{ dateLabel() }}</span>
+              <span
+                ><strong>{{ sessionPct() }}%</strong> done</span
+              >
+            </div>
+            <div class="bar"><i [style.width.%]="sessionPct()"></i></div>
+          </div>
+          <div class="stepper">
+            <span class="lbl">Actual RPE</span>
+            <div class="ctrl">
+              <button
+                type="button"
+                (click)="rpeStep(-1)"
+                aria-label="Decrease RPE"
+              >
+                −
+              </button>
+              <span class="val">{{ actualRpe() }}</span>
+              <button
+                type="button"
+                (click)="rpeStep(1)"
+                aria-label="Increase RPE"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <div class="stepper">
+            <span class="lbl">Min</span>
+            <div class="ctrl">
+              <button
+                type="button"
+                (click)="durStep(-5)"
+                aria-label="Decrease duration"
+              >
+                −
+              </button>
+              <span class="val">{{ duration() }}</span>
+              <button
+                type="button"
+                (click)="durStep(5)"
+                aria-label="Increase duration"
+              >
+                +
+              </button>
+            </div>
+          </div>
           <button
-            class="btn primary block"
             type="button"
-            [attr.aria-disabled]="completing()"
+            class="btn btn--primary donebar-cta"
+            [disabled]="completing() || completed()"
             (click)="completeSession()"
           >
-            {{ completing() ? "Logging…" : "Complete session" }}
+            {{
+              completed()
+                ? "Session logged ✓"
+                : completing()
+                  ? "Logging…"
+                  : "Complete session"
+            }}
           </button>
-        }
-        @if (completeError(); as e) {
-          <p class="note" style="color: var(--danger)">{{ e }}</p>
-        }
-      </div>
-    } @else {
-      <div class="empty">
-        No session planned yet — log a wellness check-in to generate today's
-        plan.
-        <a class="btn primary sm" routerLink="/wellness"
-          ><lucide-icon name="clipboard-check" /> Log check-in</a
-        >
-      </div>
-    }
-
-    <div class="section-h"><h2>This week</h2></div>
-    @if (week().length) {
-      <div class="card">
-        @for (d of week(); track $index) {
-          <div class="lrow" [style.opacity]="d.isRest ? '0.45' : '1'">
-            <span>{{ d.day }} · {{ d.label }}</span>
-            @if (d.isGame) {
-              <span class="band caution"><lucide-icon name="flag" /> game</span>
-            } @else if (d.isRest) {
-              <span class="chip">Rest · mobility</span>
-            } @else if (d.isTravel) {
-              <span class="band neutral"
-                ><lucide-icon name="plane" /> travel</span
-              >
-            } @else if (d.rpe !== null) {
-              <span class="chip">RPE {{ d.rpe }}</span>
-            }
-          </div>
-          @if (d.secondSession; as pm) {
-            <div
-              class="lrow"
-              style="
-                padding-left: var(--s-5);
-                margin-top: calc(var(--s-1) * -1);
-              "
-            >
-              <span style="font-size: var(--fs-sm); color: var(--text-muted)">
-                <span
-                  class="band info"
-                  style="
-                    font-size: var(--fs-xs);
-                    padding: 1px 6px;
-                    margin-right: var(--s-1);
-                  "
-                  >PM</span
-                >
-                {{ pm.label }}
-              </span>
-              <span class="chip" style="font-size: var(--fs-xs)"
-                >RPE {{ pm.rpe }}</span
-              >
-            </div>
-          }
-        }
-      </div>
-    } @else {
-      <div class="empty">
-        No schedule yet — add your competitions to see the week shape.
-      </div>
-    }
-  } @else if (tab() === "Library") {
-    @if (!videos().length) {
-      <div class="empty">
-        No videos yet — your coach adds drills &amp; sessions here.
-      </div>
-    } @else {
-      @for (cat of categories(); track cat) {
-        <div class="section-h">
-          <h2>{{ cat }}</h2>
         </div>
-        @for (v of videos(); track v.id) {
-          @if (v.category === cat) {
-            <div style="margin-bottom: var(--s-3)">
-              <app-yt-video
-                [videoId]="v.youtubeId"
-                [poster]="
-                  v.thumbnail || 'assets/images/rebuild/video-session.jpg'
-                "
-                [title]="v.title"
-                [duration]="v.duration"
-              />
-            </div>
+        @if (completeError(); as err) {
+          <p class="donebar-err">{{ err }}</p>
+        }
+      </div>
+    }
+  }
+
+  <!-- ============ SCHEDULE TAB ============ -->
+  @if (tab() === "Schedule") {
+    <div class="tab-body">
+      <div class="section-header"><h3>Upcoming events</h3></div>
+      @if (upcoming().length) {
+        <div class="blocks">
+          @for (e of upcoming(); track e.id) {
+            <a class="card sched-row" routerLink="/schedule">
+              <span class="block-num"><lucide-icon name="flag" /></span>
+              <span class="block-title-wrap">
+                <span class="block-title">{{
+                  e.competitionShortName || e.competitionName
+                }}</span>
+                <span class="block-meta"
+                  >{{ e.startsAt | date: "EEE d MMM" }} · in
+                  {{ daysTo(e.startsAt) }}d</span
+                >
+              </span>
+              <lucide-icon class="caret" name="chevron-right" />
+            </a>
           }
-        }
+        </div>
+      } @else {
+        <div class="card" style="padding: var(--sp-5)">
+          <p class="muted">
+            No events yet.
+            <a routerLink="/schedule">Add camps, tournaments & gamedays →</a>
+          </p>
+        </div>
       }
-    }
-  } @else if (tab() === "Schedule") {
-    <div class="section-h">
-      <h2>Upcoming</h2>
-      <a class="btn primary sm" routerLink="/schedule"
-        ><lucide-icon name="calendar-plus" /> Add event</a
-      >
-    </div>
-    @if (upcoming().length) {
-      <div class="card">
-        @for (e of upcoming(); track e.id) {
-          <div class="lrow">
-            <span class="inline"
-              ><lucide-icon name="flag" />
-              {{ e.competitionShortName || e.competitionName }}</span
-            >
-            <span class="band caution"
-              >in {{ daysTo(e.startsAt) }}d ·
-              {{ e.expectedGameCount }} games</span
-            >
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="empty">
-        <p style="margin: 0 0 var(--s-3)">
-          No upcoming events — add your camps, tournaments &amp; gamedays so
-          your plan adapts.
-        </p>
-        <a class="btn primary" routerLink="/schedule"
-          ><lucide-icon name="calendar-plus" /> Add an event</a
-        >
-      </div>
-    }
-  } @else {
-    <div class="empty">
-      No program yet — your coach assigns training programs here.
     </div>
   }
 
-  <app-qb-arm-care-card />
-</main>
+  <!-- ============ PROGRAMS TAB ============ -->
+  @if (tab() === "Programs") {
+    <div class="tab-body">
+      <div class="section-header"><h3>Programs</h3></div>
+      <div class="card" style="padding: var(--sp-5)">
+        <p class="muted">
+          Your daily plan is generated automatically from your schedule,
+          readiness and position — no manual program to follow. Adjust your
+          inputs in <a routerLink="/settings">Settings</a>.
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- ============ LIBRARY TAB ============ -->
+  @if (tab() === "Library") {
+    <div class="tab-body">
+      <div class="section-header">
+        <h3>Video library</h3>
+        <span class="meta">{{ videos().length }} clips</span>
+      </div>
+      @if (videos().length) {
+        <div class="lib-grid">
+          @for (v of videos(); track v.youtubeId) {
+            <div class="lib-card">
+              <app-yt-video
+                [videoId]="v.youtubeId"
+                [title]="v.title"
+                [duration]="v.duration"
+              />
+              <div class="lib-title">{{ v.title }}</div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="card" style="padding: var(--sp-5)">
+          <p class="muted">The video library is loading…</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ============ VIDEO MODAL ============ -->
+  @if (videoModal(); as vm) {
+    <div class="modal is-open" (click)="closeVideo()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <app-yt-video [videoId]="vm.videoId" [title]="vm.name" />
+        <div class="modal-foot">
+          <span class="name">{{ vm.name }}</span>
+          <button type="button" class="btn btn--ghost" (click)="closeVideo()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

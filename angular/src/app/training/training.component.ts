@@ -7,16 +7,17 @@ import {
   signal,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { DatePipe } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
-import { TopbarComponent } from "../shared/topbar.component";
 import { YtVideoComponent } from "../shared/yt-video.component";
-import { SkeletonComponent } from "../shared/skeleton.component";
 import { QbArmCareCardComponent } from "../shared/qb-arm-care-card.component";
-import { SESSION_VIDEO_ID } from "../core/config/session-video.config";
 
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ProtocolService } from "../core/services/protocol.service";
-import { ProtocolExercise } from "../core/models/protocol.models";
+import {
+  ProtocolBlock,
+  ProtocolExercise,
+} from "../core/models/protocol.models";
 import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
@@ -34,171 +35,27 @@ interface WeekRow {
 }
 
 /**
- * Training — today's session + week view. Ported 1:1 from
- * redesign/ground-zero/02-hifi/training.html. The session hero is the same
- * server-canonical prescription as Today; "This week" comes from
- * PeriodizationService.weekAhead(); completing the session logs the ACTUAL RPE +
- * duration to POST /api/training/complete (the ACWR feed) — never re-derived.
+ * Training — the session runner (redesign 2026-07-10). SERVER-CANONICAL: the
+ * prescription, the realized exercise blocks (daily-protocol), and the week view
+ * come from the engine services and are rendered, never re-derived. Ticking an
+ * exercise is local runner state (drives the progress + auto-advance); completing
+ * logs the ACTUAL RPE × duration to the training log (the ACWR feed).
  */
 @Component({
   selector: "app-training",
   imports: [
-    TopbarComponent,
-    YtVideoComponent,
-    SkeletonComponent,
-    QbArmCareCardComponent,
     RouterLink,
+    DatePipe,
     LucideAngularModule,
+    YtVideoComponent,
+    QbArmCareCardComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./training.component.html",
-  styles: [
-    `
-      .tt-tabs {
-        display: flex;
-        gap: var(--s-4);
-        border-bottom: 1px solid var(--border-soft);
-        padding-bottom: var(--s-2);
-      }
-      .tt-tab {
-        background: none;
-        border: 0;
-        cursor: pointer;
-        padding: 0 0 var(--s-2);
-        color: var(--text-faint);
-        font-weight: var(--fw-semi);
-        font-size: var(--fs-sm);
-        font-family: var(--font-body);
-      }
-      .tt-tab.on {
-        color: var(--text-strong);
-        border-bottom: 2px solid var(--accent);
-      }
-      .tt-tab:focus-visible {
-        outline: none;
-        box-shadow: var(--focus);
-        border-radius: 4px;
-      }
-
-      /* block-card — adapted from the redesign mockup, mapped to app tokens.
-         Mobile: single column; >=768px: two-up grid. */
-      .bc-list {
-        display: grid;
-        gap: var(--s-3);
-      }
-      @media (min-width: 768px) {
-        .bc-list {
-          grid-template-columns: 1fr 1fr;
-          /* Each block sizes to its own content — without this, a 1-exercise
-             block stretches to match a 5-exercise block beside it, becoming a
-             giant mostly-empty card. */
-          align-items: start;
-        }
-      }
-      .bc {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: var(--surface);
-        padding: var(--s-3);
-      }
-      .bc__head {
-        display: flex;
-        align-items: center;
-        gap: var(--s-2);
-      }
-      .bc__idx {
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        background: var(--bg);
-        color: var(--text-muted);
-        display: grid;
-        place-items: center;
-        font-size: var(--fs-xs);
-        font-weight: var(--fw-bold);
-        flex: 0 0 auto;
-      }
-      .bc__idx.done {
-        background: var(--accent-soft);
-        color: var(--accent);
-      }
-      .bc__title {
-        font-weight: var(--fw-semi);
-        flex: 1 1 auto;
-      }
-      .bc__meta {
-        color: var(--text-faint);
-        font-size: var(--fs-xs);
-        margin-top: var(--s-1);
-      }
-      .bc__bar {
-        height: 4px;
-        border-radius: 999px;
-        background: var(--border-soft);
-        margin-top: var(--s-2);
-        overflow: hidden;
-      }
-      .bc__bar > i {
-        display: block;
-        height: 100%;
-        background: var(--accent);
-        border-radius: 999px;
-        transition: width var(--motion, 0.2s);
-      }
-      .bc__ex {
-        margin: var(--s-2) 0 0;
-        padding-left: var(--s-4);
-      }
-      .bc__ex li {
-        font-size: var(--fs-sm);
-        margin: 0;
-      }
-      /* Divider between consecutive exercises so a multi-exercise block reads as
-         distinct steps rather than one run-on wall of text/video. */
-      .bc__ex li + li {
-        border-top: 1px solid var(--border);
-        margin-top: var(--s-3);
-        padding-top: var(--s-3);
-      }
-      .bc__ex small {
-        color: var(--text-faint);
-      }
-      .bc__ex li b {
-        font-weight: var(--fw-semi);
-      }
-      /* The how-to text always renders so the movement is clear even when the
-         video fails to load (YouTube 504 / offline) — see yt-video fallback. */
-      .ex-how {
-        color: var(--text-muted);
-        font-size: var(--fs-sm);
-        line-height: var(--lh-body);
-        margin: 2px 0 0;
-      }
-      .ex-feel {
-        color: var(--accent);
-        font-size: var(--fs-xs);
-        display: flex;
-        align-items: center;
-        gap: var(--s-1);
-        margin: 2px 0 var(--s-2);
-      }
-      .ex-feel svg.lucide {
-        width: 13px;
-        height: 13px;
-      }
-      /* Per-exercise video thumbnail — inline demo, tap to play. Only renders when
-         the server resolves a videoId for the exercise (DB or curated map fallback). */
-      .ex-vid {
-        margin: var(--s-1) 0;
-        border-radius: 6px;
-        overflow: hidden;
-      }
-    `,
-  ],
+  styleUrl: "./training.component.scss",
 })
 export class TrainingComponent {
   private readonly periodization = inject(PeriodizationService);
-  /** Exercise-realization layer, composed under today's intent. */
   readonly protocol = inject(ProtocolService);
   private readonly schedule = inject(ScheduleService);
   private readonly api = inject(ApiService);
@@ -206,42 +63,82 @@ export class TrainingComponent {
   private readonly videoSvc = inject(TrainingVideoService);
 
   private prefilledLog = false;
+  private protocolTriggered = false;
 
-  /** Upcoming events (the spine) for the Schedule tab. */
-  readonly upcoming = this.schedule.upcoming;
-  daysTo(iso: string): number {
-    return Math.max(
-      0,
-      Math.round((new Date(iso).getTime() - Date.now()) / 864e5),
-    );
-  }
-
+  // ── tabs ──────────────────────────────────────────────────────────────────
   readonly tabs = ["Today", "Schedule", "Programs", "Library"] as const;
   readonly tab = signal<(typeof this.tabs)[number]>("Today");
 
+  // ── prescription / session hero ─────────────────────────────────────────────
   readonly rx = this.periodization.today;
-  /** Session hero gates on the schedule snapshot — skeleton until it resolves. */
   readonly loading = this.schedule.loading;
 
-  /** Library + session video. */
-  readonly videos = this.videoSvc.videos;
-  readonly categories = this.videoSvc.categories;
-  /** Session video = a library clip matching today's intent, else the placeholder. */
-  readonly sessionVideoId = computed(
-    () =>
-      this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? SESSION_VIDEO_ID,
+  readonly seasonLabel = computed(() => {
+    const s = this.rx()?.seasonPhase;
+    const map: Record<string, string> = {
+      offseason: "Off-season",
+      preseason: "Pre-season",
+      inseason: "In-season",
+      transition: "Transition",
+    };
+    return s ? map[s] : "Training";
+  });
+
+  readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
+    const rx = this.rx();
+    if (!rx) return null;
+    if (rx.weatherAdjustment?.applied)
+      return { label: "weather-adjusted", cls: "warn" };
+    if (rx.intent === "competition") return { label: "Game day", cls: "warn" };
+    if (rx.intent === "travel") return { label: "Travel day", cls: "ghost" };
+    if (rx.recoveryEmphasis === "critical" || rx.recoveryEmphasis === "high")
+      return { label: "Recovery day", cls: "warn" };
+    return { label: "Training day", cls: "ok" };
+  });
+
+  readonly dateLabel = computed(() =>
+    new Date().toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    }),
+  );
+  readonly rpeLabel = computed(() => {
+    const r = this.rx()?.targetRpe;
+    return r == null ? "—" : String(r);
+  });
+  readonly fluidTarget = computed(
+    () => this.rx()?.nutrition?.hydrationL ?? 3.2,
   );
 
-  /** Real duration of the matched library clip; "" when none matched (no fake time). */
-  readonly sessionVideoDuration = computed(
-    () => this.videoSvc.forIntent(this.rx()?.intent)?.duration ?? "",
+  // ── conditions (weather) ────────────────────────────────────────────────────
+  readonly weatherRaw = this.periodization.weather;
+  readonly weatherIcon = computed(() => {
+    const c = (this.weatherRaw()?.condition ?? "").toLowerCase();
+    if (/rain|shower|drizzle|storm|thunder|snow/.test(c)) return "cloud-rain";
+    if (/cloud|overcast|fog/.test(c)) return "cloud";
+    return "sun";
+  });
+  readonly condAdvice = computed(() => {
+    const w = this.weatherRaw();
+    if (!w) return "Conditions load with your location.";
+    const adj = this.rx()?.weatherAdjustment;
+    if (adj?.applied && adj.reason) return adj.reason;
+    if (w.suitability === "poor")
+      return "Rough conditions — have the indoor variant ready; mobility & breathing blocks are weather-proof.";
+    if (w.suitability === "fair")
+      return "Workable conditions — keep effort honest and hydrate to plan.";
+    return "Good conditions at session time — standard fluid target applies.";
+  });
+
+  // ── session video (hero) ────────────────────────────────────────────────────
+  readonly sessionVideoId = computed(
+    () => this.videoSvc.forIntent(this.rx()?.intent)?.youtubeId ?? null,
   );
 
   constructor() {
     if (!this.videoSvc.loaded()) void this.videoSvc.load();
-    // Default the session-log RPE/duration to today's PRESCRIBED values once the
-    // prescription resolves, instead of the fabricated 5 / 58. The athlete adjusts
-    // to actuals before completing; this feeds ACWR (load = rpe × duration).
+    // Prefill the session-log RPE/duration to today's PRESCRIBED values.
     effect(() => {
       if (this.prefilledLog) return;
       const rx = this.rx();
@@ -250,8 +147,7 @@ export class TrainingComponent {
       if (rx.targetRpe != null) this.actualRpe.set(rx.targetRpe);
       if (rx.targetMinutes != null) this.duration.set(rx.targetMinutes);
     });
-    // COMPOSE: once today's intent resolves, ask daily-protocol to realize the
-    // EXERCISES for that intent (position from the prescription, else profile).
+    // COMPOSE: realize the exercises for today's intent.
     effect(() => {
       if (this.protocolTriggered) return;
       const rx = this.rx();
@@ -269,101 +165,146 @@ export class TrainingComponent {
         weatherTempC: w?.tempC ?? null,
       });
     });
+    // Open the first incomplete block whenever the block set (re)loads.
+    effect(() => {
+      const n = this.blocks().length;
+      if (n && this.openBlock() >= n) this.openBlock.set(0);
+    });
   }
 
-  private protocolTriggered = false;
+  // ── session blocks (realized protocol) ──────────────────────────────────────
+  readonly blocks = this.protocol.blocks;
 
-  /** Status chip for a block, from its completion progress. */
-  blockStatus(b: { progressPercent?: number }): { label: string; cls: string } {
-    const p = b.progressPercent ?? 0;
-    if (p >= 100) return { label: "Done", cls: "good" };
-    if (p > 0) return { label: "Active", cls: "caution" };
-    return { label: "Up next", cls: "" };
+  blockMeta(b: ProtocolBlock): string {
+    const n = b.exercises?.length ?? 0;
+    const min = b.estimatedDurationMinutes;
+    return `${n} ex${min ? ` · ~${min} min` : ""}`;
   }
-
-  /** Human dose for a realized exercise (sets×reps / hold / duration). */
   exDose(ex: ProtocolExercise): string {
-    if (ex.prescribedSets && ex.prescribedReps) {
+    if (ex.prescribedSets && ex.prescribedReps)
       return `${ex.prescribedSets}×${ex.prescribedReps}`;
-    }
     if (ex.prescribedHoldSeconds) {
       const sets = ex.prescribedSets ? `${ex.prescribedSets}×` : "";
       return `${sets}${ex.prescribedHoldSeconds}s hold`;
     }
-    if (ex.prescribedDurationSeconds) {
+    if (ex.prescribedDurationSeconds)
       return `${Math.round(ex.prescribedDurationSeconds / 60)} min`;
-    }
     return "";
   }
 
-  readonly seasonLabel = computed(() => {
-    const s = this.rx()?.seasonPhase;
-    const map: Record<string, string> = {
-      offseason: "Off-season",
-      preseason: "Pre-season",
-      inseason: "In-season",
-      transition: "Transition",
-    };
-    return s ? map[s] : "Training";
+  // ── runner state: checks / accordion / expand ───────────────────────────────
+  private readonly checked = signal<Set<string>>(new Set());
+  private readonly expandedSet = signal<Set<string>>(new Set());
+  readonly openBlock = signal(0);
+
+  private key(bi: number, ei: number): string {
+    return `${bi}:${ei}`;
+  }
+  isChecked(bi: number, ei: number): boolean {
+    return this.checked().has(this.key(bi, ei));
+  }
+  isExpanded(bi: number, ei: number): boolean {
+    return this.expandedSet().has(this.key(bi, ei));
+  }
+  isOpen(bi: number): boolean {
+    return this.openBlock() === bi;
+  }
+
+  toggleBlock(bi: number): void {
+    this.openBlock.set(this.openBlock() === bi ? -1 : bi);
+  }
+  collapseAll(): void {
+    this.openBlock.set(-1);
+  }
+  toggleExpand(bi: number, ei: number): void {
+    this.expandedSet.update((s) => {
+      const next = new Set(s);
+      const k = this.key(bi, ei);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      return next;
+    });
+  }
+
+  blockDoneCount(bi: number): number {
+    const ex = this.blocks()[bi]?.exercises ?? [];
+    return ex.reduce((n, _e, ei) => n + (this.isChecked(bi, ei) ? 1 : 0), 0);
+  }
+  blockIsDone(bi: number): boolean {
+    const total = this.blocks()[bi]?.exercises?.length ?? 0;
+    return total > 0 && this.blockDoneCount(bi) === total;
+  }
+  /** The active block = the first with unchecked exercises. */
+  readonly activeBlock = computed(() => {
+    const blocks = this.blocks();
+    for (let bi = 0; bi < blocks.length; bi++) {
+      const total = blocks[bi].exercises?.length ?? 0;
+      if (this.blockDoneCount(bi) < total) return bi;
+    }
+    return -1;
   });
 
-  readonly weather = computed(() => this.rx()?.weatherAdjustment ?? null);
+  toggleCheck(bi: number, ei: number): void {
+    this.checked.update((s) => {
+      const next = new Set(s);
+      const k = this.key(bi, ei);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      return next;
+    });
+    // Auto-advance: when a block completes, open the next incomplete one.
+    if (this.blockIsDone(bi)) {
+      const next = this.activeBlock();
+      if (next !== -1) this.openBlock.set(next);
+    }
+  }
 
-  readonly heroBand = computed<{ label: string; cls: string } | null>(() => {
-    const rx = this.rx();
-    if (!rx) return null;
-    if (rx.weatherAdjustment?.applied)
-      return { label: "weather-adjusted", cls: "caution" };
-    // Intent-specific labels take precedence over the generic recovery-emphasis
-    // badge — mirrors today.component.ts's heroBand so the same day never shows
-    // a different label on Today vs. Training.
-    if (rx.intent === "competition") return { label: "game day", cls: "info" };
-    if (rx.intent === "travel") return { label: "travel day", cls: "neutral" };
-    if (rx.recoveryEmphasis === "critical")
-      return { label: "recover", cls: "danger" };
-    if (rx.recoveryEmphasis === "high")
-      return { label: "recover", cls: "caution" };
-    return { label: "today", cls: "good" };
+  readonly totalExercises = computed(() =>
+    this.blocks().reduce((n, b) => n + (b.exercises?.length ?? 0), 0),
+  );
+  readonly doneExercises = computed(() => {
+    const blocks = this.blocks();
+    let n = 0;
+    for (let bi = 0; bi < blocks.length; bi++) n += this.blockDoneCount(bi);
+    return n;
+  });
+  readonly sessionPct = computed(() => {
+    const t = this.totalExercises();
+    return t ? Math.round((this.doneExercises() / t) * 100) : 0;
   });
 
-  /** Session blocks around the prescription — each a playable library demo
-   *  (warm-up → warmup category, main → today's intent, cooldown → recovery). */
-  readonly blocks = computed(() => {
-    const rx = this.rx();
-    return [
-      {
-        title: "Warm-up — RAMP",
-        meta: "10 min · no max effort",
-        video: this.videoSvc.first("warmup"),
-      },
-      {
-        title: rx?.intentLabel ?? "Main block",
-        meta: `RPE ${rx?.targetRpe ?? "—"} · ${rx?.targetMinutes ?? "—"} min`,
-        video: this.videoSvc.forIntent(rx?.intent),
-      },
-      {
-        title: "Cooldown & mobility",
-        meta: "easy",
-        video: this.videoSvc.first("recovery"),
-      },
-    ];
-  });
+  // ── video modal ──────────────────────────────────────────────────────────────
+  readonly videoModal = signal<{ name: string; videoId: string } | null>(null);
+  openVideo(ex: ProtocolExercise): void {
+    const id = ex.exercise?.videoId;
+    if (!id) return;
+    this.videoModal.set({ name: ex.exercise?.name ?? "Exercise", videoId: id });
+  }
+  closeVideo(): void {
+    this.videoModal.set(null);
+  }
 
-  // --- actual session log ---
+  // ── completion log (RPE × duration → ACWR) ──────────────────────────────────
   readonly actualRpe = signal(5);
   readonly duration = signal(58);
   readonly completing = signal(false);
   readonly completed = signal(false);
   readonly completeError = signal<string | null>(null);
 
+  private clamp(v: number, min: number, max: number): number {
+    return Math.min(max, Math.max(min, v));
+  }
+  rpeStep(delta: number): void {
+    this.actualRpe.set(this.clamp(this.actualRpe() + delta, 0, 10));
+  }
+  durStep(delta: number): void {
+    this.duration.set(this.clamp(this.duration() + delta, 0, 240));
+  }
+
   completeSession(): void {
-    if (this.completing()) return;
+    if (this.completing() || this.completed()) return;
     this.completing.set(true);
     this.completeError.set(null);
-    // Log a COMPLETED session in one call: a training-log payload (date+type+
-    // duration) routes to createTrainingLogSession → a completed training_sessions
-    // row. compute-acwr derives load = rpe × duration when workload is null, so this
-    // feeds ACWR. (POST /api/training/complete needs a pre-existing sessionId.)
     this.api
       .post(API_ENDPOINTS.training.createSession, {
         date: new Date().toISOString().split("T")[0],
@@ -384,7 +325,27 @@ export class TrainingComponent {
       });
   }
 
-  // --- this week (engine) ---
+  // ── schedule tab / this week ─────────────────────────────────────────────────
+  readonly upcoming = this.schedule.upcoming;
+  daysTo(iso: string): number {
+    return Math.max(
+      0,
+      Math.round((new Date(iso).getTime() - Date.now()) / 864e5),
+    );
+  }
+
+  /** Load band for a week row, from its prescribed RPE. */
+  weekLoad(r: WeekRow): string {
+    if (r.isRest) return "rest";
+    if (r.isGame) return "hard";
+    const rpe = r.rpe ?? 0;
+    return rpe >= 7 ? "hard" : rpe >= 4 ? "mod" : "easy";
+  }
+  weekPill(r: WeekRow): string {
+    if (r.isRest) return "Rest";
+    return r.rpe != null ? `RPE ${r.rpe}` : r.label;
+  }
+
   readonly week = computed<WeekRow[]>(() =>
     this.periodization.weekAhead().map((p: DailyPrescription) => ({
       day: new Date(`${p.date}T00:00:00`).toLocaleDateString("en-GB", {
@@ -400,4 +361,11 @@ export class TrainingComponent {
         : null,
     })),
   );
+
+  /** Today's row is the first in weekAhead. */
+  readonly todayIndex = 0;
+
+  // Library tab
+  readonly videos = this.videoSvc.videos;
+  readonly categories = this.videoSvc.categories;
 }
