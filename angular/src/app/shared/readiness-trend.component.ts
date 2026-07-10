@@ -49,6 +49,18 @@ const clamp = (v: number, lo: number, hi: number) =>
         role="img"
         [attr.aria-label]="ariaLabel()"
       >
+        <!-- signature chart gradients — visual only, zones stay in state
+             colors + the numeric label (see tokens: --chart-*) -->
+        <defs>
+          <linearGradient id="rtLine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" style="stop-color: var(--chart-stroke-a)" />
+            <stop offset="1" style="stop-color: var(--chart-stroke-b)" />
+          </linearGradient>
+          <linearGradient id="rtArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color: var(--chart-area-a)" />
+            <stop offset="1" style="stop-color: var(--chart-area-b)" />
+          </linearGradient>
+        </defs>
         <!-- high (75) / low (55) reference lines, labeled -->
         <line
           x1="0"
@@ -120,33 +132,38 @@ const clamp = (v: number, lo: number, hi: number) =>
       .rt-axis {
         font-size: 10px;
         fill: var(--text-faint);
+        font-variant-numeric: tabular-nums;
       }
       .rt-line {
         fill: none;
-        stroke: var(--accent);
+        stroke: url(#rtLine);
         stroke-width: 2.5;
         stroke-linejoin: round;
         stroke-linecap: round;
         vector-effect: non-scaling-stroke;
       }
       .rt-area {
-        fill: color-mix(in srgb, var(--accent) 14%, transparent);
+        fill: url(#rtArea);
         stroke: none;
       }
+      /* endpoint keeps its ZONE color (meaning) and glows in that same hue —
+         the gradient never encodes state. */
       .rt-dot {
         stroke: var(--surface);
         stroke-width: 2;
-        fill: var(--accent);
+        color: var(--accent);
+        fill: currentColor;
         vector-effect: non-scaling-stroke;
+        filter: drop-shadow(0 0 4px currentColor);
       }
       .rt-dot.danger {
-        fill: var(--danger);
+        color: var(--danger);
       }
       .rt-dot.caution {
-        fill: var(--warn);
+        color: var(--warn);
       }
       .rt-dot.good {
-        fill: var(--good);
+        color: var(--good);
       }
       .rt-value {
         font-size: 12px;
