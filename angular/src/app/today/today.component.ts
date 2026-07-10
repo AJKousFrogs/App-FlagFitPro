@@ -272,7 +272,25 @@ export class TodayComponent {
 
   // ── check-in coverage (28-day, Monday-first) ────────────────────────────────
   readonly coverage = computed(() => {
-    const logged = new Set(this.readinessSvc.history().map((h) => h.day));
+    // A scored day is unambiguously a full check-in.
+    const scored = new Set(this.readinessSvc.history().map((h) => h.day));
+    // The canonical wellness log gives an honest "partial": a check-in row that
+    // exists but is missing a core driver (sleep / energy / stress / soreness).
+    // This is the row's OWN gap — nothing is fabricated (the card's promise).
+    const complete = new Set<string>();
+    const partialDays = new Set<string>();
+    for (const w of this.wellnessSvc.wellnessData()) {
+      const day = w.date;
+      if (!day) continue;
+      const full =
+        w.sleep != null &&
+        w.energy != null &&
+        w.stress != null &&
+        w.soreness != null;
+      if (full) complete.add(day);
+      else partialDays.add(day);
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     // Start 27 days back, then walk back to the Monday of that week.
@@ -282,10 +300,11 @@ export class TodayComponent {
 
     const cells: {
       date: string;
-      status: "done" | "miss" | "today" | "future";
+      status: "done" | "partial" | "miss" | "today" | "future";
       isToday: boolean;
     }[] = [];
     let done = 0;
+    let partial = 0;
     let missed = 0;
     let elapsed = 0;
     const cur = new Date(start);
@@ -293,28 +312,33 @@ export class TodayComponent {
       const iso = cur.toISOString().slice(0, 10);
       const isToday = cur.getTime() === today.getTime();
       const isFuture = cur > today;
-      const status: "done" | "miss" | "today" | "future" = isFuture
+      const status: "done" | "partial" | "miss" | "today" | "future" = isFuture
         ? "future"
-        : logged.has(iso)
+        : scored.has(iso) || complete.has(iso)
           ? "done"
-          : "miss";
+          : partialDays.has(iso)
+            ? "partial"
+            : "miss";
       cells.push({ date: iso, status, isToday });
       if (!isFuture) {
         elapsed++;
         if (status === "done") done++;
+        else if (status === "partial") partial++;
         else missed++;
       }
       cur.setDate(cur.getDate() + 1);
     }
-    // streak: consecutive done days ending today (or the last elapsed day).
+    // streak: consecutive full check-ins ending today (partial/miss breaks it).
     let streak = 0;
     for (let i = cells.length - 1; i >= 0; i--) {
       if (cells[i].status === "future") continue;
       if (cells[i].status === "done") streak++;
       else break;
     }
-    const pct = elapsed ? Math.round((done / elapsed) * 100) : 0;
-    return { cells, pct, missed, streak };
+    // "Coverage" = days you checked in at all (full or partial); partial + missed
+    // are broken out separately below it.
+    const pct = elapsed ? Math.round(((done + partial) / elapsed) * 100) : 0;
+    return { cells, pct, missed, partial, streak };
   });
 
   // ── tracking tiles ──────────────────────────────────────────────────────────

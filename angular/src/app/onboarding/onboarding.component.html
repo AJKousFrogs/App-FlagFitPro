@@ -1,15 +1,70 @@
 <header class="topbar">
   <div class="dots">
-    @for (s of [0, 1, 2, 3]; track s) {
-      <i [class.on]="step() >= s"></i>
+    @for (k of stepKeys(); track k; let i = $index) {
+      <i [class.on]="step() >= i"></i>
     }
   </div>
   <a class="icon-btn" routerLink="/landing" aria-label="Exit onboarding">✕</a>
 </header>
 
 <main class="screen">
-  @switch (step()) {
-    @case (0) {
+  @switch (currentKey()) {
+    @case ("team") {
+      <h1>Join your team</h1>
+      <div class="field">
+        <p style="margin: 0 0 var(--s-1)">Team</p>
+        @if (teams().length) {
+          <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+            @for (t of teams(); track t.id) {
+              <button
+                type="button"
+                class="chip"
+                [class.sel]="selectedTeamId() === t.id"
+                (click)="selectedTeamId.set(t.id)"
+              >
+                {{ t.name }}
+                @if (t.homeCity) {
+                  <span class="faint"> · {{ t.homeCity }}</span>
+                }
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="muted" style="font-size: var(--fs-sm)">
+            Loading teams… if none appear, ask your team admin for an invite.
+          </p>
+        }
+      </div>
+
+      <div class="field">
+        <p style="margin: 0 0 var(--s-1)">Your role</p>
+        <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+          @for (r of roleOptions; track r.value) {
+            <button
+              type="button"
+              class="chip"
+              [class.sel]="role() === r.value"
+              (click)="setRole(r.value)"
+            >
+              {{ r.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (!isPlayer()) {
+        <p class="note">
+          Staff join as <strong>pending approval</strong>. You'll appear on the
+          roster right away, but access to athletes' health &amp; monitoring
+          data stays gated behind their consent and an admin's approval.
+        </p>
+      }
+      @if (error(); as e) {
+        <p class="note" style="color: var(--danger)">{{ e }}</p>
+      }
+    }
+
+    @case ("position") {
       <h1>Who are you on the field?</h1>
       <div class="field">
         <p style="margin: 0">Position</p>
@@ -39,7 +94,7 @@
         />
       </div>
     }
-    @case (1) {
+    @case ("physicals") {
       <h1>Your physicals</h1>
       <div class="field">
         <label for="h">Height (cm)</label>
@@ -82,7 +137,7 @@
         />
       </div>
     }
-    @case (2) {
+    @case ("season") {
       <h1>Your season</h1>
       <p class="muted" style="font-size: var(--fs-sm); margin: 0 0 var(--s-2)">
         Tell us your periods (use YYYY-MM-DD for a specific span, or MM-DD for a
@@ -137,7 +192,7 @@
         maintains + skill. Nothing hardcoded — you declare it.
       </p>
     }
-    @case (3) {
+    @case ("training") {
       <h1>How you train</h1>
       <div class="field">
         <p style="margin: 0">Equipment</p>
@@ -174,6 +229,22 @@
         <p class="note" style="color: var(--danger)">{{ e }}</p>
       }
     }
+    @case ("staff") {
+      <h1>You're all set</h1>
+      <p class="muted" style="margin: 0 0 var(--s-3)">
+        Joining <strong>{{ selectedTeamName() }}</strong> as
+        <strong>{{ roleLabel() }}</strong
+        >.
+      </p>
+      <p class="note">
+        Tap Finish to land in your staff dashboard. Athletes' health &amp;
+        monitoring data stays behind their consent and admin approval — you'll
+        see the roster and team schedule right away.
+      </p>
+      @if (error(); as e) {
+        <p class="note" style="color: var(--danger)">{{ e }}</p>
+      }
+    }
   }
 
   <div class="row" style="margin-top: var(--s-4)">
@@ -188,7 +259,7 @@
       (click)="next()"
     >
       {{
-        step() === STEPS - 1
+        step() === totalSteps() - 1
           ? saving()
             ? "Saving…"
             : "Finish →"

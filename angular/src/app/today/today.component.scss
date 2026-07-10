@@ -607,6 +607,9 @@
   .cell--done {
     background: rgba(44, 224, 113, 0.4);
   }
+  .cell--partial {
+    background: rgba(245, 183, 59, 0.5);
+  }
   .cell--miss {
     background: var(--paper-100);
   }
@@ -639,6 +642,9 @@
   }
   .csw--done {
     background: rgba(44, 224, 113, 0.4);
+  }
+  .csw--partial {
+    background: rgba(245, 183, 59, 0.5);
   }
   .csw--miss {
     background: var(--paper-100);
