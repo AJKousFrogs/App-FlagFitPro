@@ -1,323 +1,472 @@
-<app-topbar>
-  <div class="eyebrow">{{ eyebrow() }}</div>
-  <h1>{{ greeting() }}</h1>
-</app-topbar>
-
-<main class="screen">
-  <!-- context strip: next event + any weather adjustment -->
-  @if (nextEvent(); as ev) {
-    <div class="strip">
-      <span class="inline">
-        <lucide-icon name="flag" />
-        {{ daysToNext() }}d →
-        {{ ev.competitionShortName || ev.competitionName }}
-        @if (weather(); as w) {
-          · <lucide-icon name="cloud-rain" /> {{ w.reason }}
-        }
-      </span>
-      <lucide-icon name="chevron-down" />
-    </div>
-  }
-
-  <!-- standalone weather strip — always shown when weather data is available -->
-  @if (weatherRaw(); as w) {
-    <div
-      class="card flat"
-      style="
-        display: flex;
-        align-items: center;
-        gap: var(--s-3);
-        padding: var(--s-3) var(--s-4);
-      "
-    >
-      <lucide-icon
-        name="sun"
-        style="flex-shrink: 0; color: var(--text-muted)"
-      />
-      <span style="font-weight: var(--fw-semi)">{{ w.tempC }}°C</span>
-      @if (w.location) {
-        <span class="muted">{{ w.location }}</span>
-      }
-      @if (w.condition) {
-        <span class="muted">· {{ w.condition }}</span>
-      }
-      @if (w.suitability) {
-        <span
-          class="band {{
-            w.suitability === 'excellent' || w.suitability === 'good'
-              ? 'good'
-              : w.suitability === 'poor'
-                ? 'danger'
-                : 'caution'
-          }}"
-          style="margin-left: auto"
-        >
-          {{ w.suitability }}
-        </span>
-      }
-    </div>
-  }
-
-  <!-- THE ANSWER — today's prescription (server-canonical) -->
-  @if (loading()) {
-    <app-skeleton variant="hero" label="today's plan" />
-  } @else if (rx(); as p) {
-    <div class="hero">
-      <div class="row">
-        <h1>{{ p.intentLabel }}</h1>
-        @if (heroBand(); as b) {
-          <span class="band {{ b.cls }}">{{ b.label }}</span>
-        }
+<div class="td">
+  <!-- ============ HERO BAND ============ -->
+  <header
+    class="heroband"
+    style="--hero-img: url(&quot;assets/images/rebuild/hero-team.jpg&quot;)"
+  >
+    <div class="pagehead">
+      <div>
+        <div class="eyebrow">
+          {{ dateLabel() }}
+          @if (seasonPhaseLabel(); as ph) {
+            · {{ ph }}
+          }
+        </div>
+        <h1>Good {{ partOfDay() }}, {{ firstName() }}</h1>
+        <p class="quote">
+          <em>“{{ quote()[0] }}”</em>
+          <span class="who">— {{ quote()[1] }}</span>
+          <button type="button" (click)="nextQuote()" aria-label="Next quote">
+            <lucide-icon name="refresh-cw" />
+          </button>
+        </p>
       </div>
-      <p style="margin: var(--s-3) 0 0; color: var(--text)">
-        {{ p.reasoning }}
-      </p>
-      @if (p.injuryAdjustment; as adj) {
-        <span class="band caution" style="margin-top: var(--s-3)"
-          >Adjusted for {{ adj.regions.join(", ") }} tightness</span
-        >
-      }
-
-      <div class="tiles" style="margin: var(--s-4) 0">
-        <div>
-          <b>{{ rpeLabel() }}</b
-          ><small>RPE</small>
-        </div>
-        <div>
-          <b>{{ p.targetMinutes }}</b
-          ><small>min</small>
-        </div>
-        <div>
-          <b>{{ p.sprintReps }}</b
-          ><small>sprints</small>
-        </div>
-      </div>
-
-      <!-- position-specific accessory / prehab focus (guidance, not load) -->
-      @if (p.positionEmphasis; as pe) {
-        <div class="card flat" style="margin-bottom: var(--s-4)">
-          <div class="row" style="align-items: baseline">
-            <b>{{ pe.label }} focus</b>
-            @if (pe.restricted) {
-              <span class="band caution">arm flagged</span>
-            } @else {
-              <small>prehab &amp; care</small>
-            }
-          </div>
-          <div
-            style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: var(--s-2);
-              margin: var(--s-2) 0;
-            "
-          >
-            @for (f of pe.focus; track f) {
-              <span class="chip">{{ f }}</span>
-            }
-          </div>
-          <small class="muted">{{ pe.note }}</small>
-          @if (pe.volume; as v) {
-            <div
-              style="
-                margin-top: var(--s-3);
-                padding-top: var(--s-3);
-                border-top: 1px solid var(--border-soft);
-              "
+      <div class="head-actions">
+        @if (weatherRaw(); as w) {
+          <span class="geo-chip">
+            <span class="geo-dot"></span>
+            <span>{{ w.location || "Your location" }}</span>
+            <span class="geo-temp"
+              ><lucide-icon [name]="weatherIcon()" />{{ w.tempC }}°</span
             >
-              <small
-                class="muted"
-                style="display: block; margin-bottom: var(--s-2)"
-                >Prepared for (worst case):</small
-              >
-              <div style="display: flex; flex-wrap: wrap; gap: var(--s-2)">
-                @for (t of v.targets; track t) {
-                  <span class="chip">{{ t }}</span>
+          </span>
+        }
+        <a
+          class="icon-btn"
+          routerLink="/notifications"
+          aria-label="Notifications"
+        >
+          <lucide-icon name="bell" />
+        </a>
+        <a class="avatar" routerLink="/profile" aria-label="Profile">
+          @if (avatarUrl(); as url) {
+            <img [src]="url" alt="" />
+          } @else {
+            {{ initials() }}
+          }
+        </a>
+      </div>
+    </div>
+    <div class="team-id">
+      <span class="crest"><lucide-icon name="flag" /></span>
+      <span
+        ><strong>{{ teamName() }}</strong></span
+      >
+    </div>
+  </header>
+
+  <main class="stack">
+    <!-- ============ SEASON PLAN ============ -->
+    @if (seasonEvents().length) {
+      <section class="card">
+        <div class="card-head">
+          <h3>Season plan</h3>
+          @if (seasonPhaseLabel(); as ph) {
+            <span class="meta">{{ ph }}</span>
+          }
+          <span class="spacer"></span>
+          <a class="mini-btn" routerLink="/schedule">+ Add event</a>
+        </div>
+        <div class="card-body">
+          <div class="plan-chips">
+            @for (e of seasonEvents(); track e.id) {
+              <span class="event-chip">
+                <strong>{{
+                  e.competitionShortName || e.competitionName
+                }}</strong>
+                {{ e.startsAt | date: "MMM d" }}
+              </span>
+            }
+          </div>
+          @if (timeline(); as tl) {
+            <div class="timeline">
+              <div class="tl-track">
+                @for (d of tl.dots; track $index) {
+                  <div class="event-dot" [style.left.%]="d.left"></div>
+                  <span
+                    class="tl-event-lbl"
+                    [class.clamp-r]="d.left > 88"
+                    [style.left.%]="d.left"
+                    >{{ d.label }}</span
+                  >
+                }
+              </div>
+              <div class="today-marker" style="left: 0%"></div>
+              <div class="tl-months">
+                @for (m of tl.months; track $index) {
+                  <span class="tl-month" [style.left.%]="m.left">{{
+                    m.label
+                  }}</span>
                 }
               </div>
             </div>
           }
+          <p class="plan-foot">
+            Plan re-periodizes when events change: taper locks before each
+            event, deload follows, and load ramps stay inside ACWR guardrails.
+          </p>
         </div>
-      }
+      </section>
+    }
 
-      <!-- fuel: engine-derived macros + illustrative food chips -->
-      <div class="card flat" style="margin-bottom: var(--s-4)">
-        <div class="row" style="align-items: baseline">
-          <b>Fuel today</b><small>{{ p.nutrition.rationale }}</small>
-        </div>
-        <div class="fuel-macros">
-          <div>
-            <iconify-icon icon="mdi:barley"></iconify-icon
-            ><b>{{ p.nutrition.carbsG }}g</b><small>carbs</small>
-          </div>
-          <div>
-            <iconify-icon icon="mdi:food-drumstick"></iconify-icon
-            ><b>{{ p.nutrition.proteinG }}g</b><small>protein</small>
-          </div>
-          <div>
-            <iconify-icon icon="mdi:cup-water"></iconify-icon
-            ><b>{{ p.nutrition.hydrationL }}L</b><small>fluid</small>
-          </div>
-        </div>
-        <small class="muted" style="display: block; margin-bottom: var(--s-2)"
-          >Food ideas to hit it</small
-        >
-        <div class="fuel-foods">
-          @for (f of foodSuggestions(); track f.label) {
-            <span class="foodchip"
-              ><iconify-icon [icon]="f.icon"></iconify-icon>{{ f.label }}</span
-            >
+    <!-- ============ SESSION + CHECK-INS ============ -->
+    <div class="grid-2">
+      <section class="card session-card">
+        <div class="card-head">
+          <h3>Today's session</h3>
+          <span class="spacer"></span>
+          @if (rx(); as p) {
+            <span class="pill pill--warn">{{ p.intentLabel }}</span>
           }
         </div>
-        <div class="row" style="margin-top: var(--s-3)">
-          <a class="btn ghost sm" routerLink="/wellness" style="flex: 1"
-            >Log nutrition →</a
-          >
-          <a
-            href="https://www.laprimafit.si"
-            target="_blank"
-            rel="noopener"
-            style="
-              font-size: var(--fs-sm);
-              color: var(--text-muted);
-              white-space: nowrap;
-            "
-            >meal plan →</a
-          >
+        <div class="card-body">
+          @if (loading()) {
+            <p class="muted">Loading today's plan…</p>
+          } @else if (rx(); as p) {
+            <h2>{{ p.intentLabel }}</h2>
+            <p class="why">
+              <span class="ic"><lucide-icon name="activity" /></span>
+              <span><strong>Why:</strong> {{ p.reasoning }}</span>
+            </p>
+            <div class="stat-row">
+              <div class="stat-chip">
+                <span class="v">{{ rpeLabel() }}</span
+                ><span class="k">RPE</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ p.targetMinutes }}</span
+                ><span class="k">Min</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ p.sprintReps }}</span
+                ><span class="k">Sprints</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ hydroTarget() }}L</span
+                ><span class="k">Fluid</span>
+              </div>
+            </div>
+            @if (conditionsLine(); as c) {
+              <div class="cond-line" [attr.data-suit]="c.suit">
+                <span class="ic"><lucide-icon name="sun" /></span>
+                <span
+                  ><strong>{{ c.text }}.</strong> {{ c.tail }}</span
+                >
+              </div>
+            }
+            <a class="btn btn--primary" routerLink="/training">Start session</a>
+          } @else {
+            <p class="muted" style="margin: 0 0 var(--sp-3)">
+              No plan yet — log a check-in and we'll calculate your readiness
+              and what to train.
+            </p>
+            <a class="btn btn--primary" routerLink="/wellness">Check in →</a>
+          }
         </div>
-      </div>
+      </section>
 
-      <!-- session video — real YouTube IFrame Player (no API key) -->
-      <div style="margin-bottom: var(--s-4)">
-        <app-yt-video
-          [videoId]="sessionVideoId()"
-          title="Watch today's session"
-          [duration]="sessionVideoDuration()"
-        />
-      </div>
-
-      <a class="btn primary block" routerLink="/training">Start session →</a>
-    </div>
-  } @else {
-    <!-- data-state: no plan yet (no schedule / not logged in) -->
-    <div class="empty">
-      <p style="margin: 0 0 var(--s-3)">
-        No plan yet. Log today's wellness check-in and we'll calculate your
-        readiness and what to train.
-      </p>
-      <a class="btn primary" routerLink="/wellness">Check in →</a>
-    </div>
-  }
-
-  <!-- schedule entry — athlete-entered camps / tournaments / gamedays drive the plan -->
-  <a class="card linkcard" routerLink="/schedule">
-    <span class="lc-ic"><lucide-icon name="calendar" /></span>
-    <div class="stack" style="gap: var(--s-1); flex: 1">
-      <b>Your schedule</b>
-      @if (nextEvent(); as ev) {
-        <small class="muted"
-          >Next: {{ ev.competitionShortName || ev.competitionName }} · in
-          {{ daysToNext() }}d</small
-        >
-      } @else {
-        <small class="muted"
-          >Add camps, tournaments &amp; gamedays so your plan adapts</small
-        >
-      }
-    </div>
-    <lucide-icon class="lc-go" name="chevron-right" />
-  </a>
-  @if (eventHotelInfo(); as hotelEv) {
-    <!-- sibling, not nested in the linkcard <a> above — an <a> can't contain another <a> -->
-    <small class="muted inline" style="padding: 0 var(--s-2)">
-      <lucide-icon name="bed" />
-      {{ hotelEv.hotelName || "Team hotel" }}
-      @if (hotelEv.hotelAddress) {
-        ·
-        <a [href]="mapUrl(hotelEv.hotelAddress)" target="_blank" rel="noopener"
-          >map</a
-        >
-      }
-    </small>
-  }
-
-  <!-- recovery modalities — gated by owned equipment -->
-  @if (recovery().length) {
-    <div class="section-h"><h2>Recovery today</h2></div>
-    <div class="card stack">
-      @for (r of recovery(); track r.id) {
-        <div class="row">
-          <span class="inline"
-            ><lucide-icon name="heart-pulse" /> {{ r.label }}</span
-          >
-          <small class="muted">{{ r.reason }}</small>
+      <section class="card">
+        <div class="card-head">
+          <h3>Check-in coverage</h3>
+          <span class="meta">last 28 days</span>
         </div>
-      }
-      <a
-        class="btn ghost sm block"
-        routerLink="/wellness"
-        style="margin-top: var(--s-1)"
-        >Log recovery →</a
-      >
+        <div class="card-body">
+          @if (coverage(); as cov) {
+            <div class="cover-grid">
+              <span class="cover-lbl">M</span><span class="cover-lbl">T</span
+              ><span class="cover-lbl">W</span><span class="cover-lbl">T</span
+              ><span class="cover-lbl">F</span><span class="cover-lbl">S</span
+              ><span class="cover-lbl">S</span>
+              @for (c of cov.cells; track c.date) {
+                <div
+                  class="cell cell--{{ c.status }}"
+                  [class.cell--today]="c.isToday"
+                  [title]="c.date"
+                ></div>
+              }
+            </div>
+            <div class="cover-legend">
+              <span><i class="csw csw--done"></i>Done</span>
+              <span><i class="csw csw--miss"></i>Missed</span>
+              <span><i class="csw csw--future"></i>Upcoming</span>
+              <span><i class="csw csw--today"></i>Today</span>
+            </div>
+            <div class="cover-meta">
+              <span
+                ><strong>{{ cov.pct }}% coverage</strong> ·
+                {{ cov.missed }} missed</span
+              >
+              <span
+                >streak <strong>{{ cov.streak }} days</strong></span
+              >
+            </div>
+          }
+          <div class="acwr-ready">
+            <div class="row">
+              <span>ACWR reliability</span
+              ><strong>{{ daysLogged() }} / 21 days</strong>
+            </div>
+            <div class="bar">
+              <i [style.width.%]="acwrReliabilityPct()"></i>
+            </div>
+            <span
+              >Check-ins fuel ACWR and readiness. Until the ratio is reliable,
+              the app shows honest estimates — never fabricated numbers.</span
+            >
+          </div>
+        </div>
+      </section>
     </div>
-  } @else if (!hasEquipment()) {
-    <a class="card linkcard" routerLink="/settings">
-      <span class="lc-ic"><lucide-icon name="heart-pulse" /></span>
-      <div class="stack" style="gap: var(--s-1); flex: 1">
-        <b>Recovery</b>
-        <small class="muted"
-          >Add your recovery gear in Settings for tailored modalities</small
-        >
-      </div>
-      <lucide-icon class="lc-go" name="chevron-right" />
-    </a>
-  }
 
-  <!-- diagnostics below the fold -->
-  <div class="section-h"><h2>How you're tracking</h2></div>
-
-  <!-- Whole card is the tap target (one-handed / gloved use), not just the link. -->
-  <a
-    class="card"
-    routerLink="/wellness"
-    style="text-decoration: none; color: inherit"
-  >
-    <div class="row">
-      <div class="inline">
-        <span>Readiness</span>
+    <!-- ============ TRACKING TILES ============ -->
+    <div class="grid-4">
+      <a class="tile" routerLink="/wellness">
+        <span class="k">Readiness</span>
         @if (readinessBand(); as b) {
-          <span class="band {{ b.cls }}">{{ b.label }}</span>
+          <span class="v"
+            >{{ readinessScore() | number: "1.0-0" }}
+            <span class="pill pill--{{ b.cls === 'good' ? 'ok' : 'ghost' }}">{{
+              b.label.split("·")[1]
+            }}</span></span
+          >
         } @else {
-          <span class="band neutral">not logged today</span>
+          <span class="v"
+            >— <span class="pill pill--ghost">not logged</span></span
+          >
         }
-      </div>
-      <span class="faint" style="font-size: var(--fs-sm)">breakdown →</span>
-    </div>
-  </a>
+        @if (readinessSpark(); as pts) {
+          <svg
+            class="spark"
+            width="120"
+            height="26"
+            viewBox="0 0 120 26"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <polyline [attr.points]="pts" />
+          </svg>
+        }
+        <span class="note">Log a check-in to keep this fresh.</span>
+      </a>
 
-  @if (acwrBand(); as b) {
-    <div class="card">
-      <div class="row">
-        <div class="inline">
-          <span>Load (ACWR)</span
-          ><span class="band {{ b.cls }}">{{ b.label }}</span>
-        </div>
-        <a class="faint" style="font-size: var(--fs-sm)" routerLink="/stats"
-          >trend →</a
+      <a class="tile" routerLink="/wellness">
+        <span class="k">Sleep last night</span>
+        @if (sleepHours(); as h) {
+          <span class="v">{{ h }}h</span>
+          <div class="bar"><i [style.width.%]="(h / 8) * 100"></i></div>
+          <span class="note"
+            >Target <strong>8h</strong>. The biggest recovery lever — worth more
+            than any supplement.</span
+          >
+        } @else {
+          <span class="v">—</span>
+          <span class="note">Log your check-in to track sleep.</span>
+        }
+      </a>
+
+      <a class="tile" routerLink="/acwr">
+        <span class="k">Load (ACWR)</span>
+        @if (acwrBand(); as b) {
+          <span class="v"
+            >{{ acwrRatio() | number: "1.2-2"
+            }}<span class="pill pill--ghost">{{
+              b.label.split("·")[1]
+            }}</span></span
+          >
+        } @else {
+          <span class="v"
+            >— <span class="pill pill--ghost">building</span></span
+          >
+          <div class="bar"><i [style.width.%]="acwrReliabilityPct()"></i></div>
+        }
+        <span class="note"
+          >No ratio until the data supports one.
+          <strong>{{ 21 - daysLogged() }} days to go.</strong></span
         >
-      </div>
+      </a>
+
+      <a class="tile" routerLink="/settings">
+        <span class="k">Body mass</span>
+        <span class="v">— <span class="pill pill--ghost">sync</span></span>
+        <span class="note"
+          >Connect a scale in Settings to track weight trends and flag acute
+          drops.</span
+        >
+      </a>
     </div>
-  } @else {
-    <!-- insufficient history: guarded, no fake number -->
-    <div class="card flat">
-      <div class="row">
-        <span>Load (ACWR)</span
-        ><span class="band neutral">building · need ~21 days</span>
+
+    <!-- ============ BODY CHECK ============ -->
+    <section class="card bodycheck">
+      <div class="bc-head">
+        <div>
+          <div class="lbl">Body check</div>
+          <div class="sub">
+            Any niggles? Tap all that apply — 10 seconds, the earliest injury
+            signal we have.
+          </div>
+        </div>
+        <span class="spacer"></span>
+        <button
+          class="flag-chip"
+          type="button"
+          [class.is-on]="isNoneOn()"
+          (click)="clearBody()"
+        >
+          None — all clear
+        </button>
       </div>
-      <p class="note" style="margin-top: var(--s-2)">
-        Keep logging sessions — a reliable ratio needs ~21 days &amp; 12
-        sessions.
-      </p>
-    </div>
-  }
-</main>
+      @for (g of bodyGroups; track g) {
+        <div class="bc-group">
+          <span class="bc-lbl">{{ g }}</span>
+          @for (p of partsFor(g); track p.label) {
+            <button
+              class="flag-chip"
+              type="button"
+              [class.is-on]="isPartOn(p.label)"
+              (click)="togglePart(p.label)"
+            >
+              {{ p.label }}
+            </button>
+          }
+        </div>
+      }
+      @if (hasFlags()) {
+        <div class="bc-group">
+          <span class="bc-lbl">Worst one</span>
+          @for (s of ["mild", "moderate", "sharp"]; track s) {
+            <button
+              class="flag-chip sev-chip"
+              type="button"
+              [attr.data-sev]="s"
+              [class.is-on]="isSev(s)"
+              (click)="setSeverity(s)"
+            >
+              {{
+                s === "mild"
+                  ? "Mild — aware of it"
+                  : s === "moderate"
+                    ? "Moderate — changes how I move"
+                    : "Sharp — stops me"
+              }}
+            </button>
+          }
+        </div>
+      }
+      @if (bodyMsg(); as m) {
+        <span class="flag-msg {{ m.cls }}">{{ m.text }}</span>
+      }
+    </section>
+
+    <!-- ============ FUEL & HYDRATION ============ -->
+    @if (rx()?.nutrition; as n) {
+      <section class="card">
+        <div class="card-head">
+          <h3>Fuel today</h3>
+          <span class="meta">{{ n.rationale }}</span>
+        </div>
+        <div class="card-body fuel-grid">
+          <!-- left: intake -->
+          <div class="fuel-col">
+            <div class="macro-row">
+              <div class="stat-chip">
+                <span class="v">{{ n.carbsG }}g</span
+                ><span class="k">Carbs</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ n.proteinG }}g</span
+                ><span class="k">Protein</span>
+              </div>
+              <div class="stat-chip">
+                <span class="v">{{ n.hydrationL }}L</span
+                ><span class="k">Fluid</span>
+              </div>
+            </div>
+
+            <span class="sec-lbl">Hydration</span>
+            <div class="hydro-top">
+              <span
+                ><strong>{{ hydroValue() }}</strong> L logged</span
+              >
+              <span>target {{ hydroTarget() }} L</span>
+            </div>
+            <div class="bar" [attr.data-state]="hydroMsg()?.cls">
+              <i [style.width.%]="hydroPct()"></i>
+            </div>
+            <div class="hydro-ctrl">
+              <button class="mini-btn" type="button" (click)="addWater(250)">
+                +250 ml
+              </button>
+              <button class="mini-btn" type="button" (click)="addWater(500)">
+                +500 ml
+              </button>
+              <button class="mini-btn" type="button" (click)="resetWater()">
+                Reset
+              </button>
+            </div>
+            @if (hydroMsg(); as hm) {
+              <div class="hydro-msg {{ hm.cls }}">
+                <span class="ic"><lucide-icon name="alert-triangle" /></span>
+                <span>{{ hm.text }}</span>
+              </div>
+            }
+
+            <span class="sec-lbl">Food ideas to hit it</span>
+            <div class="food-chips">
+              @for (f of foodSuggestions(); track f) {
+                <span class="food-chip">{{ f }}</span>
+              }
+            </div>
+
+            <div class="fuel-actions">
+              <a class="btn btn--primary" routerLink="/wellness"
+                >Log nutrition</a
+              >
+              <a
+                class="btn btn--ghost"
+                href="https://www.laprimafit.si"
+                target="_blank"
+                rel="noopener"
+                >Meal plan ↗</a
+              >
+            </div>
+          </div>
+
+          <!-- right: supplement stack -->
+          <div class="fuel-col">
+            <span class="sec-lbl">Daily stack — evidence-graded</span>
+            <div class="supp">
+              @for (s of supplements(); track s.name; let i = $index) {
+                <div class="supp-row" [class.is-done]="s.done">
+                  <button
+                    class="supp-check"
+                    type="button"
+                    [attr.aria-pressed]="s.done"
+                    [attr.aria-label]="'Toggle ' + s.name"
+                    (click)="toggleSupp(i)"
+                  >
+                    <lucide-icon name="check" />
+                  </button>
+                  <span class="supp-main">
+                    <span class="supp-name">{{ s.name }}</span>
+                    <span class="supp-note">{{ s.note }}</span>
+                  </span>
+                  <span class="grade grade--{{ s.grade }}">{{
+                    s.grade | uppercase
+                  }}</span>
+                  <a class="supp-link" routerLink="/supplements">Evidence →</a>
+                </div>
+              }
+            </div>
+            <span class="note supp-foot"
+              >Order of operations: load management → strength → sleep → food →
+              then this list. Supplements are the last 2–5%, not injury
+              insurance.</span
+            >
+          </div>
+        </div>
+      </section>
+    }
+  </main>
+</div>
