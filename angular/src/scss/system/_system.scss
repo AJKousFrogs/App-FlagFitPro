@@ -1237,4 +1237,42 @@
       display: none;
     }
   }
+  /* ---- screen entrance motion (fires once per mount) ----------------------
+     Direct children of the two page scaffolds rise in with a short stagger.
+     `backwards` fill keeps items hidden only during their delay and leaves NO
+     persistent transform afterwards (a lingering transform would turn the
+     parent into a containing block and break position:fixed descendants).
+     Capped at 6 staggered items — everything later arrives with the last
+     wave, so long screens never trickle. Reduced motion: the global guard
+     zeroes durations AND delays, so content is immediately visible. */
+  @keyframes sys-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .screen > *,
+  .stack > * {
+    animation: sys-rise var(--t-entrance) var(--ease-out) backwards;
+  }
+  .screen > :nth-child(2),
+  .stack > :nth-child(2) {
+    animation-delay: var(--t-stagger);
+  }
+  .screen > :nth-child(3),
+  .stack > :nth-child(3) {
+    animation-delay: calc(2 * var(--t-stagger));
+  }
+  .screen > :nth-child(4),
+  .stack > :nth-child(4) {
+    animation-delay: calc(3 * var(--t-stagger));
+  }
+  .screen > :nth-child(5),
+  .stack > :nth-child(5) {
+    animation-delay: calc(4 * var(--t-stagger));
+  }
+  .screen > :nth-child(n + 6),
+  .stack > :nth-child(n + 6) {
+    animation-delay: calc(5 * var(--t-stagger));
+  }
 }
