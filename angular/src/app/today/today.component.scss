@@ -371,6 +371,67 @@
     height: 14px;
     background: var(--surface-3);
     border-radius: 7px;
+    overflow: visible;
+  }
+  .phase {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 3px;
+  }
+  .phase--build {
+    background: rgba(44, 224, 113, 0.45);
+  }
+  .phase--easy {
+    background: rgba(245, 183, 59, 0.45);
+  }
+  .phase--season {
+    background: var(--ink-700);
+  }
+  .phase.is-now {
+    outline: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  .tl-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: var(--sp-3);
+  }
+  .lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .lg i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: 0 0 auto;
+  }
+  .lg i.sw--build {
+    background: rgba(44, 224, 113, 0.6);
+  }
+  .lg i.sw--easy {
+    background: rgba(245, 183, 59, 0.6);
+  }
+  .lg i.sw--season {
+    background: var(--ink-600);
+  }
+  .lg.is-now {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .lg .now-pill {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent-soft);
+    color: var(--brand-300);
+    border-radius: var(--r-pill);
+    padding: 2px 7px;
   }
   .today-marker {
     position: absolute;
@@ -741,6 +802,77 @@
     display: grid;
     gap: var(--sp-3);
     align-content: start;
+  }
+  .nutri-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-1);
+  }
+  .nutri-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    min-width: 0;
+    flex: 1 1 160px;
+  }
+  .nutri-chip .nc-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .nutri-chip .nc-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 1.35;
+  }
+  .nutri-chip--load {
+    border-color: rgba(245, 183, 59, 0.35);
+    background: var(--warn-soft);
+  }
+  .nutri-chip--load .nc-label {
+    color: var(--warn);
+  }
+  .nutri-chip--recover {
+    border-color: rgba(44, 224, 113, 0.3);
+    background: var(--accent-soft);
+  }
+  .nutri-chip--recover .nc-label {
+    color: var(--brand-300);
+  }
+  .nutri-chip--free {
+    border-color: var(--border);
+  }
+  .electro {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    font-size: 13px;
+    border-radius: var(--r-md);
+    padding: 10px 13px;
+    color: var(--text-2);
+  }
+  .electro .ic {
+    flex: 0 0 auto;
+    margin-top: 1px;
+  }
+  .electro--warn {
+    background: var(--warn-soft);
+    border: 1px solid rgba(245, 183, 59, 0.25);
+  }
+  .electro--warn .ic {
+    color: var(--warn);
+  }
+  .electro--info {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+  .electro--info .ic {
+    color: var(--brand-300);
   }
   .macro-row {
     display: flex;

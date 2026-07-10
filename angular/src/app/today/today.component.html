@@ -81,6 +81,14 @@
           @if (timeline(); as tl) {
             <div class="timeline">
               <div class="tl-track">
+                @for (s of tl.segments; track $index) {
+                  <div
+                    class="phase phase--{{ s.cls }}"
+                    [class.is-now]="s.isNow"
+                    [style.left.%]="s.leftPct"
+                    [style.width.%]="s.widthPct"
+                  ></div>
+                }
                 @for (d of tl.dots; track $index) {
                   <div class="event-dot" [style.left.%]="d.left"></div>
                   <span
@@ -99,6 +107,16 @@
                   }}</span>
                 }
               </div>
+            </div>
+            <div class="tl-legend">
+              @for (s of tl.segments; track $index) {
+                <span class="lg" [class.is-now]="s.isNow">
+                  <i class="sw--{{ s.cls }}"></i>{{ s.label }} · {{ s.range }}
+                  @if (s.isNow) {
+                    <span class="now-pill">now</span>
+                  }
+                </span>
+              }
             </div>
           }
           <p class="plan-foot">
@@ -369,6 +387,16 @@
         <div class="card-body fuel-grid">
           <!-- left: intake -->
           <div class="fuel-col">
+            @if (nutriStrip().length) {
+              <div class="nutri-strip">
+                @for (c of nutriStrip(); track c.label) {
+                  <div class="nutri-chip nutri-chip--{{ c.tone }}">
+                    <span class="nc-label">{{ c.label }}</span>
+                    <span class="nc-sub">{{ c.sub }}</span>
+                  </div>
+                }
+              </div>
+            }
             <div class="macro-row">
               <div class="stat-chip">
                 <span class="v">{{ n.carbsG }}g</span
@@ -409,6 +437,12 @@
               <div class="hydro-msg {{ hm.cls }}">
                 <span class="ic"><lucide-icon name="alert-triangle" /></span>
                 <span>{{ hm.text }}</span>
+              </div>
+            }
+            @if (electroNote(); as en) {
+              <div class="electro electro--{{ en.tone }}">
+                <span class="ic"><lucide-icon name="droplet" /></span>
+                <span>{{ en.text }}</span>
               </div>
             }
 
