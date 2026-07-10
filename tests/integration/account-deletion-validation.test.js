@@ -54,7 +54,10 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   getSupabaseClient: () => createSupabaseClient(),
+  // The endpoint now reads/writes account_deletion_requests via supabaseAdmin
+  // (was the anon client). Give it the same injectable .from() plus rpc.
   supabaseAdmin: {
+    ...createSupabaseClient(),
     rpc: async () => ({ data: "req-1", error: null }),
   },
 }));

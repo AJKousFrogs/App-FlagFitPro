@@ -15,7 +15,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
 } from "./utils/error-handler.js";
-import { getSupabaseClient, supabaseAdmin } from "./supabase-client.js";
+import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 
 const handler = async (event, context) => {
@@ -25,7 +25,10 @@ const handler = async (event, context) => {
     rateLimitType: "CREATE",
     requireAuth: true, // P0-006: Explicitly require authentication for account deletion
     handler: async (event, context, { userId, requestId }) => {
-      const supabase = getSupabaseClient();
+      // Service-role client: was the anon client, which RLS denies on
+      // account_deletion_requests (0 anon policies) → the deletion-request
+      // read/write failed. All ops here are self-scoped to `userId` (2026-07-10).
+      const supabase = supabaseAdmin;
 
       // GET - Get deletion request status
       if (event.httpMethod === "GET") {
