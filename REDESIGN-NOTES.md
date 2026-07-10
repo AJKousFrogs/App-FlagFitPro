@@ -5,6 +5,24 @@ they are (or might be) logic, or fall outside the current pass's scope.
 Rule of thumb from the polish protocol: *if unsure whether something is UI or
 logic → it's logic → don't touch → log it here.*
 
+## Pass B — data-viz modernization (2026-07-10)
+
+- **No draw-in animation on chart lines.** The protocol allows one, but the
+  standard technique (stroke-dashoffset) animates a paint property, not
+  transform/opacity — so it's out by the motion rules. Charts inherit the
+  Pass A screen-entrance instead; nothing chart-specific loops or pulses.
+- **Load-calendar heatmap + coverage grid left alone.** They're categorical
+  grids, not line charts — the gradient system doesn't apply, and their cell
+  colors ENCODE data (restyling them would be a semantics change, i.e. logic).
+- **Today micro-sparkline gets no glow endpoint** — 26px tall; a glow marker
+  there is noise, not comprehension ("don't over-glow").
+- **Endpoint dots keep ZONE colors** (danger/caution/good) with a same-hue
+  glow; the signature gradient styles only the line/area and never encodes
+  state. The numeric label remains the primary (colorblind-safe) encoder.
+- **Local screenshots show empty chart states** (dev has no API data), so the
+  visual treatment was verified via a token-exact static harness in Chromium +
+  AA contrast math; live pages render the same components with real data.
+
 ## Pass A — interaction layer (2026-07-10)
 
 - **Training (`.tr`) screen gets no entrance motion.** Its session-runner

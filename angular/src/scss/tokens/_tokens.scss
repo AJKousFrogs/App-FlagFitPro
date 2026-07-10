@@ -144,6 +144,16 @@
 
   --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
 
+  /* charts — ONE signature gradient (the brand pair) for every line/area.
+     Purely visual: strokes/fills only, never an encoding of value or zone
+     (zones keep their state colors + numeric labels). Both stops pass AA
+     graphics contrast (3:1) on --surface. */
+  --chart-stroke-a: var(--accent);
+  --chart-stroke-b: var(--accent-2);
+  --chart-area-a: color-mix(in srgb, var(--accent) 22%, transparent);
+  --chart-area-b: color-mix(in srgb, var(--accent-2) 4%, transparent);
+  --chart-glow: color-mix(in srgb, var(--accent) 60%, transparent);
+
   /* overlays — text/scrims that sit ON photos or dark gradients. Intentionally
      theme-INDEPENDENT (white text on a dark scrim stays white in light mode). */
   --overlay-text: var(--c-white);
