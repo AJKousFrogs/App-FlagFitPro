@@ -127,7 +127,15 @@
         <div class="card">
           @for (inj of injuries()!; track inj.athleteId + inj.reportedAt) {
             <div class="inj-row">
-              <div class="inj-meta">
+              <div
+                class="inj-meta"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: var(--s-2);
+                  flex-wrap: wrap;
+                "
+              >
                 <b>{{ inj.athleteName }}</b>
                 <span class="band {{ gradeBand(inj.grade) }}">{{
                   gradeLabel(inj)
