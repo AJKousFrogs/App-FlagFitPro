@@ -162,19 +162,68 @@ export class TodayComponent {
     return p ? label[p] : null;
   });
 
-  /** Timeline built from the REAL upcoming events: a today→last-event track with
-   *  event dots, month ticks and a today marker. No fabricated phase dates. */
+  /** Phased season timeline DERIVED from the real schedule + the engine's own
+   *  rules (taper locks ~6 days before each event): a today→last-event track with
+   *  colour-coded phase segments (build → taper → in-season), a legend, event
+   *  dots, month ticks and a today marker. No fabricated phase dates — every
+   *  boundary comes from a real event date. */
   readonly timeline = computed(() => {
     const events = this.seasonEvents();
     if (!events.length) return null;
+    const DAY = 86_400_000;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const start = today.getTime();
+    const first = new Date(events[0].startsAt).getTime();
     const last = new Date(events[events.length - 1].startsAt).getTime();
-    const end = Math.max(last + 3 * 86_400_000, start + 30 * 86_400_000);
+    const end = Math.max(last + 3 * DAY, start + 30 * DAY);
     const span = end - start || 1;
     const pos = (t: number) =>
       Math.max(0, Math.min(100, ((t - start) / span) * 100));
+    const fmt = (t: number) =>
+      new Date(t).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+      });
+
+    // Taper locks ~6 days before the first event; build fills the run-up.
+    const taperStart = Math.max(start, first - 6 * DAY);
+    const seg: {
+      cls: "build" | "easy" | "season";
+      leftPct: number;
+      widthPct: number;
+      isNow: boolean;
+      label: string;
+      range: string;
+    }[] = [];
+    if (taperStart > start) {
+      seg.push({
+        cls: "build",
+        leftPct: pos(start),
+        widthPct: pos(taperStart) - pos(start),
+        isNow: true,
+        label: this.seasonPhaseLabel()
+          ? `${this.seasonPhaseLabel()} · build`
+          : "Build",
+        range: `${fmt(start)} – ${fmt(taperStart)}`,
+      });
+    }
+    seg.push({
+      cls: "easy",
+      leftPct: pos(taperStart),
+      widthPct: pos(first) - pos(taperStart),
+      isNow: taperStart <= start,
+      label: "Taper",
+      range: `${fmt(taperStart)} – ${fmt(first)}`,
+    });
+    seg.push({
+      cls: "season",
+      leftPct: pos(first),
+      widthPct: pos(end) - pos(first),
+      isNow: false,
+      label: "In-season · gamedays",
+      range: `${fmt(first)} – ${fmt(last)}`,
+    });
 
     const dots = events.map((e) => ({
       left: pos(new Date(e.startsAt).getTime()),
@@ -192,7 +241,7 @@ export class TodayComponent {
         });
       cur.setMonth(cur.getMonth() + 1);
     }
-    return { dots, months };
+    return { segments: seg, dots, months };
   });
 
   // ── today's session (prescription) ──────────────────────────────────────────
@@ -412,6 +461,73 @@ export class TodayComponent {
     if (intent === "strength")
       return ["chicken", "eggs", "rice", "shake", "oats", "fruit"];
     return ["rice", "oats", "fruit", "chicken", "shake", "eggs"];
+  });
+
+  // ── nutri-strip: contextual chips, each mapped to a real prescription signal ──
+  readonly nutriStrip = computed<
+    { label: string; sub: string; tone: "load" | "recover" | "free" }[]
+  >(() => {
+    const rx = this.rx();
+    if (!rx) return [];
+    const chips: {
+      label: string;
+      sub: string;
+      tone: "load" | "recover" | "free";
+    }[] = [];
+    const hrs = rx.hoursUntilNextEvent;
+    const ev = rx.driverEvent;
+    const gameSoon = hrs != null && hrs >= 0 && hrs <= 48;
+    // Carb-load window — the engine already raises carbs into a game (competition
+    // bonus); surface it when a driver event is inside 48h.
+    if (ev && gameSoon) {
+      const days = Math.max(1, Math.round(hrs! / 24));
+      chips.push({
+        label: "Carb-load",
+        sub: `${ev.competitionShortName || ev.competitionName || "Game"} in ~${days}d — top up glycogen`,
+        tone: "load",
+      });
+    }
+    // Recovery plate — driven by the day's recovery emphasis, not fabricated.
+    if (rx.recoveryEmphasis === "high" || rx.recoveryEmphasis === "critical") {
+      chips.push({
+        label: "Recovery plate",
+        sub: "Protein + antioxidants first — repair over fuel",
+        tone: "recover",
+      });
+    }
+    // Free-meal window — only on genuine low-load days with no game imminent.
+    if ((rx.intent === "rest" || rx.intent === "recovery") && !gameSoon) {
+      chips.push({
+        label: "Free-meal window",
+        sub: "Low load today — one relaxed meal won't cost you",
+        tone: "free",
+      });
+    }
+    return chips;
+  });
+
+  // ── electrolyte / sweat note — from the real heat modifier or gameday sweat ──
+  readonly electroNote = computed<{
+    text: string;
+    tone: "warn" | "info";
+  } | null>(() => {
+    const rx = this.rx();
+    if (!rx) return null;
+    const w = rx.weatherAdjustment;
+    const heat = w?.applied ? (w.heatLoadFactor ?? 1) : 1;
+    if (heat > 1) {
+      return {
+        tone: "warn",
+        text: `Hot day (heat load ×${heat.toFixed(2)}) — sweat + sodium losses climb. Add 300–700 mg sodium per litre; water alone won't cover it.`,
+      };
+    }
+    if (rx.intent === "competition") {
+      return {
+        tone: "info",
+        text: "Gameday sweat rate runs high — pre-load electrolytes and sip a sodium drink between drives, not just water.",
+      };
+    }
+    return null;
   });
 
   // ── hydration ─────────────────────────────────────────────────────────────────
