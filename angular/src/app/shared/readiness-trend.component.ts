@@ -136,14 +136,14 @@ const clamp = (v: number, lo: number, hi: number) =>
       }
       .rt-line {
         fill: none;
-        stroke: url(#rtLine);
+        stroke: url("#rtLine");
         stroke-width: 2.5;
         stroke-linejoin: round;
         stroke-linecap: round;
         vector-effect: non-scaling-stroke;
       }
       .rt-area {
-        fill: url(#rtArea);
+        fill: url("#rtArea");
         stroke: none;
       }
       /* endpoint keeps its ZONE color (meaning) and glows in that same hue —

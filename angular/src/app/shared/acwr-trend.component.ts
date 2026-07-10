@@ -64,12 +64,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
         stroke-linecap="round"
         [attr.points]="points()"
       />
-      <circle
-        class="acwr-dot"
-        [attr.cx]="lastX()"
-        [attr.cy]="lastY()"
-        r="4"
-      />
+      <circle class="acwr-dot" [attr.cx]="lastX()" [attr.cy]="lastY()" r="4" />
     </svg>
     <!-- Name the y-axis (the "sweet"/"danger" band labels don't say what the
          ratio is). -->

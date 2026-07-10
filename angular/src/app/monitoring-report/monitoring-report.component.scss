@@ -182,7 +182,7 @@
 }
 .mr-spark polyline {
   fill: none;
-  stroke: url(#mrSparkLine);
+  stroke: url("#mrSparkLine");
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -242,6 +242,7 @@
   border: 1px solid var(--border);
   background: var(--surface-2);
 }
+
 // Tone = colour PLUS the icon/label already in the template (never colour-only).
 .tone-good {
   color: var(--good);
