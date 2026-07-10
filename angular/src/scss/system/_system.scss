@@ -54,6 +54,43 @@
     border-radius: var(--r-sm);
   }
 
+  /* ---- baseline interaction layer (every interactive element) -------------
+     One shared transition + press + focus fallback at the ELEMENT level so it
+     ripples into screen-scoped styles (.td/.tr redesigns etc.) without
+     per-screen tuning. Only paint properties + transform/opacity — never
+     layout. Reduced-motion users: the global guard in styles.scss zeroes all
+     of it. */
+  button,
+  a,
+  [role="button"],
+  select,
+  summary {
+    transition:
+      background-color var(--t-fast) var(--ease),
+      border-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease),
+      box-shadow var(--t-fast) var(--ease),
+      opacity var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+  button:not(:disabled):not([aria-disabled="true"]):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: scale(0.97);
+  }
+  /* Keyboard ring fallback for anything a more specific rule doesn't style.
+     Hover never replaces this — hover changes surface/border, never the ring. */
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  select:focus-visible,
+  summary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   /* ---- per-screen layout (the shell owns the frame / tab bar / FAB) ---- */
   .screen {
     padding: var(--s-4) var(--s-4) 112px;
