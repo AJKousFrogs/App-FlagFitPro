@@ -54,6 +54,43 @@
     border-radius: var(--r-sm);
   }
 
+  /* ---- baseline interaction layer (every interactive element) -------------
+     One shared transition + press + focus fallback at the ELEMENT level so it
+     ripples into screen-scoped styles (.td/.tr redesigns etc.) without
+     per-screen tuning. Only paint properties + transform/opacity — never
+     layout. Reduced-motion users: the global guard in styles.scss zeroes all
+     of it. */
+  button,
+  a,
+  [role="button"],
+  select,
+  summary {
+    transition:
+      background-color var(--t-fast) var(--ease),
+      border-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease),
+      box-shadow var(--t-fast) var(--ease),
+      opacity var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+  button:not(:disabled):not([aria-disabled="true"]):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: scale(0.97);
+  }
+  /* Keyboard ring fallback for anything a more specific rule doesn't style.
+     Hover never replaces this — hover changes surface/border, never the ring. */
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  select:focus-visible,
+  summary:focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   /* ---- per-screen layout (the shell owns the frame / tab bar / FAB) ---- */
   .screen {
     padding: var(--s-4) var(--s-4) 112px;
@@ -109,6 +146,10 @@
     color: var(--text);
     position: relative;
     cursor: pointer;
+  }
+  .icon-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border);
   }
   .icon-btn:focus-visible,
   .avatar:focus-visible {
@@ -225,11 +266,18 @@
     gap: var(--s-3);
     text-decoration: none;
     color: var(--text);
-    transition: border-color 0.15s;
+    transition:
+      border-color var(--t-fast) var(--ease),
+      box-shadow var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
   }
   .linkcard:hover,
   .linkcard:focus-visible {
     border-color: var(--accent);
+  }
+  .linkcard:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--e-1);
   }
   .linkcard:focus-visible {
     outline: none;
@@ -268,18 +316,16 @@
     align-items: center;
     justify-content: center;
     gap: var(--s-2);
-    transition:
-      transform var(--t-fast) var(--ease),
-      background var(--t-fast);
+    /* transition comes from the baseline interaction layer (element rules) */
   }
-  .btn:active {
+  .btn:not(:disabled):not([aria-disabled="true"]):active {
     transform: scale(0.98);
   }
   .btn.primary {
     background: var(--accent);
     color: var(--on-accent);
   }
-  .btn.primary:hover {
+  .btn.primary:not(:disabled):not([aria-disabled="true"]):hover {
     background: var(--accent-press);
   }
   .btn.secondary {
@@ -287,14 +333,25 @@
     color: var(--text-strong);
     border-color: var(--border);
   }
+  .btn.secondary:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--surface-2);
+    border-color: var(--text-faint);
+  }
   .btn.ghost {
     background: transparent;
     color: var(--text);
     border-color: var(--border);
   }
+  .btn.ghost:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--surface-2);
+    color: var(--text-strong);
+  }
   .btn.danger {
     background: var(--danger-soft);
     color: var(--danger);
+  }
+  .btn.danger:not(:disabled):not([aria-disabled="true"]):hover {
+    border-color: var(--danger);
   }
   .btn.block {
     display: flex;
@@ -333,6 +390,14 @@
     color: var(--accent);
     border-color: var(--accent);
   } /* selected (filters, format, equipment) */
+  .chip:not(.sel):hover {
+    background: var(--surface-raised);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .chip:active {
+    transform: scale(0.96);
+  }
   .chip:focus-visible {
     outline: none;
     box-shadow: var(--focus);
@@ -1008,6 +1073,9 @@
   .tabbar a[aria-current="page"] {
     color: var(--accent);
   }
+  .tabbar a:not(.active):not([aria-current="page"]):hover {
+    color: var(--text);
+  }
   .tabbar a:focus-visible {
     outline: none;
     box-shadow: var(--focus);
@@ -1037,6 +1105,12 @@
     box-shadow: var(--e-3);
     border: 0;
     cursor: pointer;
+  }
+  .fab:hover {
+    transform: translateY(-1px);
+  }
+  .fab:active {
+    transform: scale(0.94);
   }
   .fab:focus-visible {
     outline: none;
@@ -1162,5 +1236,43 @@
     .fab {
       display: none;
     }
+  }
+  /* ---- screen entrance motion (fires once per mount) ----------------------
+     Direct children of the two page scaffolds rise in with a short stagger.
+     `backwards` fill keeps items hidden only during their delay and leaves NO
+     persistent transform afterwards (a lingering transform would turn the
+     parent into a containing block and break position:fixed descendants).
+     Capped at 6 staggered items — everything later arrives with the last
+     wave, so long screens never trickle. Reduced motion: the global guard
+     zeroes durations AND delays, so content is immediately visible. */
+  @keyframes sys-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .screen > *,
+  .stack > * {
+    animation: sys-rise var(--t-entrance) var(--ease-out) backwards;
+  }
+  .screen > :nth-child(2),
+  .stack > :nth-child(2) {
+    animation-delay: var(--t-stagger);
+  }
+  .screen > :nth-child(3),
+  .stack > :nth-child(3) {
+    animation-delay: calc(2 * var(--t-stagger));
+  }
+  .screen > :nth-child(4),
+  .stack > :nth-child(4) {
+    animation-delay: calc(3 * var(--t-stagger));
+  }
+  .screen > :nth-child(5),
+  .stack > :nth-child(5) {
+    animation-delay: calc(4 * var(--t-stagger));
+  }
+  .screen > :nth-child(n + 6),
+  .stack > :nth-child(n + 6) {
+    animation-delay: calc(5 * var(--t-stagger));
   }
 }

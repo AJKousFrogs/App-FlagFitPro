@@ -87,10 +87,15 @@
   --e-2: 0 4px 16px rgba(0, 0, 0, 0.45);
   --e-3: 0 12px 36px rgba(0, 0, 0, 0.55);
 
-  /* motion */
+  /* motion — micro-interactions use fast/med; screen entrances use entrance +
+     stagger (≤6 items; see system entrance rules). ease-out decelerates only:
+     calm arrival, no overshoot — this app is read carefully, never playful. */
   --t-fast: 120ms;
   --t-med: 220ms;
+  --t-entrance: 360ms;
+  --t-stagger: 45ms;
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   /* ---- TIER 2 · SEMANTIC (what the UI uses) ------------------------------ */
   --bg: var(--c-ink-900);

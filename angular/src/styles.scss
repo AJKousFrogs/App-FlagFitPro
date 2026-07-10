@@ -57,6 +57,10 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      /* Zero delays too — staggered entrances use animation-delay with a
+         `backwards` fill, so a surviving delay would leave content invisible
+         for up to ~250ms. Reduced motion must mean instantly visible. */
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
