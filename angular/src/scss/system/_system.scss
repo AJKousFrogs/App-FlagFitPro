@@ -147,6 +147,10 @@
     position: relative;
     cursor: pointer;
   }
+  .icon-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--border);
+  }
   .icon-btn:focus-visible,
   .avatar:focus-visible {
     outline: none;
@@ -262,11 +266,18 @@
     gap: var(--s-3);
     text-decoration: none;
     color: var(--text);
-    transition: border-color 0.15s;
+    transition:
+      border-color var(--t-fast) var(--ease),
+      box-shadow var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
   }
   .linkcard:hover,
   .linkcard:focus-visible {
     border-color: var(--accent);
+  }
+  .linkcard:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--e-1);
   }
   .linkcard:focus-visible {
     outline: none;
@@ -1062,6 +1073,9 @@
   .tabbar a[aria-current="page"] {
     color: var(--accent);
   }
+  .tabbar a:not(.active):not([aria-current="page"]):hover {
+    color: var(--text);
+  }
   .tabbar a:focus-visible {
     outline: none;
     box-shadow: var(--focus);
@@ -1091,6 +1105,12 @@
     box-shadow: var(--e-3);
     border: 0;
     cursor: pointer;
+  }
+  .fab:hover {
+    transform: translateY(-1px);
+  }
+  .fab:active {
+    transform: scale(0.94);
   }
   .fab:focus-visible {
     outline: none;
