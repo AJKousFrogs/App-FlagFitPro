@@ -13,6 +13,16 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 @Component({
   selector: "app-acwr-trend",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: [
+    `
+      .acwr-dot {
+        fill: var(--accent);
+        stroke: var(--surface);
+        stroke-width: 2;
+        filter: drop-shadow(0 0 4px var(--chart-glow));
+      }
+    `,
+  ],
   template: `
     <svg
       width="100%"
@@ -22,6 +32,14 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
       role="img"
       [attr.aria-label]="ariaLabel()"
     >
+      <!-- signature chart gradient — visual only; the sweet band + danger
+           threshold below carry the meaning and are untouched -->
+      <defs>
+        <linearGradient id="acwrLine" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" style="stop-color: var(--chart-stroke-a)" />
+          <stop offset="1" style="stop-color: var(--chart-stroke-b)" />
+        </linearGradient>
+      </defs>
       <rect x="0" y="45" width="360" height="25" fill="var(--good-soft)" />
       <text x="6" y="59" font-size="10" fill="var(--text-faint)">
         sweet 0.8–1.3
@@ -40,15 +58,17 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
       </text>
       <polyline
         fill="none"
-        stroke="var(--accent)"
+        stroke="url(#acwrLine)"
         stroke-width="2.5"
+        stroke-linejoin="round"
+        stroke-linecap="round"
         [attr.points]="points()"
       />
       <circle
+        class="acwr-dot"
         [attr.cx]="lastX()"
         [attr.cy]="lastY()"
         r="4"
-        fill="var(--accent)"
       />
     </svg>
     <!-- Name the y-axis (the "sweet"/"danger" band labels don't say what the
