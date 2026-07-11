@@ -63,6 +63,11 @@ pids
 coverage
 *.lcov
 
+# Generated one-off reports (scripts/comprehensive-health-check.js,
+# scripts/feature-validator.js) — local diagnostics, not build artifacts.
+health-check-report.json
+validation-report.json
+
 # Playwright
 .playwright/
 playwright-report/
