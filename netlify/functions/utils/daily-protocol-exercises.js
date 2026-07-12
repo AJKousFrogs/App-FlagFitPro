@@ -4,12 +4,23 @@ const logger = createLogger({ service: "netlify.daily-protocol" });
 
 // Maps the protocol's canonical block categories to the free-form category/label
 // strings the exercise library actually uses.
+// Logical block → the actual `category` values queried for it. Covers BOTH the
+// legacy TitleCase library AND the tissue-load-engine lowercase families (added
+// 2026-07-12) so the new isometric/plyometric/power/speed/skill content is
+// actually reachable by the generator, not just present in the table.
 const EXERCISE_CATEGORY_ALIASES = {
-  isometrics: ["isometric", "Isometric", "Strength"],
-  plyometrics: ["plyometric", "Plyometric", "Power"],
+  isometrics: ["isometric", "Isometric", "isometrics", "Strength"],
+  plyometrics: ["plyometric", "Plyometric", "plyometrics", "Power", "power"],
   strength: ["strength", "Strength"],
-  conditioning: ["conditioning", "Conditioning", "Speed"],
-  skill_drills: ["skill", "Skill", "agility", "Agility", "Position-Specific"],
+  conditioning: ["conditioning", "Conditioning", "Speed", "speed"],
+  skill_drills: [
+    "skill",
+    "Skill",
+    "skill_drills",
+    "agility",
+    "Agility",
+    "Position-Specific",
+  ],
 };
 
 function dedupeExercisesById(exercises) {

@@ -25,8 +25,9 @@ import {
 } from "../database/library/tissue-registry.mjs";
 import { FAMILIES as FAMILIES_REHAB } from "../database/library/families.mjs";
 import { FAMILIES_GENERAL } from "../database/library/families-general.mjs";
+import { FAMILIES_ISO_PLYO } from "../database/library/families-iso-plyo.mjs";
 
-const FAMILIES = [...FAMILIES_REHAB, ...FAMILIES_GENERAL];
+const FAMILIES = [...FAMILIES_REHAB, ...FAMILIES_GENERAL, ...FAMILIES_ISO_PLYO];
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
