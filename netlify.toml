@@ -1550,6 +1550,13 @@
   status = 200
   force = true
 
+# Team Practice Plan API - Coach-facing periodized practice-plan generator
+[[redirects]]
+  from = "/api/team-practice-plan"
+  to = "/.netlify/functions/team-practice-plan"
+  status = 200
+  force = true
+
 # Privacy Settings API
 [[redirects]]
   from = "/api/privacy-settings/*"
