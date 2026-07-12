@@ -102,7 +102,9 @@ function expand() {
         muscle_groups: ov.muscleGroups ?? fam.muscleGroups,
         target_muscles: ov.targetMuscles ?? fam.targetMuscles,
         movement_pattern: ov.movementPattern ?? fam.movementPattern,
-        applicable_positions: ov.positions ?? fam.positions ?? [],
+        // position codes are TEXT → position_specific (text[]). applicable_positions
+        // is a uuid[] FK column and must NOT receive position strings.
+        position_specific: ov.positions ?? fam.positions ?? [],
         is_high_intensity: ["high", "very_high"].includes(
           ov.loadingRateBand ?? fam.loadingRateBand,
         ),
@@ -170,7 +172,7 @@ function toSql(rows) {
     "muscle_groups",
     "target_muscles",
     "movement_pattern",
-    "applicable_positions",
+    "position_specific",
     "is_high_intensity",
     "load_contribution_au",
     "default_sets",
