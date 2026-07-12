@@ -29,6 +29,7 @@ import { FAMILIES_ISO_PLYO } from "../database/library/families-iso-plyo.mjs";
 import { FAMILIES_POSITION } from "../database/library/families-position.mjs";
 import { FAMILIES_NEURO } from "../database/library/families-neuro.mjs";
 import { FAMILIES_TEAM_PRACTICE } from "../database/library/families-team-practice.mjs";
+import { FAMILIES_SPRINT } from "../database/library/families-sprint.mjs";
 
 const FAMILIES = [
   ...FAMILIES_REHAB,
@@ -37,6 +38,7 @@ const FAMILIES = [
   ...FAMILIES_POSITION,
   ...FAMILIES_NEURO,
   ...FAMILIES_TEAM_PRACTICE,
+  ...FAMILIES_SPRINT,
 ];
 
 const here = dirname(fileURLToPath(import.meta.url));
