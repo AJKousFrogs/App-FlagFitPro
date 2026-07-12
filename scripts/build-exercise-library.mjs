@@ -27,12 +27,14 @@ import { FAMILIES as FAMILIES_REHAB } from "../database/library/families.mjs";
 import { FAMILIES_GENERAL } from "../database/library/families-general.mjs";
 import { FAMILIES_ISO_PLYO } from "../database/library/families-iso-plyo.mjs";
 import { FAMILIES_POSITION } from "../database/library/families-position.mjs";
+import { FAMILIES_NEURO } from "../database/library/families-neuro.mjs";
 
 const FAMILIES = [
   ...FAMILIES_REHAB,
   ...FAMILIES_GENERAL,
   ...FAMILIES_ISO_PLYO,
   ...FAMILIES_POSITION,
+  ...FAMILIES_NEURO,
 ];
 
 const here = dirname(fileURLToPath(import.meta.url));
