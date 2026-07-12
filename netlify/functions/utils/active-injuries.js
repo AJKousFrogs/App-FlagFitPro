@@ -63,3 +63,83 @@ export function injuriesPainLevel(injuries) {
   }
   return level;
 }
+
+// Graded injury → load response (SOT Law 5a; Tissue Load Engine §4.3). An injury
+// must affect RPE/LOAD, not just swap exercises — but the response is GRADED, not
+// a blanket shutdown. Over-conservatism is a failure mode: pulling an athlete to
+// recovery-only for a MINOR niggle de-conditions them, and de-conditioning is
+// itself an injury-risk factor (Gabbett; Malone sprint-as-vaccine). So:
+//   • CLINICAL injury (mechanism ≠ self_report) or SEVERE self-report → full RTP.
+//   • MINOR/MODERATE self-report → keep training on a DOWN-REGULATED normal plan:
+//     the day's load target is cut by loadFactor and injured-region work is
+//     filtered out, but the athlete still trains.
+// loadFactor values mirror the client engine's INJURY_RESPONSE caps so the two
+// layers agree (parity-tested).
+const SEV_RANK = { minor: 1, moderate: 2, severe: 3 };
+const INJURY_LOAD_FACTOR = { minor: 0.85, moderate: 0.6, severe: 0.35 };
+
+/**
+ * Decide how an athlete's active injuries reshape today's plan.
+ * @returns {{hasInjury:boolean, goRtp:boolean, hasClinical:boolean,
+ *   severity:('minor'|'moderate'|'severe'|null), loadFactor:number,
+ *   injuredRegions:string[]}}
+ */
+export function resolveInjuryResponse(activeInjuries) {
+  if (!Array.isArray(activeInjuries) || activeInjuries.length === 0) {
+    return {
+      hasInjury: false,
+      goRtp: false,
+      hasClinical: false,
+      severity: null,
+      loadFactor: 1,
+      injuredRegions: [],
+    };
+  }
+  const hasClinical = activeInjuries.some(
+    (i) => i.injury_mechanism && i.injury_mechanism !== "self_report",
+  );
+  const severity = activeInjuries.reduce((worst, i) => {
+    const s = normalizeSeverity(i.injury_grade);
+    return SEV_RANK[s] > SEV_RANK[worst] ? s : worst;
+  }, "minor");
+  const goRtp = hasClinical || severity === "severe";
+  const injuredRegions = [
+    ...new Set(
+      activeInjuries
+        .map((i) => (i.injury_location || "").toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
+  return {
+    hasInjury: true,
+    goRtp,
+    hasClinical,
+    severity,
+    loadFactor: INJURY_LOAD_FACTOR[severity] ?? 0.85,
+    injuredRegions,
+  };
+}
+
+// Deconditioning guard (Tissue Load Engine §4.5). The under-load alarm is as
+// important as the spike alarm: if chronic load COLLAPSES while an athlete is
+// carrying a tissue flag, the eventual return spike is where they get hurt.
+// This never surfaces an injury PROBABILITY (ACWR is contested) — it only flags
+// a real, large drop for coach attention.
+export const DECONDITIONING_DROP_THRESHOLD = 0.15; // >15% drop over the window
+
+/**
+ * @param {number} recentLoad  summed load over the last N days
+ * @param {number} priorLoad   summed load over the N days before that
+ * @param {boolean} hasActiveInjury
+ * @returns {{warn:boolean, dropPct:number}}
+ */
+export function detectDeconditioning(recentLoad, priorLoad, hasActiveInjury) {
+  if (!hasActiveInjury || !(priorLoad > 0)) {
+    return { warn: false, dropPct: 0 };
+  }
+  const dropPct = (priorLoad - recentLoad) / priorLoad;
+  return {
+    warn: dropPct > DECONDITIONING_DROP_THRESHOLD,
+    dropPct: Math.max(0, dropPct),
+  };
+}
