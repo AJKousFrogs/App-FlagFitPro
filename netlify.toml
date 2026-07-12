@@ -1479,32 +1479,6 @@
   status = 200
   force = true
 
-# ExerciseDB API - Exercise database manager
-[[redirects]]
-  from = "/api/exercisedb/*"
-  to = "/.netlify/functions/exercisedb"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/exercisedb"
-  to = "/.netlify/functions/exercisedb"
-  status = 200
-  force = true
-
-# Exercises API - Exercise library for training
-[[redirects]]
-  from = "/api/exercises/*"
-  to = "/.netlify/functions/exercises"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/exercises"
-  to = "/.netlify/functions/exercises"
-  status = 200
-  force = true
-
 # Micro Sessions API - Quick training sessions
 [[redirects]]
   from = "/api/micro-sessions/*"
@@ -1573,32 +1547,6 @@
 [[redirects]]
   from = "/api/playbook"
   to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-# Isometrics API - Isometric exercise tracking
-[[redirects]]
-  from = "/api/isometrics/*"
-  to = "/.netlify/functions/exercises"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/isometrics"
-  to = "/.netlify/functions/exercises"
-  status = 200
-  force = true
-
-# Plyometrics API - Plyometric exercise tracking
-[[redirects]]
-  from = "/api/plyometrics/*"
-  to = "/.netlify/functions/exercises"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/plyometrics"
-  to = "/.netlify/functions/exercises"
   status = 200
   force = true
 

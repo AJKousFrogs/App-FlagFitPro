@@ -92,5 +92,14 @@ Safety: tables verified empty immediately before drop; drop is a migration (recr
   documented decision that a site was deliberately different).
 
 ## 5. Status ledger
-- 2026-07-12: plan written. Workstream A executing. C/D/E queued. Engine wiring
-  deferred until A–D land.
+- 2026-07-12: plan written.
+- 2026-07-12: **Workstream A DONE.** Deleted dead endpoints `exercises-core.js`,
+  `isometrics.js`, `plyometrics.js`, `exercisedb.js` (the `exercises.js` dispatcher
+  kept — it still serves the live `/api/qb-throwing` + `/api/exercise-progression`);
+  removed their 4 `netlify.toml` routes and 3 dead test files + the contract-test
+  `exercisedb_exercises` block. Dropped the 5 empty legacy tables
+  (`ff_exercise_mappings`, `exercisedb_exercises`, `isometrics_exercises`,
+  `plyometrics_exercises`, `exercise_registry`) via migration `20260712150000`.
+  `exercises` is now the sole exercise store. Suite green (875).
+- Next: Workstream C (ACWR parity merge) → D (readiness) → E (empty-table sweep) →
+  engine wiring + drills to 1000.
