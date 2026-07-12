@@ -809,3 +809,75 @@
     }
   }
 }
+
+/* Recovery modalities panel (low-load days) */
+.tr {
+  .rec-headline {
+    margin: 0 0 var(--sp-3);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .rec-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+  .rec-item {
+    padding: var(--sp-4);
+  }
+  .rec-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+  .rec-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .rec-tier {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    color: var(--text-3);
+    &[data-tier="META"],
+    &[data-tier="RCT"] {
+      color: var(--accent);
+    }
+  }
+  .rec-dose {
+    margin: var(--sp-2) 0 0;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .rec-effect {
+    margin: var(--sp-2) 0 0;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+  .rec-timing {
+    margin: var(--sp-2) 0 0;
+    font-size: 0.8rem;
+    color: var(--text-2);
+  }
+  .rec-warn {
+    margin: var(--sp-2) 0 0;
+    font-size: 0.8rem;
+    color: var(--warn);
+  }
+  .rec-myth {
+    margin: var(--sp-2) 0 0;
+    font-size: 0.78rem;
+    color: var(--text-3);
+    font-style: italic;
+  }
+  .rec-caution {
+    margin: var(--sp-1) 0 0;
+    font-size: 0.78rem;
+    color: var(--text-3);
+  }
+}

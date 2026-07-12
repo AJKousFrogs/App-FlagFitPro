@@ -1,5 +1,10 @@
 import { resolveYouTubeVideoMetadata } from "./youtube.js";
 import { createLogger } from "./structured-logger.js";
+import {
+  resolveRecoveryProtocols,
+  RECOVERY_HEADLINE,
+} from "./recovery-protocols.js";
+import { isLowLoadFocus } from "./daily-protocol-compose.js";
 
 const logger = createLogger({ service: "netlify.daily-protocol-response" });
 
@@ -392,6 +397,16 @@ export function transformProtocolResponse(
     totalLoadTargetAu: protocol.total_load_target_au,
     aiRationale: protocol.ai_rationale,
     trainingFocus: protocol.training_focus,
+    // Evidence-graded recovery modalities for low-load day types (recovery / rest
+    // / mobility / travel / competition). Single source: utils/recovery-protocols.js
+    // (tiers, dosing, the CWI/contrast adaptation context-switch, debunked-rationale
+    // flags). Empty on training days — their session IS the work.
+    recoveryProtocols: isLowLoadFocus(protocol.training_focus)
+      ? resolveRecoveryProtocols({ dayType: protocol.training_focus })
+      : [],
+    recoveryHeadline: isLowLoadFocus(protocol.training_focus)
+      ? RECOVERY_HEADLINE
+      : null,
     morningMobility: createBlock(
       "morning_mobility",
       "Morning Mobility",

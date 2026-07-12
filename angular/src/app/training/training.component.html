@@ -235,6 +235,51 @@
           </div>
         }
 
+        <!-- Recovery modalities (low-load days: recovery/rest/mobility/travel/competition) -->
+        @if (protocol.recoveryProtocols().length) {
+          <div class="section-header"><h3>Recovery</h3></div>
+          @if (protocol.recoveryHeadline(); as hl) {
+            <p class="muted rec-headline">{{ hl }}</p>
+          }
+          <div class="rec-list">
+            @for (m of protocol.recoveryProtocols(); track m.key) {
+              <div class="card rec-item">
+                <div class="rec-top">
+                  <span class="rec-name">{{ m.name }}</span>
+                  @if (m.tier) {
+                    <span class="rec-tier" [attr.data-tier]="m.tier">{{
+                      m.tier
+                    }}</span>
+                  }
+                </div>
+                @if (m.dose?.durationText) {
+                  <p class="rec-dose">
+                    {{ m.dose?.durationText
+                    }}@if (m.dose?.frequencyPerWeek) {
+                      · {{ m.dose?.frequencyPerWeek }}×/week
+                    }
+                  </p>
+                }
+                @if (m.effect) {
+                  <p class="muted rec-effect">{{ m.effect }}</p>
+                }
+                @if (m.timing) {
+                  <p class="rec-timing">{{ m.timing }}</p>
+                }
+                @if (m.warning) {
+                  <p class="rec-warn">⚠ {{ m.warning }}</p>
+                }
+                @if (m.debunked) {
+                  <p class="rec-myth">Myth: {{ m.debunked }}</p>
+                }
+                @for (c of m.cautions ?? []; track c) {
+                  <p class="rec-caution">• {{ c }}</p>
+                }
+              </div>
+            }
+          </div>
+        }
+
         <!-- QB arm-care (self-gates on position === qb) -->
         <div class="qb-slot"><app-qb-arm-care-card /></div>
       </section>

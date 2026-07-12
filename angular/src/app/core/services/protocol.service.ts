@@ -6,6 +6,7 @@ import {
   DailyProtocol,
   PROTOCOL_BLOCK_ORDER,
   ProtocolBlock,
+  RecoveryProtocol,
 } from "../models/protocol.models";
 
 /**
@@ -38,6 +39,15 @@ export class ProtocolService {
       (k) => p[k] as ProtocolBlock | undefined,
     ).filter((b): b is ProtocolBlock => !!b && (b.exercises?.length ?? 0) > 0);
   });
+
+  /** Evidence-graded recovery modalities for a low-load day (empty on training
+   *  days). Server single source: utils/recovery-protocols.js. */
+  readonly recoveryProtocols = computed<RecoveryProtocol[]>(
+    () => this.protocol()?.recoveryProtocols ?? [],
+  );
+  readonly recoveryHeadline = computed<string | null>(
+    () => this.protocol()?.recoveryHeadline ?? null,
+  );
 
   /**
    * Generate + fetch today's protocol for the given intent. Idempotent server-
