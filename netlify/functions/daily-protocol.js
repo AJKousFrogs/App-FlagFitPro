@@ -1414,7 +1414,8 @@ async function generateProtocol(
     // Source: VALD Practitioner's Guide to Isometrics
     // ============================================================================
 
-    // Query from both exercises table (isometric category) and isometrics_exercises table
+    // Single source of truth: the `exercises` table, resolved via
+    // EXERCISE_CATEGORY_ALIASES (legacy isometrics_exercises table retired 2026-07-12).
     const allIsometrics = prioritizeExercises(
       await fetchExercisesByCategories(
         supabase,
@@ -1492,7 +1493,8 @@ async function generateProtocol(
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels[plyoIntensity] ||
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels.medium;
 
-    // Query from both exercises table and plyometrics_exercises table
+    // Single source of truth: the `exercises` table, resolved via
+    // EXERCISE_CATEGORY_ALIASES (legacy plyometrics_exercises table retired 2026-07-12).
     let allPlyometrics = prioritizeExercises(
       await fetchExercisesByCategories(
         supabase,
