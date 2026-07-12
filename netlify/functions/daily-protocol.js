@@ -1788,6 +1788,20 @@ async function generateProtocol(
         if (wrDbSkills.length >= 2) {
           filteredSkill = wrDbSkills;
         }
+      } else if (
+        ["center", "rusher", "blitzer", "linebacker"].includes(
+          normalizedPosition,
+        )
+      ) {
+        // Position filter for the previously-unhandled roles so their dedicated
+        // technical drills (snap accuracy, edge rush/contain, zone drops, flag-pull)
+        // are prioritised over generic skill work when enough exist.
+        const posSkills = skillExercises.filter((ex) =>
+          ex.position_specific?.includes(normalizedPosition),
+        );
+        if (posSkills.length >= 2) {
+          filteredSkill = posSkills;
+        }
       }
 
       const selectedSkills = filteredSkill
