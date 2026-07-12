@@ -27,8 +27,9 @@ reimplement the plan in Angular.
 |---|---|---|
 | Periodization / taper / framing | ✅ single source + generated port + parity test | none — this is the template |
 | Team-practice plan | ✅ new, backend-only realization, tested | none — UI must call it, not fork it |
-| **ACWR** | ❌ **6 parallel impls**: `utils/acwr.js#computeAcwrAt` (canonical, used by the daily-protocol engine) vs hand-rolled `calculateACWR` in `daily-training.js`, `load-management.js`, `training-plan.js`, `training-stats-enhanced.js`, `smart-training-recommendations.js`, plus frontend `precision.utils.ts#calculateACWRRatio` | **Workstream C** — verify each is the same intent (not a deliberately-different variant, per the readiness precedent in `calculation-ownership-audit-2026-07-08.md`), add a parity harness, then route all to `computeAcwrAt`. Safety-relevant → gated. |
-| Readiness | mostly centralised (`calc-readiness.js` / `utils`), many *readers* | Workstream D — confirm no second compute site; likely already single-source. |
+| **ACWR** | ✅ **already single-source** (verified 2026-07-12). The MATH lives once in `utils/acwr.js#computeAcwrAt` (EWMA, uncoupled 7/21). The five backend `calculateACWR` (`daily-training`, `training-plan`, `training-stats-enhanced`, `smart-training-recommendations`, `load-management`) are **thin adapters** that build a daily-load Map (via `computeSessionLoad`) and delegate to `computeAcwrAt` + `classifyAcwrZone`; each carries a comment documenting its migration off the old rolling-average ratio. Frontend `precision.utils.ts#calculateACWRRatio` is a trivial `safeDivide` display helper, not a second method. | none — the repeated function *name* is not duplicated math. (Grep over-flagged; corrected.) |
+| Readiness | ✅ single-source: `utils/readiness-score.js`, used by `calc-readiness.js` + `daily-protocol-decision.js`; other `readinessScore` refs are reads. | none |
+| Session load | ✅ single-source: `utils/acwr.js#computeSessionLoad`. | none |
 
 ### 1b. Exercise data stores
 `exercises` (840 rows) is the canonical tissue-load library. Parallel legacy tables
@@ -57,14 +58,19 @@ and each drop is individually gated.
 
 ## 2. Sequencing
 
-1. **Workstream A — Exercise single source** (verified low-risk; below). Delete the
-   dead endpoint tree + stale comments + their tests/routes, then drop the empty
-   legacy exercise tables. _Executing now._
-2. **Workstream C — ACWR single source** (safety-relevant; gated). Per-site intent
-   audit → parity harness → route all callers to `computeAcwrAt` → delete the copies.
-3. **Workstream D — Readiness** confirm single compute site.
-4. **Workstream E — Empty-table sweep** classify & drop remaining unshipped empties,
-   one gated batch at a time (migrate any that gained rows first).
+1. **Workstream A — Exercise single source** ✅ DONE (§3). Dead endpoints + routes +
+   tests removed; 5 empty legacy tables dropped; `exercises` is the sole store.
+2. **Workstream C — ACWR** ✅ VERIFIED already single-source (§1a). No merge needed.
+3. **Workstream D — Readiness** ✅ VERIFIED single-source (`utils/readiness-score.js`).
+4. **Workstream E — Empty-table sweep** — CAREFUL/gated. ~130 tables have 0 rows, but
+   **most are unshipped-FEATURE scaffolding, not legacy duplicates** (e.g.
+   `bloodwork_*`, `nutrition_*`, community/chat tables). "Legacy that can be deleted"
+   ≠ "empty". Only drop a table with a **proof of legacy**: empty AND superseded by a
+   canonical table AND not written by any active endpoint. Candidates needing that
+   proof before any drop: `session_exercises` (vs `protocol_exercises`),
+   `training_session_templates` (vs `prescription_templates`), `training_weeks`,
+   `micro_sessions`, `player_programs`/`training_programs`. Each is its own gated
+   commit; **do not blanket-drop empties.** Backlogged, not blocking the engine.
 5. **THEN** wire the team-practice engine (endpoint + coach/athlete UI) and continue
    the drill library toward 1000.
 
@@ -101,5 +107,10 @@ Safety: tables verified empty immediately before drop; drop is a migration (recr
   (`ff_exercise_mappings`, `exercisedb_exercises`, `isometrics_exercises`,
   `plyometrics_exercises`, `exercise_registry`) via migration `20260712150000`.
   `exercises` is now the sole exercise store. Suite green (875).
-- Next: Workstream C (ACWR parity merge) → D (readiness) → E (empty-table sweep) →
-  engine wiring + drills to 1000.
+- 2026-07-12: **Workstreams C + D VERIFIED already single-source** — ACWR math lives
+  once in `utils/acwr.js` (the 5 `calculateACWR` are thin adapters that delegate;
+  frontend `calculateACWRRatio` is a display divide), readiness lives once in
+  `utils/readiness-score.js`. No merge needed; the grep-based "6 duplicates" flag was
+  a false positive (corrected §1a). The calc architecture is fully single-source.
+- Next: Workstream E is backlogged (gated per-table proof; no blanket drops).
+  Proceeding to engine wiring + drills to 1000.
