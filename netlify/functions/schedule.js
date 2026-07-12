@@ -165,7 +165,7 @@ function hoursBetween(a, b) {
  * Resolve the periodization phase for `now` given a list of upcoming and
  * past events. Pure function — same inputs always yield the same phase.
  */
-function resolvePhase(now, upcoming, lastEvent) {
+export function resolvePhase(now, upcoming, lastEvent) {
   const next = upcoming[0] ?? null;
 
   // Currently inside an event (live day)

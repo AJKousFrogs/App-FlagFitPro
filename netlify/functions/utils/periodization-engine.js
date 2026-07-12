@@ -1496,6 +1496,20 @@ var OUTDOOR_INTENSE = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime"]
 function substituteForWet(intent) {
   return intent === "taper-prime" ? "mobility" : "strength";
 }
+function planWeek(dayInputs, teamPracticeFlags, phases7, todayReadiness, todayAcwr) {
+  const intentHints = planWeekIntents(teamPracticeFlags, phases7);
+  const out = dayInputs.map(
+    (input, i) => prescribeFor({ ...input, weeklyIntentHint: intentHints[i] })
+  );
+  const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
+  return addSecondSessions(
+    capped,
+    teamPracticeFlags,
+    phases7,
+    todayReadiness,
+    todayAcwr
+  );
+}
 function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null) {
   if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
     return rx;
@@ -1855,6 +1869,7 @@ var __periodization__ = {
   cnsRecoveryHoursForAge,
   isHighCnsSessionType,
   planWeekIntents,
+  planWeek,
   detectTournamentRecoveryDay,
   modulateIntentForLoad
 };
@@ -1866,6 +1881,7 @@ export {
   enforceWeeklyRestMinimum,
   isHighCnsSessionType,
   macroPhaseFor,
+  planWeek,
   planWeekIntents,
   prescribeFor
 };
