@@ -303,13 +303,81 @@ export function keywordsForRegion(region) {
   return [...merged];
 }
 
+// Injured-region → canonical tissue-node ids (the Tissue Load Engine graph,
+// mirrors database/library/tissue-registry.mjs). The safety filter prefers this
+// STRUCTURED path — an exercise's tissue_targets vs the injured tissues — over
+// name keywords. The calf–Achilles complex is one functional unit: any
+// plantarflexor loader loads the Achilles.
+const CALF_ACHILLES_TISSUES = ["achilles", "soleus", "gastrocnemius"];
+const REGION_TO_TISSUES = {
+  calf: CALF_ACHILLES_TISSUES,
+  gastrocnemius: CALF_ACHILLES_TISSUES,
+  soleus: CALF_ACHILLES_TISSUES,
+  achilles: CALF_ACHILLES_TISSUES,
+  heel: CALF_ACHILLES_TISSUES,
+  hamstring: ["hamstring"],
+  quad: ["quadriceps", "patellar_tendon"],
+  quadriceps: ["quadriceps", "patellar_tendon"],
+  knee: ["patellar_tendon", "acl", "quadriceps"],
+  patella: ["patellar_tendon"],
+  patellar: ["patellar_tendon"],
+  groin: ["adductor"],
+  adductor: ["adductor"],
+  ankle: ["ankle"],
+  shin: ["tibia"],
+  tibia: ["tibia"],
+  plantar: ["plantar_fascia"],
+  foot: ["plantar_fascia", "tibia"],
+  "lower back": ["lumbar"],
+  lumbar: ["lumbar"],
+  shoulder: ["rotator_cuff"],
+};
+
+/** Canonical tissue-node ids an injured region implicates (empty for regions the
+ *  graph doesn't recognise — the caller then relies on the keyword fail-safe). */
+export function tissuesForRegion(region) {
+  const r = String(region || "").toLowerCase();
+  if (REGION_TO_TISSUES[r]) {
+    return REGION_TO_TISSUES[r];
+  }
+  const merged = new Set();
+  for (const [key, tissues] of Object.entries(REGION_TO_TISSUES)) {
+    if (r.includes(key)) {
+      tissues.forEach((t) => merged.add(t));
+    }
+  }
+  return [...merged];
+}
+
+/**
+ * Is an exercise safe to prescribe given the athlete's injured regions?
+ *
+ * UNSAFE if EITHER signal fires — the structured tissue-graph match
+ * (exercise.tissue_targets ∩ the injured region's tissues) OR the legacy
+ * name-keyword match. The union is deliberately the more conservative (safer)
+ * combination: tissue_targets catches exercises whose NAME doesn't reveal the
+ * load (e.g. a machine exercise), while the keyword path still fails safe for
+ * rows not yet tissue-tagged and for regions the graph doesn't map.
+ */
 export function isExerciseSafeForInjuries(ex, injuredRegions) {
   if (!injuredRegions || injuredRegions.length === 0) {
     return true;
   }
   const name = (ex.name || "").toLowerCase();
   const slug = (ex.slug || "").toLowerCase();
+  const tissueTargets = Array.isArray(ex.tissue_targets)
+    ? ex.tissue_targets
+    : [];
   for (const region of injuredRegions) {
+    // Structured path: injured tissues vs the exercise's tissue_targets.
+    const injuredTissues = tissuesForRegion(region);
+    if (
+      tissueTargets.length &&
+      injuredTissues.some((t) => tissueTargets.includes(t))
+    ) {
+      return false;
+    }
+    // Keyword fail-safe (untagged rows, unmapped regions).
     const keywords = keywordsForRegion(region);
     if (keywords.some((kw) => name.includes(kw) || slug.includes(kw))) {
       return false;
