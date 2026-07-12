@@ -1829,45 +1829,12 @@ async function generateProtocol(
       });
     }
 
-    // ============================================================================
-    // Add gym block exercises to main_session for display
-    // Main Session should always have exercises (except recovery days)
-    // ============================================================================
-    // Collect all exercises from gym blocks and add them to main_session
-    const gymBlockTypes = [
-      "isometrics",
-      "plyometrics",
-      "strength",
-      "conditioning",
-      "skill_drills",
-    ];
-    let mainSessionSequence = 1;
-
-    gymBlockTypes.forEach((blockType) => {
-      // Find all exercises for this block type that were just added
-      const blockExercises = protocolExercises.filter(
-        (pe) => pe.block_type === blockType,
-      );
-
-      // Add them to main_session as well
-      blockExercises.forEach((ex) => {
-        protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.exercise_id,
-          exercise_name:
-            ex.exercise_name || ex.exercise?.name || ex.name || null,
-          block_type: "main_session",
-          sequence_order: mainSessionSequence++,
-          prescribed_sets: ex.prescribed_sets,
-          prescribed_reps: ex.prescribed_reps,
-          prescribed_hold_seconds: ex.prescribed_hold_seconds,
-          prescribed_duration_seconds: ex.prescribed_duration_seconds,
-          rest_seconds: ex.rest_seconds,
-          load_contribution_au: ex.load_contribution_au,
-          ai_note: ex.ai_note || `Gym Training - ${blockType}`,
-        });
-      });
-    });
+    // NOTE: on a gym day the split blocks above (isometrics / plyometrics /
+    // strength / conditioning / skill_drills) ARE the session and are rendered as
+    // their own blocks. We deliberately do NOT copy them into a consolidated
+    // "Main Session" — doing so listed every exercise twice (bug reported
+    // 2026-07-12). Main Session is emitted only for non-gym primary work
+    // (sprint / field / template sessions); see generateMainSessionFallback.
   }
 
   // ============================================================================
