@@ -14,6 +14,34 @@ function positionFlagsFor(bucket) {
   };
 }
 
+// The low-load day types — rest, recovery, mobility, travel, competition. All
+// skip the gym / main-session blocks, but each realizes DISTINCT content (rest =
+// minimal daily mobility; recovery = active recovery + modality protocols;
+// mobility = a mobility session; travel = anti-stiffness movement + hydration;
+// competition = game-day). Keeping them as separate `trainingFocus` values — not
+// collapsed into one "recovery" — is what lets the generator make each day type
+// look and read differently; this Set is the shared classifier the gating uses.
+const LOW_LOAD_FOCUSES = new Set([
+  "rest",
+  "recovery",
+  "mobility",
+  "travel",
+  "competition",
+]);
+
+/** Is this a low-load, non-gym day (rest/recovery/mobility/travel/competition)? */
+function isLowLoadFocus(trainingFocus) {
+  return LOW_LOAD_FOCUSES.has(trainingFocus);
+}
+
+/** A low-load day's session decision: no gym, no sprint, not a practice. */
+const lowLoad = (trainingFocus) => ({
+  trainingFocus,
+  isSprintSession: false,
+  isGymTrainingDay: false,
+  isPracticeDay: false,
+});
+
 /** Map a periodization INTENT (+ label) to daily-protocol's session decision
  * variables. A "Flag football practice" label is a practice day regardless of
  * the underlying intent. */
@@ -56,17 +84,20 @@ function mapIntentToSession(intent, intentLabel) {
         isGymTrainingDay: true,
         isPracticeDay: false,
       };
+    // Distinct low-load day types — NOT collapsed into one "recovery" (bug
+    // 2026-07-12: rest, recovery, mobility, travel and competition all rendered
+    // identically). Each gets its own trainingFocus so the generator realizes
+    // distinct content; all skip gym/sprint/practice (see lowLoad()).
     case "mobility":
+      return lowLoad("mobility");
     case "recovery":
+      return lowLoad("recovery");
     case "rest":
+      return lowLoad("rest");
     case "travel":
+      return lowLoad("travel");
     case "competition":
-      return {
-        trainingFocus: "recovery",
-        isSprintSession: false,
-        isGymTrainingDay: false,
-        isPracticeDay: false,
-      };
+      return lowLoad("competition");
     default:
       return {
         trainingFocus: "strength",
@@ -77,4 +108,9 @@ function mapIntentToSession(intent, intentLabel) {
   }
 }
 
-export { positionFlagsFor, mapIntentToSession };
+export {
+  positionFlagsFor,
+  mapIntentToSession,
+  isLowLoadFocus,
+  LOW_LOAD_FOCUSES,
+};

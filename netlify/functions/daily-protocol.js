@@ -94,6 +94,7 @@ import {
 import {
   positionFlagsFor,
   mapIntentToSession,
+  isLowLoadFocus,
 } from "./utils/daily-protocol-compose.js";
 import {
   completeExercise,
@@ -1399,9 +1400,10 @@ async function generateProtocol(
     trainingFocus,
   );
 
-  // Skip gym blocks on practice days, film room days, or recovery days
+  // Skip gym blocks on practice days, film room days, or any low-load day type
+  // (rest / recovery / mobility / travel / competition).
   let isGymTrainingDay =
-    !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+    !isPracticeDay && !isFilmRoomDay && !isLowLoadFocus(trainingFocus);
   // COMPOSE: the intent layer decides whether today is a gym day.
   if (composeGym !== null) {
     isGymTrainingDay = composeGym;

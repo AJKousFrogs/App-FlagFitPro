@@ -4,6 +4,7 @@ import {
   WARMUP_TARGET_SECONDS,
 } from "./daily-protocol-training-logic.js";
 import { createLogger } from "./structured-logger.js";
+import { isLowLoadFocus } from "./daily-protocol-compose.js";
 
 const logger = createLogger({
   service: "netlify.daily-protocol-fallback-exercises",
@@ -603,7 +604,7 @@ export async function generateFallbackProtocolExercises(
   });
 
   const isGymTrainingDay =
-    !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+    !isPracticeDay && !isFilmRoomDay && !isLowLoadFocus(trainingFocus);
 
   if (isGymTrainingDay) {
     seededShuffle(FALLBACK_EXERCISES.isometrics, seed + 2)

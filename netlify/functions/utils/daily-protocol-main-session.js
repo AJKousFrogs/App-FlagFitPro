@@ -1,5 +1,6 @@
 import { createLogger } from "./structured-logger.js";
 import { getPrescriptionTemplate } from "./prescription-templates.js";
+import { isLowLoadFocus } from "./daily-protocol-compose.js";
 const logger = createLogger({ service: "netlify.daily-protocol-main-session" });
 
 export async function generateMainSessionFallback({
@@ -63,7 +64,11 @@ export async function generateMainSessionFallback({
     });
   }
 
-  if (!mainSessionGenerated && trainingFocus !== "recovery") {
+  // Low-load day types (rest / recovery / mobility / travel / competition) never
+  // get a generic strength/field "main session" — their session is the mobility /
+  // recovery / activation content the block builders add. Only genuine training
+  // days fall through to the fallback main session.
+  if (!mainSessionGenerated && !isLowLoadFocus(trainingFocus)) {
     mainSessionGenerated = await addFallbackMainSession({
       supabase,
       protocolExercises,
@@ -78,8 +83,8 @@ export async function generateMainSessionFallback({
     });
   }
 
-  if (!mainSessionGenerated && trainingFocus === "recovery") {
-    logger.info("daily_protocol_recovery_day", {});
+  if (!mainSessionGenerated && isLowLoadFocus(trainingFocus)) {
+    logger.info("daily_protocol_low_load_day", { trainingFocus });
   }
 
   return {

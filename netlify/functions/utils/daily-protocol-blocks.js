@@ -448,36 +448,59 @@ export async function addRecoveryBlocks({
     });
   }
 
-  const recoveryCount = trainingFocus === "recovery" ? 6 : 3;
-  const { data: recoveryExercises } = await supabase
-    .from("exercises")
-    .select("*")
-    .eq("category", "recovery")
-    .eq("active", true)
-    .limit(15);
+  // Each low-load day type gets a DISTINCT evening block (bug 2026-07-12: rest,
+  // recovery, mobility, travel and competition all rendered the same). rest and
+  // competition get NO recovery-exercise block — rest is minimal daily mobility
+  // only; competition's session is the game/activation, not recovery work.
+  const RECOVERY_BLOCK_BY_FOCUS = {
+    rest: { count: 0, note: null },
+    recovery: {
+      count: 6,
+      note: "Recovery day — active recovery + the recovery modalities to enhance adaptation.",
+    },
+    mobility: {
+      count: 4,
+      note: "Mobility session — move through full ranges under control; no loading.",
+    },
+    travel: {
+      count: 3,
+      note: "Travel day — anti-stiffness movement + hydration; stand and walk every 60–90 min.",
+    },
+    competition: { count: 0, note: null },
+  };
+  const recoveryCfg = RECOVERY_BLOCK_BY_FOCUS[trainingFocus] ?? {
+    count: 3,
+    note: null,
+  };
 
-  if (recoveryExercises && recoveryExercises.length > 0) {
-    const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(
-      0,
-      recoveryCount,
-    );
-    shuffled.forEach((ex, idx) => {
-      protocolExercises.push({
-        exercise_id: ex.id,
-        exercise_name: ex.name,
-        block_type: "evening_recovery",
-        sequence_order: idx + 1,
-        prescribed_sets: ex.default_sets || 1,
-        prescribed_reps: ex.default_reps,
-        prescribed_hold_seconds: ex.default_hold_seconds,
-        prescribed_duration_seconds: ex.default_duration_seconds,
-        load_contribution_au: ex.load_contribution_au || 0,
-        ai_note:
-          trainingFocus === "recovery"
-            ? "Recovery Day - Focus on these modalities to enhance recovery"
-            : null,
+  if (recoveryCfg.count > 0) {
+    const { data: recoveryExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "recovery")
+      .eq("active", true)
+      .limit(15);
+
+    if (recoveryExercises && recoveryExercises.length > 0) {
+      const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(
+        0,
+        recoveryCfg.count,
+      );
+      shuffled.forEach((ex, idx) => {
+        protocolExercises.push({
+          exercise_id: ex.id,
+          exercise_name: ex.name,
+          block_type: "evening_recovery",
+          sequence_order: idx + 1,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note: recoveryCfg.note,
+        });
       });
-    });
+    }
   }
 }
 

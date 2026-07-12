@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { __compose__ } from "../../netlify/functions/daily-protocol.js";
+import { isLowLoadFocus } from "../../netlify/functions/utils/daily-protocol-compose.js";
 
 const { positionFlagsFor, mapIntentToSession } = __compose__;
 
@@ -43,12 +44,22 @@ describe("mapIntentToSession — periodization intent → exercise session", () 
       expect(m.isSprintSession).toBe(false);
     }
   });
-  it("mobility / recovery / rest / competition are recovery (no gym, no sprint)", () => {
-    for (const i of ["mobility", "recovery", "rest", "competition"]) {
+  it("each low-load intent maps to its OWN distinct focus (not collapsed to recovery)", () => {
+    const intents = ["rest", "recovery", "mobility", "travel", "competition"];
+    // Distinct focus per intent — the whole point of the fix: rest ≠ recovery ≠
+    // mobility ≠ travel ≠ competition, so the generator can realize each day type
+    // differently instead of rendering them all as "recovery".
+    const focuses = intents.map((i) => mapIntentToSession(i, "").trainingFocus);
+    expect(new Set(focuses)).toEqual(new Set(intents));
+    for (const i of intents) {
       const m = mapIntentToSession(i, "");
-      expect(m.trainingFocus).toBe("recovery");
+      expect(m.trainingFocus).toBe(i);
+      // All are low-load: no gym, no sprint, not a practice — and classified as
+      // low-load so the gym / main-session gating skips them.
+      expect(isLowLoadFocus(m.trainingFocus)).toBe(true);
       expect(m.isGymTrainingDay).toBe(false);
       expect(m.isSprintSession).toBe(false);
+      expect(m.isPracticeDay).toBe(false);
     }
   });
   it("a 'Flag football practice' label is a practice day regardless of intent", () => {
