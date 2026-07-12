@@ -281,6 +281,7 @@ export function transformProtocolResponse(
     morning_mobility: [],
     foam_roll: [],
     warm_up: [],
+    rehab_progression: [],
     isometrics: [],
     plyometrics: [],
     strength: [],
@@ -289,6 +290,7 @@ export function transformProtocolResponse(
     main_session: [],
     cool_down: [],
     evening_recovery: [],
+    evening_mobility: [],
   };
 
   exercises.forEach((pe) => {
@@ -346,6 +348,9 @@ export function transformProtocolResponse(
   if (blocks.warm_up.length > 0) {
     blocksArray.push({ type: "warm_up", title: "Warm-Up" });
   }
+  if (blocks.rehab_progression.length > 0) {
+    blocksArray.push({ type: "rehab_progression", title: "Rehab Progression" });
+  }
   if (blocks.isometrics.length > 0) {
     blocksArray.push({ type: "isometrics", title: "Isometrics" });
   }
@@ -369,6 +374,9 @@ export function transformProtocolResponse(
   }
   if (blocks.evening_recovery.length > 0) {
     blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });
+  }
+  if (blocks.evening_mobility.length > 0) {
+    blocksArray.push({ type: "evening_mobility", title: "Evening Mobility" });
   }
 
   return {
@@ -395,6 +403,11 @@ export function transformProtocolResponse(
       "pi-circle-fill",
     ),
     warmUp: createBlock("warm_up", "Warm-Up", "pi-bolt"),
+    rehabProgression: createBlock(
+      "rehab_progression",
+      "Rehab Progression",
+      "pi-heart",
+    ),
     isometrics: createBlock("isometrics", "Isometrics", "pi-pause-circle"),
     plyometrics: createBlock("plyometrics", "Plyometrics", "pi-arrow-up"),
     strength: createBlock("strength", "Strength", "pi-heart"),
@@ -411,6 +424,14 @@ export function transformProtocolResponse(
       "Evening Recovery",
       "pi-moon",
     ),
+    eveningMobility: createBlock(
+      "evening_mobility",
+      "Evening Mobility",
+      "pi-moon",
+    ),
+    // RTP protocols are keyed by training_focus (return_to_play_phase_N);
+    // expose it as a flag so clients don't parse the string.
+    is_return_to_play: /^return_to_play/.test(protocol.training_focus || ""),
     blocks: blocksArray,
     overallProgress: protocol.overall_progress || 0,
     completedExercises: protocol.completed_exercises || 0,

@@ -34,9 +34,12 @@ export interface ProtocolBlock {
 /** The /api/daily-protocol response `data`. Only the fields the client renders. */
 export interface DailyProtocol {
   trainingFocus?: string;
+  /** True for return-to-play protocols (training_focus = return_to_play_phase_N). */
+  is_return_to_play?: boolean;
   morningMobility?: ProtocolBlock;
   foamRoll?: ProtocolBlock;
   warmUp?: ProtocolBlock;
+  rehabProgression?: ProtocolBlock;
   isometrics?: ProtocolBlock;
   plyometrics?: ProtocolBlock;
   strength?: ProtocolBlock;
@@ -45,6 +48,7 @@ export interface DailyProtocol {
   mainSession?: ProtocolBlock;
   coolDown?: ProtocolBlock;
   eveningRecovery?: ProtocolBlock;
+  eveningMobility?: ProtocolBlock;
 }
 
 /** Render order of the blocks (only those with exercises are shown). */
@@ -52,6 +56,7 @@ export const PROTOCOL_BLOCK_ORDER: (keyof DailyProtocol)[] = [
   "morningMobility",
   "foamRoll",
   "warmUp",
+  "rehabProgression",
   "isometrics",
   "plyometrics",
   "strength",
@@ -60,4 +65,5 @@ export const PROTOCOL_BLOCK_ORDER: (keyof DailyProtocol)[] = [
   "mainSession",
   "coolDown",
   "eveningRecovery",
+  "eveningMobility",
 ];

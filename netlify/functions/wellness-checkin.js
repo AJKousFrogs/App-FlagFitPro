@@ -5,7 +5,10 @@ import {
   canCoachViewWellness,
   filterWellnessDataForCoach,
 } from "./utils/consent-guard.js";
-import { detectPainTrigger } from "./utils/safety-override.js";
+import {
+  detectPainTrigger,
+  PAIN_TRIGGER_THRESHOLD,
+} from "./utils/safety-override.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
@@ -439,11 +442,11 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
 
   await ensurePublicUserProfile(supabase, userId, log);
 
-  // Safety override: Check for pain triggers (muscleSoreness >3/10)
+  // Safety override: Check for pain triggers (muscleSoreness > shared threshold)
   if (
     muscleSoreness !== undefined &&
     muscleSoreness !== null &&
-    muscleSoreness > 3
+    muscleSoreness > PAIN_TRIGGER_THRESHOLD
   ) {
     await detectPainTrigger(
       userId,

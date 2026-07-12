@@ -996,6 +996,29 @@ async function generateProtocol(
     }
   }
 
+  // Record generation request (unique constraint = best-effort concurrency
+  // dedup) BEFORE the injury branch, so the return-to-play path is serialized
+  // through the SAME guard as the normal path instead of racing outside it. RTP
+  // does its own daily_protocols upsert + protocol_exercises delete/insert; two
+  // concurrent first-time RTP generations used to race that delete/insert (a
+  // spurious 500 / duplicate rows). Acquiring the guard here — the same order
+  // for every generation path — closes that window. `existingCompleted` covers
+  // the already-generated case for both paths.
+  const { requestRecord, existingCompleted } =
+    await createProtocolGenerationRequest(
+      supabase,
+      userId,
+      date,
+      idempotencyKey,
+    );
+
+  if (
+    existingCompleted?.status === "completed" &&
+    existingCompleted.protocol_id
+  ) {
+    return await getProtocol(supabase, userId, { date }, headers, log);
+  }
+
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
   // ============================================================================
@@ -1064,26 +1087,13 @@ async function generateProtocol(
       date,
       wellnessCheckin,
       headers,
-      { activeInjuries },
+      { activeInjuries, getProtocol },
     );
   }
   // ============================================================================
-
-  // Record generation request (with unique constraint for concurrency safety)
-  const { requestRecord, existingCompleted } =
-    await createProtocolGenerationRequest(
-      supabase,
-      userId,
-      date,
-      idempotencyKey,
-    );
-
-  if (
-    existingCompleted?.status === "completed" &&
-    existingCompleted.protocol_id
-  ) {
-    return await getProtocol(supabase, userId, { date }, headers, log);
-  }
+  // (Generation request already recorded above, before the injury branch, so
+  // both RTP and normal paths share one guard. `requestRecord`/`existingCompleted`
+  // are in scope here.)
 
   let {
     readinessScore,

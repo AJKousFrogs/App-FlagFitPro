@@ -97,6 +97,27 @@
     }
   </div>
 
+  <!-- lapse nudge: an established habit stopped — restock offer -->
+  @for (n of nudges(); track n.supplement) {
+    <a
+      class="card linkcard"
+      href="https://www.laprimafit.eu"
+      target="_blank"
+      rel="noopener"
+    >
+      <span class="lc-ic"
+        ><iconify-icon icon="mdi:package-variant"></iconify-icon
+      ></span>
+      <div style="flex: 1">
+        <b>Did your {{ n.label }} stock run empty?</b>
+        <div class="muted" style="font-size: var(--fs-sm)">
+          {{ n.message }}
+        </div>
+      </div>
+      <lucide-icon name="arrow-up-right" class="lc-go" />
+    </a>
+  }
+
   <!-- V2.1 game-day caffeine timing -->
   @if (caffeineTiming(); as ct) {
     <div class="section-h"><h2>Caffeine timing — today</h2></div>
@@ -146,6 +167,25 @@
     Only “creatine days” is yours — saturation time and water gain are typical
     creatine effects, not personal measurements.
   </p>
+
+  <!-- usage- and phase-aware coaching (from your real logs + season phase) -->
+  <div class="section-h"><h2>Coaching</h2></div>
+  @for (card of education(); track card.key) {
+    <div class="card">
+      <div class="lrow">
+        <b>{{ card.title }}</b>
+        <span class="band {{ card.statusCls }}">{{ card.status }}</span>
+      </div>
+      @for (line of card.lines; track $index) {
+        <p
+          class="muted"
+          style="font-size: var(--fs-sm); margin-top: var(--s-1)"
+        >
+          {{ line }}
+        </p>
+      }
+    </div>
+  }
 
   <!-- the stack -->
   <div class="section-h"><h2>Your stack</h2></div>

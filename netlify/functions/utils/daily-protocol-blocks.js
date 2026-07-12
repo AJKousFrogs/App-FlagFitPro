@@ -252,18 +252,56 @@ export async function addWarmupBlock({
 
 // Body-region keywords that disqualify a cool-down stretch when that region is
 // injured. Matching is substring-based on the exercise name/slug (lowercase).
+// Anatomically-linked structures share keywords in BOTH directions: the
+// calf–Achilles complex is one unit (a "Calf Raise" loads the Achilles tendon
+// directly — before 2026-07-12 it passed the filter for an "achilles" report),
+// the patellar tendon belongs to the knee, the plantar fascia to the foot/heel.
+const CALF_ACHILLES_COMPLEX = [
+  "calf",
+  "gastrocnemius",
+  "soleus",
+  "achilles",
+  "heel raise",
+  "heel drop",
+];
 const REGION_KEYWORDS = {
-  calf: ["calf", "gastrocnemius", "soleus"],
-  hamstring: ["hamstring"],
+  calf: CALF_ACHILLES_COMPLEX,
+  gastrocnemius: CALF_ACHILLES_COMPLEX,
+  soleus: CALF_ACHILLES_COMPLEX,
+  achilles: CALF_ACHILLES_COMPLEX,
+  hamstring: ["hamstring", "nordic"],
   quad: ["quad", "quadricep"],
-  ankle: ["ankle"],
-  achilles: ["achilles"],
+  ankle: ["ankle", "achilles", "heel raise", "heel drop"],
   hip: ["hip", "hip flexor", "hip adductor", "iliopsoas"],
   groin: ["groin", "adductor"],
-  knee: ["knee"],
+  knee: ["knee", "patella", "patellar"],
+  shin: ["shin", "tibialis"],
+  foot: ["foot", "plantar", "toe raise", "heel raise", "heel drop"],
+  plantar: ["plantar", "foot", "toe raise", "heel raise", "heel drop"],
   "lower back": ["lower back", "lumbar"],
   shoulder: ["shoulder", "rotator"],
 };
+
+/**
+ * Keywords for an injured region: exact REGION_KEYWORDS entry when it exists;
+ * otherwise the union of every entry whose key appears in the region string
+ * (so "foot / plantar" or "hip flexor" from the Today body check resolve to
+ * their anatomical keyword sets); the raw region string is always included as
+ * a last-resort match.
+ */
+export function keywordsForRegion(region) {
+  const r = String(region || "").toLowerCase();
+  if (REGION_KEYWORDS[r]) {
+    return REGION_KEYWORDS[r];
+  }
+  const merged = new Set([r]);
+  for (const [key, kws] of Object.entries(REGION_KEYWORDS)) {
+    if (r.includes(key)) {
+      kws.forEach((kw) => merged.add(kw));
+    }
+  }
+  return [...merged];
+}
 
 export function isExerciseSafeForInjuries(ex, injuredRegions) {
   if (!injuredRegions || injuredRegions.length === 0) {
@@ -272,9 +310,7 @@ export function isExerciseSafeForInjuries(ex, injuredRegions) {
   const name = (ex.name || "").toLowerCase();
   const slug = (ex.slug || "").toLowerCase();
   for (const region of injuredRegions) {
-    const keywords = REGION_KEYWORDS[region.toLowerCase()] || [
-      region.toLowerCase(),
-    ];
+    const keywords = keywordsForRegion(region);
     if (keywords.some((kw) => name.includes(kw) || slug.includes(kw))) {
       return false;
     }

@@ -16,6 +16,8 @@ import { AcwrService } from "../core/services/acwr.service";
 import { ScheduleService } from "../core/services/schedule.service";
 import { IdentityService } from "../core/services/identity.service";
 import { WellnessService } from "../core/services/wellness.service";
+import { InjuryService, InjurySeverity } from "../core/services/injury.service";
+import { LoggerService } from "../core/services/logger.service";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
 const QUOTES: readonly [string, string][] = [
@@ -41,31 +43,60 @@ const QUOTES: readonly [string, string][] = [
 interface BcPart {
   label: string;
   group: "Lower body" | "Trunk" | "Upper body";
+  /** Canonical region sent to /api/athlete-injuries — must hit the server's
+   *  region sets (athlete-injuries.js) so the right restrictions derive. */
+  region: string;
 }
 const BODY_PARTS: BcPart[] = [
   ...(
     [
-      "Hamstring",
-      "Quadriceps",
-      "Groin / adductor",
-      "Hip flexor",
-      "Glute",
-      "Knee",
-      "Calf",
-      "Soleus",
-      "Achilles",
-      "Ankle",
-      "Shin",
-      "Foot / plantar",
+      ["Hamstring", "hamstring"],
+      ["Quadriceps", "quadriceps"],
+      ["Groin / adductor", "groin"],
+      ["Hip flexor", "hip flexor"],
+      ["Glute", "glute"],
+      ["Knee", "knee"],
+      ["Calf", "calf"],
+      ["Soleus", "soleus"],
+      ["Achilles", "achilles"],
+      ["Ankle", "ankle"],
+      ["Shin", "shin"],
+      ["Foot / plantar", "plantar"],
     ] as const
-  ).map((label) => ({ label, group: "Lower body" as const })),
-  ...(["Lower back", "Upper back / neck", "Core / abs"] as const).map(
-    (label) => ({ label, group: "Trunk" as const }),
-  ),
-  ...(["Shoulder", "Elbow", "Wrist / hand", "Fingers", "Other"] as const).map(
-    (label) => ({ label, group: "Upper body" as const }),
-  ),
+  ).map(([label, region]) => ({
+    label,
+    region,
+    group: "Lower body" as const,
+  })),
+  ...(
+    [
+      ["Lower back", "lower back"],
+      ["Upper back / neck", "neck"],
+      ["Core / abs", "core"],
+    ] as const
+  ).map(([label, region]) => ({ label, region, group: "Trunk" as const })),
+  ...(
+    [
+      ["Shoulder", "shoulder"],
+      ["Elbow", "elbow"],
+      ["Wrist / hand", "wrist"],
+      ["Fingers", "finger"],
+      ["Other", "other"],
+    ] as const
+  ).map(([label, region]) => ({
+    label,
+    region,
+    group: "Upper body" as const,
+  })),
 ];
+
+/** Body-check severity → athlete_injuries severity (drives restriction depth
+ *  and the self-report auto-expiry: minor 2d / moderate 4d / severe 7d). */
+const BC_SEVERITY: Record<string, InjurySeverity> = {
+  mild: "minor",
+  moderate: "moderate",
+  sharp: "severe",
+};
 
 interface Supplement {
   name: string;
@@ -104,6 +135,8 @@ export class TodayComponent {
   private readonly schedule = inject(ScheduleService);
   private readonly identity = inject(IdentityService);
   private readonly wellnessSvc = inject(WellnessService);
+  private readonly injurySvc = inject(InjuryService);
+  private readonly logger = inject(LoggerService);
 
   constructor() {
     // Readiness is server-canonical; recompute from the latest check-in each visit.
@@ -421,43 +454,100 @@ export class TodayComponent {
       return next;
     });
     this.noneClear.set(false);
+    this.bodyLogState.set("idle");
     if (this.selectedParts().size === 0) this.severity.set(null);
   }
   setSeverity(sev: string): void {
     this.severity.set(sev);
+    this.bodyLogState.set("idle");
   }
   clearBody(): void {
     this.selectedParts.set(new Set());
     this.severity.set(null);
     this.noneClear.set(true);
+    this.bodyLogState.set("idle");
+  }
+
+  // Body-check submit state. "Logged" is only ever shown after the writes
+  // actually landed in athlete_injuries (SOT Law 7 — no fabricated UI claims;
+  // this card previously asserted the report was saved and surfaced to staff
+  // while persisting nothing at all — the trust bug this state machine closes).
+  readonly bodyLogState = signal<"idle" | "saving" | "saved" | "error">("idle");
+  private readonly loggedSummary = signal<{ list: string; sev: string }>({
+    list: "",
+    sev: "mild",
+  });
+
+  readonly canLogBody = computed(
+    () =>
+      this.hasFlags() &&
+      this.severity() !== null &&
+      this.bodyLogState() !== "saving",
+  );
+
+  /** Persist every flagged region as a self-reported tightness (the same
+   *  athlete_injuries path as the Wellness reporter), then refresh readiness —
+   *  the plan reacts through InjuryService's restrictions signal. */
+  async logBody(): Promise<void> {
+    const parts = BODY_PARTS.filter((p) => this.selectedParts().has(p.label));
+    const sev = this.severity();
+    if (parts.length === 0 || !sev || this.bodyLogState() === "saving") return;
+    const severity = BC_SEVERITY[sev] ?? "minor";
+    this.bodyLogState.set("saving");
+    try {
+      for (const p of parts) {
+        await this.injurySvc.report(p.region, severity);
+      }
+      this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
+      this.loggedSummary.set({
+        list: parts.map((p) => p.label).join(", "),
+        sev,
+      });
+      this.selectedParts.set(new Set());
+      this.severity.set(null);
+      this.bodyLogState.set("saved");
+    } catch (err) {
+      this.logger.error("body_check_log_failed", err);
+      this.bodyLogState.set("error");
+    }
   }
 
   readonly bodyMsg = computed<{ text: string; cls: string } | null>(() => {
-    if (this.noneClear()) {
+    const state = this.bodyLogState();
+    if (state === "saving") return { text: "Logging…", cls: "" };
+    if (state === "error")
+      return { text: "Couldn't log that — try again.", cls: "is-danger" };
+    if (state === "saved") {
+      const { list, sev } = this.loggedSummary();
+      if (sev === "mild")
+        return {
+          text: `Logged: ${list} · mild — sprint/high-intensity work comes off that area; auto-clears in 2 days.`,
+          cls: "",
+        };
+      if (sev === "moderate")
+        return {
+          text: `Logged: ${list} · moderate — easy session only while it settles (~4 days); visible to your coaching staff.`,
+          cls: "is-warn",
+        };
       return {
-        text: "All clear logged — clean slate for the next block.",
-        cls: "",
+        text: `Logged: ${list} · sharp — recovery only, don't train through this; visible to your coaching staff. If it persists, see your physio.`,
+        cls: "is-danger",
       };
+    }
+    if (this.noneClear()) {
+      return { text: "All clear — nothing flagged today.", cls: "" };
     }
     const on = [...this.selectedParts()];
     if (on.length === 0) return null;
     const list = on.join(", ");
-    const sev = this.severity();
-    if (!sev)
-      return { text: `Selected: ${list} — pick severity to log.`, cls: "" };
-    if (sev === "mild")
+    if (!this.severity())
       return {
-        text: `Logged: ${list} · mild — monitored, load unchanged, trend watched.`,
+        text: `Selected: ${list} — pick severity, then log it.`,
         cls: "",
       };
-    if (sev === "moderate")
-      return {
-        text: `Logged: ${list} · moderate — today's plyo & sprint work gets swapped; coach sees the flag.`,
-        cls: "is-warn",
-      };
     return {
-      text: `Logged: ${list} · sharp — session flagged, don't train through this. Coach notified.`,
-      cls: "is-danger",
+      text: `Ready: ${list} — tap “Log it” and today's plan works around it.`,
+      cls: "",
     };
   });
 

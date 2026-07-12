@@ -272,8 +272,8 @@
                 <stop offset="1" style="stop-color: var(--chart-stroke-b)" />
               </linearGradient>
             </defs>
-            <polyline stroke="url(#tdSparkLine)" [attr.points]="pts" /></svg
-          >
+            <polyline stroke="url(#tdSparkLine)" [attr.points]="pts" />
+          </svg>
         }
         <span class="note">Log a check-in to keep this fresh.</span>
       </a>
@@ -379,6 +379,16 @@
               }}
             </button>
           }
+        </div>
+        <div class="bc-group">
+          <button
+            class="btn btn--primary"
+            type="button"
+            [disabled]="!canLogBody()"
+            (click)="logBody()"
+          >
+            {{ bodyLogState() === "saving" ? "Logging…" : "Log it" }}
+          </button>
         </div>
       }
       @if (bodyMsg(); as m) {

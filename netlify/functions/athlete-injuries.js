@@ -75,6 +75,7 @@ const UPPER_BODY = new Set([
   "tricep",
   "arm",
   "hand",
+  "finger",
   "neck",
   "pec",
   "chest",

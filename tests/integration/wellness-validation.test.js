@@ -34,6 +34,7 @@ vi.mock("../../netlify/functions/utils/consent-guard.js", () => ({
 
 vi.mock("../../netlify/functions/utils/safety-override.js", () => ({
   detectPainTrigger: vi.fn(),
+  PAIN_TRIGGER_THRESHOLD: 3,
 }));
 
 vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({

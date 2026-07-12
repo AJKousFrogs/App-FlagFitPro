@@ -14,6 +14,7 @@ import {
   getWellnessTrends,
   parseTimeframe,
 } from "../../shared/utils/wellness-analytics.utils";
+import { WELLNESS } from "../constants/wellness.constants";
 
 /** Result shape from public.calculate_acwr (jsonb). */
 export interface AcwrCalculationResult {
@@ -355,9 +356,13 @@ export class WellnessService {
       }),
       tap((result) => {
         if (result.success) {
-          // Fire coach-inbox alert via the Netlify function (best-effort, non-blocking).
-          // The RPC already wrote the row; this call only adds the coach notification.
-          if ((data.soreness ?? 0) >= 6) {
+          // Fire the wellness Netlify function (best-effort, non-blocking). The
+          // RPC already wrote the row; this call adds the server-side follow-ups.
+          // Gate on the SHARED pain-trigger threshold so a 4–5 soreness still
+          // reaches the safety-override path (the function's own detect_pain_trigger
+          // uses the same value; parity is test-guarded). The coach-inbox alert
+          // keeps its stricter >=6 gate inside the function.
+          if ((data.soreness ?? 0) > WELLNESS.SORENESS_PAIN_TRIGGER) {
             this.api
               .post(API_ENDPOINTS.wellness.checkin, {
                 muscleSoreness: data.soreness,

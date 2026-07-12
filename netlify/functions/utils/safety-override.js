@@ -6,6 +6,15 @@
 import { supabaseAdmin } from "../utils/supabase-client.js";
 
 /**
+ * CANONICAL soreness pain-trigger threshold. Soreness STRICTLY GREATER THAN this
+ * fires detect_pain_trigger (and the client's server-follow-up call). This is the
+ * single source of truth — the client mirrors it in wellness.constants.ts
+ * (SORENESS_PAIN_TRIGGER) and tests/unit/soreness-threshold-parity.test.js asserts
+ * the two never drift, so a 4–5 soreness can't silently fall through on one side.
+ */
+export const PAIN_TRIGGER_THRESHOLD = 3;
+
+/**
  * Check if safety override applies for athlete data
  */
 async function checkSafetyOverride(athleteId, dataType = null) {
@@ -33,7 +42,7 @@ async function detectPainTrigger(
   painLocation,
   painTrend = null,
 ) {
-  if (painScore <= 3) {
+  if (painScore <= PAIN_TRIGGER_THRESHOLD) {
     return { triggered: false };
   }
 

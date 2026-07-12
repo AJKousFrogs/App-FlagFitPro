@@ -230,6 +230,23 @@
       </div>
     </div>
 
+    @if (bodyCheckPrompt()) {
+      <div class="card warn" style="margin-bottom: var(--s-2)">
+        <b class="inline"
+          ><lucide-icon name="shield-alert" /> That's high soreness</b
+        >
+        <p
+          class="muted"
+          style="font-size: var(--fs-sm); margin-top: var(--s-1)"
+        >
+          Tell us where it is — flag the sore area below so your plan can work
+          around it. The soreness slider on its own doesn't change your session.
+        </p>
+        <button class="btn ghost sm" type="button" (click)="scrollToNiggles()">
+          Flag where it is ↓
+        </button>
+      </div>
+    }
     @if (submitted()) {
       <button class="btn secondary block" type="button" disabled>
         <lucide-icon name="check" /> Logged for today
@@ -241,7 +258,13 @@
         [attr.aria-disabled]="submitting()"
         (click)="submitCheckin()"
       >
-        {{ submitting() ? "Saving…" : "Submit check-in" }}
+        {{
+          submitting()
+            ? "Saving…"
+            : bodyCheckPrompt()
+              ? "Log check-in anyway"
+              : "Submit check-in"
+        }}
       </button>
     }
     @if (submitError(); as e) {
@@ -336,7 +359,7 @@
   }
 
   <!-- self-reported tightness → injury precedence in the plan -->
-  <div class="section-h"><h2>Niggles &amp; tightness</h2></div>
+  <div class="section-h" id="niggles"><h2>Niggles &amp; tightness</h2></div>
   <div class="card stack">
     @if (activeInjuries().length) {
       <div class="stack" style="gap: var(--s-2)">

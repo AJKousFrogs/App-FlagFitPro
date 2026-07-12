@@ -92,6 +92,13 @@
           <div class="card" style="padding: var(--sp-5)">
             <p class="muted">Building your exercises…</p>
           </div>
+        } @else if (protocol.pendingMessage(); as pending) {
+          <div class="section-header"><h3>Session blocks</h3></div>
+          <div class="card" style="padding: var(--sp-5)">
+            <p class="muted">
+              <lucide-icon name="clipboard-check" /> {{ pending }}
+            </p>
+          </div>
         } @else if (blocks().length) {
           <div class="section-header">
             <h3>Session blocks</h3>

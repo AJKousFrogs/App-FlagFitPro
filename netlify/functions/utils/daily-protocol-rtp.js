@@ -1,6 +1,9 @@
 import { getIsoDayOfWeek } from "./date-utils.js";
 import { injuriesPainLevel } from "./active-injuries.js";
-import { isExerciseSafeForInjuries } from "./daily-protocol-blocks.js";
+import {
+  isExerciseSafeForInjuries,
+  keywordsForRegion,
+} from "./daily-protocol-blocks.js";
 
 import { createLogger } from "./structured-logger.js";
 const logger = createLogger({ service: "netlify.daily-protocol-rtp" });
@@ -11,7 +14,7 @@ export async function generateReturnToPlayProtocol(
   date,
   wellnessCheckin,
   headers,
-  { activeInjuries = null } = {},
+  { activeInjuries = null, getProtocol = null } = {},
 ) {
   logger.info("rtp_protocol_generating", { date });
 
@@ -263,13 +266,32 @@ export async function generateReturnToPlayProtocol(
   }
 
   if (rtpPhase >= 2) {
-    const { data: rehabExercises } = await supabase
+    // Pull a wider rehab pool, then prefer exercises that actually target the
+    // injured region(s) — an Achilles report should surface calf/heel loading
+    // work before generic rehab filler. Difficulty order is preserved within
+    // each partition; generic exercises still top up to 4 when the region has
+    // few (or no) matches, so the block never comes back thinner than before.
+    const { data: rehabPool } = await supabase
       .from("exercises")
       .select("*")
       .eq("category", "rehab")
       .eq("active", true)
       .order("difficulty_level")
-      .limit(4);
+      .limit(16);
+
+    const regionKeywords = [
+      ...new Set(injuredRegions.flatMap((r) => keywordsForRegion(r))),
+    ];
+    const targetsInjuredRegion = (ex) => {
+      const name = (ex.name || "").toLowerCase();
+      const slug = (ex.slug || "").toLowerCase();
+      return regionKeywords.some(
+        (kw) => name.includes(kw) || slug.includes(kw),
+      );
+    };
+    const targeted = (rehabPool || []).filter(targetsInjuredRegion);
+    const generic = (rehabPool || []).filter((ex) => !targetsInjuredRegion(ex));
+    const rehabExercises = [...targeted, ...generic].slice(0, 4);
 
     if (rehabExercises?.length) {
       rehabExercises.forEach((ex) => {
@@ -369,6 +391,16 @@ export async function generateReturnToPlayProtocol(
     exerciseCount: protocolExercises.length,
   });
 
+  // Return the SAME block-keyed shape as the normal generate path (via
+  // getProtocol → transformProtocolResponse). The previous flat
+  // `{...protocol, exercises}` payload had none of the block keys the client
+  // renders, so an injured athlete's Training screen showed "No specific
+  // exercises for today's plan" while the RTP session sat unrendered in the DB.
+  if (getProtocol) {
+    return await getProtocol(supabase, userId, { date }, headers);
+  }
+
+  // Legacy flat shape for callers that don't inject getProtocol.
   return {
     statusCode: 200,
     headers,

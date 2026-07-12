@@ -22,6 +22,155 @@ interface SuppLog {
   date?: string;
 }
 
+/** Per-supplement usage summary from GET /api/supplements/insights. */
+interface SuppInsight {
+  supplement: string; // canonical bucket ("creatine", "beta-alanine", …)
+  label: string; // display name as the athlete logged it
+  firstDate?: string;
+  lastDate?: string;
+  daysSinceLast: number;
+  takenDaysLast7: number;
+  priorHabitDays: number;
+  totalDaysInWindow: number;
+  habit: boolean;
+  lapsed: boolean;
+}
+
+interface SuppNudge {
+  supplement: string;
+  label: string;
+  daysSinceLast: number;
+  message: string;
+}
+
+interface EducationCard {
+  key: string;
+  title: string;
+  status: string; // short badge text ("saturated", "building up", …)
+  statusCls: "good" | "info" | "warn" | "neutral";
+  lines: string[];
+}
+
+/** Days of daily creatine before we stop calling it the build-up window. */
+const CREATINE_BUILDUP_DAYS = 10;
+
+/**
+ * Creatine coaching, driven by the athlete's REAL logging history + the
+ * schedule phase. Evidence framing (ISSN/IOC): loading is optional, timing is
+ * flexible, cycling off is never physiologically required — the "when to
+ * stop/keep" advice below is tournament practicality, not washout dogma.
+ */
+function creatineEducation(
+  usage: SuppInsight | undefined,
+  phase: string,
+): EducationCard {
+  const nearComp = phase === "taper" || phase === "competition";
+  if (!usage || usage.totalDaysInWindow === 0) {
+    return {
+      key: "creatine",
+      title: "Creatine — when it's worth it",
+      status: "not started",
+      statusCls: "neutral",
+      lines: [
+        "3–5 g daily (a level teaspoon) is the evidence dose — the best-supported supplement for repeated sprints and strength.",
+        "No loading phase needed: daily use saturates muscle stores in ~3–4 weeks. A loading week (20 g/day split ×5–7 days) only gets you there faster.",
+        nearComp
+          ? "Competition is close — start AFTER the tournament: new supplements on game week is a gut-risk for zero benefit."
+          : "Take it any time of day, every day — consistency beats timing.",
+      ],
+    };
+  }
+  if (usage.totalDaysInWindow <= CREATINE_BUILDUP_DAYS && !usage.habit) {
+    return {
+      key: "creatine",
+      title: "Creatine — build-up phase",
+      status: "building up",
+      statusCls: "info",
+      lines: [
+        "You're in the saturation window: keep 3–5 g every day (~3–4 weeks to full stores), or a loading week (20 g/day in 4 small doses ×5–7 days) to get there sooner.",
+        "Expect +1–2 kg of water weight — that's muscle water, not fat.",
+        nearComp
+          ? "Tournament close: stay at 3–5 g and skip the loading approach this week — split high doses can upset your gut on game day."
+          : "Missing one day doesn't reset progress — just don't make it a habit.",
+      ],
+    };
+  }
+  if (usage.lapsed || usage.takenDaysLast7 <= 2) {
+    return {
+      key: "creatine",
+      title: "Creatine — you've drifted off",
+      status: "inconsistent",
+      statusCls: "warn",
+      lines: [
+        `Stores fall slowly (weeks, not days) — resume 3–5 g daily and you keep most of the benefit. No need to re-load after ${usage.daysSinceLast} day${usage.daysSinceLast === 1 ? "" : "s"} off.`,
+        "If you stopped on purpose: there's no physiological need to cycle creatine — stopping just washes stores out over ~4–6 weeks.",
+        "Restart 3–4 weeks before your next hard block or tournament so you're saturated when it counts.",
+      ],
+    };
+  }
+  const phaseLine =
+    phase === "taper"
+      ? "Taper week: keep the daily dose — do NOT stop before a tournament; creatine supports repeated-sprint output exactly when you need it."
+      : phase === "competition"
+        ? "Game day: keep the normal dose and drink to thirst — creatine shifts water into muscle, so hydration matters a bit more."
+        : phase === "recovery" || phase === "transition"
+          ? "Off-block: no need to cycle off. If you do pause, stores wash out over ~4–6 weeks — restart 3–4 weeks before the next hard block."
+          : "Training block: the maintenance dose quietly supports strength and sprint work — nothing to change.";
+  return {
+    key: "creatine",
+    title: "Creatine — maintenance",
+    status: "saturated",
+    statusCls: "good",
+    lines: [
+      "You're consistent — stores are saturated. 3–5 g/day holds them; timing is flexible.",
+      phaseLine,
+    ],
+  };
+}
+
+/** Beta-alanine coaching — chronic supplement, phase-aware framing. */
+function betaAlanineEducation(
+  usage: SuppInsight | undefined,
+  phase: string,
+): EducationCard {
+  const nearComp = phase === "taper" || phase === "competition";
+  if (!usage || usage.totalDaysInWindow === 0) {
+    return {
+      key: "beta-alanine",
+      title: "Beta-alanine — need it or not?",
+      status: "optional",
+      statusCls: "neutral",
+      lines: [
+        "It buffers repeated 1–4 min high-intensity efforts. Flag football lives on shorter bursts — creatine, sleep and fueling move the needle more; treat beta-alanine as a later add-on.",
+        "If you do start: 3.2–4.8 g/day split into 2–3 smaller doses, every day for 4+ weeks — it's a chronic builder, not a game-day boost.",
+      ],
+    };
+  }
+  if (usage.lapsed) {
+    return {
+      key: "beta-alanine",
+      title: "Beta-alanine — lapsed",
+      status: "lapsed",
+      statusCls: "warn",
+      lines: [
+        "Muscle carnosine fades slowly (~2–3 months) — resume daily dosing to hold the benefit, no re-loading needed.",
+      ],
+    };
+  }
+  return {
+    key: "beta-alanine",
+    title: "Beta-alanine — keep it daily",
+    status: "on plan",
+    statusCls: "good",
+    lines: [
+      "3.2–4.8 g/day split into 2–3 smaller doses (the tingle is harmless paresthesia; smaller doses avoid it). It needs 4+ weeks of daily use to build muscle carnosine.",
+      nearComp
+        ? "Tournament week: keep the daily dose — consistency is simpler than stopping, and carnosine only washes out over ~9 weeks anyway."
+        : "Take it with meals if the tingle bothers you.",
+    ],
+  };
+}
+
 // V2.1 caffeine-timing constants (documented starting points — see
 // SOURCE_OF_TRUTH.md's "calibration constants" convention). No per-athlete
 // bedtime setting exists yet, so a conservative fixed target bedtime is used
@@ -116,6 +265,20 @@ export class SupplementsComponent {
   /** creatine-taken days in the last 7 (real adherence); null until loaded. */
   readonly creatineDays = signal<number | null>(null);
 
+  // --- behaviour insights (lapse nudges + usage-driven coaching) ---
+  readonly insights = signal<SuppInsight[]>([]);
+  readonly nudges = signal<SuppNudge[]>([]);
+
+  /** Usage- and phase-aware coaching cards (creatine + beta-alanine). */
+  readonly education = computed<EducationCard[]>(() => {
+    const phase = this.schedule.currentPhase();
+    const byName = new Map(this.insights().map((i) => [i.supplement, i]));
+    return [
+      creatineEducation(byName.get("creatine"), phase),
+      betaAlanineEducation(byName.get("beta-alanine"), phase),
+    ];
+  });
+
   // add-to-stack inline form
   readonly adding = signal(false);
   readonly newName = signal("");
@@ -178,6 +341,22 @@ export class SupplementsComponent {
       },
       error: (e) => this.logger.error("supplements_recent_failed", e),
     });
+
+    // Behaviour insights: lapse detection ("stock ran empty?") + the usage
+    // stats the coaching cards render from. The server also drops the deduped
+    // in-app notification when a lapse is detected.
+    this.api
+      .get<{
+        insights?: SuppInsight[];
+        nudges?: SuppNudge[];
+      }>("/api/supplements/insights")
+      .subscribe({
+        next: (res) => {
+          this.insights.set(res?.data?.insights ?? []);
+          this.nudges.set(res?.data?.nudges ?? []);
+        },
+        error: (e) => this.logger.error("supplement_insights_failed", e),
+      });
   }
 
   toggle(which: "creatine" | "caffeine" | "beta"): void {
