@@ -28,6 +28,7 @@ import { FAMILIES_GENERAL } from "../database/library/families-general.mjs";
 import { FAMILIES_ISO_PLYO } from "../database/library/families-iso-plyo.mjs";
 import { FAMILIES_POSITION } from "../database/library/families-position.mjs";
 import { FAMILIES_NEURO } from "../database/library/families-neuro.mjs";
+import { FAMILIES_TEAM_PRACTICE } from "../database/library/families-team-practice.mjs";
 
 const FAMILIES = [
   ...FAMILIES_REHAB,
@@ -35,6 +36,7 @@ const FAMILIES = [
   ...FAMILIES_ISO_PLYO,
   ...FAMILIES_POSITION,
   ...FAMILIES_NEURO,
+  ...FAMILIES_TEAM_PRACTICE,
 ];
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -104,7 +106,7 @@ function expand() {
         name: v.name,
         slug: ov.slug ?? slugify(v.name),
         category: ov.category ?? fam.category,
-        subcategory: ov.subcategory ?? null,
+        subcategory: ov.subcategory ?? fam.subcategory ?? null,
         description: ov.how ?? fam.how,
         how_text: ov.how ?? fam.how,
         coaching_cues: ov.cues ?? fam.cues,
@@ -257,6 +259,14 @@ if (exclFile && existsSync(exclFile)) {
       .filter(Boolean),
   );
   emitRows = rows.filter((r) => !excl.has(r.slug));
+}
+
+// Optional: emit only rows from families whose key starts with a prefix (e.g.
+// --only-family=tp_ for the team-practice batch). Composable with the exclude.
+const onlyFam = process.argv.find((a) => a.startsWith("--only-family="));
+if (onlyFam) {
+  const prefix = onlyFam.split("=")[1] ?? "";
+  emitRows = emitRows.filter((r) => `${r._family ?? ""}`.startsWith(prefix));
 }
 
 if (process.argv.includes("--print-net-new")) {
