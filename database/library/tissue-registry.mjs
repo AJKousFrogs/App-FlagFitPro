@@ -21,8 +21,16 @@ export const TISSUES = {
     peakLoadBW: 8,
     minRecoveryHoursHeavy: 48,
     couples: [
-      { to: "hamstring", mechanism: "calf restriction → late-stance HS comp", strength: "moderate" },
-      { to: "plantar_fascia", mechanism: "shared posterior chain", strength: "moderate" },
+      {
+        to: "hamstring",
+        mechanism: "calf restriction → late-stance HS comp",
+        strength: "moderate",
+      },
+      {
+        to: "plantar_fascia",
+        mechanism: "shared posterior chain",
+        strength: "moderate",
+      },
     ],
     clearanceTests: ["single_leg_calf_raise_x25", "seated_calf_iso_gt_2xBW"],
   },
@@ -31,14 +39,18 @@ export const TISSUES = {
     label: "Soleus",
     region: "lower_limb",
     note: "Knee-FLEXED plantarflexor; ~8x BW propulsion; longer rehab window than gastroc (25 vs 8 days).",
-    couples: [{ to: "achilles", mechanism: "forms the Achilles", strength: "strong" }],
+    couples: [
+      { to: "achilles", mechanism: "forms the Achilles", strength: "strong" },
+    ],
   },
   gastrocnemius: {
     tissueType: "muscle",
     label: "Gastrocnemius",
     region: "lower_limb",
     note: "Knee-STRAIGHT biased; explosive contributor.",
-    couples: [{ to: "achilles", mechanism: "forms the Achilles", strength: "strong" }],
+    couples: [
+      { to: "achilles", mechanism: "forms the Achilles", strength: "strong" },
+    ],
   },
 
   // ── hamstring ─────────────────────────────────────────────────────────────
@@ -47,7 +59,95 @@ export const TISSUES = {
     label: "Hamstring (biceps femoris long head)",
     region: "lower_limb",
     note: "Terminal-swing eccentric; BFlh activation climbs sharply >80% max sprint speed. Do NOT remove sprint for stiffness — reduce volume, keep exposure.",
-    couples: [{ to: "achilles", mechanism: "posterior chain compensation", strength: "moderate" }],
+    couples: [
+      {
+        to: "achilles",
+        mechanism: "posterior chain compensation",
+        strength: "moderate",
+      },
+    ],
+  },
+
+  plantaris: {
+    tissueType: "muscle",
+    label: "Plantaris",
+    region: "lower_limb",
+    note: "Small plantarflexor/knee-flexor; 'tennis leg' when it or the medial gastroc tears. Shares the calf complex.",
+    couples: [
+      {
+        to: "achilles",
+        mechanism: "posterior calf complex",
+        strength: "moderate",
+      },
+    ],
+  },
+  peroneus: {
+    tissueType: "muscle",
+    label: "Peroneals (fibularis longus/brevis)",
+    region: "lower_limb",
+    note: "Evert + stabilise the ankle; peroneal reaction time is THE protective variable against lateral ankle sprain recurrence.",
+    couples: [
+      {
+        to: "ankle",
+        mechanism: "dynamic lateral ankle stabiliser",
+        strength: "strong",
+      },
+    ],
+  },
+  tibialis_anterior: {
+    tissueType: "muscle",
+    label: "Tibialis anterior",
+    region: "lower_limb",
+    note: "Dorsiflexion + foot control; weakness feeds MTSS. Shares the shin/bone-stress chain.",
+    couples: [
+      { to: "tibia", mechanism: "shin/MTSS chain", strength: "moderate" },
+    ],
+  },
+
+  // ── hip flexor / glute / ITB ───────────────────────────────────────────────
+  hip_flexor: {
+    tissueType: "muscle",
+    label: "Hip flexor (iliopsoas / rectus femoris)",
+    region: "lower_limb",
+    note: "Loaded in sprint drive + kicking; rectus femoris crosses hip AND knee (two-joint injury risk).",
+    couples: [
+      {
+        to: "lumbar",
+        mechanism: "iliopsoas attaches to lumbar spine",
+        strength: "moderate",
+      },
+    ],
+  },
+  glute: {
+    tissueType: "muscle",
+    label: "Gluteals (max/med/min)",
+    region: "lower_limb",
+    note: "Prime hip extensor + pelvic stabiliser; glute-med weakness → knee valgus + ITB/patellofemoral load.",
+    couples: [
+      {
+        to: "it_band",
+        mechanism: "glute-med weakness loads the ITB",
+        strength: "moderate",
+      },
+      {
+        to: "patellar_tendon",
+        mechanism: "hip control governs knee valgus",
+        strength: "moderate",
+      },
+    ],
+  },
+  it_band: {
+    tissueType: "fascia",
+    label: "Iliotibial band",
+    region: "lower_limb",
+    note: "Lateral knee/hip fascia; ITB syndrome is a compression/overuse issue driven by hip control + running volume — a load-management problem.",
+    couples: [
+      {
+        to: "glute",
+        mechanism: "TFL/glute-med tension governs ITB load",
+        strength: "strong",
+      },
+    ],
   },
 
   // ── knee extensor / patellar tendon ───────────────────────────────────────
@@ -58,7 +158,13 @@ export const TISSUES = {
     peakLoadBW: 6.6,
     minRecoveryHoursHeavy: 48,
     note: "Across the rehab ladder LOADING RATE changes, peak force stays high (leg press ~2 BW/s vs jump-land ~93 BW/s). Progress rate, hold force.",
-    couples: [{ to: "ankle", mechanism: "restricted dorsiflexion transfers load proximally", strength: "strong" }],
+    couples: [
+      {
+        to: "ankle",
+        mechanism: "restricted dorsiflexion transfers load proximally",
+        strength: "strong",
+      },
+    ],
   },
   quadriceps: {
     tissueType: "muscle",
@@ -72,7 +178,13 @@ export const TISSUES = {
     label: "Adductor / groin",
     region: "lower_limb",
     note: "Squeeze strength DROPS before pain (leading indicator, DeLang 2022). Copenhagen: OR 0.59 groin problems.",
-    couples: [{ to: "acl", mechanism: "adductor weakness → altered COD → knee valgus", strength: "moderate" }],
+    couples: [
+      {
+        to: "acl",
+        mechanism: "adductor weakness → altered COD → knee valgus",
+        strength: "moderate",
+      },
+    ],
   },
 
   // ── ankle / lateral ligament ──────────────────────────────────────────────
@@ -105,7 +217,11 @@ export const TISSUES = {
   },
 
   // ── trunk ─────────────────────────────────────────────────────────────────
-  lumbar: { tissueType: "joint_capsule", label: "Lumbar spine", region: "trunk" },
+  lumbar: {
+    tissueType: "joint_capsule",
+    label: "Lumbar spine",
+    region: "trunk",
+  },
   core: { tissueType: "muscle", label: "Core / trunk", region: "trunk" },
 
   // ── upper / thrower ───────────────────────────────────────────────────────
@@ -115,7 +231,12 @@ export const TISSUES = {
     region: "upper_limb",
     note: "Throw DECELERATION damages the posterior cuff/labrum. GIRD is a risk factor — track IR ROM. Throw count is a load metric.",
   },
-  ucl: { tissueType: "ligament", label: "Elbow UCL", region: "upper_limb", note: "Flexor-pronator mass is a dynamic UCL protector." },
+  ucl: {
+    tissueType: "ligament",
+    label: "Elbow UCL",
+    region: "upper_limb",
+    note: "Flexor-pronator mass is a dynamic UCL protector.",
+  },
   finger: {
     tissueType: "ligament",
     label: "Finger collateral ligaments",
@@ -133,18 +254,40 @@ export const TISSUES = {
 export const MOVEMENT_TO_TISSUES = {
   plantarflexion_bent: ["soleus", "achilles"],
   plantarflexion_straight: ["gastrocnemius", "achilles"],
-  plantarflexion_ballistic: ["gastrocnemius", "soleus", "achilles"],
+  plantarflexion_ballistic: [
+    "gastrocnemius",
+    "soleus",
+    "achilles",
+    "plantaris",
+  ],
   knee_flexion_eccentric: ["hamstring"],
-  hip_hinge: ["hamstring", "lumbar"],
+  hip_hinge: ["hamstring", "glute", "lumbar"],
+  hip_extension: ["glute", "hamstring"],
+  hip_flexion: ["hip_flexor"],
+  hip_abduction: ["glute", "it_band"],
   knee_extension: ["quadriceps", "patellar_tendon"],
   jump_land: ["patellar_tendon", "quadriceps", "achilles"],
   hip_adduction: ["adductor"],
-  ankle_balance: ["ankle"],
-  cutting: ["acl", "ankle", "adductor"],
-  impact_run: ["tibia", "achilles", "soleus"],
+  ankle_balance: ["ankle", "peroneus"],
+  ankle_eversion: ["peroneus", "ankle"],
+  ankle_dorsiflexion: ["tibialis_anterior", "tibia"],
+  cutting: ["acl", "ankle", "adductor", "glute"],
+  impact_run: ["tibia", "achilles", "soleus", "it_band"],
   anti_extension: ["core"],
+  core_rotation: ["core", "lumbar"],
+  squat: ["quadriceps", "patellar_tendon", "glute"],
+  sprint: ["hamstring", "achilles", "soleus", "glute"],
+  carry: ["core", "lumbar"],
+  horizontal_push: ["rotator_cuff"],
+  vertical_push: ["rotator_cuff"],
+  horizontal_pull: ["rotator_cuff"],
+  vertical_pull: ["rotator_cuff"],
   throw: ["rotator_cuff", "ucl"],
+  arm_care: ["rotator_cuff", "ucl"],
   grip: ["finger"],
+  // Neutral movements that don't load a tracked injury tissue (general mobility,
+  // conditioning, footwork) map to nothing — always safe, keyword fail-safe only.
+  neutral: [],
 };
 
 /** All tissue ids that share a functional complex with `tissueId` (both ways). */

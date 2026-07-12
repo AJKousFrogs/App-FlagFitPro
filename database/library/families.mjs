@@ -58,16 +58,67 @@ ALL.push({
   positions: [],
   defaults: { sets: 3, reps: 12, rest: 90, loadAu: 14, difficulty: "beginner" },
   how: "Drive through the ball of the foot to full plantarflexion, control the descent. Heavy-slow: ~3s up, ~3s down.",
-  cues: ["Full range — all the way up, all the way down", "Slow, controlled tempo", "Keep pressure through the big toe"],
+  cues: [
+    "Full range — all the way up, all the way down",
+    "Slow, controlled tempo",
+    "Keep pressure through the big toe",
+  ],
   variants: [
-    { name: "Seated Calf Raise (Soleus, Heavy-Slow)", ov: { jointEmphasis: "knee_bent", targetMuscles: ["soleus"], evidenceTier: "RCT" } },
-    { name: "Standing Calf Raise (Gastrocnemius)", ov: { jointEmphasis: "knee_straight", movement: "plantarflexion_straight", targetMuscles: ["gastrocnemius"] } },
-    { name: "Single-Leg Seated Calf Raise", ov: { jointEmphasis: "knee_bent", defaults: { sets: 3, reps: 10, rest: 90, loadAu: 12 } } },
-    { name: "Single-Leg Standing Calf Raise", ov: { jointEmphasis: "knee_straight", movement: "plantarflexion_straight" } },
-    { name: "Leg-Press Calf Raise (Heavy-Slow)", ov: { jointEmphasis: "knee_straight", movement: "plantarflexion_straight", loadingRateBand: "low", peakLoadBw: 3, defaults: { sets: 4, reps: 8, rest: 120, loadAu: 18 } } },
-    { name: "Smith Machine Standing Calf Raise", ov: { jointEmphasis: "knee_straight", movement: "plantarflexion_straight" } },
-    { name: "Weighted Seated Calf Raise (Dumbbell)", ov: { jointEmphasis: "knee_bent" } },
-    { name: "Bent-Knee Wall Calf Raise (Soleus)", ov: { jointEmphasis: "knee_bent" } },
+    {
+      name: "Seated Calf Raise (Soleus, Heavy-Slow)",
+      ov: {
+        jointEmphasis: "knee_bent",
+        targetMuscles: ["soleus"],
+        evidenceTier: "RCT",
+      },
+    },
+    {
+      name: "Standing Calf Raise (Gastrocnemius)",
+      ov: {
+        jointEmphasis: "knee_straight",
+        movement: "plantarflexion_straight",
+        targetMuscles: ["gastrocnemius"],
+      },
+    },
+    {
+      name: "Single-Leg Seated Calf Raise",
+      ov: {
+        jointEmphasis: "knee_bent",
+        defaults: { sets: 3, reps: 10, rest: 90, loadAu: 12 },
+      },
+    },
+    {
+      name: "Single-Leg Standing Calf Raise",
+      ov: {
+        jointEmphasis: "knee_straight",
+        movement: "plantarflexion_straight",
+      },
+    },
+    {
+      name: "Leg-Press Calf Raise (Heavy-Slow)",
+      ov: {
+        jointEmphasis: "knee_straight",
+        movement: "plantarflexion_straight",
+        loadingRateBand: "low",
+        peakLoadBw: 3,
+        defaults: { sets: 4, reps: 8, rest: 120, loadAu: 18 },
+      },
+    },
+    {
+      name: "Smith Machine Standing Calf Raise",
+      ov: {
+        jointEmphasis: "knee_straight",
+        movement: "plantarflexion_straight",
+      },
+    },
+    {
+      name: "Weighted Seated Calf Raise (Dumbbell)",
+      ov: { jointEmphasis: "knee_bent" },
+    },
+    {
+      name: "Bent-Knee Wall Calf Raise (Soleus)",
+      ov: { jointEmphasis: "knee_bent" },
+    },
   ],
 });
 
@@ -87,12 +138,38 @@ ALL.push({
   positions: [],
   defaults: { sets: 3, reps: 15, rest: 60, loadAu: 12, difficulty: "beginner" },
   how: "Rise on both feet, shift to the working leg, lower the heel slowly BELOW the step over ~3s. Alfredson-style eccentric loading; pain up to 5/10 that settles overnight is acceptable.",
-  cues: ["Lower slowly below the step", "Rise with both, lower with one", "Pain ≤5/10 that settles by morning is OK"],
+  cues: [
+    "Lower slowly below the step",
+    "Rise with both, lower with one",
+    "Pain ≤5/10 that settles by morning is OK",
+  ],
   variants: [
-    { name: "Eccentric Heel Drop (Bilateral, Off Step)", ov: { jointEmphasis: "knee_straight" } },
-    { name: "Eccentric Heel Drop (Single-Leg, Off Step)", ov: { jointEmphasis: "knee_straight", defaults: { sets: 3, reps: 15, rest: 60, loadAu: 14 } } },
-    { name: "Bent-Knee Eccentric Heel Drop (Soleus)", ov: { jointEmphasis: "knee_bent", movement: "plantarflexion_bent", targetMuscles: ["soleus"] } },
-    { name: "Weighted Eccentric Heel Drop (Backpack)", ov: { jointEmphasis: "knee_straight", defaults: { sets: 3, reps: 12, rest: 90, loadAu: 16 } } },
+    {
+      name: "Eccentric Heel Drop (Bilateral, Off Step)",
+      ov: { jointEmphasis: "knee_straight" },
+    },
+    {
+      name: "Eccentric Heel Drop (Single-Leg, Off Step)",
+      ov: {
+        jointEmphasis: "knee_straight",
+        defaults: { sets: 3, reps: 15, rest: 60, loadAu: 14 },
+      },
+    },
+    {
+      name: "Bent-Knee Eccentric Heel Drop (Soleus)",
+      ov: {
+        jointEmphasis: "knee_bent",
+        movement: "plantarflexion_bent",
+        targetMuscles: ["soleus"],
+      },
+    },
+    {
+      name: "Weighted Eccentric Heel Drop (Backpack)",
+      ov: {
+        jointEmphasis: "knee_straight",
+        defaults: { sets: 3, reps: 12, rest: 90, loadAu: 16 },
+      },
+    },
   ],
 });
 
@@ -112,11 +189,27 @@ ALL.push({
   positions: [],
   defaults: { sets: 4, hold: 30, rest: 60, loadAu: 8, difficulty: "beginner" },
   how: "Hold a mid-range plantarflexed position under load. Some athletes get analgesia, some don't (Achilles replication failed) — we track your response, we don't promise relief.",
-  cues: ["Hold steady, don't bounce", "Breathe through the hold", "Log whether it eased the pain — we track it per athlete"],
+  cues: [
+    "Hold steady, don't bounce",
+    "Breathe through the hold",
+    "Log whether it eased the pain — we track it per athlete",
+  ],
   variants: [
-    { name: "Seated Isometric Calf Hold (Soleus)", ov: { jointEmphasis: "knee_bent", targetMuscles: ["soleus"] } },
-    { name: "Standing Isometric Calf Hold (Gastroc)", ov: { jointEmphasis: "knee_straight", movement: "plantarflexion_straight" } },
-    { name: "Single-Leg Isometric Calf Hold", ov: { jointEmphasis: "knee_bent" } },
+    {
+      name: "Seated Isometric Calf Hold (Soleus)",
+      ov: { jointEmphasis: "knee_bent", targetMuscles: ["soleus"] },
+    },
+    {
+      name: "Standing Isometric Calf Hold (Gastroc)",
+      ov: {
+        jointEmphasis: "knee_straight",
+        movement: "plantarflexion_straight",
+      },
+    },
+    {
+      name: "Single-Leg Isometric Calf Hold",
+      ov: { jointEmphasis: "knee_bent" },
+    },
     { name: "Wall Isometric Calf Hold", ov: { jointEmphasis: "knee_bent" } },
   ],
 });
@@ -138,10 +231,26 @@ ALL.push({
   positions: [],
   defaults: { sets: 3, reps: 6, rest: 120, loadAu: 20, difficulty: "advanced" },
   how: "Kneel with ankles anchored, lower the torso forward as slowly as possible resisting with the hamstrings, catch with the hands. Prevention RR ~0.49 (Van Dyk meta) — but Impellizzeri's reappraisal calls it 'inconclusive'; program it, don't oversell it.",
-  cues: ["Resist the fall — go as slow as you can", "Hips extended, don't pike", "Catch soft, push back to the top"],
+  cues: [
+    "Resist the fall — go as slow as you can",
+    "Hips extended, don't pike",
+    "Catch soft, push back to the top",
+  ],
   variants: [
     { name: "Nordic Hamstring Curl", ov: {} },
-    { name: "Band-Assisted Nordic Curl", ov: { rehabStage: 2, defaults: { sets: 3, reps: 8, rest: 120, loadAu: 16, difficulty: "intermediate" } } },
+    {
+      name: "Band-Assisted Nordic Curl",
+      ov: {
+        rehabStage: 2,
+        defaults: {
+          sets: 3,
+          reps: 8,
+          rest: 120,
+          loadAu: 16,
+          difficulty: "intermediate",
+        },
+      },
+    },
     { name: "Eccentric-Only Nordic (Push-Up Return)", ov: {} },
     { name: "Razor Curl (Slider)", ov: { rehabStage: 3 } },
   ],
@@ -161,9 +270,19 @@ ALL.push({
   muscleGroups: ["hamstrings"],
   targetMuscles: ["biceps femoris", "semimembranosus"],
   positions: [],
-  defaults: { sets: 3, reps: 6, rest: 60, loadAu: 10, difficulty: "intermediate" },
+  defaults: {
+    sets: 3,
+    reps: 6,
+    rest: 60,
+    loadAu: 10,
+    difficulty: "intermediate",
+  },
   how: "Lengthening-biased hamstring rehab (Askling L-protocol). Faster RTP in RCTs, but LOW eccentric intensity — a bridge to Nordics, not a destination. The engine must progress you off it.",
-  cues: ["Move into length under control", "Stop short of provocative end-range early on", "Progress to Nordics once tolerated"],
+  cues: [
+    "Move into length under control",
+    "Stop short of provocative end-range early on",
+    "Progress to Nordics once tolerated",
+  ],
   variants: [
     { name: "Askling Extender (Supine)", ov: {} },
     { name: "Askling Diver (Single-Leg RDL Reach)", ov: {} },
@@ -209,16 +328,58 @@ ALL.push({
   muscleGroups: ["quadriceps"],
   targetMuscles: ["quadriceps", "patellar tendon"],
   positions: [],
-  defaults: { sets: 4, reps: 8, rest: 120, loadAu: 18, difficulty: "intermediate" },
+  defaults: {
+    sets: 4,
+    reps: 8,
+    rest: 120,
+    loadAu: 18,
+    difficulty: "intermediate",
+  },
   how: "Patellar tendon rehab progresses by LOADING RATE, not peak force. This ladder holds high tendon force while rate climbs: isometric → heavy-slow → decline squat → low jump-land.",
-  cues: ["Slow tempo on the loading rungs", "Knee tracks over the toes", "Progress rate only when 24h response is clean"],
+  cues: [
+    "Slow tempo on the loading rungs",
+    "Knee tracks over the toes",
+    "Progress rate only when 24h response is clean",
+  ],
   variants: [
-    { name: "Spanish Squat Isometric Hold", ov: { contractionType: "isometric", loadingRateBand: "none", rehabStage: 1, defaults: { sets: 5, hold: 45, rest: 90, loadAu: 10 } } },
-    { name: "Wall-Sit Isometric (Knee 60°)", ov: { contractionType: "isometric", loadingRateBand: "none", rehabStage: 1, defaults: { sets: 5, hold: 45, rest: 90, loadAu: 10 } } },
-    { name: "Heavy-Slow Leg Press", ov: { loadingRateBand: "low", rehabStage: 2 } },
-    { name: "Heavy-Slow Leg Extension", ov: { loadingRateBand: "low", rehabStage: 2 } },
-    { name: "Decline Single-Leg Squat (Slow)", ov: { loadingRateBand: "moderate", rehabStage: 3, defaults: { sets: 4, reps: 8, rest: 120, loadAu: 16 } } },
-    { name: "Low Box Step-Down (Controlled)", ov: { loadingRateBand: "moderate", rehabStage: 3 } },
+    {
+      name: "Spanish Squat Isometric Hold",
+      ov: {
+        contractionType: "isometric",
+        loadingRateBand: "none",
+        rehabStage: 1,
+        defaults: { sets: 5, hold: 45, rest: 90, loadAu: 10 },
+      },
+    },
+    {
+      name: "Wall-Sit Isometric (Knee 60°)",
+      ov: {
+        contractionType: "isometric",
+        loadingRateBand: "none",
+        rehabStage: 1,
+        defaults: { sets: 5, hold: 45, rest: 90, loadAu: 10 },
+      },
+    },
+    {
+      name: "Heavy-Slow Leg Press",
+      ov: { loadingRateBand: "low", rehabStage: 2 },
+    },
+    {
+      name: "Heavy-Slow Leg Extension",
+      ov: { loadingRateBand: "low", rehabStage: 2 },
+    },
+    {
+      name: "Decline Single-Leg Squat (Slow)",
+      ov: {
+        loadingRateBand: "moderate",
+        rehabStage: 3,
+        defaults: { sets: 4, reps: 8, rest: 120, loadAu: 16 },
+      },
+    },
+    {
+      name: "Low Box Step-Down (Controlled)",
+      ov: { loadingRateBand: "moderate", rehabStage: 3 },
+    },
   ],
 });
 
@@ -236,15 +397,69 @@ ALL.push({
   muscleGroups: ["adductors", "core"],
   targetMuscles: ["adductor longus", "adductor magnus"],
   positions: [],
-  defaults: { sets: 3, reps: 8, rest: 90, loadAu: 14, difficulty: "intermediate" },
+  defaults: {
+    sets: 3,
+    reps: 8,
+    rest: 90,
+    loadAu: 14,
+    difficulty: "intermediate",
+  },
   how: "Side plank with the top leg on a bench, lift the bottom leg to meet it. Three progression levels. Cluster-RCT: 41% lower odds of groin problems. Squeeze strength drops before pain — pair with the weekly squeeze test.",
-  cues: ["Straight line hip to shoulder", "Drive the bottom knee up to the bench", "Slow lower"],
+  cues: [
+    "Straight line hip to shoulder",
+    "Drive the bottom knee up to the bench",
+    "Slow lower",
+  ],
   variants: [
-    { name: "Copenhagen Adduction — Level 1 (Short Lever, Bent Knee)", ov: { rehabStage: 1, defaults: { sets: 3, reps: 6, rest: 90, loadAu: 10, difficulty: "beginner" } } },
-    { name: "Copenhagen Adduction — Level 2 (Mid Lever)", ov: { rehabStage: 2 } },
-    { name: "Copenhagen Adduction — Level 3 (Full Long Lever)", ov: { rehabStage: 3, defaults: { sets: 3, reps: 10, rest: 90, loadAu: 18, difficulty: "advanced" } } },
-    { name: "Copenhagen Plank Isometric Hold", ov: { contractionType: "isometric", loadingRateBand: "none", category: "isometrics", defaults: { sets: 4, hold: 20, rest: 60, loadAu: 10 } } },
-    { name: "Adductor Squeeze Isometric (45° Hip)", ov: { contractionType: "isometric", loadingRateBand: "none", category: "isometrics", rehabStage: 1, defaults: { sets: 4, hold: 30, rest: 45, loadAu: 6 } } },
+    {
+      name: "Copenhagen Adduction — Level 1 (Short Lever, Bent Knee)",
+      ov: {
+        rehabStage: 1,
+        defaults: {
+          sets: 3,
+          reps: 6,
+          rest: 90,
+          loadAu: 10,
+          difficulty: "beginner",
+        },
+      },
+    },
+    {
+      name: "Copenhagen Adduction — Level 2 (Mid Lever)",
+      ov: { rehabStage: 2 },
+    },
+    {
+      name: "Copenhagen Adduction — Level 3 (Full Long Lever)",
+      ov: {
+        rehabStage: 3,
+        defaults: {
+          sets: 3,
+          reps: 10,
+          rest: 90,
+          loadAu: 18,
+          difficulty: "advanced",
+        },
+      },
+    },
+    {
+      name: "Copenhagen Plank Isometric Hold",
+      ov: {
+        contractionType: "isometric",
+        loadingRateBand: "none",
+        category: "isometrics",
+        defaults: { sets: 4, hold: 20, rest: 60, loadAu: 10 },
+      },
+    },
+    {
+      name: "Adductor Squeeze Isometric (45° Hip)",
+      ov: {
+        contractionType: "isometric",
+        loadingRateBand: "none",
+        category: "isometrics",
+        rehabStage: 1,
+        defaults: { sets: 4, hold: 30, rest: 45, loadAu: 6 },
+      },
+    },
   ],
 });
 
@@ -264,13 +479,23 @@ ALL.push({
   positions: [],
   defaults: { sets: 3, hold: 30, rest: 45, loadAu: 8, difficulty: "beginner" },
   how: "Single-leg balance progressions build peroneal reaction time — the protective variable after an ankle sprain (70% recurrence). Attach this permanently to any athlete with an ankle history.",
-  cues: ["Soft knee, quiet foot", "Progress: eyes open → eyes closed → unstable surface", "Add perturbations once stable"],
+  cues: [
+    "Soft knee, quiet foot",
+    "Progress: eyes open → eyes closed → unstable surface",
+    "Add perturbations once stable",
+  ],
   variants: [
     { name: "Single-Leg Balance (Eyes Open)", ov: { rehabStage: 1 } },
     { name: "Single-Leg Balance (Eyes Closed)", ov: { rehabStage: 2 } },
     { name: "Single-Leg Balance on Foam Pad", ov: { rehabStage: 2 } },
-    { name: "Single-Leg Balance with Ball Toss", ov: { rehabStage: 3, loadingRateBand: "moderate" } },
-    { name: "Star Excursion Balance Reach", ov: { rehabStage: 3, contractionType: "isotonic" } },
+    {
+      name: "Single-Leg Balance with Ball Toss",
+      ov: { rehabStage: 3, loadingRateBand: "moderate" },
+    },
+    {
+      name: "Star Excursion Balance Reach",
+      ov: { rehabStage: 3, contractionType: "isotonic" },
+    },
     { name: "Bosu Single-Leg Hold", ov: { rehabStage: 3 } },
   ],
 });
@@ -287,16 +512,39 @@ ALL.push({
   rehabStage: 2,
   movementPattern: "Dorsiflexion / Endurance",
   muscleGroups: ["shin", "calves"],
-  targetMuscles: ["tibialis anterior", "tibialis posterior", "flexor hallucis longus"],
+  targetMuscles: [
+    "tibialis anterior",
+    "tibialis posterior",
+    "flexor hallucis longus",
+  ],
   positions: [],
   defaults: { sets: 3, reps: 20, rest: 60, loadAu: 10, difficulty: "beginner" },
   how: "Posterior-chain + tibialis endurance for MTSS (the mild end of the bone-stress continuum). NOTE: focal/point tibial tenderness is a HARD STOP — this is for diffuse MTSS only, never a stress fracture.",
-  cues: ["High reps, endurance focus", "Diffuse ache only — focal point pain = stop, see a clinician", "Reduce impact volume alongside this"],
+  cues: [
+    "High reps, endurance focus",
+    "Diffuse ache only — focal point pain = stop, see a clinician",
+    "Reduce impact volume alongside this",
+  ],
   variants: [
-    { name: "Tibialis Raise (Wall-Supported)", ov: { targetMuscles: ["tibialis anterior"] } },
-    { name: "Weighted Tibialis Raise", ov: { targetMuscles: ["tibialis anterior"], defaults: { sets: 3, reps: 15, rest: 60, loadAu: 12 } } },
-    { name: "Seated Tib-Posterior Raise (Band)", ov: { targetMuscles: ["tibialis posterior"] } },
-    { name: "Toe-Walk Endurance March", ov: { movement: "plantarflexion_bent" } },
+    {
+      name: "Tibialis Raise (Wall-Supported)",
+      ov: { targetMuscles: ["tibialis anterior"] },
+    },
+    {
+      name: "Weighted Tibialis Raise",
+      ov: {
+        targetMuscles: ["tibialis anterior"],
+        defaults: { sets: 3, reps: 15, rest: 60, loadAu: 12 },
+      },
+    },
+    {
+      name: "Seated Tib-Posterior Raise (Band)",
+      ov: { targetMuscles: ["tibialis posterior"] },
+    },
+    {
+      name: "Toe-Walk Endurance March",
+      ov: { movement: "plantarflexion_bent" },
+    },
     { name: "Heel-Walk Endurance March", ov: {} },
   ],
 });

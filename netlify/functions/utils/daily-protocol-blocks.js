@@ -308,24 +308,43 @@ export function keywordsForRegion(region) {
 // STRUCTURED path — an exercise's tissue_targets vs the injured tissues — over
 // name keywords. The calf–Achilles complex is one functional unit: any
 // plantarflexor loader loads the Achilles.
-const CALF_ACHILLES_TISSUES = ["achilles", "soleus", "gastrocnemius"];
+const CALF_ACHILLES_TISSUES = [
+  "achilles",
+  "soleus",
+  "gastrocnemius",
+  "plantaris",
+];
 const REGION_TO_TISSUES = {
   calf: CALF_ACHILLES_TISSUES,
   gastrocnemius: CALF_ACHILLES_TISSUES,
   soleus: CALF_ACHILLES_TISSUES,
   achilles: CALF_ACHILLES_TISSUES,
+  plantaris: CALF_ACHILLES_TISSUES,
   heel: CALF_ACHILLES_TISSUES,
   hamstring: ["hamstring"],
   quad: ["quadriceps", "patellar_tendon"],
   quadriceps: ["quadriceps", "patellar_tendon"],
   knee: ["patellar_tendon", "acl", "quadriceps"],
+  // "runner's knee" (patellofemoral pain) loads the extensor mechanism + is
+  // driven by hip/glute control → route to the knee extensor + glute chain.
+  "runners knee": ["patellar_tendon", "quadriceps", "glute"],
+  patellofemoral: ["patellar_tendon", "quadriceps", "glute"],
   patella: ["patellar_tendon"],
   patellar: ["patellar_tendon"],
   groin: ["adductor"],
   adductor: ["adductor"],
-  ankle: ["ankle"],
-  shin: ["tibia"],
-  tibia: ["tibia"],
+  "hip flexor": ["hip_flexor"],
+  iliopsoas: ["hip_flexor"],
+  glute: ["glute", "it_band"],
+  "it band": ["it_band", "glute"],
+  itb: ["it_band", "glute"],
+  iliotibial: ["it_band", "glute"],
+  ankle: ["ankle", "peroneus"],
+  peroneus: ["peroneus", "ankle"],
+  peroneal: ["peroneus", "ankle"],
+  shin: ["tibia", "tibialis_anterior"],
+  tibia: ["tibia", "tibialis_anterior"],
+  tibialis: ["tibialis_anterior", "tibia"],
   plantar: ["plantar_fascia"],
   foot: ["plantar_fascia", "tibia"],
   "lower back": ["lumbar"],
