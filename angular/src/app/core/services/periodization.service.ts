@@ -370,6 +370,14 @@ export class PeriodizationService {
     const local = this.localPrescription();
     const server = this.serverPrescription();
     if (server && local && server.date === local.date) {
+      // Prefer the server (canonical guards) EXCEPT for the weekly rest-minimum:
+      // that is a WEEK-level decision the single-day server prescription can't
+      // make. When the week plan (local = weekAhead()[0]) makes today a rest day,
+      // honour it over the server's training session so the hero and the "This
+      // Week" view agree (bug 2026-07-12: Mixed hero on a day marked Rest).
+      if (local.intent === "rest" && server.intent !== "rest") {
+        return local;
+      }
       return server;
     }
     return local;
@@ -382,62 +390,14 @@ export class PeriodizationService {
    */
   private readonly localPrescription: Signal<DailyPrescription | null> =
     computed(() => {
-      const snap = this.schedule.snapshot();
-      if (!snap) {
-        return null;
-      }
-      const now = new Date();
-
-      // Mirror weekAhead()'s two-pass approach so the live "today" signal is
-      // schedule-aware (sessions placed relative to actual practices and games,
-      // not DOW arrays). Compute the same 7-day window to derive today's hint.
-      const todayStart = new Date(now);
-      todayStart.setHours(0, 0, 0, 0);
-      const teamPracticeFlags7: boolean[] = [];
-      const phases7: CompetitionPhase[] = [];
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(todayStart);
-        d.setDate(todayStart.getDate() + i);
-        teamPracticeFlags7.push(this.isTeamPractice(d, snap.trainingDays));
-        // Day 0 must agree with the `today` signal (server-computed
-        // `snap.currentPhase`) rather than re-resolving locally — the client and
-        // server phase resolvers key off different day-of-week sources (local vs
-        // UTC) and can disagree for a few hours around UTC midnight.
-        phases7.push(i === 0 ? snap.currentPhase : this.schedule.phaseFor(d));
-      }
-      const intentHints = planWeekIntents(teamPracticeFlags7, phases7);
-
-      // Weekly progression cap: if this week's cumulative load already exceeds
-      // the safe increase limit, pull back high-intensity sessions.
-      const prog = this.acwrService.weeklyProgression();
-
-      return prescribeFor({
-        date: now,
-        phase: snap.currentPhase,
-        upcoming: snap.upcoming,
-        lastEvent: snap.lastEvent,
-        acwr: this.readAcwr(),
-        readiness: this.readReadiness(),
-        bodyweightKg: this.readBodyweight(),
-        density14d: snap.density14d
-          ? {
-              totalGames: snap.density14d.totalGames,
-              hasPeakImportance: snap.density14d.hasPeakImportance,
-              peakDayGameCount: snap.density14d.peakDayGameCount,
-            }
-          : null,
-        seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
-        weather: this.weather(),
-        recentSessions: this.recentSessions(),
-        ageYears: this.readAgeYears(),
-        position: this.position(),
-        isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
-        activeRestrictions: this.injury.restrictions(),
-        acclimatizationDay: this.eventTravel.daysSinceArrival(),
-        arrivalDayTravelHours: this.eventTravel.arrivalDayTravelHours(),
-        weeklyIntentHint: intentHints[0],
-        weeklyProgressionUnsafe: prog ? !prog.isSafe : false,
-      });
+      // today's local answer IS day 0 of the week plan. weekAhead() runs the SAME
+      // schedule-aware two-pass prescribeFor for day 0 (server phase, ACWR,
+      // readiness, weather, travel) AND then applies enforceWeeklyRestMinimum() +
+      // addSecondSessions(). Re-computing a single day here (the prior code)
+      // skipped the weekly rest-minimum, so the hero could show a training
+      // session on a day the "This Week" view marked Rest (bug 2026-07-12). One
+      // source of truth for the day type: weekAhead()[0].
+      return this.weekAhead()[0] ?? null;
     });
 
   /**
