@@ -1,6 +1,6 @@
 {
-  "generatedOn": "2026-07-08",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP; full refresh capturing the monitoring-feature migrations (team_member_roles, bloodwork_*, session_load, wearable_health, physio_blocks, monitoring_config/providers, device_pairings, wearable_consent) and audit-fix migrations applied 2026-07-07/08.",
+  "generatedOn": "2026-07-13",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-13 after Workstream A dropped the 5 legacy exercise tables (isometrics_exercises, plyometrics_exercises, exercisedb_exercises, exercise_registry, ff_exercise_mappings) — content consolidated into the canonical `exercises` table. Table-level set now matches live (176 base tables + 7 views).",
   "tables": {
     "account_deletion_requests": [
       {
@@ -3482,150 +3482,6 @@
         "nullable": true
       }
     ],
-    "exercise_registry": [
-      {
-        "col": "id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "exercise_name",
-        "type": "character varying",
-        "nullable": false
-      },
-      {
-        "col": "category",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "muscle_groups",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "equipment_needed",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "difficulty_level",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "instructions",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "video_url",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp with time zone",
-        "nullable": true
-      },
-      {
-        "col": "updated_at",
-        "type": "timestamp with time zone",
-        "nullable": true
-      }
-    ],
-    "exercisedb_exercises": [
-      {
-        "col": "id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "exercisedb_id",
-        "type": "character varying",
-        "nullable": false
-      },
-      {
-        "col": "name",
-        "type": "character varying",
-        "nullable": false
-      },
-      {
-        "col": "category",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "muscle_groups",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "equipment",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "instructions",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "image_url",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "video_url",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp with time zone",
-        "nullable": true
-      },
-      {
-        "col": "updated_at",
-        "type": "timestamp with time zone",
-        "nullable": true
-      },
-      {
-        "col": "body_part",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "target_muscle",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "is_curated",
-        "type": "boolean",
-        "nullable": true
-      },
-      {
-        "col": "flag_football_relevance",
-        "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "difficulty_level",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "is_active",
-        "type": "boolean",
-        "nullable": true
-      },
-      {
-        "col": "is_approved",
-        "type": "boolean",
-        "nullable": true
-      }
-    ],
     "exercisedb_import_logs": [
       {
         "col": "id",
@@ -3925,38 +3781,6 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
-      }
-    ],
-    "ff_exercise_mappings": [
-      {
-        "col": "id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "exercisedb_exercise_id",
-        "type": "uuid",
-        "nullable": false
-      },
-      {
-        "col": "flag_football_exercise_id",
-        "type": "uuid",
-        "nullable": true
-      },
-      {
-        "col": "mapping_type",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "confidence_score",
-        "type": "numeric",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp with time zone",
-        "nullable": true
       }
     ],
     "flag_pull_stats": [
@@ -4402,68 +4226,6 @@
         "col": "version",
         "type": "integer",
         "nullable": false
-      }
-    ],
-    "isometrics_exercises": [
-      {
-        "col": "id",
-        "type": "integer",
-        "nullable": false
-      },
-      {
-        "col": "exercise_name",
-        "type": "character varying",
-        "nullable": false
-      },
-      {
-        "col": "category",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "target_muscles",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "equipment_needed",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "difficulty_level",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "effectiveness_rating",
-        "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "hold_duration_seconds",
-        "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "instructions",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "variations",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "performance_metrics",
-        "type": "jsonb",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp without time zone",
-        "nullable": true
       }
     ],
     "knowledge_base_entries": [
@@ -6799,78 +6561,6 @@
       {
         "col": "current_month",
         "type": "text",
-        "nullable": true
-      }
-    ],
-    "plyometrics_exercises": [
-      {
-        "col": "id",
-        "type": "integer",
-        "nullable": false
-      },
-      {
-        "col": "exercise_name",
-        "type": "character varying",
-        "nullable": false
-      },
-      {
-        "col": "exercise_category",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "target_muscles",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "equipment_needed",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "difficulty_level",
-        "type": "character varying",
-        "nullable": true
-      },
-      {
-        "col": "effectiveness_rating",
-        "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "injury_risk_rating",
-        "type": "integer",
-        "nullable": true
-      },
-      {
-        "col": "instructions",
-        "type": "text",
-        "nullable": true
-      },
-      {
-        "col": "variations",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "progressions",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "regressions",
-        "type": "ARRAY",
-        "nullable": true
-      },
-      {
-        "col": "performance_metrics",
-        "type": "jsonb",
-        "nullable": true
-      },
-      {
-        "col": "created_at",
-        "type": "timestamp without time zone",
         "nullable": true
       }
     ],
