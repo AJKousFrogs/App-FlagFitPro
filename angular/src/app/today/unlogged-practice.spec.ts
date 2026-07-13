@@ -8,7 +8,7 @@ import { resolveUnloggedPractice } from "./unlogged-practice";
  */
 
 const NOW = new Date("2026-07-15T09:00:00"); // a Wednesday, local
-const iso = (d) => {
+const iso = (d: number) => {
   const x = new Date(NOW);
   x.setDate(NOW.getDate() + d);
   return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(
