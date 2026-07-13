@@ -5,6 +5,7 @@ import {
 } from "../models/schedule.models";
 import {
   DailyPrescription,
+  HourlyWeatherPoint,
   NutritionTargets,
   PeriodizationInputs,
   PrescriptionIntent,
@@ -15,6 +16,7 @@ import {
   TaperTournamentLevel,
   WeatherAdjustment,
   WeatherInput,
+  WeatherTimeShift,
 } from "../models/prescription.models";
 import {
   POSITION_VOLUME,
@@ -206,11 +208,27 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
   // Position-specific accessory/prehab emphasis — additive guidance only, never
   // changes the chosen intent or load. Throwing/upper restrictions override the
   // QB/center emphasis into a protect-the-arm message.
-  return withPositionEmphasis(
+  const result = withPositionEmphasis(
     physioGuarded,
     inputs.position ?? null,
     inputs.activeRestrictions?.restrictsThrowing ?? false,
   );
+
+  // Phase 5b — a "train later, when it's cooler" suggestion for an outdoor field
+  // session that would be hot at the athlete's training hour. Advisory only (the
+  // prescribed load is unchanged); skipped when injury forced a change or the day
+  // is a full rest. Needs the hourly forecast — absent → no suggestion, no drift.
+  const plannedOutdoor = HEAT_GUARDED.has(spaced.intent);
+  const injuryForced = inputs.activeRestrictions?.restrictsSprint ?? false;
+  if (plannedOutdoor && !injuryForced && result.intent !== "rest") {
+    const shift = findCoolerHour(
+      inputs.weather?.hourly ?? null,
+      inputs.preferredTrainingHour ?? inputs.date.getHours(),
+      approxWBGT(inputs.weather?.tempC ?? null, inputs.weather?.humidityPct ?? null),
+    );
+    if (shift) return { ...result, timeShift: shift };
+  }
+  return result;
 }
 
 /**
@@ -1839,6 +1857,70 @@ function wbgtVolumeKeep(
   return 1 - cut;
 }
 
+// ---- Phase 5b: cooler-hour time-shift ---------------------------------------
+// Don't suggest waiting more than this many hours…
+const TIMESHIFT_MAX_WAIT_HOURS = 6;
+// …and never push a session past this venue-local hour (evening cap).
+const TIMESHIFT_LATEST_HOUR = 21;
+// The cooler hour must be at least this many °C WBGT cooler to be worth it.
+const TIMESHIFT_MIN_COOLER_WBGT = 1.5;
+
+/** Venue-local hour from an ISO string "YYYY-MM-DDTHH:MM" → 0–23, or null. */
+function hourOfIso(iso: string): number | null {
+  const m = /T(\d{2}):/.exec(iso);
+  if (!m) return null;
+  const h = Number(m[1]);
+  return Number.isInteger(h) && h >= 0 && h <= 23 ? h : null;
+}
+
+/**
+ * "Train later, when it's cooler" — Phase 5b. Pure over the hourly forecast
+ * (venue-local). Evaluates WBGT at the athlete's training hour; if that hour is
+ * hot (≥ WBGT_REDUCE) and a materially cooler, comfortable hour exists later the
+ * SAME day (within the wait window, before the evening cap), returns that hour.
+ * Null when there's no hourly data, the training hour is already fine, or no
+ * cooler hour qualifies (in which case the guard says so honestly — never
+ * invents a window). `currentWbgt` is the fallback when the forecast has no
+ * point for the training hour.
+ */
+export function findCoolerHour(
+  hourly: HourlyWeatherPoint[] | null | undefined,
+  fromHour: number,
+  currentWbgt: number | null,
+): WeatherTimeShift | null {
+  if (!hourly || hourly.length === 0) return null;
+  const day = hourly[0].time.slice(0, 10);
+  const today = hourly.filter((p) => p.time.slice(0, 10) === day);
+
+  const fromPoint = today.find((p) => hourOfIso(p.time) === fromHour);
+  const fromWbgt = fromPoint
+    ? (approxWBGT(fromPoint.tempC, fromPoint.humidityPct) ?? currentWbgt)
+    : currentWbgt;
+  // Only suggest a shift when the training hour itself is hot enough to matter.
+  if (fromWbgt === null || fromWbgt < WBGT_REDUCE_C) return null;
+
+  for (const p of today) {
+    const h = hourOfIso(p.time);
+    if (h === null || h <= fromHour) continue;
+    if (h - fromHour > TIMESHIFT_MAX_WAIT_HOURS || h > TIMESHIFT_LATEST_HOUR) {
+      continue;
+    }
+    const w = approxWBGT(p.tempC, p.humidityPct);
+    if (w === null || w >= WBGT_REDUCE_C) continue; // must be comfortable
+    if (fromWbgt - w < TIMESHIFT_MIN_COOLER_WBGT) continue; // materially cooler
+    // Earliest qualifying hour = the smallest wait to a comfortable window.
+    const hh = (n: number) => `${String(n).padStart(2, "0")}:00`;
+    return {
+      fromHour,
+      toHour: h,
+      fromWbgt: Math.round(fromWbgt),
+      toWbgt: Math.round(w),
+      message: `${Math.round(fromWbgt)}°C WBGT at ${hh(fromHour)} — train at ${hh(h)} instead, when it drops to ~${Math.round(w)}°C.`,
+    };
+  }
+  return null;
+}
+
 function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
   // Wet grass kills sprints/cuts; move to an indoor session.
   return intent === "taper-prime" ? "mobility" : "strength";
@@ -2432,4 +2514,5 @@ export const __periodization__ = {
   taperLevelFor,
   EMBEDDED_TAPER_RULES,
   approxWBGT,
+  findCoolerHour,
 };

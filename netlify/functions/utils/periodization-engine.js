@@ -654,11 +654,22 @@ function prescribeFor(inputs) {
     arrivalGuarded,
     inputs.activeRestrictions ?? null
   );
-  return withPositionEmphasis(
+  const result = withPositionEmphasis(
     physioGuarded,
     inputs.position ?? null,
     inputs.activeRestrictions?.restrictsThrowing ?? false
   );
+  const plannedOutdoor = HEAT_GUARDED.has(spaced.intent);
+  const injuryForced = inputs.activeRestrictions?.restrictsSprint ?? false;
+  if (plannedOutdoor && !injuryForced && result.intent !== "rest") {
+    const shift = findCoolerHour(
+      inputs.weather?.hourly ?? null,
+      inputs.preferredTrainingHour ?? inputs.date.getHours(),
+      approxWBGT(inputs.weather?.tempC ?? null, inputs.weather?.humidityPct ?? null)
+    );
+    if (shift) return { ...result, timeShift: shift };
+  }
+  return result;
 }
 function positionBucket(position) {
   const p = (position ?? "").toLowerCase();
@@ -1627,6 +1638,42 @@ function wbgtVolumeKeep(wbgt, reduceThreshold, relocateThreshold, intent, target
   const cut = Math.min(HEAT_MAX_VOLUME_CUT, Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5));
   return 1 - cut;
 }
+var TIMESHIFT_MAX_WAIT_HOURS = 6;
+var TIMESHIFT_LATEST_HOUR = 21;
+var TIMESHIFT_MIN_COOLER_WBGT = 1.5;
+function hourOfIso(iso) {
+  const m = /T(\d{2}):/.exec(iso);
+  if (!m) return null;
+  const h = Number(m[1]);
+  return Number.isInteger(h) && h >= 0 && h <= 23 ? h : null;
+}
+function findCoolerHour(hourly, fromHour, currentWbgt) {
+  if (!hourly || hourly.length === 0) return null;
+  const day = hourly[0].time.slice(0, 10);
+  const today = hourly.filter((p) => p.time.slice(0, 10) === day);
+  const fromPoint = today.find((p) => hourOfIso(p.time) === fromHour);
+  const fromWbgt = fromPoint ? approxWBGT(fromPoint.tempC, fromPoint.humidityPct) ?? currentWbgt : currentWbgt;
+  if (fromWbgt === null || fromWbgt < WBGT_REDUCE_C) return null;
+  for (const p of today) {
+    const h = hourOfIso(p.time);
+    if (h === null || h <= fromHour) continue;
+    if (h - fromHour > TIMESHIFT_MAX_WAIT_HOURS || h > TIMESHIFT_LATEST_HOUR) {
+      continue;
+    }
+    const w = approxWBGT(p.tempC, p.humidityPct);
+    if (w === null || w >= WBGT_REDUCE_C) continue;
+    if (fromWbgt - w < TIMESHIFT_MIN_COOLER_WBGT) continue;
+    const hh = (n) => `${String(n).padStart(2, "0")}:00`;
+    return {
+      fromHour,
+      toHour: h,
+      fromWbgt: Math.round(fromWbgt),
+      toWbgt: Math.round(w),
+      message: `${Math.round(fromWbgt)}\xB0C WBGT at ${hh(fromHour)} \u2014 train at ${hh(h)} instead, when it drops to ~${Math.round(w)}\xB0C.`
+    };
+  }
+  return null;
+}
 function substituteForWet(intent) {
   return intent === "taper-prime" ? "mobility" : "strength";
 }
@@ -2025,7 +2072,8 @@ var __periodization__ = {
   resolveTaperTargets,
   taperLevelFor,
   EMBEDDED_TAPER_RULES,
-  approxWBGT
+  approxWBGT,
+  findCoolerHour
 };
 export {
   EMBEDDED_TAPER_RULES,
@@ -2035,6 +2083,7 @@ export {
   applyWeatherGuard,
   approxWBGT,
   enforceWeeklyRestMinimum,
+  findCoolerHour,
   isHighCnsSessionType,
   macroPhaseFor,
   planWeek,

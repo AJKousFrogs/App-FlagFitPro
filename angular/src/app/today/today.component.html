@@ -172,6 +172,12 @@
                 >
               </div>
             }
+            @if (p.timeShift; as ts) {
+              <div class="time-shift">
+                <span class="ic"><lucide-icon name="clock" /></span>
+                <span>{{ ts.message }}</span>
+              </div>
+            }
             <a class="btn btn--primary" routerLink="/training">Start session</a>
           } @else {
             <p class="muted" style="margin: 0 0 var(--sp-3)">
