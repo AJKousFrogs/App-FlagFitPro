@@ -41,7 +41,6 @@ import {
   transformProtocolResponse,
 } from "./utils/daily-protocol-response.js";
 import {
-  getCurrentPeriodizationPhase,
   getPlyometricIntensity,
   getSafeConditioningIntensity,
   shouldIncludeNordicCurls,

@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > applyWeatherGuard(d: sprint @33°C) — guarded 1`] = `
+{
+  "intent": "sprint",
+  "reasoning": "33°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt. sprint day",
+  "sprintReps": 5,
+  "targetMinutes": NaN,
+  "weatherAdjustment": {
+    "action": "scale",
+    "adjustedIntent": "sprint",
+    "applied": true,
+    "heatLoadFactor": 1.1,
+    "originalIntent": "sprint",
+    "reason": "33°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.",
+  },
+}
+`;
+
+exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > applyWeatherGuard(e: conditioning @33°C) — currently UNguarded (documents the inversion) 1`] = `
+{
+  "intent": "conditioning",
+  "reasoning": "sustained conditioning",
+}
+`;
+
+exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > prescribeFor(a_in_season) 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-13",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "strength",
+  "intentLabel": "Strength session",
+  "nutrition": {
+    "carbsG": 360,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 4.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "accumulation",
+  "positionEmphasis": null,
+  "reasoning": "In-season · maintain strength and sharpen skills. Today is a strength day.",
+  "recoveryEmphasis": "low",
+  "seasonPhase": "inseason",
+  "sprintReps": 0,
+  "strengthSets": 18,
+  "targetMinutes": 75,
+  "targetRpe": 7,
+}
+`;
+
+exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > prescribeFor(b_far_preseason) 1`] = `
+{
+  "acwrAtIssue": null,
+  "date": "2026-07-13",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "mixed",
+  "intentLabel": "Mixed session",
+  "nutrition": {
+    "carbsG": 400,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "transition",
+  "positionEmphasis": null,
+  "reasoning": "Off-season window. Maintain GPP base — easy aerobic + lift.",
+  "recoveryEmphasis": "low",
+  "sprintReps": 0,
+  "strengthSets": 3,
+  "targetMinutes": 45,
+  "targetRpe": 5,
+}
+`;
+
+exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > prescribeFor(c_off_season) 1`] = `
+{
+  "acwrAtIssue": null,
+  "date": "2026-07-13",
+  "driverEvent": null,
+  "hoursUntilNextEvent": null,
+  "intent": "mixed",
+  "intentLabel": "Mixed session",
+  "nutrition": {
+    "carbsG": 400,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "transition",
+  "positionEmphasis": null,
+  "reasoning": "Off-season window. Maintain GPP base — easy aerobic + lift.",
+  "recoveryEmphasis": "low",
+  "sprintReps": 0,
+  "strengthSets": 3,
+  "targetMinutes": 45,
+  "targetRpe": 5,
+}
+`;
