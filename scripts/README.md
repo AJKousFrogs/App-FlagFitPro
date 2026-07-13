@@ -41,18 +41,19 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 
 ## Database Seeding
 
-| Command                    | Description                                                                                                                                                                |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run seed:all`         | Run core seed scripts (isometrics, plyometrics, hydration, supplements, competition, nutrition, recovery — excludes `seed:wada` and `seed:training`, run those separately) |
-| `npm run seed:isometrics`  | Isometric training exercises                                                                                                                                               |
-| `npm run seed:plyometrics` | Plyometrics research (Verkhoshansky)                                                                                                                                       |
-| `npm run seed:hydration`   | Hydration research studies                                                                                                                                                 |
-| `npm run seed:supplements` | Supplement research data                                                                                                                                                   |
-| `npm run seed:competition` | Competition protocols                                                                                                                                                      |
-| `npm run seed:nutrition`   | Nutrition system data                                                                                                                                                      |
-| `npm run seed:recovery`    | Recovery protocols                                                                                                                                                         |
-| `npm run seed:wada`        | WADA prohibited substances                                                                                                                                                 |
-| `npm run seed:training`    | Training categories                                                                                                                                                        |
+The legacy `npm run seed:*` scripts (isometrics/plyometrics/hydration/supplements/
+competition/nutrition/recovery/wada/training) were **removed 2026-07-13** — they
+inserted into a research-table schema that no longer exists (replaced by the
+canonical `exercises` table + `knowledge_base_entries`), so every one was broken.
+
+Current seeding is version-controlled SQL applied via Supabase MCP (never hand-run
+node scripts):
+
+- **Exercise library** — `database/seed-exercise-library.generated.sql` (emitted by
+  `npm run build:exercise-library` from `database/library/*.mjs`).
+- **Merlin knowledge base** — `database/seed-evidence-knowledge-gaps.sql` and the
+  `database/*-knowledge.sql` imports.
+- **Reference/config rows** — carried in `supabase/migrations/`.
 
 ## Database Utilities
 
