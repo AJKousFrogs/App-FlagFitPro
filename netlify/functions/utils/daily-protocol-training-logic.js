@@ -172,29 +172,42 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
         note: "Activate glutes with full hip extension. Hold 2s at top.",
       },
       ...PLANK_ACTIVATION_BLOCK,
+      // MOBILISE phase — DYNAMIC through-range mobility, not static holds. Static
+      // stretching is retired as a default: it improves stretch TOLERANCE, not
+      // muscle length (Weppler 2010), and offers no recovery/DOMS benefit (Afonso
+      // 2021). A static hold is triage-only, for a genuine documented ROM
+      // restriction on non-sore/non-injured tissue — see tightnessTriageStretch().
       {
-        name: "Hip 90/90 Stretch",
-        keywords: ["90/90", "hip rotation", "hip stretch"],
+        name: "90/90 Hip Switches",
+        keywords: ["90/90", "hip switch", "hip rotation"],
+        sets: 2,
+        reps: 8,
         durationSeconds: 120,
-        note: "60s each side. External/internal rotation. Breathe into the stretch.",
+        note: "Mobilise: rotate hips through internal/external range, 8 switches each side. Move, don't hold.",
       },
       {
-        name: "Pigeon Pose",
-        keywords: ["pigeon", "hip opener", "glute stretch"],
+        name: "Cossack Squats",
+        keywords: ["cossack", "lateral squat", "adductor"],
+        sets: 2,
+        reps: 6,
         durationSeconds: 150,
-        note: "75s each side. Deep hip flexor + glute release. Breathe through tightness.",
+        note: "Mobilise: shift side to side through full hip + adductor range. Control the bottom, don't bounce.",
       },
       {
-        name: "Seated Hamstring Stretch",
-        keywords: ["hamstring stretch", "seated stretch"],
+        name: "Straight-Leg Kicks (Toy Soldiers)",
+        keywords: ["toy soldier", "straight leg", "leg kick", "hamstring mobility"],
+        sets: 2,
+        reps: 10,
         durationSeconds: 90,
-        note: "45s each leg. Hinge from hip, not rounding lumbar. Soft knee.",
+        note: "Mobilise: dynamic hamstring range, kick to a controlled height. Soft knee, tall posture.",
       },
       {
-        name: "Hip Flexor Lunge Stretch",
-        keywords: ["hip flexor", "lunge stretch", "kneeling lunge"],
+        name: "Walking Hip-Flexor Lunges",
+        keywords: ["walking lunge", "hip flexor", "lunge reach"],
+        sets: 2,
+        reps: 8,
         durationSeconds: 90,
-        note: "45s each side. Posterior pelvic tilt to deepen the stretch.",
+        note: "Mobilise: step through into a lunge, reach tall to open the hip flexor, then move on. No static hold.",
       },
       {
         name: "Thoracic Rotations",
@@ -602,6 +615,102 @@ function shouldIncludeNordicCurls(dayOfWeek, trainingFocus) {
   );
 }
 
+// ── TIGHTNESS TRIAGE ─────────────────────────────────────────────────────────
+// Warm-ups default to DYNAMIC mobility (above). Static stretching is retired as a
+// default: it raises stretch TOLERANCE, not muscle length (Weppler 2010), gives no
+// recovery/DOMS benefit (Afonso 2021), and long pre-activity holds transiently cut
+// strength/power. A static hold is TRIAGE ONLY — for a genuine, documented ROM
+// restriction, on tissue that is NOT acutely sore or injured (aggressive stretch on
+// freshly-damaged tissue is contraindicated — McHugh & Tyler 2019). This map + guard
+// are that triage; wire to a real ROM-restriction signal (not soreness — soreness is
+// a contraindication here, not an indication).
+
+// Canonical region → the ONE targeted stretch to prescribe for a real restriction.
+const TIGHTNESS_TRIAGE_STRETCHES = Object.freeze({
+  hip_flexor: {
+    name: "Half-Kneeling Hip-Flexor Stretch",
+    durationSeconds: 30,
+    note: "ROM restriction only: <30 s/side, posterior pelvic tilt, then re-potentiate with a lunge or squat before loading.",
+  },
+  hamstring: {
+    name: "Supine Hamstring Stretch (strap)",
+    durationSeconds: 30,
+    note: "ROM restriction only: <30 s/side, soft knee, hinge from the hip. Not on a strained hamstring.",
+  },
+  calf: {
+    name: "Wall Calf Stretch (bent + straight knee)",
+    durationSeconds: 30,
+    note: "ROM restriction only: <30 s/side each knee angle (gastroc + soleus). Not on an irritated Achilles.",
+  },
+  chest: {
+    name: "Doorway Pec Stretch",
+    durationSeconds: 30,
+    note: "ROM restriction only: <30 s/side, elbow at shoulder height, gentle lean.",
+  },
+  shoulder: {
+    name: "Cross-Body Shoulder Stretch",
+    durationSeconds: 30,
+    note: "ROM restriction only: <30 s/side, no pain into the joint.",
+  },
+});
+
+// Map loose region synonyms onto the canonical triage keys.
+const TIGHTNESS_REGION_ALIASES = Object.freeze({
+  hip: "hip_flexor",
+  hip_flexor: "hip_flexor",
+  hips: "hip_flexor",
+  quad: "hip_flexor",
+  hamstring: "hamstring",
+  hamstrings: "hamstring",
+  posterior_chain: "hamstring",
+  calf: "calf",
+  calves: "calf",
+  achilles: "calf",
+  ankle: "calf",
+  chest: "chest",
+  pec: "chest",
+  pecs: "chest",
+  shoulder: "shoulder",
+  shoulders: "shoulder",
+});
+
+function normalizeTightnessRegion(region) {
+  if (!region || typeof region !== "string") {
+    return null;
+  }
+  const k = region.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  return TIGHTNESS_REGION_ALIASES[k] || (TIGHTNESS_TRIAGE_STRETCHES[k] ? k : null);
+}
+
+/**
+ * Tightness triage: the single targeted static stretch for a region with a GENUINE
+ * ROM restriction — or null to defer to dynamic mobility. Returns null when the
+ * region is acutely sore or under an active injury: static stretching freshly
+ * damaged tissue is contraindicated. This is the ONLY sanctioned place a static
+ * hold enters a session.
+ *
+ * @param {string} region  the tight region (canonical or a known synonym)
+ * @param {object} [ctx]
+ * @param {string[]} [ctx.soreRegions]    acutely sore regions (contraindication)
+ * @param {string[]} [ctx.injuryRegions]  active-injury regions (contraindication)
+ * @returns {object|null} `{ name, durationSeconds, note, triage: true, region }` or null
+ */
+function tightnessTriageStretch(region, { soreRegions = [], injuryRegions = [] } = {}) {
+  const key = normalizeTightnessRegion(region);
+  if (!key) {
+    return null;
+  }
+  const contraindicated = new Set(
+    [...soreRegions, ...injuryRegions]
+      .map(normalizeTightnessRegion)
+      .filter(Boolean),
+  );
+  if (contraindicated.has(key)) {
+    return null; // never statically stretch acutely sore / injured tissue
+  }
+  return { ...TIGHTNESS_TRIAGE_STRETCHES[key], triage: true, region: key };
+}
+
 export {
   WARMUP_TARGET_SECONDS,
   buildWarmupTemplate,
@@ -610,4 +719,5 @@ export {
   getSafeConditioningIntensity,
   selectWarmupVariant,
   shouldIncludeNordicCurls,
+  tightnessTriageStretch,
 };
