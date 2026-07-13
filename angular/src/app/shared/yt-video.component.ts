@@ -32,6 +32,10 @@ const API_LOAD_TIMEOUT_MS = 8000;
  * Resilience (the app must stay usable when YouTube is slow/blocked — 504s on
  * iframe_api / hqdefault.jpg break the embed but must NOT hide the exercise):
  *  - the poster falls back to a bundled local image if its src errors,
+ *  - the poster <img> is `loading="lazy"` so a grid of tiles (e.g. the 65-clip
+ *    Video Library) doesn't fire 65 simultaneous i.ytimg.com requests on mount —
+ *    that burst is exactly what makes YouTube's thumbnail CDN return 504s; only
+ *    on-screen tiles fetch, the rest load as they scroll into view,
  *  - the IFrame-API load is time-boxed; on timeout/failure we drop back to the
  *    poster and surface an "Open on YouTube" link so the video is still reachable.
  * The exercise's how-to TEXT is rendered by the parent regardless, so the athlete
@@ -46,7 +50,13 @@ const API_LOAD_TIMEOUT_MS = 8000;
       <div class="video"><div #host class="yt-host"></div></div>
     } @else {
       <div class="video">
-        <img [src]="posterSrc()" alt="" (error)="onPosterError()" />
+        <img
+          [src]="posterSrc()"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          (error)="onPosterError()"
+        />
         <button
           class="play"
           type="button"
