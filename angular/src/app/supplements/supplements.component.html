@@ -122,16 +122,29 @@
   @if (caffeineTiming(); as ct) {
     <div class="section-h"><h2>Caffeine timing — today</h2></div>
     <div class="card accent">
-      <div class="inline">
-        <iconify-icon icon="mdi:coffee"></iconify-icon>
-        <b
-          >~{{ ct.doseMg }}mg, {{ ct.leadMinutes }} min before
-          {{
-            ct.firstKickoff ? "kickoff (" + ct.firstKickoff + ")" : "your game"
-          }}</b
+      @if (ct.recommend) {
+        <div class="inline">
+          <iconify-icon icon="mdi:coffee"></iconify-icon>
+          <b
+            >~{{ ct.doseLow }}–{{ ct.doseHigh }}mg, {{ ct.leadMinutes }} min before
+            {{
+              ct.firstKickoff
+                ? "kickoff (" + ct.firstKickoff + ")"
+                : "your game"
+            }}</b
+          >
+        </div>
+        <small
+          >3–6 mg/kg pre-game, scaled to your logged bodyweight (from the server
+          caffeine⇄sleep guardrail).</small
         >
-      </div>
-      <small>3mg/kg pre-game dose, scaled to your logged bodyweight.</small>
+      } @else {
+        <div class="inline">
+          <iconify-icon icon="mdi:coffee-off-outline"></iconify-icon>
+          <b>Skip pre-game caffeine today</b>
+        </div>
+        <small>{{ ct.guidance }}</small>
+      }
       @if (ct.topUpWarning) {
         <div class="band danger" style="margin-top: var(--s-2)">
           {{ ct.topUpWarning }}
@@ -230,6 +243,44 @@
       <span class="band neutral">optional</span>
     </div>
   </div>
+
+  <!-- batch-testing / anti-doping safety (strict liability) -->
+  @if (safety(); as sf) {
+    <div class="section-h"><h2>Batch-testing &amp; safety</h2></div>
+    <div class="card warn">
+      <b class="inline"
+        ><iconify-icon icon="mdi:shield-check" class="suppi"></iconify-icon>Only
+        batch-tested supplements</b
+      >
+      <p class="muted" style="font-size: var(--fs-sm); margin-top: var(--s-1)">
+        {{ sf.imperative }}
+      </p>
+      @if (sf.stack.length) {
+        <div style="margin-top: var(--s-2)">
+          @for (item of sf.stack; track item.name) {
+            <div class="lrow">
+              <div>
+                <b>{{ item.name }}</b>
+                <div class="muted" style="font-size: var(--fs-sm)">
+                  {{ item.note }}
+                </div>
+              </div>
+              <span
+                class="band {{
+                  item.risk === 'high'
+                    ? 'danger'
+                    : item.risk === 'moderate'
+                      ? 'warn'
+                      : 'good'
+                }}"
+                >{{ item.risk }} risk</span
+              >
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
 
   <!-- restock CTA → partner store -->
   <a

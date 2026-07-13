@@ -171,15 +171,37 @@ function betaAlanineEducation(
   };
 }
 
-// V2.1 caffeine-timing constants (documented starting points — see
-// SOURCE_OF_TRUTH.md's "calibration constants" convention). No per-athlete
-// bedtime setting exists yet, so a conservative fixed target bedtime is used
-// for the sleep-cutoff guard rather than fabricating a personalized one.
-const CAFFEINE_MG_PER_KG = 3;
-const CAFFEINE_LEAD_MINUTES = 50;
-const ASSUMED_BEDTIME_HOUR = 23;
-const SLEEP_CUTOFF_HOURS = 8;
+// The caffeine⇄sleep DECISION (per-kg dose + whether a dose lands too close to bed)
+// is owned by ONE place: the server guardrail utils/nutrition-protocols.js
+// caffeineSleepGuardrail (GET /api/supplements/caffeine-timing). The client used to
+// carry its own divergent heuristic (fixed 3 mg/kg, 8 h cutoff) — retired in favour
+// of calling the endpoint so the numbers can never drift from Merlin + the engine.
+const CAFFEINE_LEAD_MINUTES = "45–60"; // display only; server uses ~1 h pre-game
+const ASSUMED_BEDTIME_HOUR = 23; // no per-athlete bedtime setting exists yet
 const FALLBACK_BODYWEIGHT_KG = 80;
+
+/** Server caffeine⇄sleep guardrail response (GET /api/supplements/caffeine-timing). */
+interface CaffeineGuard {
+  recommend: boolean;
+  doseMgLow: number;
+  doseMgHigh: number;
+  takeAtHour: number;
+  hoursBeforeBed: number;
+  protectsSleep: boolean;
+  guidance: string;
+  warning: string | null;
+}
+
+/** Server batch-testing / contamination-risk response (GET /api/supplements/safety). */
+interface SupplementSafety {
+  imperative: string;
+  stack: {
+    name: string;
+    risk: "high" | "moderate" | "low";
+    batchTestedRequired: boolean;
+    note: string;
+  }[];
+}
 
 /**
  * Supplements — the dedicated stack/log screen. Ported 1:1 from
@@ -225,38 +247,49 @@ export class SupplementsComponent {
     return FALLBACK_BODYWEIGHT_KG;
   }
 
-  /** Suggested pre-game dose, timing, and a sleep-cutoff guard for a late-day top-up. */
+  readonly leadMinutes = CAFFEINE_LEAD_MINUTES;
+
+  // Server-owned caffeine⇄sleep guardrails: one keyed on the FIRST game (the
+  // pre-game dose) and one on the LAST game (the binding sleep constraint — the
+  // latest caffeine opportunity vs bedtime). Populated by the effect below.
+  private readonly caffeineGuard = signal<CaffeineGuard | null>(null);
+  private readonly caffeineTopUp = signal<CaffeineGuard | null>(null);
+  private lastCaffeineKey = "";
+
+  /** Pre-game dose + timing + the last-game top-up sleep guard, all from the server. */
   readonly caffeineTiming = computed(() => {
     if (!this.isGameDay()) return null;
-    const ev = this.nextEvent();
-    if (!ev) return null;
-    const bodyweight = this.readBodyweight();
-    const doseMg = Math.round(CAFFEINE_MG_PER_KG * bodyweight);
-
+    const guard = this.caffeineGuard();
+    if (!guard) return null; // still loading / no schedule
     const games = this.eventGames.sortedGames();
     const firstKickoff =
       games.length > 0 ? games[0].kickoffTime.slice(0, 5) : null;
-    const lastGame = games.length > 0 ? games[games.length - 1] : null;
-
-    let topUpWarning: string | null = null;
-    if (lastGame) {
-      const [h, m] = lastGame.kickoffTime.split(":").map(Number);
-      const lastEndMinutes = h * 60 + m + lastGame.expectedDurationMinutes;
-      const bedtimeMinutes = ASSUMED_BEDTIME_HOUR * 60;
-      const hoursToBed = (bedtimeMinutes - lastEndMinutes) / 60;
-      if (hoursToBed < SLEEP_CUTOFF_HOURS) {
-        topUpWarning = `Skip a caffeine top-up before the last game — it's within ${SLEEP_CUTOFF_HOURS}h of a typical bedtime. Tonight's sleep matters more than one more edge.`;
-      }
-    }
-
+    const topUp = this.caffeineTopUp() ?? guard;
     return {
-      doseMg,
+      recommend: guard.recommend,
+      doseLow: guard.doseMgLow,
+      doseHigh: guard.doseMgHigh,
+      guidance: guard.guidance,
       leadMinutes: CAFFEINE_LEAD_MINUTES,
       firstKickoff,
-      topUpWarning,
+      topUpWarning: topUp && !topUp.recommend ? topUp.warning : null,
       multiGame: games.length > 1,
     };
   });
+
+  private fetchCaffeineGuard(
+    weightKg: number,
+    gameStartHour: number,
+    target: typeof this.caffeineGuard,
+  ): void {
+    const url =
+      `/api/supplements/caffeine-timing?weightKg=${weightKg}` +
+      `&gameStartHour=${gameStartHour}&bedtimeHour=${ASSUMED_BEDTIME_HOUR}`;
+    this.api.get<CaffeineGuard>(url).subscribe({
+      next: (res) => target.set(res?.data ?? null),
+      error: (e) => this.logger.error("caffeine_timing_failed", e),
+    });
+  }
 
   readonly creatine = signal(true);
   readonly caffeine = signal(true);
@@ -268,6 +301,9 @@ export class SupplementsComponent {
   // --- behaviour insights (lapse nudges + usage-driven coaching) ---
   readonly insights = signal<SuppInsight[]>([]);
   readonly nudges = signal<SuppNudge[]>([]);
+
+  // --- batch-testing / contamination-risk safety (GET /api/supplements/safety) ---
+  readonly safety = signal<SupplementSafety | null>(null);
 
   /** Usage- and phase-aware coaching cards (creatine + beta-alanine). */
   readonly education = computed<EducationCard[]>(() => {
@@ -314,6 +350,43 @@ export class SupplementsComponent {
       const ev = this.nextEvent();
       if (ev?.id) this.eventGames.load(ev.id);
     });
+
+    // Single-source caffeine⇄sleep: on a game day, once the per-game kickoffs are
+    // known, ask the SERVER guardrail for the dose (first game) and the top-up
+    // sleep decision (last game). Idempotent — only re-fetches when the inputs move.
+    effect(() => {
+      if (!this.isGameDay()) {
+        this.caffeineGuard.set(null);
+        this.caffeineTopUp.set(null);
+        return;
+      }
+      const games = this.eventGames.sortedGames();
+      if (games.length === 0) return;
+      const hourOf = (t: string): number => {
+        const [h, m] = t.split(":").map(Number);
+        return h + (m || 0) / 60;
+      };
+      const weightKg = this.readBodyweight();
+      const firstHour = hourOf(games[0].kickoffTime);
+      const lastHour = hourOf(games[games.length - 1].kickoffTime);
+      const key = `${weightKg}|${firstHour}|${lastHour}`;
+      if (key === this.lastCaffeineKey) return;
+      this.lastCaffeineKey = key;
+      this.fetchCaffeineGuard(weightKg, firstHour, this.caffeineGuard);
+      if (lastHour !== firstHour) {
+        this.fetchCaffeineGuard(weightKg, lastHour, this.caffeineTopUp);
+      } else {
+        this.caffeineTopUp.set(null);
+      }
+    });
+
+    // Batch-testing / contamination-risk for the athlete's stack (anti-doping).
+    this.api
+      .get<SupplementSafety>("/api/supplements/safety")
+      .subscribe({
+        next: (res) => this.safety.set(res?.data ?? null),
+        error: (e) => this.logger.error("supplement_safety_failed", e),
+      });
 
     this.api.get<{ logs?: SuppLog[] }>("/api/supplements/recent").subscribe({
       next: (res) => {
