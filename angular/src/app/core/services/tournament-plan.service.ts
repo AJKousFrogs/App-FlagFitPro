@@ -4,6 +4,7 @@ import { EventGamesService } from "./event-games.service";
 import { PeriodizationService } from "./periodization.service";
 import { SupabaseService } from "./supabase.service";
 import { TOURNAMENT_DAY } from "../config/position-volume.config";
+import { FALLBACK_BODYWEIGHT_KG } from "../config/athlete-defaults";
 import {
   EventGame,
   GameGap,
@@ -283,8 +284,6 @@ export function buildTournamentDayPlan(
 
   return { games: sorted, gaps, blocks, heatAdjusted: hotDay };
 }
-
-const FALLBACK_BODYWEIGHT_KG = 80;
 
 @Injectable({ providedIn: "root" })
 export class TournamentPlanService {

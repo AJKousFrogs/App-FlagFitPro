@@ -31,7 +31,7 @@ import { ADULT_FLAG_COMPETITIVE_V1 } from "../config/evidence-presets";
 // Same inputs → same output. Tested without DI. Server-mirror friendly.
 // =============================================================================
 
-const FALLBACK_BODYWEIGHT_KG = 80;
+import { FALLBACK_BODYWEIGHT_KG } from "../config/athlete-defaults";
 const FALLBACK_READINESS = 70;
 // Single-sourced from the adult evidence preset's ACWR thresholds (itself CI
 // drift-guarded against the backend's ACWR_RISK_ZONES, tests/unit/

@@ -561,8 +561,10 @@ var RETURN_TO_PLAY_V1 = {
   ]
 };
 
-// angular/src/app/core/services/periodization-engine.ts
+// angular/src/app/core/config/athlete-defaults.ts
 var FALLBACK_BODYWEIGHT_KG = 80;
+
+// angular/src/app/core/services/periodization-engine.ts
 var FALLBACK_READINESS = 70;
 var ACWR_UNDER = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotLow;
 var ACWR_ELEVATED = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotHigh;
