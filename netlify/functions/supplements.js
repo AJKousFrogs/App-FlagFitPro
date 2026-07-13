@@ -9,6 +9,11 @@ import {
   parseBoundedInt,
 } from "./utils/input-validator.js";
 import { createLogger } from "./utils/structured-logger.js";
+import {
+  supplementContaminationRisk,
+  caffeineSleepGuardrail,
+  BATCH_TESTED_IMPERATIVE,
+} from "./utils/nutrition-protocols.js";
 
 const logger = createLogger({ service: "netlify.supplements" });
 
@@ -540,6 +545,48 @@ const handler = async (event, context) => {
         if (path.includes("/insights")) {
           const result = await getSupplementInsights(userId);
           return createSuccessResponse(result);
+        }
+
+        // GET /api/supplements/safety — strict-liability batch-testing imperative +
+        // per-supplement contamination-risk tier (for a ?name= or the whole stack).
+        if (path.includes("/safety")) {
+          const nameQuery = event.queryStringParameters?.name;
+          if (nameQuery) {
+            return createSuccessResponse({
+              imperative: BATCH_TESTED_IMPERATIVE,
+              name: nameQuery,
+              ...supplementContaminationRisk(nameQuery),
+            });
+          }
+          const stack = await getUserSupplements(userId);
+          const list = Array.isArray(stack) ? stack : stack?.supplements || [];
+          return createSuccessResponse({
+            imperative: BATCH_TESTED_IMPERATIVE,
+            stack: list.map((s) => {
+              const name = s.name || s.supplement_name || "";
+              return { name, ...supplementContaminationRisk(name) };
+            }),
+          });
+        }
+
+        // GET /api/supplements/caffeine-timing — caffeine-vs-sleep guardrail.
+        // ?weightKg=&gameStartHour=&bedtimeHour= (per-kg dose; sleep protected first).
+        if (path.includes("/caffeine-timing")) {
+          const q = event.queryStringParameters || {};
+          const guard = caffeineSleepGuardrail({
+            weightKg: Number(q.weightKg),
+            gameStartHour: Number(q.gameStartHour),
+            bedtimeHour:
+              q.bedtimeHour !== undefined ? Number(q.bedtimeHour) : undefined,
+          });
+          if (!guard) {
+            return createErrorResponse(
+              "caffeine-timing requires weightKg (30-200) and gameStartHour (0-24)",
+              422,
+              "validation_error",
+            );
+          }
+          return createSuccessResponse(guard);
         }
 
         if (path.includes("/recent") || path.endsWith("/recent")) {

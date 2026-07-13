@@ -18,6 +18,7 @@ import {
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
+import { betweenGamesRefuel } from "./utils/nutrition-protocols.js";
 
 // =============================================================================
 // NUTRITION CALCULATION CONSTANTS
@@ -718,6 +719,38 @@ async function handleRequest(
     if (event.httpMethod === "POST" && path === "calculate") {
       const profile = calculateNutritionProfile(body);
       return createSuccessResponse(profile);
+    }
+
+    // Between-games refuel calculator (tournament recovery windows).
+    // ?hours=<recovery window> ; body weight from the nutrition profile / users
+    // row (override with ?weightKg=). Per-kg targets, never a flat number.
+    if (event.httpMethod === "GET" && path === "refuel") {
+      const params = event.queryStringParameters || {};
+      let weightKg = Number(params.weightKg);
+      if (!Number.isFinite(weightKg) || weightKg <= 0) {
+        const profile = await getAthleteNutritionProfile(userId);
+        weightKg = profile?.weight_kg ?? null;
+        if (!weightKg) {
+          const { data: u } = await supabaseAdmin
+            .from("users")
+            .select("weight_kg")
+            .eq("id", userId)
+            .single();
+          weightKg = u?.weight_kg ?? null;
+        }
+      }
+      const refuel = betweenGamesRefuel({
+        weightKg,
+        hoursUntilNextGame: Number(params.hours),
+      });
+      if (!refuel) {
+        return createErrorResponse(
+          "refuel requires a valid body weight (set your nutrition profile or pass weightKg) and hours between 0 and 48",
+          422,
+          "validation_error",
+        );
+      }
+      return createSuccessResponse(refuel);
     }
 
     // Get athlete's saved nutrition profile
