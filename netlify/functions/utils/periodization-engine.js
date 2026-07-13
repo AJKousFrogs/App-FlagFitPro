@@ -1586,6 +1586,25 @@ var STORM_CODE_MAX = 99;
 var HEAT_LOAD_FACTOR_REDUCE = 1.1;
 var HEAT_LOAD_FACTOR_AVOID = 1.2;
 var HEAT_VOLUME_CUT = 0.8;
+function approxWBGT(tempC, humidityPct) {
+  if (typeof tempC !== "number" || typeof humidityPct !== "number" || humidityPct < 0 || humidityPct > 100) {
+    return null;
+  }
+  const e = humidityPct / 100 * 6.105 * Math.exp(17.27 * tempC / (237.7 + tempC));
+  return 0.567 * tempC + 0.393 * e + 3.94;
+}
+var WBGT_CAUTION_C = 27.8;
+var WBGT_REDUCE_C = 30;
+var WBGT_RELOCATE_C = 32.2;
+var WBGT_STOP_C = 32.2;
+var HEAT_INTENSITY_WEIGHT = {
+  sprint: 1,
+  mixed: 0.9,
+  "taper-prime": 0.6,
+  technical: 0.6
+};
+var HEAT_DURATION_REF_MIN = 45;
+var HEAT_MAX_VOLUME_CUT = 0.5;
 var ACCLIMATIZATION_WINDOW_DAYS = 14;
 var ACCLIMATIZATION_MAX_SHIFT_C = 4;
 function acclimatizationShiftC(acclimatizationDay) {
@@ -1595,6 +1614,19 @@ function acclimatizationShiftC(acclimatizationDay) {
   return ACCLIMATIZATION_MAX_SHIFT_C * (1 - acclimatizationDay / ACCLIMATIZATION_WINDOW_DAYS);
 }
 var OUTDOOR_INTENSE = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime"]);
+var HEAT_GUARDED = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime", "technical"]);
+function wbgtVolumeKeep(wbgt, reduceThreshold, relocateThreshold, intent, targetMinutes) {
+  const bandSpan = Math.max(0.1, relocateThreshold - reduceThreshold);
+  const bandFrac = Math.min(1, Math.max(0, (wbgt - reduceThreshold) / bandSpan));
+  const intensity = HEAT_INTENSITY_WEIGHT[intent] ?? 0.6;
+  const durationFactor = Math.min(
+    2,
+    Math.max(0.5, targetMinutes / HEAT_DURATION_REF_MIN)
+  );
+  const strain = bandFrac * intensity * durationFactor;
+  const cut = Math.min(HEAT_MAX_VOLUME_CUT, Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5));
+  return 1 - cut;
+}
 function substituteForWet(intent) {
   return intent === "taper-prime" ? "mobility" : "strength";
 }
@@ -1614,9 +1646,10 @@ function planWeek(dayInputs, teamPracticeFlags, phases7, todayReadiness, todayAc
   );
 }
 function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null) {
-  if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
+  if (!weather || !HEAT_GUARDED.has(rx.intent)) {
     return rx;
   }
+  const nonHeatEligible = OUTDOOR_INTENSE.has(rx.intent);
   const apparent = typeof weather.apparentC === "number" ? weather.apparentC : typeof weather.tempC === "number" ? weather.tempC : null;
   const code = weather.weatherCode;
   const storm = code !== null && code >= STORM_CODE_MIN && code <= STORM_CODE_MAX;
@@ -1624,45 +1657,59 @@ function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null
   const wind = weather.windKmh;
   const shift = acclimatizationShiftC(acclimatizationDay);
   const acclimatizing = shift > 0;
-  const heatStopEff = HEAT_STOP_C - shift;
-  const heatAvoidEff = HEAT_AVOID_C - shift;
-  const heatReduceEff = HEAT_REDUCE_C - shift;
-  const heatCautionEff = HEAT_CAUTION_C - shift;
+  const acclimNote = acclimatizing ? ` Still acclimatizing (day ${acclimatizationDay} at this climate) \u2014 extra caution applied.` : "";
+  const wbgt = approxWBGT(weather.tempC, weather.humidityPct);
+  const usingWbgt = wbgt !== null;
+  const heatMetric = usingWbgt ? wbgt : apparent;
+  const heatStopEff = (usingWbgt ? WBGT_STOP_C : HEAT_STOP_C) - shift;
+  const heatAvoidEff = (usingWbgt ? WBGT_RELOCATE_C : HEAT_AVOID_C) - shift;
+  const heatReduceEff = (usingWbgt ? WBGT_REDUCE_C : HEAT_REDUCE_C) - shift;
+  const heatCautionEff = (usingWbgt ? WBGT_CAUTION_C : HEAT_CAUTION_C) - shift;
   const coldAvoidEff = COLD_AVOID_C + shift;
   const coldCautionEff = COLD_CAUTION_C + shift;
-  const acclimNote = acclimatizing ? ` Still acclimatizing (day ${acclimatizationDay} at this climate) \u2014 extra caution applied.` : "";
-  const original = rx.intent;
-  const heatLoadFactor = apparent === null ? 1 : apparent >= heatAvoidEff ? HEAT_LOAD_FACTOR_AVOID : apparent >= heatReduceEff ? HEAT_LOAD_FACTOR_REDUCE : 1;
   const t = (n) => Math.round(n);
+  const cite = heatMetric === null ? "" : usingWbgt ? `${t(heatMetric)}\xB0C WBGT` : `${t(heatMetric)}\xB0C feels-like`;
+  const citeBare = heatMetric === null ? "" : `${t(heatMetric)}\xB0C`;
+  const original = rx.intent;
+  const heatLoadFactor = heatMetric === null ? 1 : heatMetric >= heatAvoidEff ? HEAT_LOAD_FACTOR_AVOID : heatMetric >= heatReduceEff ? HEAT_LOAD_FACTOR_REDUCE : 1;
   let action = "none";
   let adjusted = original;
   let reason = "";
+  let heatKeep = 1;
   if (storm) {
     action = "stop";
     adjusted = "recovery";
     reason = "Thunderstorm \u2014 lightning risk. Outdoor training stopped; move indoors or rest.";
-  } else if (apparent !== null && apparent >= heatStopEff) {
+  } else if (heatMetric !== null && heatMetric >= heatStopEff) {
     action = "stop";
     adjusted = "recovery";
-    reason = `${t(apparent)}\xB0C feels-like \u2014 too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatAvoidEff) {
+    reason = `${cite} \u2014 too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
+  } else if (heatMetric !== null && heatMetric >= heatAvoidEff) {
     action = "relocate";
     adjusted = "mobility";
-    reason = `${t(apparent)}\xB0C feels-like \u2014 no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
-  } else if (wet) {
+    reason = `${cite} \u2014 no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
+  } else if (wet && nonHeatEligible) {
     action = "substitute";
     adjusted = substituteForWet(original);
     reason = "Wet grass \u2014 slip/ACL risk on sprints & cuts. Moved indoors to a tempo + strength session.";
-  } else if (apparent !== null && apparent <= coldAvoidEff) {
+  } else if (nonHeatEligible && apparent !== null && apparent <= coldAvoidEff) {
     action = "substitute";
     adjusted = "mobility";
     reason = `${t(apparent)}\xB0C feels-like \u2014 no outdoor max-effort in the cold. Indoor low-intensity mobility instead.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatReduceEff) {
+  } else if (heatMetric !== null && heatMetric >= heatReduceEff) {
     action = "scale";
-    reason = `${t(apparent)}\xB0C feels-like \u2014 cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatCautionEff) {
-    reason = `${t(apparent)}\xB0C \u2014 warm. Add hydration and breaks; session unchanged.${acclimNote}`;
-  } else if (apparent !== null && apparent <= coldCautionEff) {
+    heatKeep = usingWbgt ? wbgtVolumeKeep(
+      heatMetric,
+      heatReduceEff,
+      heatAvoidEff,
+      original,
+      rx.targetMinutes
+    ) : HEAT_VOLUME_CUT;
+    const cutPct = t((1 - heatKeep) * 100);
+    reason = `${cite} \u2014 cut intense volume ~${cutPct}%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
+  } else if (heatMetric !== null && heatMetric >= heatCautionEff) {
+    reason = `${citeBare} \u2014 warm. Add hydration and breaks; session unchanged.${acclimNote}`;
+  } else if (nonHeatEligible && apparent !== null && apparent <= coldCautionEff) {
     reason = `${t(apparent)}\xB0C \u2014 cold muscles. Extend your warm-up; ease into max-velocity work.${acclimNote}`;
   } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
     reason = `${t(wind)} km/h wind \u2014 throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
@@ -1699,8 +1746,8 @@ function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null
   if (action === "scale") {
     return {
       ...rx,
-      targetMinutes: t(rx.targetMinutes * HEAT_VOLUME_CUT),
-      sprintReps: t(rx.sprintReps * HEAT_VOLUME_CUT),
+      targetMinutes: t(rx.targetMinutes * heatKeep),
+      sprintReps: t(rx.sprintReps * heatKeep),
       reasoning: `${reason} ${rx.reasoning}`,
       weatherAdjustment: {
         applied: true,
@@ -1977,7 +2024,8 @@ var __periodization__ = {
   modulateIntentForLoad,
   resolveTaperTargets,
   taperLevelFor,
-  EMBEDDED_TAPER_RULES
+  EMBEDDED_TAPER_RULES,
+  approxWBGT
 };
 export {
   EMBEDDED_TAPER_RULES,
@@ -1985,6 +2033,7 @@ export {
   __periodization__,
   addSecondSessions,
   applyWeatherGuard,
+  approxWBGT,
   enforceWeeklyRestMinimum,
   isHighCnsSessionType,
   macroPhaseFor,

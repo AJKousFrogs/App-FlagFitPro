@@ -111,6 +111,7 @@ async function resolveWeather(userId) {
     return {
       tempC: data.temp ?? null,
       apparentC: data.apparentC ?? data.temp ?? null,
+      humidityPct: data.humidity ?? null,
       condition: data.condition ?? null,
       weatherCode: data.weatherCode ?? null,
       precipMm: data.precipMm ?? null,

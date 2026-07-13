@@ -1714,6 +1714,62 @@ const HEAT_LOAD_FACTOR_REDUCE = 1.1;
 const HEAT_LOAD_FACTOR_AVOID = 1.2;
 const HEAT_VOLUME_CUT = 0.8;
 
+// -----------------------------------------------------------------------------
+// WBGT (Wet-Bulb Globe Temperature) — Phase 5. The sports/military standard for
+// heat-illness risk. Raw air/apparent temp misclassifies heat strain because it
+// under-weights humidity; WBGT weights it heavily. We approximate a SHADE WBGT
+// from air temp + relative humidity (Australian BoM simplified formula, widely
+// cited when a globe thermometer isn't available):
+//   e    = (RH/100) · 6.105 · exp(17.27·Ta / (237.7 + Ta))   [vapour pressure, hPa]
+//   WBGT ≈ 0.567·Ta + 0.393·e + 3.94
+// It excludes solar/globe load, so it is a CONSERVATIVE (shade) estimate — true
+// on-field WBGT in direct sun is higher; the thresholds below are set for that.
+// Requires humidity: null in → null out → the guard falls back to apparent temp
+// and says so (no fabricated humidity — audit ground rule).
+export function approxWBGT(
+  tempC: number | null,
+  humidityPct: number | null | undefined,
+): number | null {
+  if (
+    typeof tempC !== "number" ||
+    typeof humidityPct !== "number" ||
+    humidityPct < 0 ||
+    humidityPct > 100
+  ) {
+    return null;
+  }
+  const e =
+    (humidityPct / 100) *
+    6.105 *
+    Math.exp((17.27 * tempC) / (237.7 + tempC));
+  return 0.567 * tempC + 0.393 * e + 3.94;
+}
+
+// WBGT activity thresholds (°C WBGT) — NATA/ACSM continuous-activity categories
+// for unhelmeted athletes (flag football has no pads/helmet, so the general
+// thresholds apply, not the tighter padded-football ones):
+//   < 27.8  normal   → session unchanged (hydration nudge as it climbs)
+//   27.8-30 high     → SCALE volume (cut, more breaks); deeper for long/hard work
+//   30-32.2 very high→ RELOCATE indoors (no intense outdoor work)
+//   ≥ 32.2  extreme  → STOP outdoor training (indoor recovery / rest)
+const WBGT_CAUTION_C = 27.8;
+const WBGT_REDUCE_C = 30.0;
+const WBGT_RELOCATE_C = 32.2;
+const WBGT_STOP_C = 32.2;
+
+// Metabolic intensity weight per FIELD intent — scales heat strain by how hard
+// the work is (sprint/mixed generate more metabolic heat than a skills session).
+const HEAT_INTENSITY_WEIGHT: Partial<Record<PrescriptionIntent, number>> = {
+  sprint: 1.0,
+  mixed: 0.9,
+  "taper-prime": 0.6,
+  technical: 0.6,
+};
+// Reference session minutes: strain scales with duration relative to this.
+const HEAT_DURATION_REF_MIN = 45;
+// Deepest fractional volume cut the WBGT SCALE band may apply (long, hard, hot).
+const HEAT_MAX_VOLUME_CUT = 0.5;
+
 // V2.4 — heat/cold ACCLIMATIZATION. The same 32°C affects a Ljubljana athlete
 // landing in American Samoa yesterday very differently than a Samoan native —
 // unacclimatized athletes carry materially higher heat/cold-illness risk in
@@ -1743,10 +1799,45 @@ function acclimatizationShiftC(acclimatizationDay: number | null): number {
   );
 }
 
-// Intense + outdoor intents → subject to the guard. Strength (indoor), mobility,
-// technical, recovery, rest, and competition (organiser's call) are agnostic.
+// Intense + outdoor intents → subject to the storm/wet/wind/cold guards.
+// Strength (indoor), mobility, recovery, rest, and competition (organiser's
+// call) are agnostic.
 const OUTDOOR_INTENSE: ReadonlySet<PrescriptionIntent> =
   new Set<PrescriptionIntent>(["sprint", "mixed", "taper-prime"]);
+
+// HEAT-guarded field intents (WBGT path, Phase 5) — adds `technical`, fixing the
+// D13 inversion: a long outdoor skills session accumulates real heat load and
+// must be guarded too, not just the short intense sprints. (Wet-grass
+// substitution still keys on OUTDOOR_INTENSE only — a skills session doesn't
+// slip like a sprint/cut does.)
+const HEAT_GUARDED: ReadonlySet<PrescriptionIntent> =
+  new Set<PrescriptionIntent>(["sprint", "mixed", "taper-prime", "technical"]);
+
+/**
+ * Fractional volume to KEEP in the WBGT "scale" band, scaled by heat strain =
+ * how far into the band × how long × how hard. A short skills session at the
+ * bottom of the band keeps most of its volume; a long sprint session near the
+ * top loses up to HEAT_MAX_VOLUME_CUT. Returns 1 (no cut) when not applicable.
+ */
+function wbgtVolumeKeep(
+  wbgt: number,
+  reduceThreshold: number,
+  relocateThreshold: number,
+  intent: PrescriptionIntent,
+  targetMinutes: number,
+): number {
+  const bandSpan = Math.max(0.1, relocateThreshold - reduceThreshold);
+  const bandFrac = Math.min(1, Math.max(0, (wbgt - reduceThreshold) / bandSpan));
+  const intensity = HEAT_INTENSITY_WEIGHT[intent] ?? 0.6;
+  const durationFactor = Math.min(
+    2,
+    Math.max(0.5, targetMinutes / HEAT_DURATION_REF_MIN),
+  );
+  // strain in [0,1]-ish → cut fraction, capped at HEAT_MAX_VOLUME_CUT.
+  const strain = bandFrac * intensity * durationFactor;
+  const cut = Math.min(HEAT_MAX_VOLUME_CUT, Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5));
+  return 1 - cut;
+}
 
 function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
   // Wet grass kills sprints/cuts; move to an indoor session.
@@ -1804,9 +1895,15 @@ export function applyWeatherGuard(
   coachOverride: boolean,
   acclimatizationDay: number | null = null,
 ): DailyPrescription {
-  if (!weather || !OUTDOOR_INTENSE.has(rx.intent)) {
+  // Heat-guarded field intents (incl. `technical` — the D13 inversion fix); a
+  // superset of OUTDOOR_INTENSE, so this gate also covers the storm/wet/cold/wind
+  // branches below.
+  if (!weather || !HEAT_GUARDED.has(rx.intent)) {
     return rx;
   }
+  // Wet-grass slip + cold max-effort substitution still key on the intense set
+  // only — a skills session doesn't slip on wet grass or over-stress in cold.
+  const nonHeatEligible = OUTDOOR_INTENSE.has(rx.intent);
 
   const apparent =
     typeof weather.apparentC === "number"
@@ -1827,59 +1924,86 @@ export function applyWeatherGuard(
   // acclimatized/no travel declared — byte-identical to V1 behaviour then).
   const shift = acclimatizationShiftC(acclimatizationDay);
   const acclimatizing = shift > 0;
-  const heatStopEff = HEAT_STOP_C - shift;
-  const heatAvoidEff = HEAT_AVOID_C - shift;
-  const heatReduceEff = HEAT_REDUCE_C - shift;
-  const heatCautionEff = HEAT_CAUTION_C - shift;
-  const coldAvoidEff = COLD_AVOID_C + shift;
-  const coldCautionEff = COLD_CAUTION_C + shift;
   const acclimNote = acclimatizing
     ? ` Still acclimatizing (day ${acclimatizationDay} at this climate) — extra caution applied.`
     : "";
 
+  // Heat metric: WBGT when humidity is available (Phase 5 — the heat-illness
+  // standard, humidity-weighted), else the legacy apparent-temp path
+  // (byte-identical). The thresholds + citation label switch with the metric so
+  // the athlete sees "29°C WBGT" vs "33°C feels-like" honestly.
+  const wbgt = approxWBGT(weather.tempC, weather.humidityPct);
+  const usingWbgt = wbgt !== null;
+  const heatMetric = usingWbgt ? wbgt : apparent;
+  const heatStopEff = (usingWbgt ? WBGT_STOP_C : HEAT_STOP_C) - shift;
+  const heatAvoidEff = (usingWbgt ? WBGT_RELOCATE_C : HEAT_AVOID_C) - shift;
+  const heatReduceEff = (usingWbgt ? WBGT_REDUCE_C : HEAT_REDUCE_C) - shift;
+  const heatCautionEff = (usingWbgt ? WBGT_CAUTION_C : HEAT_CAUTION_C) - shift;
+  const coldAvoidEff = COLD_AVOID_C + shift;
+  const coldCautionEff = COLD_CAUTION_C + shift;
+
+  const t = (n: number) => Math.round(n);
+  const cite =
+    heatMetric === null
+      ? ""
+      : usingWbgt
+        ? `${t(heatMetric)}°C WBGT`
+        : `${t(heatMetric)}°C feels-like`;
+  const citeBare = heatMetric === null ? "" : `${t(heatMetric)}°C`;
+
   const original = rx.intent;
   const heatLoadFactor =
-    apparent === null
+    heatMetric === null
       ? 1
-      : apparent >= heatAvoidEff
+      : heatMetric >= heatAvoidEff
         ? HEAT_LOAD_FACTOR_AVOID
-        : apparent >= heatReduceEff
+        : heatMetric >= heatReduceEff
           ? HEAT_LOAD_FACTOR_REDUCE
           : 1;
-  const t = (n: number) => Math.round(n);
 
   let action: WeatherAdjustment["action"] = "none";
   let adjusted = original;
   let reason = "";
+  let heatKeep = 1; // fraction of volume KEPT in the scale band
 
   if (storm) {
     action = "stop";
     adjusted = "recovery";
     reason =
       "Thunderstorm — lightning risk. Outdoor training stopped; move indoors or rest.";
-  } else if (apparent !== null && apparent >= heatStopEff) {
+  } else if (heatMetric !== null && heatMetric >= heatStopEff) {
     action = "stop";
     adjusted = "recovery";
-    reason = `${t(apparent)}°C feels-like — too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatAvoidEff) {
+    reason = `${cite} — too hot to train outdoors. Indoor recovery or rest today.${acclimNote}`;
+  } else if (heatMetric !== null && heatMetric >= heatAvoidEff) {
     action = "relocate";
     adjusted = "mobility";
-    reason = `${t(apparent)}°C feels-like — no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
-  } else if (wet) {
+    reason = `${cite} — no intense outdoor work. Moved to indoor mobility & skills; hydrate hard.${acclimNote}`;
+  } else if (wet && nonHeatEligible) {
     action = "substitute";
     adjusted = substituteForWet(original);
     reason =
       "Wet grass — slip/ACL risk on sprints & cuts. Moved indoors to a tempo + strength session.";
-  } else if (apparent !== null && apparent <= coldAvoidEff) {
+  } else if (nonHeatEligible && apparent !== null && apparent <= coldAvoidEff) {
     action = "substitute";
     adjusted = "mobility";
     reason = `${t(apparent)}°C feels-like — no outdoor max-effort in the cold. Indoor low-intensity mobility instead.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatReduceEff) {
+  } else if (heatMetric !== null && heatMetric >= heatReduceEff) {
     action = "scale";
-    reason = `${t(apparent)}°C feels-like — cut intense volume ~20%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
-  } else if (apparent !== null && apparent >= heatCautionEff) {
-    reason = `${t(apparent)}°C — warm. Add hydration and breaks; session unchanged.${acclimNote}`;
-  } else if (apparent !== null && apparent <= coldCautionEff) {
+    heatKeep = usingWbgt
+      ? wbgtVolumeKeep(
+          heatMetric,
+          heatReduceEff,
+          heatAvoidEff,
+          original,
+          rx.targetMinutes,
+        )
+      : HEAT_VOLUME_CUT;
+    const cutPct = t((1 - heatKeep) * 100);
+    reason = `${cite} — cut intense volume ~${cutPct}%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
+  } else if (heatMetric !== null && heatMetric >= heatCautionEff) {
+    reason = `${citeBare} — warm. Add hydration and breaks; session unchanged.${acclimNote}`;
+  } else if (nonHeatEligible && apparent !== null && apparent <= coldCautionEff) {
     reason = `${t(apparent)}°C — cold muscles. Extend your warm-up; ease into max-velocity work.${acclimNote}`;
   } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
     reason = `${t(wind)} km/h wind — throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
@@ -1920,11 +2044,12 @@ export function applyWeatherGuard(
   }
 
   if (action === "scale") {
-    // Same intent, reduced volume; heat load-scaling reflects true strain at port.
+    // Same intent, reduced volume; the cut is strain-scaled (WBGT band × duration
+    // × intensity) on the WBGT path, or the flat legacy factor without humidity.
     return {
       ...rx,
-      targetMinutes: t(rx.targetMinutes * HEAT_VOLUME_CUT),
-      sprintReps: t(rx.sprintReps * HEAT_VOLUME_CUT),
+      targetMinutes: t(rx.targetMinutes * heatKeep),
+      sprintReps: t(rx.sprintReps * heatKeep),
       reasoning: `${reason} ${rx.reasoning}`,
       weatherAdjustment: {
         applied: true,
@@ -2306,4 +2431,5 @@ export const __periodization__ = {
   resolveTaperTargets,
   taperLevelFor,
   EMBEDDED_TAPER_RULES,
+  approxWBGT,
 };

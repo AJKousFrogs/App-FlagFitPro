@@ -116,6 +116,13 @@ export interface WeatherInput {
   tempC: number | null;
   /** Feels-like / apparent temperature — the value the guard prefers. */
   apparentC: number | null;
+  /**
+   * Relative humidity %. Feeds the WBGT-approx heat metric (Phase 5). Null →
+   * WBGT can't be computed, so the guard falls back to the apparent-temp path
+   * and says so (no fabricated humidity). Open-Meteo always returns this, so in
+   * practice it's present; the fallback is only for degraded/missing data.
+   */
+  humidityPct?: number | null;
   condition: string | null;
   /** Open-Meteo WMO weather code (95–99 = thunderstorm, ≥61 = rain). */
   weatherCode: number | null;
