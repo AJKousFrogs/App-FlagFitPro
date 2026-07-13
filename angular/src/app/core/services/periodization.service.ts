@@ -25,6 +25,7 @@ import {
 import { CompetitionPhase } from "../models/schedule.models";
 import {
   DailyPrescription,
+  PeriodizationInputs,
   RecentSession,
   SeasonWindow,
   WeatherInput,
@@ -38,13 +39,7 @@ import { InjuryService } from "./injury.service";
 import { EventTravelService } from "./event-travel.service";
 import { RemoteTelemetryService } from "./remote-telemetry.service";
 import { firstValueFrom } from "rxjs";
-import {
-  prescribeFor,
-  macroPhaseFor,
-  planWeekIntents,
-  enforceWeeklyRestMinimum,
-  addSecondSessions,
-} from "./periodization-engine";
+import { macroPhaseFor, planWeek } from "./periodization-engine";
 import { isTeamPractice as isTeamPracticeShared } from "./periodization-input-helpers";
 
 /**
@@ -179,16 +174,12 @@ export class PeriodizationService {
         },
       });
 
-    // Server prescription fetch + comparison (backend-authoritative migration,
-    // steps 2+3 — see docs/SOURCE_OF_TRUTH.md §5a). Watches `localPrescription`,
-    // NOT `today` — `today` itself depends on `serverPrescription`, which this
-    // effect sets, so reading `today()` here would be a self-triggering cycle.
-    // Logs match/mismatch to `frontend_logs` for ongoing verification (best-effort,
-    // read-only, never blocks) AND — this is the actual switch — sets
-    // `serverPrescription` on a successful response so `today` prefers it. Any
-    // failure/timeout leaves `serverPrescription` unset, so `today` keeps
-    // rendering `localPrescription`: the exact pre-migration behavior, not a new
-    // failure mode.
+    // Runtime drift canary: fetch the server's day-0 prescription and log whether
+    // it matches the client's. Both sides now run the SAME shared engine planWeek,
+    // so this should always match; a mismatch means the server's live INPUT
+    // ASSEMBLY diverged from the client's for this athlete/date. Read-only,
+    // best-effort, never blocks, and NEVER changes what `today` renders (`today` is
+    // always the client planWeek day 0 — the single source of truth).
     effect(() => {
       const local = this.localPrescription();
       if (!local || this.lastShadowComparedDate === local.date) {
@@ -200,14 +191,12 @@ export class PeriodizationService {
   }
 
   /**
-   * Fire-and-forget: fetch the server's prescription for the same date, log
-   * whether the CORE decision fields (intent/targets/volume) agree against the
-   * local computation, and — on success — make it the one `today` renders (by
-   * setting `serverPrescription`; see `today`'s date-match guard). On any
-   * failure/timeout this simply returns without setting anything — `today` keeps
-   * rendering `localPrescription`, identical to pre-migration behavior. Never
-   * throws, never blocks, never alters `localComputed` or anything rendered
-   * from it directly.
+   * Fire-and-forget drift canary: fetch the server's prescription for the same
+   * date and log whether the CORE decision fields (intent/targets/volume) agree
+   * with the client's. It NEVER changes what `today` renders — `today` is always
+   * the client's shared-`planWeek` day 0 (single source). A mismatch flags that
+   * the server's input assembly diverged from the client's (both run the same
+   * engine now). Never throws, never blocks.
    */
   private async fetchServerPrescription(
     localComputed: DailyPrescription,
@@ -260,11 +249,10 @@ export class PeriodizationService {
         this.remoteTelemetry.warn("periodization_server_mismatch", context);
         return;
       }
+      // Verified match — logged for the runtime drift canary only. `today` always
+      // renders the client's planWeek day 0 (single source); this just detects if
+      // the server's input assembly ever diverges from the client's.
       this.remoteTelemetry.info("periodization_server_match", context);
-      // Only reached on a verified-matching response: switching the SOURCE the
-      // value renders from, not the value itself (they're identical) — zero
-      // behavior risk for this athlete/date.
-      this.serverPrescription.set(server);
     } catch {
       // Fetch failed → serverPrescription stays unset; `today` renders
       // `localPrescription`. Fail-safe, not a new failure mode.
@@ -350,30 +338,20 @@ export class PeriodizationService {
   }
 
   /**
-   * Server-computed prescription for today, once the periodization-prescription
-   * endpoint has answered (step 3 of the backend-authoritative migration — see
-   * docs/SOURCE_OF_TRUTH.md §5a). Null until it arrives, and on any fetch failure
-   * — `today` below falls back to `localPrescription` whenever this is null OR
-   * stale (a different date, e.g. after a midnight rollover before the next
-   * fetch completes).
+   * Today's prescription — day 0 of the ONE week plan (weekAhead → the shared
+   * engine `planWeek`), via `localPrescription`. This is THE single source of
+   * truth for the day: the hero, "This Week", the COMPOSE intent handed to
+   * daily-protocol, and the server (which runs the identical `planWeek`) all read
+   * the same computation, so they cannot drift. The migration-era preference for a
+   * single-day server prescription was retired — that endpoint could not apply the
+   * week-level passes (rest minimum / PM sessions) and caused a Today-vs-This-Week
+   * drift (bug 2026-07-12). ACWR/readiness are already server-canonical inputs
+   * (`readAcwr`/`readReadiness` prefer the server values), so nothing canonical is
+   * lost. The server fetch below is kept only as a runtime drift canary.
    */
-  private readonly serverPrescription = signal<DailyPrescription | null>(null);
-
-  /**
-   * Today's prescription, PREFERRING the server's answer when available and
-   * fresh (Law #6: server-canonical) — else the identical local computation
-   * (Law #4: an instant answer, never a spinner; and the offline/fail-safe path).
-   * Reactive — updates whenever the schedule, ACWR, readiness, or the server
-   * fetch resolve.
-   */
-  readonly today: Signal<DailyPrescription | null> = computed(() => {
-    const local = this.localPrescription();
-    const server = this.serverPrescription();
-    if (server && local && server.date === local.date) {
-      return server;
-    }
-    return local;
-  });
+  readonly today: Signal<DailyPrescription | null> = computed(() =>
+    this.localPrescription(),
+  );
 
   /**
    * The client-computed prescription — unchanged from before the migration.
@@ -382,62 +360,14 @@ export class PeriodizationService {
    */
   private readonly localPrescription: Signal<DailyPrescription | null> =
     computed(() => {
-      const snap = this.schedule.snapshot();
-      if (!snap) {
-        return null;
-      }
-      const now = new Date();
-
-      // Mirror weekAhead()'s two-pass approach so the live "today" signal is
-      // schedule-aware (sessions placed relative to actual practices and games,
-      // not DOW arrays). Compute the same 7-day window to derive today's hint.
-      const todayStart = new Date(now);
-      todayStart.setHours(0, 0, 0, 0);
-      const teamPracticeFlags7: boolean[] = [];
-      const phases7: CompetitionPhase[] = [];
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(todayStart);
-        d.setDate(todayStart.getDate() + i);
-        teamPracticeFlags7.push(this.isTeamPractice(d, snap.trainingDays));
-        // Day 0 must agree with the `today` signal (server-computed
-        // `snap.currentPhase`) rather than re-resolving locally — the client and
-        // server phase resolvers key off different day-of-week sources (local vs
-        // UTC) and can disagree for a few hours around UTC midnight.
-        phases7.push(i === 0 ? snap.currentPhase : this.schedule.phaseFor(d));
-      }
-      const intentHints = planWeekIntents(teamPracticeFlags7, phases7);
-
-      // Weekly progression cap: if this week's cumulative load already exceeds
-      // the safe increase limit, pull back high-intensity sessions.
-      const prog = this.acwrService.weeklyProgression();
-
-      return prescribeFor({
-        date: now,
-        phase: snap.currentPhase,
-        upcoming: snap.upcoming,
-        lastEvent: snap.lastEvent,
-        acwr: this.readAcwr(),
-        readiness: this.readReadiness(),
-        bodyweightKg: this.readBodyweight(),
-        density14d: snap.density14d
-          ? {
-              totalGames: snap.density14d.totalGames,
-              hasPeakImportance: snap.density14d.hasPeakImportance,
-              peakDayGameCount: snap.density14d.peakDayGameCount,
-            }
-          : null,
-        seasonPhase: macroPhaseFor(now, this.seasonCalendar()),
-        weather: this.weather(),
-        recentSessions: this.recentSessions(),
-        ageYears: this.readAgeYears(),
-        position: this.position(),
-        isTeamPractice: this.isTeamPractice(now, snap.trainingDays),
-        activeRestrictions: this.injury.restrictions(),
-        acclimatizationDay: this.eventTravel.daysSinceArrival(),
-        arrivalDayTravelHours: this.eventTravel.arrivalDayTravelHours(),
-        weeklyIntentHint: intentHints[0],
-        weeklyProgressionUnsafe: prog ? !prog.isSafe : false,
-      });
+      // today's local answer IS day 0 of the week plan. weekAhead() runs the SAME
+      // schedule-aware two-pass prescribeFor for day 0 (server phase, ACWR,
+      // readiness, weather, travel) AND then applies enforceWeeklyRestMinimum() +
+      // addSecondSessions(). Re-computing a single day here (the prior code)
+      // skipped the weekly rest-minimum, so the hero could show a training
+      // session on a day the "This Week" view marked Rest (bug 2026-07-12). One
+      // source of truth for the day type: weekAhead()[0].
+      return this.weekAhead()[0] ?? null;
     });
 
   /**
@@ -502,71 +432,47 @@ export class PeriodizationService {
       seasonPhases7.push(macroPhaseFor(d, this.seasonCalendar()));
     }
 
-    // Schedule-aware intent plan: places sessions relative to practices and
-    // games rather than by hardcoded day-of-week.
-    const intentHints = planWeekIntents(teamPracticeFlags, phases7);
-
     // Weekly progression cap drives a hard guard for the entire week view.
     const prog = this.acwrService.weeklyProgression();
     const weeklyUnsafe = prog ? !prog.isSafe : false;
 
-    const out: DailyPrescription[] = [];
-    for (let i = 0; i < 7; i++) {
-      const date = dates7[i];
-      const phase = phases7[i];
-      out.push(
-        prescribeFor({
-          date,
-          phase,
-          upcoming: snap.upcoming,
-          lastEvent: snap.lastEvent,
-          // ACWR and readiness are TODAY's acute signals; like weather (below) they
-          // may only guard the current day. Passing them to all 7 days made a low
-          // readiness / high ACWR today collapse the whole week to recovery/rest
-          // (the readiness-collapse and ACWR-danger guards return before the phase
-          // switch), overriding each future day's real phase. Future days resolve to
-          // their phase-driven plan instead.
-          acwr: i === 0 ? acwr : null,
-          readiness: i === 0 ? readiness : null,
-          bodyweightKg: bodyweight,
-          density14d: snap.density14d
-            ? {
-                totalGames: snap.density14d.totalGames,
-                hasPeakImportance: snap.density14d.hasPeakImportance,
-                peakDayGameCount: snap.density14d.peakDayGameCount,
-              }
-            : null,
-          seasonPhase: seasonPhases7[i],
-          // Weather is current-conditions only (no 7-day forecast feed), so it
-          // can only guard today; future days resolve unguarded rather than
-          // against stale "now" weather.
-          weather: i === 0 ? this.weather() : null,
-          // Arrival day is a one-off fact about TODAY specifically, not a
-          // forecastable offset like acclimatizationDay above.
-          arrivalDayTravelHours:
-            i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,
-          recentSessions: this.recentSessions(),
-          ageYears,
-          position: this.position(),
-          isTeamPractice: teamPracticeFlags[i],
-          activeRestrictions: this.injury.restrictions(),
-          acclimatizationDay: acclimBase === null ? null : acclimBase + i,
-          weeklyIntentHint: intentHints[i],
-          weeklyProgressionUnsafe: weeklyUnsafe,
-        }),
-      );
-    }
+    // Assemble the 7 per-day inputs from client signals; the WEEK-LEVEL passes
+    // (schedule-aware intent hints, the ≥2 rest-day minimum, PM second sessions)
+    // are owned by the shared engine planWeek() — the SAME function the server
+    // runs — so today (= day 0), This Week, and the server can never disagree.
+    // ACWR / readiness / weather / arrival-day are TODAY-only acute signals
+    // (i === 0); passing them to future days would collapse the week to today's
+    // guard state (readiness-collapse / ACWR-danger guards return before the
+    // phase switch), overriding each future day's real phase.
+    const dayInputs: PeriodizationInputs[] = dates7.map((date, i) => ({
+      date,
+      phase: phases7[i],
+      upcoming: snap.upcoming,
+      lastEvent: snap.lastEvent,
+      acwr: i === 0 ? acwr : null,
+      readiness: i === 0 ? readiness : null,
+      bodyweightKg: bodyweight,
+      density14d: snap.density14d
+        ? {
+            totalGames: snap.density14d.totalGames,
+            hasPeakImportance: snap.density14d.hasPeakImportance,
+            peakDayGameCount: snap.density14d.peakDayGameCount,
+          }
+        : null,
+      seasonPhase: seasonPhases7[i],
+      weather: i === 0 ? this.weather() : null,
+      arrivalDayTravelHours:
+        i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,
+      recentSessions: this.recentSessions(),
+      ageYears,
+      position: this.position(),
+      isTeamPractice: teamPracticeFlags[i],
+      activeRestrictions: this.injury.restrictions(),
+      acclimatizationDay: acclimBase === null ? null : acclimBase + i,
+      weeklyProgressionUnsafe: weeklyUnsafe,
+    }));
 
-    // Safety net: ensure ≥ 2 rest days even if schedule topology is unusual,
-    // then add PM double sessions where the phase and readiness allow it.
-    const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
-    return addSecondSessions(
-      capped,
-      teamPracticeFlags,
-      phases7,
-      readiness,
-      acwr,
-    );
+    return planWeek(dayInputs, teamPracticeFlags, phases7, readiness, acwr);
   }
 
   /**

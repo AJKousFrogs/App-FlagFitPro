@@ -90,7 +90,16 @@ export const WELLNESS = {
   } as const,
 
   // Risk flag thresholds
-  /** Pain level >= this triggers "High pain" risk flag */
+  /**
+   * Soreness STRICTLY GREATER THAN this fires the server safety-override /
+   * detect_pain_trigger path. Canonical value lives server-side in
+   * netlify/functions/utils/safety-override.js (PAIN_TRIGGER_THRESHOLD); this
+   * mirror is guarded by tests/unit/soreness-threshold-parity.test.js so the
+   * two runtimes can never drift (a 4–5 soreness must reach the override path).
+   */
+  SORENESS_PAIN_TRIGGER: 3,
+  /** Pain level >= this triggers "High pain" risk flag (also the soreness level
+   *  at/above which, with no region flagged, we prompt a body check). */
   HIGH_PAIN_THRESHOLD: 7,
   /** Fatigue level >= this triggers "High fatigue" risk flag */
   HIGH_FATIGUE_THRESHOLD: 7,

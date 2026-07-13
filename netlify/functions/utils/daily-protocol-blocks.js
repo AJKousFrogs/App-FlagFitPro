@@ -252,29 +252,152 @@ export async function addWarmupBlock({
 
 // Body-region keywords that disqualify a cool-down stretch when that region is
 // injured. Matching is substring-based on the exercise name/slug (lowercase).
+// Anatomically-linked structures share keywords in BOTH directions: the
+// calf–Achilles complex is one unit (a "Calf Raise" loads the Achilles tendon
+// directly — before 2026-07-12 it passed the filter for an "achilles" report),
+// the patellar tendon belongs to the knee, the plantar fascia to the foot/heel.
+const CALF_ACHILLES_COMPLEX = [
+  "calf",
+  "gastrocnemius",
+  "soleus",
+  "achilles",
+  "heel raise",
+  "heel drop",
+];
 const REGION_KEYWORDS = {
-  calf: ["calf", "gastrocnemius", "soleus"],
-  hamstring: ["hamstring"],
+  calf: CALF_ACHILLES_COMPLEX,
+  gastrocnemius: CALF_ACHILLES_COMPLEX,
+  soleus: CALF_ACHILLES_COMPLEX,
+  achilles: CALF_ACHILLES_COMPLEX,
+  hamstring: ["hamstring", "nordic"],
   quad: ["quad", "quadricep"],
-  ankle: ["ankle"],
-  achilles: ["achilles"],
+  ankle: ["ankle", "achilles", "heel raise", "heel drop"],
   hip: ["hip", "hip flexor", "hip adductor", "iliopsoas"],
   groin: ["groin", "adductor"],
-  knee: ["knee"],
+  knee: ["knee", "patella", "patellar"],
+  shin: ["shin", "tibialis"],
+  foot: ["foot", "plantar", "toe raise", "heel raise", "heel drop"],
+  plantar: ["plantar", "foot", "toe raise", "heel raise", "heel drop"],
   "lower back": ["lower back", "lumbar"],
   shoulder: ["shoulder", "rotator"],
 };
 
+/**
+ * Keywords for an injured region: exact REGION_KEYWORDS entry when it exists;
+ * otherwise the union of every entry whose key appears in the region string
+ * (so "foot / plantar" or "hip flexor" from the Today body check resolve to
+ * their anatomical keyword sets); the raw region string is always included as
+ * a last-resort match.
+ */
+export function keywordsForRegion(region) {
+  const r = String(region || "").toLowerCase();
+  if (REGION_KEYWORDS[r]) {
+    return REGION_KEYWORDS[r];
+  }
+  const merged = new Set([r]);
+  for (const [key, kws] of Object.entries(REGION_KEYWORDS)) {
+    if (r.includes(key)) {
+      kws.forEach((kw) => merged.add(kw));
+    }
+  }
+  return [...merged];
+}
+
+// Injured-region → canonical tissue-node ids (the Tissue Load Engine graph,
+// mirrors database/library/tissue-registry.mjs). The safety filter prefers this
+// STRUCTURED path — an exercise's tissue_targets vs the injured tissues — over
+// name keywords. The calf–Achilles complex is one functional unit: any
+// plantarflexor loader loads the Achilles.
+const CALF_ACHILLES_TISSUES = [
+  "achilles",
+  "soleus",
+  "gastrocnemius",
+  "plantaris",
+];
+const REGION_TO_TISSUES = {
+  calf: CALF_ACHILLES_TISSUES,
+  gastrocnemius: CALF_ACHILLES_TISSUES,
+  soleus: CALF_ACHILLES_TISSUES,
+  achilles: CALF_ACHILLES_TISSUES,
+  plantaris: CALF_ACHILLES_TISSUES,
+  heel: CALF_ACHILLES_TISSUES,
+  hamstring: ["hamstring"],
+  quad: ["quadriceps", "patellar_tendon"],
+  quadriceps: ["quadriceps", "patellar_tendon"],
+  knee: ["patellar_tendon", "acl", "quadriceps"],
+  // "runner's knee" (patellofemoral pain) loads the extensor mechanism + is
+  // driven by hip/glute control → route to the knee extensor + glute chain.
+  "runners knee": ["patellar_tendon", "quadriceps", "glute"],
+  patellofemoral: ["patellar_tendon", "quadriceps", "glute"],
+  patella: ["patellar_tendon"],
+  patellar: ["patellar_tendon"],
+  groin: ["adductor"],
+  adductor: ["adductor"],
+  "hip flexor": ["hip_flexor"],
+  iliopsoas: ["hip_flexor"],
+  glute: ["glute", "it_band"],
+  "it band": ["it_band", "glute"],
+  itb: ["it_band", "glute"],
+  iliotibial: ["it_band", "glute"],
+  ankle: ["ankle", "peroneus"],
+  peroneus: ["peroneus", "ankle"],
+  peroneal: ["peroneus", "ankle"],
+  shin: ["tibia", "tibialis_anterior"],
+  tibia: ["tibia", "tibialis_anterior"],
+  tibialis: ["tibialis_anterior", "tibia"],
+  plantar: ["plantar_fascia"],
+  foot: ["plantar_fascia", "tibia"],
+  "lower back": ["lumbar"],
+  lumbar: ["lumbar"],
+  shoulder: ["rotator_cuff"],
+};
+
+/** Canonical tissue-node ids an injured region implicates (empty for regions the
+ *  graph doesn't recognise — the caller then relies on the keyword fail-safe). */
+export function tissuesForRegion(region) {
+  const r = String(region || "").toLowerCase();
+  if (REGION_TO_TISSUES[r]) {
+    return REGION_TO_TISSUES[r];
+  }
+  const merged = new Set();
+  for (const [key, tissues] of Object.entries(REGION_TO_TISSUES)) {
+    if (r.includes(key)) {
+      tissues.forEach((t) => merged.add(t));
+    }
+  }
+  return [...merged];
+}
+
+/**
+ * Is an exercise safe to prescribe given the athlete's injured regions?
+ *
+ * UNSAFE if EITHER signal fires — the structured tissue-graph match
+ * (exercise.tissue_targets ∩ the injured region's tissues) OR the legacy
+ * name-keyword match. The union is deliberately the more conservative (safer)
+ * combination: tissue_targets catches exercises whose NAME doesn't reveal the
+ * load (e.g. a machine exercise), while the keyword path still fails safe for
+ * rows not yet tissue-tagged and for regions the graph doesn't map.
+ */
 export function isExerciseSafeForInjuries(ex, injuredRegions) {
   if (!injuredRegions || injuredRegions.length === 0) {
     return true;
   }
   const name = (ex.name || "").toLowerCase();
   const slug = (ex.slug || "").toLowerCase();
+  const tissueTargets = Array.isArray(ex.tissue_targets)
+    ? ex.tissue_targets
+    : [];
   for (const region of injuredRegions) {
-    const keywords = REGION_KEYWORDS[region.toLowerCase()] || [
-      region.toLowerCase(),
-    ];
+    // Structured path: injured tissues vs the exercise's tissue_targets.
+    const injuredTissues = tissuesForRegion(region);
+    if (
+      tissueTargets.length &&
+      injuredTissues.some((t) => tissueTargets.includes(t))
+    ) {
+      return false;
+    }
+    // Keyword fail-safe (untagged rows, unmapped regions).
+    const keywords = keywordsForRegion(region);
     if (keywords.some((kw) => name.includes(kw) || slug.includes(kw))) {
       return false;
     }
@@ -325,36 +448,59 @@ export async function addRecoveryBlocks({
     });
   }
 
-  const recoveryCount = trainingFocus === "recovery" ? 6 : 3;
-  const { data: recoveryExercises } = await supabase
-    .from("exercises")
-    .select("*")
-    .eq("category", "recovery")
-    .eq("active", true)
-    .limit(15);
+  // Each low-load day type gets a DISTINCT evening block (bug 2026-07-12: rest,
+  // recovery, mobility, travel and competition all rendered the same). rest and
+  // competition get NO recovery-exercise block — rest is minimal daily mobility
+  // only; competition's session is the game/activation, not recovery work.
+  const RECOVERY_BLOCK_BY_FOCUS = {
+    rest: { count: 0, note: null },
+    recovery: {
+      count: 6,
+      note: "Recovery day — active recovery + the recovery modalities to enhance adaptation.",
+    },
+    mobility: {
+      count: 4,
+      note: "Mobility session — move through full ranges under control; no loading.",
+    },
+    travel: {
+      count: 3,
+      note: "Travel day — anti-stiffness movement + hydration; stand and walk every 60–90 min.",
+    },
+    competition: { count: 0, note: null },
+  };
+  const recoveryCfg = RECOVERY_BLOCK_BY_FOCUS[trainingFocus] ?? {
+    count: 3,
+    note: null,
+  };
 
-  if (recoveryExercises && recoveryExercises.length > 0) {
-    const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(
-      0,
-      recoveryCount,
-    );
-    shuffled.forEach((ex, idx) => {
-      protocolExercises.push({
-        exercise_id: ex.id,
-        exercise_name: ex.name,
-        block_type: "evening_recovery",
-        sequence_order: idx + 1,
-        prescribed_sets: ex.default_sets || 1,
-        prescribed_reps: ex.default_reps,
-        prescribed_hold_seconds: ex.default_hold_seconds,
-        prescribed_duration_seconds: ex.default_duration_seconds,
-        load_contribution_au: ex.load_contribution_au || 0,
-        ai_note:
-          trainingFocus === "recovery"
-            ? "Recovery Day - Focus on these modalities to enhance recovery"
-            : null,
+  if (recoveryCfg.count > 0) {
+    const { data: recoveryExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "recovery")
+      .eq("active", true)
+      .limit(15);
+
+    if (recoveryExercises && recoveryExercises.length > 0) {
+      const shuffled = deterministicSort(seed ?? "", recoveryExercises).slice(
+        0,
+        recoveryCfg.count,
+      );
+      shuffled.forEach((ex, idx) => {
+        protocolExercises.push({
+          exercise_id: ex.id,
+          exercise_name: ex.name,
+          block_type: "evening_recovery",
+          sequence_order: idx + 1,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note: recoveryCfg.note,
+        });
       });
-    });
+    }
   }
 }
 

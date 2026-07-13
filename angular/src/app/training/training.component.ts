@@ -91,6 +91,7 @@ export class TrainingComponent {
       return { label: "weather-adjusted", cls: "warn" };
     if (rx.intent === "competition") return { label: "Game day", cls: "warn" };
     if (rx.intent === "travel") return { label: "Travel day", cls: "ghost" };
+    if (rx.intent === "rest") return { label: "Rest day", cls: "ghost" };
     if (rx.recoveryEmphasis === "critical" || rx.recoveryEmphasis === "high")
       return { label: "Recovery day", cls: "warn" };
     return { label: "Training day", cls: "ok" };

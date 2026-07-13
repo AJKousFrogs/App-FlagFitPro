@@ -26,6 +26,7 @@ import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
 import { EventTravelService } from "../core/services/event-travel.service";
+import { WELLNESS } from "../core/constants/wellness.constants";
 
 /**
  * Wellness — the daily check-in. Ported 1:1 from
@@ -97,6 +98,9 @@ export class WellnessComponent {
    *  untouched resubmit can't downgrade a previously-reported moderate/severe). */
   selectTightRegion(region: string): void {
     this.tightRegion.set(region);
+    // They're addressing the high-soreness prompt — retire it so the submit
+    // button returns to its normal label.
+    this.bodyCheckPrompt.set(false);
     const existing = this.injurySvc
       .active()
       .find((i) => (i.region ?? "").toLowerCase() === region.toLowerCase());
@@ -251,8 +255,35 @@ export class WellnessComponent {
   readonly submitted = signal(false);
   readonly submitError = signal<string | null>(null);
 
+  /** High soreness with no region flagged → we ask "where?" once before saving.
+   *  Law 5a: the slider is an INPUT, not a trigger — so a 9/10 with no body-check
+   *  must at least PROMPT one, never silently change (or not change) the plan. */
+  readonly bodyCheckPrompt = signal(false);
+
+  /** Scroll the niggles/tightness selector into view so the prompt is actionable. */
+  scrollToNiggles(): void {
+    document
+      .getElementById("niggles")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   submitCheckin(): void {
     if (this.submitting()) return;
+
+    // Soft-gate: high soreness but nothing flagged and no active injury → ask the
+    // athlete to point at the sore area first (the niggles selector does the real
+    // athlete_injuries write that adapts the plan). One nudge, not a hard block —
+    // a second tap ("Log check-in anyway") proceeds.
+    const needsBodyCheck =
+      this.soreness() >= WELLNESS.HIGH_PAIN_THRESHOLD &&
+      !this.tightRegion() &&
+      this.activeInjuries().length === 0;
+    if (needsBodyCheck && !this.bodyCheckPrompt()) {
+      this.bodyCheckPrompt.set(true);
+      this.scrollToNiggles();
+      return;
+    }
+
     this.submitting.set(true);
     this.submitError.set(null);
     this.wellnessSvc

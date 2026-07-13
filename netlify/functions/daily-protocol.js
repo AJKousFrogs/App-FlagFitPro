@@ -52,6 +52,7 @@ import {
   addMorningMobilityBlock,
   addRecoveryBlocks,
   addWarmupBlock,
+  isExerciseSafeForInjuries,
 } from "./utils/daily-protocol-blocks.js";
 import {
   calculateAge,
@@ -62,7 +63,11 @@ import { buildProtocolDecisionContext } from "./utils/daily-protocol-decision.js
 import { persistFallbackProtocolWhenExercisesMissing } from "./utils/daily-protocol-fallback.js";
 import { generateMainSessionFallback } from "./utils/daily-protocol-main-session.js";
 import { generateReturnToPlayProtocol } from "./utils/daily-protocol-rtp.js";
-import { getActiveInjuries } from "./utils/active-injuries.js";
+import {
+  getActiveInjuries,
+  resolveInjuryResponse,
+  detectDeconditioning,
+} from "./utils/active-injuries.js";
 import { getLastHighCnsSession } from "./utils/cns-spacing.js";
 import { generateTemplateMainSession } from "./utils/daily-protocol-template-session.js";
 import {
@@ -89,6 +94,7 @@ import {
 import {
   positionFlagsFor,
   mapIntentToSession,
+  isLowLoadFocus,
 } from "./utils/daily-protocol-compose.js";
 import {
   completeExercise,
@@ -899,6 +905,72 @@ async function getProtocol(supabase, userId, params, headers, log = logger) {
 // an intent, every path below is bypassed and legacy behaviour is unchanged.
 // ============================================================================
 
+// Raise a deconditioning warning to the athlete's coaching staff (Tissue Load
+// Engine §4.5). Deduped per athlete/day via coach_inbox_items.source; best-effort.
+async function raiseDeconditioningWarning(
+  supabase,
+  userId,
+  date,
+  dropPct,
+  injuryResponse,
+  log = logger,
+) {
+  const { data: membership } = await supabase
+    .from("team_members")
+    .select("team_id")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!membership?.team_id) {
+    return;
+  }
+
+  const { data: existing } = await supabase
+    .from("coach_inbox_items")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("source", "deconditioning")
+    .gte("created_at", `${date}T00:00:00Z`)
+    .limit(1)
+    .maybeSingle();
+  if (existing) {
+    return;
+  } // already flagged today
+
+  const { data: coaches } = await supabase
+    .from("team_members")
+    .select("user_id")
+    .eq("team_id", membership.team_id)
+    .in("role", ["coach", "head_coach"])
+    .eq("status", "active");
+  if (!coaches?.length) {
+    return;
+  }
+
+  const pct = Math.round(dropPct * 100);
+  const region = injuryResponse.injuredRegions.join(", ") || "a tissue flag";
+  await supabase.from("coach_inbox_items").insert(
+    coaches.map((c) => ({
+      coach_id: c.user_id,
+      user_id: userId,
+      team_id: membership.team_id,
+      item_type: "deconditioning_warning",
+      title: `Chronic load dropping under injury`,
+      message: `Chronic training load is down ~${pct}% over 2 weeks while ${region} is flagged. Under-loading now sets up a return spike — consider maintaining non-provocative chronic load (low-impact conditioning) rather than full rest.`,
+      priority: "normal",
+      action_required: false,
+      source: "deconditioning",
+      metadata: {
+        drop_pct: pct,
+        severity: injuryResponse.severity,
+        regions: injuryResponse.injuredRegions,
+      },
+      expires_at: new Date(Date.now() + 5 * 86_400_000).toISOString(),
+    })),
+  );
+  log.info("deconditioning_warning_raised", { user_id: userId, drop_pct: pct });
+}
+
 // Deterministic per-(athlete, day) ordering key for an exercise (H1). Replaces the
 // old random-comparator shuffle, which was BOTH nondeterministic (regenerating the
 // same day produced a different protocol — confusing, and untestable) and a biased,
@@ -996,6 +1068,29 @@ async function generateProtocol(
     }
   }
 
+  // Record generation request (unique constraint = best-effort concurrency
+  // dedup) BEFORE the injury branch, so the return-to-play path is serialized
+  // through the SAME guard as the normal path instead of racing outside it. RTP
+  // does its own daily_protocols upsert + protocol_exercises delete/insert; two
+  // concurrent first-time RTP generations used to race that delete/insert (a
+  // spurious 500 / duplicate rows). Acquiring the guard here — the same order
+  // for every generation path — closes that window. `existingCompleted` covers
+  // the already-generated case for both paths.
+  const { requestRecord, existingCompleted } =
+    await createProtocolGenerationRequest(
+      supabase,
+      userId,
+      date,
+      idempotencyKey,
+    );
+
+  if (
+    existingCompleted?.status === "completed" &&
+    existingCompleted.protocol_id
+  ) {
+    return await getProtocol(supabase, userId, { date }, headers, log);
+  }
+
   // ============================================================================
   // INJURY CHECK - Priority #1 for athlete safety
   // ============================================================================
@@ -1020,6 +1115,64 @@ async function generateProtocol(
     client: supabase,
   });
   const hasActiveInjuries = activeInjuries.length > 0;
+
+  // GRADED injury response (SOT Law 5a / Tissue Load Engine §4.3). A minor/
+  // moderate self-report no longer triggers the full recovery-only RTP takeover
+  // (over-conservative — de-conditioning is itself an injury-risk factor). It
+  // keeps the athlete training on a DOWN-REGULATED normal plan: load target cut
+  // by injuryResponse.loadFactor + injured-region exercises filtered out. Only
+  // SEVERE self-reports or ANY CLINICAL injury go to full RTP.
+  const injuryResponse = resolveInjuryResponse(activeInjuries);
+
+  // Deconditioning guard (Tissue Load Engine §4.5): while an athlete carries a
+  // tissue flag, a COLLAPSE in chronic load is the setup for a dangerous return
+  // spike — the under-load alarm matters as much as the spike alarm. Never a
+  // fabricated risk % (ACWR is contested); just a real >15% chronic-load drop
+  // flagged to the coach, deduped per day. Best-effort, never blocks the plan.
+  if (injuryResponse.hasInjury) {
+    try {
+      const priorDay = new Date(
+        new Date(`${date}T00:00:00Z`).getTime() - 14 * 86_400_000,
+      )
+        .toISOString()
+        .slice(0, 10);
+      const load = async (onOrBefore) =>
+        Number(
+          (
+            await supabase
+              .from("readiness_scores")
+              .select("chronic_load")
+              .eq("user_id", userId)
+              .lte("day", onOrBefore)
+              .order("day", { ascending: false })
+              .limit(1)
+              .maybeSingle()
+          ).data?.chronic_load ?? 0,
+        );
+      const decon = detectDeconditioning(
+        await load(date),
+        await load(priorDay),
+        true,
+      );
+      if (decon.warn) {
+        log.info("daily_protocol_deconditioning_warning", {
+          user_id: userId,
+          date,
+          drop_pct: Number(decon.dropPct.toFixed(2)),
+        });
+        await raiseDeconditioningWarning(
+          supabase,
+          userId,
+          date,
+          decon.dropPct,
+          injuryResponse,
+          log,
+        );
+      }
+    } catch (deconErr) {
+      log.warn("daily_protocol_deconditioning_check_failed", {}, deconErr);
+    }
+  }
 
   // Newly-injured gate: if a coach set injury_gate_active on this athlete,
   // block prescription delivery until the gate is cleared. This covers the
@@ -1051,12 +1204,15 @@ async function generateProtocol(
     }
   }
 
-  // If injuries exist, generate return-to-play protocol instead
-  if (hasActiveInjuries) {
+  // Full RTP only for SEVERE self-reports or CLINICAL injuries; minor/moderate
+  // fall through to the down-regulated normal plan below.
+  if (injuryResponse.goRtp) {
     log.info("daily_protocol_return_to_play_triggered", {
       user_id: userId,
       date,
       injury_count: activeInjuries.length,
+      severity: injuryResponse.severity,
+      clinical: injuryResponse.hasClinical,
     });
     return await generateReturnToPlayProtocol(
       supabase,
@@ -1064,26 +1220,13 @@ async function generateProtocol(
       date,
       wellnessCheckin,
       headers,
-      { activeInjuries },
+      { activeInjuries, getProtocol },
     );
   }
   // ============================================================================
-
-  // Record generation request (with unique constraint for concurrency safety)
-  const { requestRecord, existingCompleted } =
-    await createProtocolGenerationRequest(
-      supabase,
-      userId,
-      date,
-      idempotencyKey,
-    );
-
-  if (
-    existingCompleted?.status === "completed" &&
-    existingCompleted.protocol_id
-  ) {
-    return await getProtocol(supabase, userId, { date }, headers, log);
-  }
+  // (Generation request already recorded above, before the injury branch, so
+  // both RTP and normal paths share one guard. `requestRecord`/`existingCompleted`
+  // are in scope here.)
 
   let {
     readinessScore,
@@ -1095,6 +1238,7 @@ async function generateProtocol(
     aiRationale,
     adjustedLoadTarget,
     taperLoadMultiplier,
+    injuryLoadAdjustment,
     isPracticeDay,
     isFilmRoomDay,
     periodizationPhase,
@@ -1105,7 +1249,16 @@ async function generateProtocol(
     context,
     computeReadinessDaysStale,
     computeTrainingDaysLogged,
+    injuryResponse,
   });
+
+  if (injuryLoadAdjustment) {
+    log.info("daily_protocol_injury_load_downregulated", {
+      user_id: userId,
+      date,
+      ...injuryLoadAdjustment,
+    });
+  }
 
   // Age-scaled CNS recovery spacing — mirrors the client's cnsRecoveryHoursForAge().
   // Older athletes recover neuromuscular fatigue more slowly: <35y → 48h, 35-39y → 60h,
@@ -1247,9 +1400,10 @@ async function generateProtocol(
     trainingFocus,
   );
 
-  // Skip gym blocks on practice days, film room days, or recovery days
+  // Skip gym blocks on practice days, film room days, or any low-load day type
+  // (rest / recovery / mobility / travel / competition).
   let isGymTrainingDay =
-    !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+    !isPracticeDay && !isFilmRoomDay && !isLowLoadFocus(trainingFocus);
   // COMPOSE: the intent layer decides whether today is a gym day.
   if (composeGym !== null) {
     isGymTrainingDay = composeGym;
@@ -1262,7 +1416,8 @@ async function generateProtocol(
     // Source: VALD Practitioner's Guide to Isometrics
     // ============================================================================
 
-    // Query from both exercises table (isometric category) and isometrics_exercises table
+    // Single source of truth: the `exercises` table, resolved via
+    // EXERCISE_CATEGORY_ALIASES (legacy isometrics_exercises table retired 2026-07-12).
     const allIsometrics = prioritizeExercises(
       await fetchExercisesByCategories(
         supabase,
@@ -1340,7 +1495,8 @@ async function generateProtocol(
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels[plyoIntensity] ||
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels.medium;
 
-    // Query from both exercises table and plyometrics_exercises table
+    // Single source of truth: the `exercises` table, resolved via
+    // EXERCISE_CATEGORY_ALIASES (legacy plyometrics_exercises table retired 2026-07-12).
     let allPlyometrics = prioritizeExercises(
       await fetchExercisesByCategories(
         supabase,
@@ -1636,6 +1792,20 @@ async function generateProtocol(
         if (wrDbSkills.length >= 2) {
           filteredSkill = wrDbSkills;
         }
+      } else if (
+        ["center", "rusher", "blitzer", "linebacker"].includes(
+          normalizedPosition,
+        )
+      ) {
+        // Position filter for the previously-unhandled roles so their dedicated
+        // technical drills (snap accuracy, edge rush/contain, zone drops, flag-pull)
+        // are prioritised over generic skill work when enough exist.
+        const posSkills = skillExercises.filter((ex) =>
+          ex.position_specific?.includes(normalizedPosition),
+        );
+        if (posSkills.length >= 2) {
+          filteredSkill = posSkills;
+        }
       }
 
       const selectedSkills = filteredSkill
@@ -1661,45 +1831,12 @@ async function generateProtocol(
       });
     }
 
-    // ============================================================================
-    // Add gym block exercises to main_session for display
-    // Main Session should always have exercises (except recovery days)
-    // ============================================================================
-    // Collect all exercises from gym blocks and add them to main_session
-    const gymBlockTypes = [
-      "isometrics",
-      "plyometrics",
-      "strength",
-      "conditioning",
-      "skill_drills",
-    ];
-    let mainSessionSequence = 1;
-
-    gymBlockTypes.forEach((blockType) => {
-      // Find all exercises for this block type that were just added
-      const blockExercises = protocolExercises.filter(
-        (pe) => pe.block_type === blockType,
-      );
-
-      // Add them to main_session as well
-      blockExercises.forEach((ex) => {
-        protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.exercise_id,
-          exercise_name:
-            ex.exercise_name || ex.exercise?.name || ex.name || null,
-          block_type: "main_session",
-          sequence_order: mainSessionSequence++,
-          prescribed_sets: ex.prescribed_sets,
-          prescribed_reps: ex.prescribed_reps,
-          prescribed_hold_seconds: ex.prescribed_hold_seconds,
-          prescribed_duration_seconds: ex.prescribed_duration_seconds,
-          rest_seconds: ex.rest_seconds,
-          load_contribution_au: ex.load_contribution_au,
-          ai_note: ex.ai_note || `Gym Training - ${blockType}`,
-        });
-      });
-    });
+    // NOTE: on a gym day the split blocks above (isometrics / plyometrics /
+    // strength / conditioning / skill_drills) ARE the session and are rendered as
+    // their own blocks. We deliberately do NOT copy them into a consolidated
+    // "Main Session" — doing so listed every exercise twice (bug reported
+    // 2026-07-12). Main Session is emitted only for non-gym primary work
+    // (sprint / field / template sessions); see generateMainSessionFallback.
   }
 
   // ============================================================================
@@ -1799,6 +1936,36 @@ async function generateProtocol(
       });
       protocolExercises.length = 0;
       protocolExercises.push(...deduped);
+    }
+  }
+
+  // Injury filter (Tissue Load Engine §4.3): on the DOWN-REGULATED normal plan
+  // (minor/moderate injury — full RTP already returned earlier), strip any
+  // exercise that loads the injured region so the server is self-sufficient for
+  // safety and never depends on the client having sent an injury-adjusted intent.
+  // Null-exercise rows (headings/notes) are always kept.
+  if (
+    injuryResponse.hasInjury &&
+    !injuryResponse.goRtp &&
+    injuryResponse.injuredRegions.length
+  ) {
+    const safe = protocolExercises.filter(
+      (ex) =>
+        ex?.exercise_id === null ||
+        ex?.exercise_id === undefined ||
+        isExerciseSafeForInjuries(
+          { name: ex.exercise_name, tissue_targets: ex.tissue_targets },
+          injuryResponse.injuredRegions,
+        ),
+    );
+    if (safe.length !== protocolExercises.length) {
+      log.info("daily_protocol_injury_filtered_exercises", {
+        user_id: userId,
+        removed: protocolExercises.length - safe.length,
+        regions: injuryResponse.injuredRegions,
+      });
+      protocolExercises.length = 0;
+      protocolExercises.push(...safe);
     }
   }
 

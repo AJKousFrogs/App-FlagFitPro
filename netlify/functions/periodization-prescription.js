@@ -33,13 +33,14 @@ import {
 import { createLogger } from "./utils/structured-logger.js";
 import {
   getScheduleSnapshot,
+  resolvePhase,
   DEFAULT_LOOKAHEAD_DAYS,
   DEFAULT_LOOKBACK_DAYS,
 } from "./schedule.js";
 import { getActiveInjuries } from "./utils/active-injuries.js";
 import { ageFromDob } from "./utils/age.js";
 import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
-import { prescribeFor, macroPhaseFor } from "./utils/periodization-engine.js";
+import { planWeek, macroPhaseFor } from "./utils/periodization-engine.js";
 import {
   deriveRestrictions,
   isTeamPractice,
@@ -225,57 +226,85 @@ async function assemblePeriodizationInputs(userId, now) {
     rpe: typeof r.rpe === "number" ? r.rpe : null,
   }));
 
-  // Typed against the SAME interface the client engine's prescribeFor()
-  // requires (reusability audit F4, 2026-07-08): TypeScript checks this object
-  // literal's shape against PeriodizationInputs at build time (npm run
-  // typecheck:functions) — if the interface gains/renames/removes a field,
-  // this fails to compile instead of silently drifting at runtime. No .d.ts
-  // generation step needed: `checkJs` resolves the type straight from the .ts
-  // source via the import() path below.
-  /** @type {import("../../angular/src/app/core/models/prescription.models").PeriodizationInputs} */
-  const inputs = {
-    date: now,
-    // schedule.js's resolvePhase (see schedule-resolver-parity.test.js) always
-    // returns one of the 6 CompetitionPhase literals — narrowing here since
-    // schedule.js is outside this file's @ts-check scope, so its return type is
-    // loosely inferred as `string` rather than the precise union.
-    phase:
-      /** @type {import("../../angular/src/app/core/models/schedule.models").CompetitionPhase} */ (
-        snap.currentPhase
-      ),
-    upcoming: snap.upcoming,
-    lastEvent: snap.lastEvent,
-    acwr:
-      typeof readinessRow.data?.acwr === "number"
-        ? readinessRow.data.acwr
-        : null,
-    readiness:
-      typeof readinessRow.data?.score === "number"
-        ? readinessRow.data.score
-        : null,
-    bodyweightKg: weightKg,
-    density14d: snap.density14d
-      ? {
-          totalGames: snap.density14d.totalGames,
-          hasPeakImportance: snap.density14d.hasPeakImportance,
-          peakDayGameCount: snap.density14d.peakDayGameCount,
-        }
-      : null,
-    seasonPhase: macroPhaseFor(now, seasonCalendar),
-    weather,
-    recentSessions,
-    ageYears: resolveAgeYears(
-      userRow.data?.date_of_birth ?? userRow.data?.birth_date ?? null,
-    ),
-    position: configRow.data?.primary_position ?? null,
-    isTeamPractice: isTeamPractice(now, recurringDays, snap.trainingDays),
-    activeRestrictions: resolveActiveRestrictions(activeInjuries),
-    acclimatizationDay: travel.acclimatizationDay,
-    arrivalDayTravelHours: travel.arrivalDayTravelHours,
-    coachOverride: false,
-  };
+  const acwrVal =
+    typeof readinessRow.data?.acwr === "number" ? readinessRow.data.acwr : null;
+  const readinessVal =
+    typeof readinessRow.data?.score === "number"
+      ? readinessRow.data.score
+      : null;
+  const ageYears = resolveAgeYears(
+    userRow.data?.date_of_birth ?? userRow.data?.birth_date ?? null,
+  );
+  const position = configRow.data?.primary_position ?? null;
+  const restrictions = resolveActiveRestrictions(activeInjuries);
+  const density14d = snap.density14d
+    ? {
+        totalGames: snap.density14d.totalGames,
+        hasPeakImportance: snap.density14d.hasPeakImportance,
+        peakDayGameCount: snap.density14d.peakDayGameCount,
+      }
+    : null;
 
-  return { error: null, inputs };
+  // Assemble the 7-day input window and hand it to the SHARED engine planWeek()
+  // (the identical function the client runs), which owns the week-level passes —
+  // schedule-aware intent hints, the ≥2 rest-day minimum, and the PM second
+  // sessions — that a single-day computation cannot. This is what guarantees the
+  // server's day 0 equals the client's `today`; the two can no longer drift.
+  // Day-0-only acute signals (ACWR/readiness/weather/arrival) are null for future
+  // days. Per-day phase uses resolvePhase (day 0 keeps the canonical
+  // snap.currentPhase, matching the client's day-0 convention). Each object literal
+  // is still type-checked against PeriodizationInputs (checkJs → the .ts source).
+  /** @type {import("../../angular/src/app/core/models/prescription.models").PeriodizationInputs[]} */
+  const dayInputs = [];
+  /** @type {boolean[]} */
+  const teamPracticeFlags = [];
+  /** @type {import("../../angular/src/app/core/models/schedule.models").CompetitionPhase[]} */
+  const phases7 = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + i);
+    const phase =
+      /** @type {import("../../angular/src/app/core/models/schedule.models").CompetitionPhase} */ (
+        i === 0
+          ? snap.currentPhase
+          : resolvePhase(d, snap.upcoming, snap.lastEvent)
+      );
+    const isPractice = isTeamPractice(d, recurringDays, snap.trainingDays);
+    teamPracticeFlags.push(isPractice);
+    phases7.push(phase);
+    dayInputs.push({
+      date: d,
+      phase,
+      upcoming: snap.upcoming,
+      lastEvent: snap.lastEvent,
+      acwr: i === 0 ? acwrVal : null,
+      readiness: i === 0 ? readinessVal : null,
+      bodyweightKg: weightKg,
+      density14d,
+      seasonPhase: macroPhaseFor(d, seasonCalendar),
+      weather: i === 0 ? weather : null,
+      recentSessions,
+      ageYears,
+      position,
+      isTeamPractice: isPractice,
+      activeRestrictions: restrictions,
+      acclimatizationDay:
+        travel.acclimatizationDay === null
+          ? null
+          : travel.acclimatizationDay + i,
+      arrivalDayTravelHours: i === 0 ? travel.arrivalDayTravelHours : null,
+      coachOverride: false,
+    });
+  }
+
+  return {
+    error: null,
+    dayInputs,
+    teamPracticeFlags,
+    phases7,
+    todayReadiness: readinessVal,
+    todayAcwr: acwrVal,
+  };
 }
 
 async function handleRequest(event, _context, { userId }) {
@@ -289,7 +318,14 @@ async function handleRequest(event, _context, { userId }) {
     );
   }
 
-  const { error, inputs } = await assemblePeriodizationInputs(userId, now);
+  const {
+    error,
+    dayInputs,
+    teamPracticeFlags,
+    phases7,
+    todayReadiness,
+    todayAcwr,
+  } = await assemblePeriodizationInputs(userId, now);
   if (error) {
     logger.error(
       "periodization_prescription_assembly_failed",
@@ -303,9 +339,17 @@ async function handleRequest(event, _context, { userId }) {
     );
   }
 
-  /** @type {import("../../angular/src/app/core/models/prescription.models").DailyPrescription} */
-  const prescription = prescribeFor(inputs);
-  return createSuccessResponse({ prescription });
+  // The SAME shared engine planWeek() the client runs — so the server's day 0 is
+  // identical to the client's `today` (single source; the drift canary verifies).
+  /** @type {import("../../angular/src/app/core/models/prescription.models").DailyPrescription[]} */
+  const week = planWeek(
+    dayInputs,
+    teamPracticeFlags,
+    phases7,
+    todayReadiness,
+    todayAcwr,
+  );
+  return createSuccessResponse({ prescription: week[0] });
 }
 
 export const handler = async (event, context) =>

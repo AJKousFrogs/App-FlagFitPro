@@ -45,6 +45,10 @@ const LOWER_LIMB = new Set([
   "itb", // iliotibial band
   "it band",
   "iliotibial",
+  "peron", // peroneus / peroneal
+  "psoas", // iliopsoas / hip flexor
+  "iliopsoas",
+  "plantaris",
   "tendon", // generic lower-limb tendinopathy report
 ]);
 
@@ -75,6 +79,7 @@ const UPPER_BODY = new Set([
   "tricep",
   "arm",
   "hand",
+  "finger",
   "neck",
   "pec",
   "chest",

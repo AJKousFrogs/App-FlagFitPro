@@ -15,6 +15,11 @@ const BLOCK_TYPES = {
   main_session: { category: "strength", estimatedMinutes: 45 }, // Legacy - kept for backwards compatibility
   cool_down: { category: "cool_down", estimatedMinutes: 15 },
   evening_recovery: { category: "recovery", estimatedMinutes: 10 },
+  // Return-to-play blocks (daily-protocol-rtp.js). The DB CHECK constraint has
+  // allowed these since 20260328, but the response transformer dropped their
+  // rows — an injured athlete's rehab session rendered as an empty screen.
+  rehab_progression: { category: "rehab", estimatedMinutes: 15 },
+  evening_mobility: { category: "mobility", estimatedMinutes: 10 },
 };
 
 /**

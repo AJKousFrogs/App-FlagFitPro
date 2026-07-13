@@ -537,88 +537,6 @@ async function testTrainingSessionTemplatesResponseShape() {
 }
 
 // =============================================================================
-// TESTS: EXERCISE LIBRARY RESPONSE SHAPE
-// =============================================================================
-
-async function testExerciseLibraryResponseShape() {
-  await describe("Exercise Library Response Shape Contract", async () => {
-    await test("exercisedb_exercises table has required columns", async () => {
-      const { data, error } = await supabase
-        .from("exercisedb_exercises")
-        .select(
-          "id, name, body_part, equipment, target_muscle, is_curated, flag_football_relevance, difficulty_level, is_active, is_approved",
-        )
-        .limit(1);
-
-      if (error) {
-        throw new Error(`Query failed: ${error.message}`);
-      }
-    });
-
-    await test("flag_football_relevance is in range 1-10 when present", async () => {
-      const { data, error } = await supabase
-        .from("exercisedb_exercises")
-        .select("flag_football_relevance")
-        .not("flag_football_relevance", "is", null)
-        .limit(100);
-
-      if (error) {
-        throw new Error(`Query failed: ${error.message}`);
-      }
-
-      for (const row of data || []) {
-        assertRange(
-          row.flag_football_relevance,
-          1,
-          10,
-          "flag_football_relevance",
-        );
-      }
-    });
-
-    await test("difficulty_level matches enum contract", async () => {
-      const allowedLevels = ["beginner", "intermediate", "advanced", "elite"];
-      const { data, error } = await supabase
-        .from("exercisedb_exercises")
-        .select("difficulty_level")
-        .not("difficulty_level", "is", null)
-        .limit(100);
-
-      if (error) {
-        throw new Error(`Query failed: ${error.message}`);
-      }
-
-      for (const row of data || []) {
-        assertOneOf(row.difficulty_level, allowedLevels, "difficulty_level");
-      }
-    });
-
-    await test("is_curated, is_active, is_approved are booleans", async () => {
-      const { data, error } = await supabase
-        .from("exercisedb_exercises")
-        .select("is_curated, is_active, is_approved")
-        .limit(100);
-
-      if (error) {
-        throw new Error(`Query failed: ${error.message}`);
-      }
-
-      for (const row of data || []) {
-        if (row.is_curated !== null) {
-          assertType(row.is_curated, "boolean", "is_curated");
-        }
-        if (row.is_active !== null) {
-          assertType(row.is_active, "boolean", "is_active");
-        }
-        if (row.is_approved !== null) {
-          assertType(row.is_approved, "boolean", "is_approved");
-        }
-      }
-    });
-  });
-}
-
-// =============================================================================
 // TESTS: USER ID FIELD CONSISTENCY
 // =============================================================================
 
@@ -686,7 +604,6 @@ async function runTests() {
   await testLoadMonitoringResponseShape();
   await testWorkoutLogsResponseShape();
   await testTrainingSessionTemplatesResponseShape();
-  await testExerciseLibraryResponseShape();
   await testUserIdFieldConsistency();
 
   // Summary

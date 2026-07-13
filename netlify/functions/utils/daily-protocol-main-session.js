@@ -1,5 +1,6 @@
 import { createLogger } from "./structured-logger.js";
 import { getPrescriptionTemplate } from "./prescription-templates.js";
+import { isLowLoadFocus } from "./daily-protocol-compose.js";
 const logger = createLogger({ service: "netlify.daily-protocol-main-session" });
 
 export async function generateMainSessionFallback({
@@ -28,16 +29,28 @@ export async function generateMainSessionFallback({
       acwrForLogic,
     });
   } else if (hasGymAccess && isGymTrainingDay) {
-    const mainSessionExercises = protocolExercises.filter(
-      (exercise) => exercise.block_type === "main_session",
-    );
+    // The gym session IS the split blocks (isometrics / plyometrics / strength /
+    // conditioning / skill_drills), which render as their own blocks. If any of
+    // them has exercises, the session is already "generated" — do NOT add a
+    // consolidated Main Session that would duplicate them (bug 2026-07-12). Only
+    // fall through to the generic fallback when the gym blocks came back empty.
+    const gymBlockTypes = [
+      "isometrics",
+      "plyometrics",
+      "strength",
+      "conditioning",
+      "skill_drills",
+    ];
+    const gymBlockCount = protocolExercises.filter((exercise) =>
+      gymBlockTypes.includes(exercise.block_type),
+    ).length;
 
-    if (mainSessionExercises.length > 0) {
+    if (gymBlockCount > 0) {
       sessionType = "gym";
       sessionCategory = "strength";
       mainSessionGenerated = true;
       logger.info("daily_protocol_gym_session_generated", {
-        exerciseCount: mainSessionExercises.length,
+        splitBlockExercises: gymBlockCount,
       });
     } else {
       logger.warn("daily_protocol_gym_session_empty", {});
@@ -51,7 +64,11 @@ export async function generateMainSessionFallback({
     });
   }
 
-  if (!mainSessionGenerated && trainingFocus !== "recovery") {
+  // Low-load day types (rest / recovery / mobility / travel / competition) never
+  // get a generic strength/field "main session" — their session is the mobility /
+  // recovery / activation content the block builders add. Only genuine training
+  // days fall through to the fallback main session.
+  if (!mainSessionGenerated && !isLowLoadFocus(trainingFocus)) {
     mainSessionGenerated = await addFallbackMainSession({
       supabase,
       protocolExercises,
@@ -66,8 +83,8 @@ export async function generateMainSessionFallback({
     });
   }
 
-  if (!mainSessionGenerated && trainingFocus === "recovery") {
-    logger.info("daily_protocol_recovery_day", {});
+  if (!mainSessionGenerated && isLowLoadFocus(trainingFocus)) {
+    logger.info("daily_protocol_low_load_day", { trainingFocus });
   }
 
   return {

@@ -303,85 +303,27 @@ function calculateACWR(sessions) {
 }
 
 /**
- * Get plyometric exercises from database
+ * Get plyometric exercises.
+ *
+ * The legacy `plyometrics_exercises` table was retired 2026-07-12 (Workstream A) —
+ * its content now lives in the canonical `exercises` table (category 'plyometrics'),
+ * read by the daily-protocol engine. This endpoint (`/api/daily-training`) is
+ * superseded by daily-protocol and is not called by the frontend, so it serves the
+ * curated defaults rather than re-querying the dropped table.
  */
-async function getPlyometricExercises(difficulty = "intermediate", limit = 3) {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("plyometrics_exercises")
-      .select("*")
-      .eq("difficulty_level", difficulty)
-      .limit(limit);
-
-    if (error) {
-      logger.warn("plyometrics_fetch_failed", {}, error);
-      return getDefaultPlyometrics();
-    }
-
-    return data.length > 0
-      ? data.map(formatPlyometric)
-      : getDefaultPlyometrics();
-  } catch {
-    return getDefaultPlyometrics();
-  }
+async function getPlyometricExercises(_difficulty = "intermediate", limit = 3) {
+  return getDefaultPlyometrics().slice(0, limit);
 }
 
 /**
- * Get isometric exercises from database
+ * Get isometric exercises.
+ *
+ * The legacy `isometrics_exercises` table was retired 2026-07-12 (Workstream A) —
+ * its content now lives in the canonical `exercises` table (category 'isometrics').
+ * See getPlyometricExercises above for why this returns the curated defaults.
  */
 async function getIsometricExercises(_category = "lower_body", limit = 3) {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("isometrics_exercises")
-      .select("*")
-      .limit(limit);
-
-    if (error) {
-      logger.warn("isometrics_fetch_failed", {}, error);
-      return getDefaultIsometrics();
-    }
-
-    return data.length > 0 ? data.map(formatIsometric) : getDefaultIsometrics();
-  } catch {
-    return getDefaultIsometrics();
-  }
-}
-
-/**
- * Format plyometric exercise for response
- */
-function formatPlyometric(exercise) {
-  return {
-    id: exercise.id,
-    exercise_name: exercise.exercise_name,
-    exercise_category: exercise.exercise_category,
-    difficulty_level: exercise.difficulty_level,
-    description: exercise.description,
-    instructions: exercise.instructions || [],
-    intensity_level: exercise.intensity_level,
-    safety_notes: exercise.safety_notes || [],
-    recommended_contacts: exercise.recommended_contacts || 20,
-    session_sets: exercise.session_sets || 3,
-    session_reps: exercise.session_reps || 8,
-  };
-}
-
-/**
- * Format isometric exercise for response
- */
-function formatIsometric(exercise) {
-  return {
-    id: exercise.id,
-    name: exercise.name,
-    description: exercise.description,
-    category: exercise.category,
-    setup_instructions: exercise.setup_instructions,
-    execution_cues: exercise.execution_cues || [],
-    difficulty_level: exercise.difficulty_level,
-    session_duration: exercise.recommended_duration_seconds || 30,
-    session_sets: exercise.recommended_sets || 3,
-    rest_between_sets: exercise.rest_period_seconds || 60,
-  };
+  return getDefaultIsometrics().slice(0, limit);
 }
 
 /**

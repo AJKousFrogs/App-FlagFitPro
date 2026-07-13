@@ -2995,108 +2995,6 @@ export type Database = {
           },
         ]
       }
-      exercise_registry: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          difficulty_level: string | null
-          equipment_needed: string[] | null
-          exercise_name: string
-          id: string
-          instructions: string | null
-          muscle_groups: string[] | null
-          updated_at: string | null
-          video_url: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          equipment_needed?: string[] | null
-          exercise_name: string
-          id?: string
-          instructions?: string | null
-          muscle_groups?: string[] | null
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          equipment_needed?: string[] | null
-          exercise_name?: string
-          id?: string
-          instructions?: string | null
-          muscle_groups?: string[] | null
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Relationships: []
-      }
-      exercisedb_exercises: {
-        Row: {
-          body_part: string | null
-          category: string | null
-          created_at: string | null
-          difficulty_level: string | null
-          equipment: string[] | null
-          exercisedb_id: string
-          flag_football_relevance: number | null
-          id: string
-          image_url: string | null
-          instructions: string | null
-          is_active: boolean | null
-          is_approved: boolean | null
-          is_curated: boolean | null
-          muscle_groups: string[] | null
-          name: string
-          target_muscle: string | null
-          updated_at: string | null
-          video_url: string | null
-        }
-        Insert: {
-          body_part?: string | null
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          equipment?: string[] | null
-          exercisedb_id: string
-          flag_football_relevance?: number | null
-          id?: string
-          image_url?: string | null
-          instructions?: string | null
-          is_active?: boolean | null
-          is_approved?: boolean | null
-          is_curated?: boolean | null
-          muscle_groups?: string[] | null
-          name: string
-          target_muscle?: string | null
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Update: {
-          body_part?: string | null
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          equipment?: string[] | null
-          exercisedb_id?: string
-          flag_football_relevance?: number | null
-          id?: string
-          image_url?: string | null
-          instructions?: string | null
-          is_active?: boolean | null
-          is_approved?: boolean | null
-          is_curated?: boolean | null
-          muscle_groups?: string[] | null
-          name?: string
-          target_muscle?: string | null
-          updated_at?: string | null
-          video_url?: string | null
-        }
-        Relationships: []
-      }
       exercisedb_import_logs: {
         Row: {
           errors: Json | null
@@ -3319,41 +3217,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ff_exercise_mappings: {
-        Row: {
-          confidence_score: number | null
-          created_at: string | null
-          exercisedb_exercise_id: string
-          flag_football_exercise_id: string | null
-          id: string
-          mapping_type: string | null
-        }
-        Insert: {
-          confidence_score?: number | null
-          created_at?: string | null
-          exercisedb_exercise_id: string
-          flag_football_exercise_id?: string | null
-          id?: string
-          mapping_type?: string | null
-        }
-        Update: {
-          confidence_score?: number | null
-          created_at?: string | null
-          exercisedb_exercise_id?: string
-          flag_football_exercise_id?: string | null
-          id?: string
-          mapping_type?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ff_exercise_mappings_exercisedb_exercise_id_fkey"
-            columns: ["exercisedb_exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercisedb_exercises"
             referencedColumns: ["id"]
           },
         ]
@@ -3708,51 +3571,6 @@ export type Database = {
             referencedColumns: ["competition_event_id"]
           },
         ]
-      }
-      isometrics_exercises: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          difficulty_level: string | null
-          effectiveness_rating: number | null
-          equipment_needed: string[] | null
-          exercise_name: string
-          hold_duration_seconds: number | null
-          id: number
-          instructions: string | null
-          performance_metrics: Json | null
-          target_muscles: string[] | null
-          variations: string[] | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          effectiveness_rating?: number | null
-          equipment_needed?: string[] | null
-          exercise_name: string
-          hold_duration_seconds?: number | null
-          id?: number
-          instructions?: string | null
-          performance_metrics?: Json | null
-          target_muscles?: string[] | null
-          variations?: string[] | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          difficulty_level?: string | null
-          effectiveness_rating?: number | null
-          equipment_needed?: string[] | null
-          exercise_name?: string
-          hold_duration_seconds?: number | null
-          id?: number
-          instructions?: string | null
-          performance_metrics?: Json | null
-          target_muscles?: string[] | null
-          variations?: string[] | null
-        }
-        Relationships: []
       }
       knowledge_base_entries: {
         Row: {
@@ -5607,57 +5425,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      plyometrics_exercises: {
-        Row: {
-          created_at: string | null
-          difficulty_level: string | null
-          effectiveness_rating: number | null
-          equipment_needed: string[] | null
-          exercise_category: string | null
-          exercise_name: string
-          id: number
-          injury_risk_rating: number | null
-          instructions: string | null
-          performance_metrics: Json | null
-          progressions: string[] | null
-          regressions: string[] | null
-          target_muscles: string[] | null
-          variations: string[] | null
-        }
-        Insert: {
-          created_at?: string | null
-          difficulty_level?: string | null
-          effectiveness_rating?: number | null
-          equipment_needed?: string[] | null
-          exercise_category?: string | null
-          exercise_name: string
-          id?: number
-          injury_risk_rating?: number | null
-          instructions?: string | null
-          performance_metrics?: Json | null
-          progressions?: string[] | null
-          regressions?: string[] | null
-          target_muscles?: string[] | null
-          variations?: string[] | null
-        }
-        Update: {
-          created_at?: string | null
-          difficulty_level?: string | null
-          effectiveness_rating?: number | null
-          equipment_needed?: string[] | null
-          exercise_category?: string | null
-          exercise_name?: string
-          id?: number
-          injury_risk_rating?: number | null
-          instructions?: string | null
-          performance_metrics?: Json | null
-          progressions?: string[] | null
-          regressions?: string[] | null
-          target_muscles?: string[] | null
-          variations?: string[] | null
-        }
-        Relationships: []
       }
       position_specific_metrics: {
         Row: {

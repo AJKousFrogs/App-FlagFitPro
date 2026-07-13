@@ -2,14 +2,19 @@ import { createLogger } from "./structured-logger.js";
 
 const logger = createLogger({ service: "netlify.daily-protocol" });
 
-// Maps the protocol's canonical block categories to the free-form category/label
-// strings the exercise library actually uses.
+// Maps the protocol's canonical block categories to the actual `category` values
+// queried for each. As of 2026-07-12 the library is normalized to a SINGLE
+// lowercase value per section (legacy TitleCase `Strength`/`Isometric`/`Speed`/
+// `Power`/`Agility`/`Position-Specific` were merged into their lowercase
+// canonicals), so these lists are lowercase-only. A block may intentionally pull
+// from an adjacent section (isometrics also draws from strength; plyometrics from
+// power; conditioning from speed; skill_drills from agility) as a depth fallback.
 const EXERCISE_CATEGORY_ALIASES = {
-  isometrics: ["isometric", "Isometric", "Strength"],
-  plyometrics: ["plyometric", "Plyometric", "Power"],
-  strength: ["strength", "Strength"],
-  conditioning: ["conditioning", "Conditioning", "Speed"],
-  skill_drills: ["skill", "Skill", "agility", "Agility", "Position-Specific"],
+  isometrics: ["isometrics", "strength"],
+  plyometrics: ["plyometrics", "power"],
+  strength: ["strength"],
+  conditioning: ["conditioning", "speed"],
+  skill_drills: ["skill_drills", "agility"],
 };
 
 function dedupeExercisesById(exercises) {

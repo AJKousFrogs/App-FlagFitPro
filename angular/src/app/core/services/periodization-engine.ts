@@ -1577,6 +1577,44 @@ function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
 }
 
 /**
+ * Plan a full 7-day week — the SINGLE orchestration shared by the client
+ * (periodization.service `weekAhead`) and the server (periodization-prescription),
+ * so "today" (= day 0), "This Week", the COMPOSE intent handed to daily-protocol,
+ * and the server endpoint can never disagree about a day. Callers assemble the 7
+ * per-day inputs from their own data source (client signals vs server DB); this
+ * function owns the WEEK-LEVEL passes that a single-day computation cannot: the
+ * schedule-aware intent hints (planWeekIntents), then the ≥2 rest-day minimum
+ * (enforceWeeklyRestMinimum) and the PM second-session pass (addSecondSessions).
+ * Each input's `weeklyIntentHint` is overwritten here — planWeekIntents owns it.
+ *
+ * @param dayInputs 7 fully-formed per-day inputs (index 0 = today).
+ * @param teamPracticeFlags 7 booleans — is day i a team practice.
+ * @param phases7 7 competition phases (day 0 = the server-canonical phase).
+ * @param todayReadiness today's readiness for the PM-session pass.
+ * @param todayAcwr today's ACWR for the PM-session pass.
+ */
+export function planWeek(
+  dayInputs: PeriodizationInputs[],
+  teamPracticeFlags: boolean[],
+  phases7: CompetitionPhase[],
+  todayReadiness: number | null,
+  todayAcwr: number | null,
+): DailyPrescription[] {
+  const intentHints = planWeekIntents(teamPracticeFlags, phases7);
+  const out = dayInputs.map((input, i) =>
+    prescribeFor({ ...input, weeklyIntentHint: intentHints[i] }),
+  );
+  const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
+  return addSecondSessions(
+    capped,
+    teamPracticeFlags,
+    phases7,
+    todayReadiness,
+    todayAcwr,
+  );
+}
+
+/**
  * Apply the weather guard to a base prescription. Returns the prescription
  * unchanged (no `weatherAdjustment`) when weather is unknown, the intent is
  * weather-agnostic, or conditions are benign. A coach override keeps the planned
@@ -2084,6 +2122,7 @@ export const __periodization__ = {
   cnsRecoveryHoursForAge,
   isHighCnsSessionType,
   planWeekIntents,
+  planWeek,
   detectTournamentRecoveryDay,
   modulateIntentForLoad,
 };

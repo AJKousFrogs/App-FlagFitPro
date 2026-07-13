@@ -34,6 +34,7 @@ export async function buildProtocolDecisionContext({
   context,
   computeReadinessDaysStale,
   computeTrainingDaysLogged,
+  injuryResponse = null,
 }) {
   const readinessScore = context.readiness?.score || null;
   const acwrValue = context.readiness?.acwr || null;
@@ -263,6 +264,29 @@ export async function buildProtocolDecisionContext({
     aiRationale += ` 🛡️ Recovery block active — load capped to ${activeBlock.max_load_percent}% (${beforeCap}→${adjustedLoadTarget} AU).`;
   }
 
+  // Injury down-regulation (Tissue Load Engine §4.3): a minor/moderate active
+  // injury cuts today's LOAD target (which flows into ACWR as the athlete logs
+  // the lighter session). Graded, not a shutdown — the athlete keeps training.
+  let injuryLoadAdjustment = null;
+  if (
+    injuryResponse?.hasInjury &&
+    !injuryResponse.goRtp &&
+    injuryResponse.loadFactor < 1
+  ) {
+    const beforeInjury = adjustedLoadTarget;
+    adjustedLoadTarget = Math.round(
+      adjustedLoadTarget * injuryResponse.loadFactor,
+    );
+    injuryLoadAdjustment = {
+      severity: injuryResponse.severity,
+      regions: injuryResponse.injuredRegions,
+      loadFactor: injuryResponse.loadFactor,
+      beforeAu: beforeInjury,
+      afterAu: adjustedLoadTarget,
+    };
+    aiRationale += ` 🩹 ${injuryResponse.severity} ${injuryResponse.injuredRegions.join(", ") || "soft-tissue"} flag — load down-regulated to ${Math.round(injuryResponse.loadFactor * 100)}% (${beforeInjury}→${adjustedLoadTarget} AU); injured-region work removed. Keep training, don't train through it.`;
+  }
+
   return {
     readinessScore,
     acwrValue,
@@ -274,6 +298,7 @@ export async function buildProtocolDecisionContext({
     adjustedLoadTarget,
     taperLoadMultiplier,
     recoveryBlockCap,
+    injuryLoadAdjustment,
     isPracticeDay,
     isFilmRoomDay,
     periodizationPhase,

@@ -6,6 +6,7 @@ import {
   DailyProtocol,
   PROTOCOL_BLOCK_ORDER,
   ProtocolBlock,
+  RecoveryProtocol,
 } from "../models/protocol.models";
 
 /**
@@ -23,6 +24,10 @@ export class ProtocolService {
   readonly protocol = signal<DailyProtocol | null>(null);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  /** Set when the server answers 202 (RTP/injury-gate coach review pending or
+   *  coach-rejected) — the athlete must see WHY there are no exercises instead
+   *  of the generic "no specific exercises" empty state. */
+  readonly pendingMessage = signal<string | null>(null);
 
   /** Blocks that actually have exercises, in render order. */
   readonly blocks = computed<ProtocolBlock[]>(() => {
@@ -34,6 +39,15 @@ export class ProtocolService {
       (k) => p[k] as ProtocolBlock | undefined,
     ).filter((b): b is ProtocolBlock => !!b && (b.exercises?.length ?? 0) > 0);
   });
+
+  /** Evidence-graded recovery modalities for a low-load day (empty on training
+   *  days). Server single source: utils/recovery-protocols.js. */
+  readonly recoveryProtocols = computed<RecoveryProtocol[]>(
+    () => this.protocol()?.recoveryProtocols ?? [],
+  );
+  readonly recoveryHeadline = computed<string | null>(
+    () => this.protocol()?.recoveryHeadline ?? null,
+  );
 
   /**
    * Generate + fetch today's protocol for the given intent. Idempotent server-
@@ -53,6 +67,7 @@ export class ProtocolService {
     }
     this.loading.set(true);
     this.error.set(null);
+    this.pendingMessage.set(null);
     this.api
       .post<DailyProtocol>(API_ENDPOINTS.dailyProtocol.generate, {
         date: rx.date,
@@ -67,6 +82,22 @@ export class ProtocolService {
       })
       .subscribe({
         next: (res) => {
+          // 202 coach-review responses (injury gate / RTP approval / rejected)
+          // carry success:true with a top-level flag + message and no data.
+          const gated = res as {
+            pending_approval?: boolean;
+            rejected?: boolean;
+            message?: string;
+          };
+          if (res?.success && (gated.pending_approval || gated.rejected)) {
+            this.pendingMessage.set(
+              gated.message ??
+                "Your prescription is pending coach review. You will be notified when it is approved.",
+            );
+            this.protocol.set(null);
+            this.loading.set(false);
+            return;
+          }
           this.protocol.set(res?.success ? (res.data ?? null) : null);
           this.loading.set(false);
           if (!res?.success) {
