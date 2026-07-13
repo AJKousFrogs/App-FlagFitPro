@@ -104,4 +104,55 @@ describe("buildProtocolDecisionContext", () => {
     expect(result.trainingFocus).toBe("recovery");
     expect(result.aiRationale).toContain("Readiness is low or ACWR is high");
   });
+
+  // Phase 2 (B5): in COMPOSE mode the rationale descriptor is owned by the intent
+  // label — a day-of-week `training_session_templates` row must not override it
+  // (the "Rest day" hero vs "Monday - Speed & Acceleration" rationale drift).
+  test("COMPOSE intent owns the rationale; a day-of-week template can't override", async () => {
+    const result = await buildProtocolDecisionContext({
+      supabase: mockSupabase(),
+      userId: "athlete-1",
+      date: "2026-07-13", // Monday
+      context: {
+        dayOfWeek: 1,
+        readiness: { score: 60, acwr: null, hasCheckin: true },
+        // the legacy day-matched sprint template that produced the drift
+        sessionTemplate: {
+          session_name: "Monday - Speed & Acceleration",
+          session_type: "sprint",
+          description: "Short acceleration, band resistance, sprint mechanics.",
+        },
+        sessionResolution: { success: true, status: "resolved" },
+        playerProgram: null,
+        acwrTargetRange: { min: 0.8, max: 1.3 },
+        intent: "rest", // planWeek said REST
+        intentLabel: "Rest + daily mobility",
+      },
+      computeReadinessDaysStale: vi.fn().mockResolvedValue(0),
+      computeTrainingDaysLogged: vi.fn().mockResolvedValue(5),
+    });
+    expect(result.aiRationale).toContain("Rest + daily mobility");
+    expect(result.aiRationale).not.toContain("Speed & Acceleration");
+    expect(result.aiRationale).not.toContain("Monday");
+  });
+
+  test("COMPOSE intent without a label falls back to the intent's own label", async () => {
+    const result = await buildProtocolDecisionContext({
+      supabase: mockSupabase(),
+      userId: "athlete-1",
+      date: "2026-07-13",
+      context: {
+        dayOfWeek: 1,
+        readiness: { score: 75, acwr: 1.0, hasCheckin: true },
+        sessionTemplate: null,
+        sessionResolution: { success: true, status: "resolved" },
+        playerProgram: null,
+        acwrTargetRange: { min: 0.8, max: 1.3 },
+        intent: "mixed", // no intentLabel sent
+      },
+      computeReadinessDaysStale: vi.fn().mockResolvedValue(0),
+      computeTrainingDaysLogged: vi.fn().mockResolvedValue(5),
+    });
+    expect(result.aiRationale).toContain("Mixed session");
+  });
 });

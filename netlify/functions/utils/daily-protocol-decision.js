@@ -14,6 +14,23 @@ const PERIODIZATION_PHASE_NAMES = {
 
 const TRAINING_SESSIONS_TABLE = "training_sessions";
 
+// Fallback session labels when the COMPOSE layer sends an intent without a label
+// (it normally sends intentLabel). Keeps the rationale descriptor honest + aligned
+// with the hero. Not a periodization source — just display text for the intent.
+const COMPOSE_INTENT_LABELS = {
+  rest: "Rest + daily mobility",
+  recovery: "Active recovery",
+  mobility: "Mobility session",
+  travel: "Travel day",
+  competition: "Game day",
+  sprint: "Speed & acceleration",
+  "taper-prime": "Pre-game prime",
+  strength: "Strength session",
+  mixed: "Mixed session",
+  technical: "Technical skills",
+  practice_day: "Flag football practice",
+};
+
 const BASELINE_FOCUS_BY_DAY = {
   0: "recovery",
   1: "strength",
@@ -121,7 +138,19 @@ export async function buildProtocolDecisionContext({
   let trainingFocus = "strength";
   let aiRationale = "";
 
-  if (isPracticeDay && context.teamActivity?.activity) {
+  if (context.intent) {
+    // COMPOSE single authority (Phase 2 B4/B5): the rationale descriptor is the
+    // intent's OWN label — the exact text the hero and This-Week render — so a
+    // day-of-week `training_session_templates` row ("Monday - Speed") or
+    // BASELINE_FOCUS_BY_DAY can never override it. trainingFocus/isSprintSession/
+    // isGymTrainingDay are set authoritatively by the COMPOSE layer downstream
+    // (daily-protocol.js), so this branch owns only the framing text.
+    const label =
+      context.intentLabel ||
+      COMPOSE_INTENT_LABELS[context.intent] ||
+      "Today's session";
+    aiRationale = `📋 ${label}.`;
+  } else if (isPracticeDay && context.teamActivity?.activity) {
     const practiceTime =
       context.teamActivity.activity.startTimeLocal || "18:00";
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;

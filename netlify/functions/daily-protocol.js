@@ -1035,6 +1035,14 @@ async function generateProtocol(
     context.seasonPhase = payload.seasonPhase;
   }
 
+  // COMPOSE: thread the resolved intent + its label so the rationale descriptor is
+  // owned by the intent layer (single authority) — not a day-of-week template that
+  // can contradict it ("Rest day" hero vs "Monday - Speed" rationale, Phase 2 B5).
+  if (payload.intent) {
+    context.intent = payload.intent;
+    context.intentLabel = payload.intentLabel ?? null;
+  }
+
   // DB authority: query team_season_phases for the athlete's team.
   // Only runs when the client didn't send an explicit seasonPhase — DB wins over
   // the month-switch fallback but yields to an explicit client override.
