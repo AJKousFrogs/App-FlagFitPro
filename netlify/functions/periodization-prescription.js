@@ -91,22 +91,35 @@ function resolveAgeYears(dob) {
  * "no location -> available:false, never a default city" contract.
  */
 async function resolveWeather(userId) {
-  const city = await resolveTeamHomeCity(userId);
-  if (!city) {
+  // Weather is a NON-CRITICAL guard input — a provider/geocoding hiccup must
+  // never 500 the whole prescription. getWeatherData returns null on any
+  // failure (Open-Meteo/Nominatim error or timeout), so guard the null deref
+  // and swallow any unexpected throw, degrading to "no weather" instead.
+  try {
+    const city = await resolveTeamHomeCity(userId);
+    if (!city) {
+      return null;
+    }
+    const data = await getWeatherData(null, null, city);
+    if (!data || data.temp === null || data.temp === undefined) {
+      return null;
+    }
+    return {
+      tempC: data.temp ?? null,
+      apparentC: data.apparentC ?? data.temp ?? null,
+      condition: data.condition ?? null,
+      weatherCode: data.weatherCode ?? null,
+      precipMm: data.precipMm ?? null,
+      windKmh: data.windKmh ?? null,
+    };
+  } catch (err) {
+    logger.warn(
+      "periodization_weather_resolve_failed",
+      { userId },
+      err instanceof Error ? err : new Error(String(err)),
+    );
     return null;
   }
-  const data = await getWeatherData(null, null, city);
-  if (data.temp === null || data.temp === undefined) {
-    return null;
-  }
-  return {
-    tempC: data.temp ?? null,
-    apparentC: data.apparentC ?? data.temp ?? null,
-    condition: data.condition ?? null,
-    weatherCode: data.weatherCode ?? null,
-    precipMm: data.precipMm ?? null,
-    windKmh: data.windKmh ?? null,
-  };
 }
 
 /**
@@ -367,4 +380,5 @@ export const __test__ = {
   isTeamPractice,
   travelFieldsFromLeg,
   assemblePeriodizationInputs,
+  resolveWeather,
 };
