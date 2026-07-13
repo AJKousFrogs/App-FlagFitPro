@@ -13,15 +13,12 @@ import {
   getAllPresets,
 } from "../config/evidence-presets";
 import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
-import { SupabaseService } from "./supabase.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class EvidenceConfigService {
   private readonly logger = inject(LoggerService);
-  private readonly supabaseService = inject(SupabaseService);
 
   // Active preset ID
   private readonly activePresetId = signal<string>("adult_flag_competitive_v1");
@@ -80,28 +77,11 @@ export class EvidenceConfigService {
   /**
    * Log preset change (for analytics/calibration)
    */
-  private async logPresetChange(presetId: string): Promise<void> {
+  private logPresetChange(presetId: string): void {
+    // Structured log only. The former Supabase write targeted `user_activity_logs`,
+    // a table that does not exist in the live schema (the insert was try/caught into
+    // a no-op) — removed 2026-07-13 to kill the frontend↔DB drift. If preset-change
+    // analytics are ever needed, add a real table + endpoint first.
     this.logger.info("evidence_config_preset_changed", { presetId });
-
-    // Log to Supabase for analytics
-    const user = this.supabaseService.currentUser();
-    if (user?.id) {
-      try {
-        await this.supabaseService.client.from("user_activity_logs").insert({
-          user_id: user.id,
-          activity_type: "preset_change",
-          activity_data: {
-            preset_id: presetId,
-            changed_at: new Date().toISOString(),
-          },
-        });
-      } catch (error) {
-        // Silently fail if table doesn't exist
-        this.logger.debug(
-          "Activity log table not available:",
-          toLogContext(error),
-        );
-      }
-    }
   }
 }
