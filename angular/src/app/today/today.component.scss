@@ -586,6 +586,24 @@
   .cond-line[data-suit="poor"] .ic {
     color: var(--danger);
   }
+  /* Phase 5b — cooler-hour time-shift suggestion */
+  .time-shift {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-2);
+    background: var(--accent-soft);
+    border: 1px solid rgba(44, 224, 113, 0.22);
+    border-radius: var(--r-md);
+    padding: 10px 13px;
+  }
+  .time-shift .ic {
+    color: var(--brand-300);
+    flex: 0 0 auto;
+    margin-top: 1px;
+  }
 
   .cover-grid {
     display: grid;

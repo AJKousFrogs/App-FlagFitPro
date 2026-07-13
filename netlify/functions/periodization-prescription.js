@@ -116,6 +116,7 @@ async function resolveWeather(userId) {
       weatherCode: data.weatherCode ?? null,
       precipMm: data.precipMm ?? null,
       windKmh: data.windKmh ?? null,
+      hourly: Array.isArray(data.hourly) ? data.hourly : null,
     };
   } catch (err) {
     logger.warn(
@@ -240,6 +241,19 @@ async function resolveTaperRuleset(supabase) {
   }
 }
 
+/** "HH:MM" (venue-local training time) → hour 0-23, or null if unset/malformed. */
+function parseTrainingHour(time) {
+  if (typeof time !== "string") {
+    return null;
+  }
+  const m = /^(\d{1,2}):/.exec(time.trim());
+  if (!m) {
+    return null;
+  }
+  const h = Number(m[1]);
+  return Number.isInteger(h) && h >= 0 && h <= 23 ? h : null;
+}
+
 async function assemblePeriodizationInputs(userId, now) {
   const dayStr = now.toISOString().slice(0, 10);
   const recentSince = new Date(now.getTime() - 4 * 86_400_000).toISOString();
@@ -303,6 +317,12 @@ async function assemblePeriodizationInputs(userId, now) {
   const seasonCalendar = Array.isArray(configRow.data?.season_calendar)
     ? configRow.data.season_calendar
     : [];
+  // Phase 5b — the athlete's declared training time ("HH:MM", venue-local) anchors
+  // the cooler-hour time-shift. Parsed to an hour 0-23; null if unset/malformed
+  // (the engine then has no anchor → no time-shift, never a fabricated hour).
+  const preferredTrainingHour = parseTrainingHour(
+    configRow.data?.team_training_days?.time,
+  );
 
   const weightKg =
     typeof userRow.data?.weight_kg === "number" &&
@@ -388,6 +408,9 @@ async function assemblePeriodizationInputs(userId, now) {
       // Two-layer taper: hand the engine the live-hydrated ruleset when present,
       // else null → the engine uses its embedded default. Same object all 7 days.
       taperRuleset,
+      // Phase 5b — cooler-hour time-shift anchor (day 0 only; the declared
+      // venue-local training time). Null → the engine suggests no shift.
+      preferredTrainingHour: i === 0 ? preferredTrainingHour : null,
     });
   }
 

@@ -32,6 +32,7 @@ function createSafetyFallback(location, description) {
     icon: "⚠️",
     location: location || "Unknown",
     safetyWarning: true,
+    hourly: [],
   };
 }
 
@@ -56,6 +57,38 @@ async function fetchWithTimeout(
 async function getWeatherData(latitude, longitude, city) {
   logger.info("weather_provider_open_meteo");
   return await getOpenMeteoData(latitude, longitude, city);
+}
+
+/**
+ * Flatten Open-Meteo's parallel hourly arrays (`time[]`, `temperature_2m[]`, …)
+ * into per-hour points `{ time, tempC, humidityPct, apparentC, weatherCode,
+ * windKmh, precipMm }`. `time` is the venue-local ISO string ("YYYY-MM-DDTHH:MM").
+ * Returns [] for any missing/mismatched input — the time-shift is optional and
+ * must never break the weather payload.
+ */
+function parseHourly(hourly) {
+  if (!hourly || !Array.isArray(hourly.time)) {
+    return [];
+  }
+  const n = hourly.time.length;
+  const at = (arr, i) =>
+    Array.isArray(arr) && typeof arr[i] === "number" ? arr[i] : null;
+  const points = [];
+  for (let i = 0; i < n; i++) {
+    if (typeof hourly.time[i] !== "string") {
+      continue;
+    }
+    points.push({
+      time: hourly.time[i],
+      tempC: at(hourly.temperature_2m, i),
+      humidityPct: at(hourly.relative_humidity_2m, i),
+      apparentC: at(hourly.apparent_temperature, i),
+      weatherCode: at(hourly.weather_code, i),
+      windKmh: at(hourly.wind_speed_10m, i),
+      precipMm: at(hourly.precipitation, i),
+    });
+  }
+  return points;
 }
 
 /**
@@ -112,7 +145,10 @@ async function getOpenMeteoData(latitude, longitude, city) {
     // Call Open-Meteo API
     // Metric units — this is a metric club (Ljubljana; users.preferred_units=metric)
     // and all training thresholds are °C / km/h / mm. See WEATHER_LOGIC.md.
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,precipitation,cloud_cover&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto`;
+    // Phase 5b — also pull the HOURLY forecast (today + tomorrow, venue-local
+    // via timezone=auto) so the engine can suggest shifting a hot session to a
+    // cooler hour ("train at 20:00 when it drops to ~27° WBGT").
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,precipitation,cloud_cover&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation&forecast_days=2&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm&timezone=auto`;
 
     const weatherResponse = await fetchWithTimeout(weatherUrl);
 
@@ -125,6 +161,11 @@ async function getOpenMeteoData(latitude, longitude, city) {
     if (!current) {
       throw new Error("Open-Meteo response missing current weather data");
     }
+
+    // Flatten Open-Meteo's parallel hourly arrays into per-hour points the
+    // engine's time-shift resolver consumes. Venue-local time strings (timezone
+    // =auto) → no TZ conversion needed downstream. Missing/short arrays → [].
+    const hourly = parseHourly(weatherData.hourly);
 
     const weatherCondition = getOpenMeteoCondition(current.weather_code);
     const suitability = calculateOpenMeteoSuitability({
@@ -153,6 +194,7 @@ async function getOpenMeteoData(latitude, longitude, city) {
       icon: weatherCondition.icon,
       location: locationName,
       safetyWarning: suitability.level === "poor" && !suitability.suitable,
+      hourly,
     };
   } catch (error) {
     logger.error("weather_open_meteo_error", error);
@@ -475,6 +517,8 @@ async function handleRequest(event, _context, { userId }) {
       location: weatherData.location,
       icon: weatherData.icon,
       safetyWarning: weatherData.safetyWarning || false,
+      // Phase 5b — hourly forecast for the cooler-hour time-shift suggestion.
+      hourly: weatherData.hourly ?? [],
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

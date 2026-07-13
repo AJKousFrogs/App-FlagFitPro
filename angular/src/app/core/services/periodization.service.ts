@@ -25,6 +25,7 @@ import {
 import { CompetitionPhase } from "../models/schedule.models";
 import {
   DailyPrescription,
+  HourlyWeatherPoint,
   PeriodizationInputs,
   RecentSession,
   SeasonWindow,
@@ -148,6 +149,7 @@ export class PeriodizationService {
         windSpeed?: number;
         condition?: string;
         suitability?: string;
+        hourly?: HourlyWeatherPoint[];
       }>("/api/weather")
       .subscribe({
         next: (res) => {
@@ -161,6 +163,7 @@ export class PeriodizationService {
             weatherCode: d.weatherCode ?? null,
             precipMm: d.precipMm ?? null,
             windKmh: d.windKmh ?? d.windSpeed ?? null,
+            hourly: d.hourly ?? null,
             suitability:
               (d.suitability as
                 | "excellent"
@@ -472,6 +475,10 @@ export class PeriodizationService {
       activeRestrictions: this.injury.restrictions(),
       acclimatizationDay: acclimBase === null ? null : acclimBase + i,
       weeklyProgressionUnsafe: weeklyUnsafe,
+      // Phase 5b — the athlete's current wall-clock hour anchors the cooler-hour
+      // time-shift ("it's hot now → train at 20:00"). day-0 only; `date` is
+      // midnight so its hour can't be used. Venue-local for a local club.
+      preferredTrainingHour: i === 0 ? new Date().getHours() : null,
     }));
 
     return planWeek(dayInputs, teamPracticeFlags, phases7, readiness, acwr);

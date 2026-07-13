@@ -131,6 +131,42 @@ export interface WeatherInput {
   suitability?: "excellent" | "good" | "fair" | "poor" | null;
   /** City / location name resolved by the weather endpoint (team home_city). */
   location?: string | null;
+  /**
+   * Hourly forecast (venue-local time strings, today + tomorrow) for the Phase 5b
+   * cooler-hour time-shift. Undefined/empty → no time-shift suggested (the guard
+   * still applies from the current conditions).
+   */
+  hourly?: HourlyWeatherPoint[] | null;
+}
+
+/** One hour of forecast — venue-local ISO time + the fields WBGT needs. */
+export interface HourlyWeatherPoint {
+  /** Venue-local ISO string, e.g. "2026-07-13T20:00" (Open-Meteo timezone=auto). */
+  time: string;
+  tempC: number | null;
+  humidityPct: number | null;
+  apparentC: number | null;
+  weatherCode: number | null;
+  windKmh: number | null;
+  precipMm: number | null;
+}
+
+/**
+ * A "train later, when it's cooler" suggestion (Phase 5b). Present only when the
+ * heat guard fired AND the hourly forecast has a materially cooler hour later
+ * today. Hours are venue-local (0–23). Advisory only — it does not change the
+ * session's prescribed load, just when to do it.
+ */
+export interface WeatherTimeShift {
+  /** The hour the athlete would otherwise train (preferred time or now). */
+  fromHour: number;
+  /** The suggested cooler hour later today. */
+  toHour: number;
+  /** WBGT (°C) at the from-hour vs the to-hour. */
+  fromWbgt: number;
+  toWbgt: number;
+  /** Athlete-facing one-liner, e.g. "32°C WBGT now — train at 20:00 (~27°)". */
+  message: string;
 }
 
 /**
@@ -203,6 +239,12 @@ export interface DailyPrescription {
   seasonPhase?: SeasonPhase | null;
   /** Weather guard result, present only when weather was supplied. */
   weatherAdjustment?: WeatherAdjustment | null;
+  /**
+   * "Train later, when it's cooler" suggestion (Phase 5b). Present only when the
+   * heat guard fired and the hourly forecast has a materially cooler hour later
+   * today. Advisory — the prescribed load is unchanged; this only moves WHEN.
+   */
+  timeShift?: WeatherTimeShift | null;
   /**
    * Injury/tightness down-regulation applied on top of the base plan, if any.
    * Traceability for the self-report → recalc loop: what was changed and why.
@@ -417,4 +459,11 @@ export interface PeriodizationInputs {
    * available, so client and server share one deterministic computation.
    */
   taperRuleset?: TaperRuleset | null;
+  /**
+   * The athlete's preferred training hour (0–23, venue-local), from
+   * `team_training_days.time`. The Phase 5b time-shift measures "now vs a cooler
+   * hour" from here. Null/undefined → the guard uses `date`'s hour instead (no
+   * fabricated default — it's their planned time or the current time).
+   */
+  preferredTrainingHour?: number | null;
 }
