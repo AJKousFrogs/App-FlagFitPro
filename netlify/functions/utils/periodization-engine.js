@@ -864,18 +864,21 @@ var PRACTICE_PHASE_MODIFIERS = {
   },
   // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
   // glycogen top-up (top-up is only the final day, handled by the taper branch).
+  // Taper = cut VOLUME, hold INTENSITY (Bosquet 2007): RPE stays at the
+  // accumulation baseline (7); only the duration drops (90 → 60 min).
   taper: {
     intent: "mixed",
-    rpe: 6,
+    rpe: 7,
     minutes: 60,
     recoveryEmphasis: "medium",
     nutritionIntent: "mixed",
     framing: "sharp"
   },
-  // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
+  // Final 48h of a taper → shorter, still-sharp walkthrough/activation + begin
+  // glycogen top-up. Intensity held at baseline (RPE 7); volume halved (90 → 45).
   taper_final: {
     intent: "mixed",
-    rpe: 5,
+    rpe: 7,
     minutes: 45,
     recoveryEmphasis: "medium",
     nutritionIntent: "taper-prime",
@@ -902,22 +905,61 @@ var TAPER_CONFIG = {
   finalThirdDaysOut: 2,
   /** Default day-of-taper when hours-to-event is unknown. */
   defaultDayOfTaper: 7,
-  /** Individual (non-practice) taper session targets. */
-  individual: {
-    regular: {
-      intent: "sprint",
-      rpe: 6,
-      minutes: 45,
-      sprintReps: 6
+  /**
+   * The final 48h keeps the SAME intensity as the front of the taper but a
+   * lower VOLUME — a few extra-crisp sprints. Applied on top of the level's
+   * volumeFloorPct (see resolveTaperTargets). ~0.66 → e.g. 30min/5reps front →
+   * 20min/3reps final at the international tier (Bosquet exponential taper).
+   */
+  finalThirdVolumeFactor: 0.66
+};
+var EMBEDDED_TAPER_RULES = {
+  version: "v1-2026-07-13",
+  source: "embedded",
+  byLevel: {
+    // A taper reduces VOLUME (volumeFloorPct) while HOLDING INTENSITY
+    // (intensityRetention ≥ 0.90, so RPE never crashes — rubric B6). Bigger
+    // events get a deeper volume cut; a local game gets a short, light taper.
+    local: { volumeFloorPct: 0.7, intensityRetention: 0.9, taperDays: 3 },
+    regional: { volumeFloorPct: 0.6, intensityRetention: 0.95, taperDays: 5 },
+    national: { volumeFloorPct: 0.55, intensityRetention: 0.95, taperDays: 7 },
+    international: {
+      volumeFloorPct: 0.5,
+      intensityRetention: 1,
+      taperDays: 10
     },
-    final: {
-      intent: "mobility",
-      rpe: 4,
-      minutes: 30,
-      sprintReps: 4
-    }
+    world: { volumeFloorPct: 0.5, intensityRetention: 1, taperDays: 12 }
   }
 };
+function taperLevelFor(level) {
+  switch (level) {
+    case "club":
+      return "local";
+    case "regional":
+      return "regional";
+    case "national":
+      return "national";
+    case "international":
+    case "continental":
+      return "international";
+    case "world":
+    case "olympic":
+      return "world";
+    default:
+      return "national";
+  }
+}
+function resolveTaperTargets(ruleset, level, isFinalThird) {
+  const base = baseTargets("sprint");
+  const rule = ruleset.byLevel[taperLevelFor(level)] ?? EMBEDDED_TAPER_RULES.byLevel.national;
+  const volFactor = isFinalThird ? rule.volumeFloorPct * TAPER_CONFIG.finalThirdVolumeFactor : rule.volumeFloorPct;
+  return {
+    intent: "sprint",
+    rpe: Math.round((base.targetRpe ?? 8) * rule.intensityRetention),
+    minutes: Math.round(base.targetMinutes * volFactor),
+    sprintReps: Math.max(2, Math.round(base.sprintReps * volFactor))
+  };
+}
 function practiceModifierFor(phase, daysOut) {
   const key = phase === "taper" && daysOut !== null && daysOut <= TAPER_CONFIG.finalThirdDaysOut ? "taper_final" : phase;
   return PRACTICE_PHASE_MODIFIERS[key] ?? null;
@@ -1138,7 +1180,12 @@ function decideBasePrescription(inputs) {
       });
     case "taper": {
       const dayOfTaper = hoursUntilNext !== null ? Math.max(1, Math.ceil(hoursUntilNext / 24)) : TAPER_CONFIG.defaultDayOfTaper;
-      const t = dayOfTaper <= TAPER_CONFIG.finalThirdDaysOut ? TAPER_CONFIG.individual.final : TAPER_CONFIG.individual.regular;
+      const ruleset = inputs.taperRuleset ?? EMBEDDED_TAPER_RULES;
+      const t = resolveTaperTargets(
+        ruleset,
+        driverEvent?.competitionLevel ?? null,
+        dayOfTaper <= TAPER_CONFIG.finalThirdDaysOut
+      );
       return finalize({
         date,
         phase,
@@ -1927,9 +1974,13 @@ var __periodization__ = {
   planWeekIntents,
   planWeek,
   detectTournamentRecoveryDay,
-  modulateIntentForLoad
+  modulateIntentForLoad,
+  resolveTaperTargets,
+  taperLevelFor,
+  EMBEDDED_TAPER_RULES
 };
 export {
+  EMBEDDED_TAPER_RULES,
   READINESS_LOW,
   __periodization__,
   addSecondSessions,
@@ -1939,5 +1990,7 @@ export {
   macroPhaseFor,
   planWeek,
   planWeekIntents,
-  prescribeFor
+  prescribeFor,
+  resolveTaperTargets,
+  taperLevelFor
 };

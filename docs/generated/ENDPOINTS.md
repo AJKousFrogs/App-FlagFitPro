@@ -67,14 +67,14 @@
 | `micro-sessions` | GET, POST, PATCH | _(router submodule)_ | micro_sessions, micro_session_analytics |
 | `monitoring-report` | GET | /api/monitoring-report/*<br>/api/monitoring-report | monitoring_config, team_members, daily_wellness_checkin, session_load, bloodwork_panels, bloodwork_markers, wearable_health, physio_blocks, users, check_health_sharing() |
 | `notifications` | OPTIONS | /api/notifications<br>/api/notifications/* | — |
-| `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates |
+| `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates, users |
 | `parental-consent` | GET, POST, PUT | _(router submodule)_ | users, parental_consent, privacy_audit_log |
 | `payments` | OPTIONS | /api/payments/*<br>/api/payments<br>/api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `payments-core` | GET, POST, PUT | _(router submodule)_ | team_members, player_payments |
 | `performance-data` | GET, POST, PUT, PATCH, DELETE | _(router submodule)_ | team_members, physical_measurements, performance_tests, daily_wellness_checkin, supplement_logs, v_injuries_unified |
 | `performance-heatmap` | GET | _(router submodule)_ | training_sessions |
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
-| `periodization-prescription` | GET | /api/periodization-prescription | athlete_travel_log, readiness_scores, users, athlete_training_config, training_sessions |
+| `periodization-prescription` | GET | /api/periodization-prescription | athlete_travel_log, taper_rules, readiness_scores, users, athlete_training_config, training_sessions |
 | `player-programs` | GET, POST, PUT | _(router submodule)_ | player_programs, training_programs |
 | `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers, ensure_public_user_profile() |
 | `player-stats` | GET | _(router submodule)_ | games, game_events |

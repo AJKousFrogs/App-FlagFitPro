@@ -219,7 +219,9 @@ describe("prescribeFor — phase defaults", () => {
     expect(rx.intent).toBe("sprint");
   });
 
-  it("taper phase, 2 days from event → mobility (final third)", () => {
+  it("taper phase, 2 days from event → sprint, sharp + low volume (final third holds intensity)", () => {
+    // B6: the final 48h keeps near-max sprint work (velocity/CNS), only VOLUME
+    // drops — it must NOT soften to mobility (that detrains before the game).
     const rx = prescribeFor(
       inputs({
         phase: "taper",
@@ -227,7 +229,12 @@ describe("prescribeFor — phase defaults", () => {
         date: new Date("2026-05-07T08:00:00Z"), // 48h out — final third
       }),
     );
-    expect(rx.intent).toBe("mobility");
+    expect(rx.intent).toBe("sprint"); // velocity preserved, not mobility
+    expect(rx.targetRpe).toBe(8); // intensity held at the sprint baseline
+    // national tier (event() default): floor 0.55 × finalThird 0.66 →
+    // 60min→22, 10reps→4. A few near-max efforts, minimal volume.
+    expect(rx.sprintReps).toBe(4);
+    expect(rx.targetMinutes).toBe(22);
   });
 
   it("transition phase, no heavy density → mixed", () => {
@@ -344,7 +351,8 @@ describe("prescribeFor — team practice (day type) × phase modifier", () => {
     expect(rx.reasoning).toContain("recovery");
   });
 
-  it("taper phase, >2 days out → sharp practice (mixed, rpe6/60min, 'sharp' framing)", () => {
+  it("taper phase, >2 days out → sharp practice (mixed, rpe7 held/60min, 'sharp' framing)", () => {
+    // B6: taper cuts practice VOLUME (90→60 min), holds intensity at baseline RPE 7.
     const rx = prescribeFor(
       inputs({
         isTeamPractice: true,
@@ -353,12 +361,12 @@ describe("prescribeFor — team practice (day type) × phase modifier", () => {
       }),
     );
     expect(rx.intent).toBe("mixed");
-    expect(rx.targetRpe).toBe(6);
-    expect(rx.targetMinutes).toBe(60);
+    expect(rx.targetRpe).toBe(7); // intensity held (was wrongly cut to 6)
+    expect(rx.targetMinutes).toBe(60); // volume cut from 90
     expect(rx.reasoning).toContain("sharp");
   });
 
-  it("taper phase, ≤2 days out → taper_final practice (lighter rpe5/45min)", () => {
+  it("taper phase, ≤2 days out → taper_final practice (rpe7 held, 45min — volume cut only)", () => {
     const rx = prescribeFor(
       inputs({
         isTeamPractice: true,
@@ -367,8 +375,8 @@ describe("prescribeFor — team practice (day type) × phase modifier", () => {
       }),
     );
     expect(rx.intent).toBe("mixed");
-    expect(rx.targetRpe).toBe(5);
-    expect(rx.targetMinutes).toBe(45);
+    expect(rx.targetRpe).toBe(7); // intensity held (was wrongly cut to 5)
+    expect(rx.targetMinutes).toBe(45); // volume halved from 90
   });
 
   it("competition phase → the GAME is the session; practice yields", () => {
@@ -1490,7 +1498,10 @@ describe("prescribeFor — team practice day", () => {
     );
     expect(rx.intentLabel).toBe("Flag football practice");
     expect(rx.reasoning).toMatch(/sharp, not heavy/i);
-    expect(rx.targetRpe).toBeLessThan(7); // tapered, not a full practice
+    // B6: tapered = VOLUME cut, intensity HELD — practice stays at baseline RPE 7
+    // (was wrongly < 7); the taper shows in the shorter duration, not a softer RPE.
+    expect(rx.targetRpe).toBe(7);
+    expect(rx.targetMinutes).toBeLessThan(90); // volume reduced from a full practice
   });
 
   it("without a declared practice day, the taper is the normal sharp sprint", () => {

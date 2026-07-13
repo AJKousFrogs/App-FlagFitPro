@@ -40,7 +40,11 @@ import {
 import { getActiveInjuries } from "./utils/active-injuries.js";
 import { ageFromDob } from "./utils/age.js";
 import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
-import { planWeek, macroPhaseFor } from "./utils/periodization-engine.js";
+import {
+  planWeek,
+  macroPhaseFor,
+  EMBEDDED_TAPER_RULES,
+} from "./utils/periodization-engine.js";
 import {
   deriveRestrictions,
   isTeamPractice,
@@ -164,6 +168,77 @@ async function resolveTravel(userId, now) {
   return travelFieldsFromLeg(data, now);
 }
 
+/** The curated taper_rules tournament-level vocabulary. */
+const TAPER_LEVELS = [
+  "local",
+  "regional",
+  "national",
+  "international",
+  "world",
+];
+
+/**
+ * Live-source layer of the two-layer taper model. Reads the active `taper_rules`
+ * and materializes them into the SAME normalized TaperRuleset shape the engine's
+ * embedded default uses — so the engine runs on one schema and never touches raw
+ * DB rows. Returns null (→ engine falls back to EMBEDDED_TAPER_RULES) when the
+ * table is unreachable or does not cover the full curated vocabulary, so a
+ * partial/absent live policy can never silently weaken the taper.
+ * @returns {Promise<null | import("../../angular/src/app/core/models/prescription.models").TaperRuleset>}
+ */
+async function resolveTaperRuleset(supabase) {
+  try {
+    const { data, error } = await supabase
+      .from("taper_rules")
+      .select(
+        "tournament_level, volume_floor_pct, intensity_retention, taper_days, version, is_active",
+      )
+      .eq("is_active", true);
+    if (error || !Array.isArray(data) || data.length === 0) {
+      return null;
+    }
+    /** @type {Record<string, {volumeFloorPct:number,intensityRetention:number,taperDays:number}>} */
+    const byLevel = {};
+    let version = null;
+    for (const r of data) {
+      if (!TAPER_LEVELS.includes(r.tournament_level)) {
+        continue;
+      }
+      const floor = Number(r.volume_floor_pct);
+      const retention = Number(r.intensity_retention);
+      const days = Number(r.taper_days);
+      // Reject any malformed row → fall back to embedded (never a bad number).
+      if (
+        !(floor > 0 && floor <= 1) ||
+        !(retention >= 0.5 && retention <= 1) ||
+        !(days > 0)
+      ) {
+        return null;
+      }
+      byLevel[r.tournament_level] = {
+        volumeFloorPct: floor,
+        intensityRetention: retention,
+        taperDays: days,
+      };
+      version ??= r.version ?? null;
+    }
+    // Require the FULL curated vocabulary — no partial policy reaches the engine.
+    if (!TAPER_LEVELS.every((lvl) => byLevel[lvl])) {
+      return null;
+    }
+    return {
+      version: version ?? "live",
+      source: "live",
+      byLevel:
+        /** @type {import("../../angular/src/app/core/models/prescription.models").TaperRuleset["byLevel"]} */ (
+          byLevel
+        ),
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function assemblePeriodizationInputs(userId, now) {
   const dayStr = now.toISOString().slice(0, 10);
   const recentSince = new Date(now.getTime() - 4 * 86_400_000).toISOString();
@@ -177,6 +252,7 @@ async function assemblePeriodizationInputs(userId, now) {
     activeInjuries,
     weather,
     travel,
+    taperRuleset,
   ] = await Promise.all([
     getScheduleSnapshot(supabaseAdmin, userId, {
       from: new Date(now.getTime() - DEFAULT_LOOKBACK_DAYS * 86_400_000),
@@ -210,6 +286,7 @@ async function assemblePeriodizationInputs(userId, now) {
     getActiveInjuries(userId, dayStr),
     resolveWeather(userId),
     resolveTravel(userId, now),
+    resolveTaperRuleset(supabaseAdmin),
   ]);
 
   if (scheduleResult.error) {
@@ -307,6 +384,9 @@ async function assemblePeriodizationInputs(userId, now) {
           : travel.acclimatizationDay + i,
       arrivalDayTravelHours: i === 0 ? travel.arrivalDayTravelHours : null,
       coachOverride: false,
+      // Two-layer taper: hand the engine the live-hydrated ruleset when present,
+      // else null → the engine uses its embedded default. Same object all 7 days.
+      taperRuleset,
     });
   }
 
@@ -317,6 +397,10 @@ async function assemblePeriodizationInputs(userId, now) {
     phases7,
     todayReadiness: readinessVal,
     todayAcwr: acwrVal,
+    taperPolicy: {
+      version: (taperRuleset ?? EMBEDDED_TAPER_RULES).version,
+      source: (taperRuleset ?? EMBEDDED_TAPER_RULES).source,
+    },
   };
 }
 
@@ -338,6 +422,7 @@ async function handleRequest(event, _context, { userId }) {
     phases7,
     todayReadiness,
     todayAcwr,
+    taperPolicy,
   } = await assemblePeriodizationInputs(userId, now);
   if (error) {
     logger.error(
@@ -362,7 +447,9 @@ async function handleRequest(event, _context, { userId }) {
     todayReadiness,
     todayAcwr,
   );
-  return createSuccessResponse({ prescription: week[0] });
+  // Surface taper-policy provenance so the app "knows what is happening" —
+  // whether the taper ran on the live ruleset or the embedded default.
+  return createSuccessResponse({ prescription: week[0], taperPolicy });
 }
 
 export const handler = async (event, context) =>
@@ -380,5 +467,6 @@ export const __test__ = {
   isTeamPractice,
   travelFieldsFromLeg,
   assemblePeriodizationInputs,
+  resolveTaperRuleset,
   resolveWeather,
 };

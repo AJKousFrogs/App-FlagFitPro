@@ -9351,6 +9351,11 @@
         "col": "is_active",
         "type": "boolean",
         "nullable": false
+      },
+      {
+        "col": "version",
+        "type": "text",
+        "nullable": false
       }
     ],
     "team_activities": [

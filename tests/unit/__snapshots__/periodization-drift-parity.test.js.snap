@@ -99,3 +99,67 @@ exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > prescr
   "targetRpe": 5,
 }
 `;
+
+exports[`Phase 4 — taper holds intensity, cuts volume (B6) > final 48h (40h out): prescription is locked (regression snapshot) 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-13",
+  "driverEvent": {
+    "competitionLevel": "national",
+    "competitionShortName": "League",
+    "endsAt": "2026-07-15T00:00:00.000Z",
+    "expectedGameCount": 1,
+    "importance": "regular",
+    "startsAt": "2026-07-15T00:00:00.000Z",
+  },
+  "hoursUntilNextEvent": 40,
+  "intent": "sprint",
+  "intentLabel": "Sprint focus",
+  "nutrition": {
+    "carbsG": 360,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 4.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "taper",
+  "positionEmphasis": null,
+  "reasoning": "2 days to League (1 games). Sharp, not heavy.",
+  "recoveryEmphasis": "medium",
+  "sprintReps": 4,
+  "strengthSets": 0,
+  "targetMinutes": 22,
+  "targetRpe": 8,
+}
+`;
+
+exports[`Phase 4 — taper holds intensity, cuts volume (B6) > front of taper (72h out): prescription is locked (regression snapshot) 1`] = `
+{
+  "acwrAtIssue": 1,
+  "date": "2026-07-13",
+  "driverEvent": {
+    "competitionLevel": "national",
+    "competitionShortName": "League",
+    "endsAt": "2026-07-16T08:00:00.000Z",
+    "expectedGameCount": 1,
+    "importance": "regular",
+    "startsAt": "2026-07-16T08:00:00.000Z",
+  },
+  "hoursUntilNextEvent": 72,
+  "intent": "sprint",
+  "intentLabel": "Sprint focus",
+  "nutrition": {
+    "carbsG": 360,
+    "hydrationL": 2.8,
+    "proteinG": 144,
+    "rationale": "Daily targets at 4.5g/kg carbs, 1.8g/kg protein.",
+  },
+  "phase": "taper",
+  "positionEmphasis": null,
+  "reasoning": "3 days to League (1 games). Sharp, not heavy.",
+  "recoveryEmphasis": "medium",
+  "sprintReps": 6,
+  "strengthSets": 0,
+  "targetMinutes": 33,
+  "targetRpe": 8,
+}
+`;

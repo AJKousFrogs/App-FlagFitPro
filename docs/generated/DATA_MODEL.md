@@ -2382,7 +2382,7 @@ Touched by: `performance-data`, `staff-nutritionist`, `supplements`, `user-conte
 - `created_at` timestamp with time zone · not null
 
 ### `taper_rules`
-Touched by: _(no endpoint references this table)_
+Touched by: `periodization-prescription`
 
 - `id` uuid · not null
 - `tournament_level` text · not null
@@ -2392,6 +2392,7 @@ Touched by: _(no endpoint references this table)_
 - `intensity_retention` numeric · not null
 - `methodology_citation` text · not null
 - `is_active` boolean · not null
+- `version` text · not null
 
 ### `team_activities`
 Touched by: _(no endpoint references this table)_
@@ -2836,7 +2837,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `parental-consent`, `periodization-prescription`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
