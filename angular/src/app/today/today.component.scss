@@ -604,6 +604,34 @@
     flex: 0 0 auto;
     margin-top: 1px;
   }
+  /* log-your-practice nudge (ACWR accuracy) */
+  .log-practice-nudge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: var(--sp-4);
+    padding: 12px 15px;
+    font-size: 13px;
+    color: var(--text-2);
+    background: var(--warn-soft);
+    border: 1px solid rgba(245, 183, 59, 0.22);
+    border-radius: var(--r-md);
+    text-decoration: none;
+  }
+  .log-practice-nudge .ic {
+    color: var(--warn);
+    flex: 0 0 auto;
+  }
+  .log-practice-nudge .cta {
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-weight: 600;
+    color: var(--brand-300);
+    white-space: nowrap;
+  }
+  .log-practice-nudge:hover .cta {
+    color: var(--brand-500);
+  }
 
   .cover-grid {
     display: grid;
