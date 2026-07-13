@@ -128,6 +128,16 @@
     }
 
     <!-- ============ SESSION + CHECK-INS ============ -->
+    @if (unloggedPractice(); as up) {
+      <a class="log-practice-nudge" routerLink="/training">
+        <span class="ic"><lucide-icon name="clock" /></span>
+        <span
+          >Log {{ up.label }} practice so your training load (ACWR) stays
+          accurate.</span
+        >
+        <span class="cta">Log it →</span>
+      </a>
+    }
     <div class="grid-2">
       <section class="card session-card">
         <div class="card-head">

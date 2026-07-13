@@ -18,6 +18,7 @@ import { IdentityService } from "../core/services/identity.service";
 import { WellnessService } from "../core/services/wellness.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
 import { LoggerService } from "../core/services/logger.service";
+import { resolveUnloggedPractice } from "./unlogged-practice";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
 const QUOTES: readonly [string, string][] = [
@@ -302,6 +303,23 @@ export class TodayComponent {
           : "Good conditions for the plan.";
     return { text: parts.join(" "), tail, suit: suit ?? "good" };
   });
+
+  /**
+   * A team-practice day (today or yesterday) with NO logged training session —
+   * a nudge to log it so ACWR reflects the real practice load. This is the
+   * honest way to close the "practices don't count" gap: the athlete enters the
+   * ACTUAL session (RPE × minutes), never a fabricated estimate. Null when there
+   * is nothing outstanding. Suppressed once a session is logged for that day
+   * (recentSessions covers the last 4 days of completed sessions, incl.
+   * session_type='flag_football').
+   */
+  readonly unloggedPractice = computed<{ label: string } | null>(() =>
+    resolveUnloggedPractice(
+      this.schedule.snapshot()?.trainingDays,
+      this.periodization.recentSessions().map((s) => s.at),
+      new Date(),
+    ),
+  );
 
   // ── check-in coverage (28-day, Monday-first) ────────────────────────────────
   readonly coverage = computed(() => {
