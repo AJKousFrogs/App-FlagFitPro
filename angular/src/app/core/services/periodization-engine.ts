@@ -967,26 +967,36 @@ function decideBasePrescription(
       });
     }
 
+    // transition (off-season / no games) shares the realization path with
+    // accumulation: a schedule-aware hint from planWeekIntents drives a proper
+    // phase-shaped session (this is how an off-season week becomes a real
+    // anchor-placed GPP plan — strength / mixed sprint-conditioning / skill —
+    // instead of a flat "mixed" every day). The only transition-specific behaviour
+    // is the no-week-context fallback, guarded at the top of the shared block.
     case "transition":
-      return finalize({
-        date,
-        phase,
-        intent: heavyDensity ? "mobility" : "mixed",
-        targetRpe: 5,
-        targetMinutes: 45,
-        sprintReps: 0,
-        strengthSets: 3,
-        reasoning:
-          "Off-season window. Maintain GPP base — easy aerobic + lift.",
-        recoveryEmphasis: "low",
-        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
-        driverEvent,
-        hoursUntilNextEvent: hoursUntilNext,
-        acwrAtIssue: acwr,
-      });
-
     case "accumulation":
     default: {
+      // Off-season with no week plan (e.g. a standalone single-day call, no hint) →
+      // the conservative GPP base session. With a hint present, the normal path
+      // below realizes the planned strength / mixed / skill day.
+      if (phase === "transition" && inputs.weeklyIntentHint == null) {
+        return finalize({
+          date,
+          phase,
+          intent: heavyDensity ? "mobility" : "mixed",
+          targetRpe: 5,
+          targetMinutes: 45,
+          sprintReps: 0,
+          strengthSets: 3,
+          reasoning:
+            "Off-season window. Maintain GPP base — easy aerobic + lift.",
+          recoveryEmphasis: "low",
+          nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+          driverEvent,
+          hoursUntilNextEvent: hoursUntilNext,
+          acwrAtIssue: acwr,
+        });
+      }
       // No event micro-phase is driving the week. Use the schedule-aware intent
       // hint from weekAhead()'s planWeekIntents pass when available — it places
       // sessions relative to actual practices and games rather than by DOW.
@@ -1140,9 +1150,80 @@ function inSeasonWindow(
  * prescribeFor, where modulateIntentForLoad() applies ACWR / density / weekly-
  * progression safety modulation before the intent reaches the prescription.
  */
+/**
+ * The session-TYPE mix for FREE (self-directed) training days, by macro season
+ * phase. Placement is always anchor-based (proximity to the athlete's REAL
+ * practices/games — never a hardcoded weekday); only the TYPE mix differs by phase.
+ * Evidence (Bompa & Buzzichelli 2018 periodization, NSCA-TSAC):
+ *   • off-season = GPP: strength + `mixed` (sprint-conditioning) base, skill upkeep.
+ *   • pre-season  = convert base to speed/power (strength + sprint).
+ *   • in-season   = maintain strength + sharpen skill at LOW sprint volume (the
+ *                   practices/games already carry the max-speed load).
+ *   • peak        = sharp + low volume: short speed + skill, extra rest.
+ *   • transition/post-season = active regeneration only (recovery/mobility).
+ * `mixed` = "combined sprint + technical" — this is the sprint-filled conditioning.
+ */
+interface PhaseSessionModel {
+  afterPractice: PrescriptionIntent; // day AFTER a practice — different stimulus
+  beforePractice: PrescriptionIntent; // day BEFORE a practice — complement, save legs
+  quality: [PrescriptionIntent, PrescriptionIntent]; // well-buffered days, alternated
+  secondCapPerWeek: number; // cap on quality[1] across the week
+  sandwiched: PrescriptionIntent; // squeezed between anchors (no clear before/after)
+}
+
+function phaseSessionModel(season: SeasonPhase | null): PhaseSessionModel {
+  switch (season) {
+    case "preseason":
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "sprint"],
+        secondCapPerWeek: 2,
+        sandwiched: "technical",
+      };
+    case "inseason":
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "technical"],
+        secondCapPerWeek: 3,
+        sandwiched: "technical",
+      };
+    case "peak":
+      return {
+        afterPractice: "technical",
+        beforePractice: "technical",
+        quality: ["sprint", "technical"],
+        secondCapPerWeek: 3,
+        sandwiched: "recovery",
+      };
+    case "transition":
+    case "postseason":
+      return {
+        afterPractice: "recovery",
+        beforePractice: "mobility",
+        quality: ["recovery", "mobility"],
+        secondCapPerWeek: 4,
+        sandwiched: "mobility",
+      };
+    case "offseason":
+    default:
+      // GPP base. `null` (no declared season_calendar + no games/practices) is the
+      // honest off-season inference — the rationale surfaces "set your season plan".
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "mixed"],
+        secondCapPerWeek: 2,
+        sandwiched: "technical",
+      };
+  }
+}
+
 export function planWeekIntents(
   teamPracticeFlags: boolean[],
   phases: CompetitionPhase[],
+  seasonPhases: (SeasonPhase | null)[] = [],
 ): (PrescriptionIntent | null)[] {
   const intents: (PrescriptionIntent | null)[] = new Array(7).fill(null);
 
@@ -1157,9 +1238,14 @@ export function planWeekIntents(
     (_, i) => teamPracticeFlags[i] || isGameDay[i],
   );
 
-  // Only plan free accumulation days — everything else keeps a null hint.
+  // Plan every free TRAINING-ELIGIBLE day — accumulation (in-season, games ahead)
+  // AND transition (off-season / no games). Off-season days used to be skipped
+  // here and fell through to a flat "mixed" every day; now they get a real
+  // anchor-placed, phase-shaped plan. competition/taper/recovery/travel stay locked.
   const freeDays = Array.from({ length: 7 }, (_, i) => i).filter(
-    (i) => !isLocked[i] && phases[i] === "accumulation",
+    (i) =>
+      !isLocked[i] &&
+      (phases[i] === "accumulation" || phases[i] === "transition"),
   );
   if (!freeDays.length) return intents;
 
@@ -1214,12 +1300,17 @@ export function planWeekIntents(
     if (!trainingIdxs.has(idx)) intents[idx] = "rest";
   }
 
-  // Assign training intents chronologically (earlier days first).
-  let strengthAssigned = 0;
-  let sprintAssigned = 0;
+  // Assign training intents chronologically (earlier days first). PLACEMENT is
+  // anchor-based (proximity to the athlete's real practices/games); the session
+  // TYPE comes from the day's macro season phase via phaseSessionModel — so a Mon/
+  // Wed/Thu-practice player and a Tue/Fri/Sun-practice player each get the sessions
+  // fitted around THEIR days, and off/pre/in/peak seasons differ.
+  let firstQualityAssigned = 0;
+  let secondQualityAssigned = 0;
   for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
     const s = slots.find((sl) => sl.idx === idx)!;
     const minGameDist = Math.min(s.gameB, s.gameA);
+    const model = phaseSessionModel(seasonPhases[idx] ?? null);
 
     // Shouldn't happen (we require minGameDist > 0 in slot selection), but guard.
     if (minGameDist <= 1) {
@@ -1227,37 +1318,38 @@ export function planWeekIntents(
       continue;
     }
 
-    // Day immediately before a practice → technical (complement practice; don't
-    // pre-fatigue legs with strength or sprint before the practice).
+    // Day immediately before a practice → complement it, don't pre-fatigue.
     if (s.pracA === 1) {
-      intents[idx] = "technical";
+      intents[idx] = model.beforePractice;
       continue;
     }
 
-    // Day immediately after a practice → strength (different neuromuscular
-    // stimulus; the adaptation window from practice is still open).
+    // Day immediately after a practice → a different stimulus while the practice
+    // adaptation window is still open.
     if (s.pracB === 1) {
-      intents[idx] = "strength";
-      strengthAssigned++;
+      intents[idx] = model.afterPractice;
+      firstQualityAssigned++;
       continue;
     }
 
-    // Good buffer from practices on both sides (≥ 2 days): quality session.
-    // Alternate strength and sprint; cap sprint at 2 per week.
+    // Good buffer from practices on both sides (≥ 2 days): a quality session.
+    // Alternate the phase's two quality types; cap the second per the phase model.
     if (Math.min(s.pracB, s.pracA) >= 2) {
-      if (sprintAssigned < strengthAssigned && sprintAssigned < 2) {
-        intents[idx] = "sprint";
-        sprintAssigned++;
+      if (
+        secondQualityAssigned < firstQualityAssigned &&
+        secondQualityAssigned < model.secondCapPerWeek
+      ) {
+        intents[idx] = model.quality[1];
+        secondQualityAssigned++;
       } else {
-        intents[idx] = "strength";
-        strengthAssigned++;
+        intents[idx] = model.quality[0];
+        firstQualityAssigned++;
       }
       continue;
     }
 
-    // Sandwiched between practices (both ≤ 2 days) with no single "after" or
-    // "before" adjacency: technical is the safest complementary choice.
-    intents[idx] = "technical";
+    // Sandwiched between anchors with no clear before/after → the phase's safe fill.
+    intents[idx] = model.sandwiched;
   }
 
   return intents;
@@ -1600,7 +1692,8 @@ export function planWeek(
   todayReadiness: number | null,
   todayAcwr: number | null,
 ): DailyPrescription[] {
-  const intentHints = planWeekIntents(teamPracticeFlags, phases7);
+  const seasonPhases = dayInputs.map((d) => d.seasonPhase ?? null);
+  const intentHints = planWeekIntents(teamPracticeFlags, phases7, seasonPhases);
   const out = dayInputs.map((input, i) =>
     prescribeFor({ ...input, weeklyIntentHint: intentHints[i] }),
   );

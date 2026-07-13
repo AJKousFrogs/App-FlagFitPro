@@ -1155,24 +1155,32 @@ function decideBasePrescription(inputs) {
         acwrAtIssue: acwr
       });
     }
+    // transition (off-season / no games) shares the realization path with
+    // accumulation: a schedule-aware hint from planWeekIntents drives a proper
+    // phase-shaped session (this is how an off-season week becomes a real
+    // anchor-placed GPP plan — strength / mixed sprint-conditioning / skill —
+    // instead of a flat "mixed" every day). The only transition-specific behaviour
+    // is the no-week-context fallback, guarded at the top of the shared block.
     case "transition":
-      return finalize({
-        date,
-        phase,
-        intent: heavyDensity ? "mobility" : "mixed",
-        targetRpe: 5,
-        targetMinutes: 45,
-        sprintReps: 0,
-        strengthSets: 3,
-        reasoning: "Off-season window. Maintain GPP base \u2014 easy aerobic + lift.",
-        recoveryEmphasis: "low",
-        nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
-        driverEvent,
-        hoursUntilNextEvent: hoursUntilNext,
-        acwrAtIssue: acwr
-      });
     case "accumulation":
     default: {
+      if (phase === "transition" && inputs.weeklyIntentHint == null) {
+        return finalize({
+          date,
+          phase,
+          intent: heavyDensity ? "mobility" : "mixed",
+          targetRpe: 5,
+          targetMinutes: 45,
+          sprintReps: 0,
+          strengthSets: 3,
+          reasoning: "Off-season window. Maintain GPP base \u2014 easy aerobic + lift.",
+          recoveryEmphasis: "low",
+          nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+          driverEvent,
+          hoursUntilNextEvent: hoursUntilNext,
+          acwrAtIssue: acwr
+        });
+      }
       const weekHint = inputs.weeklyIntentHint ?? null;
       const weeklyUnsafe = inputs.weeklyProgressionUnsafe ?? false;
       if (seasonPhase && seasonPhase !== "preseason") {
@@ -1244,7 +1252,53 @@ function inSeasonWindow(iso, md, from, to) {
   const t = to.slice(0, 10);
   return f <= t ? iso >= f && iso <= t : iso >= f || iso <= t;
 }
-function planWeekIntents(teamPracticeFlags, phases) {
+function phaseSessionModel(season) {
+  switch (season) {
+    case "preseason":
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "sprint"],
+        secondCapPerWeek: 2,
+        sandwiched: "technical"
+      };
+    case "inseason":
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "technical"],
+        secondCapPerWeek: 3,
+        sandwiched: "technical"
+      };
+    case "peak":
+      return {
+        afterPractice: "technical",
+        beforePractice: "technical",
+        quality: ["sprint", "technical"],
+        secondCapPerWeek: 3,
+        sandwiched: "recovery"
+      };
+    case "transition":
+    case "postseason":
+      return {
+        afterPractice: "recovery",
+        beforePractice: "mobility",
+        quality: ["recovery", "mobility"],
+        secondCapPerWeek: 4,
+        sandwiched: "mobility"
+      };
+    case "offseason":
+    default:
+      return {
+        afterPractice: "strength",
+        beforePractice: "technical",
+        quality: ["strength", "mixed"],
+        secondCapPerWeek: 2,
+        sandwiched: "technical"
+      };
+  }
+}
+function planWeekIntents(teamPracticeFlags, phases, seasonPhases = []) {
   const intents = new Array(7).fill(null);
   const isGameDay = phases.map(
     (p) => p === "competition" || p === "taper" || p === "recovery"
@@ -1254,7 +1308,7 @@ function planWeekIntents(teamPracticeFlags, phases) {
     (_, i) => teamPracticeFlags[i] || isGameDay[i]
   );
   const freeDays = Array.from({ length: 7 }, (_, i) => i).filter(
-    (i) => !isLocked[i] && phases[i] === "accumulation"
+    (i) => !isLocked[i] && (phases[i] === "accumulation" || phases[i] === "transition")
   );
   if (!freeDays.length) return intents;
   const nearestBefore = (idx, flags) => {
@@ -1288,35 +1342,36 @@ function planWeekIntents(teamPracticeFlags, phases) {
   for (const { idx } of slots) {
     if (!trainingIdxs.has(idx)) intents[idx] = "rest";
   }
-  let strengthAssigned = 0;
-  let sprintAssigned = 0;
+  let firstQualityAssigned = 0;
+  let secondQualityAssigned = 0;
   for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
     const s = slots.find((sl) => sl.idx === idx);
     const minGameDist = Math.min(s.gameB, s.gameA);
+    const model = phaseSessionModel(seasonPhases[idx] ?? null);
     if (minGameDist <= 1) {
       intents[idx] = "rest";
       continue;
     }
     if (s.pracA === 1) {
-      intents[idx] = "technical";
+      intents[idx] = model.beforePractice;
       continue;
     }
     if (s.pracB === 1) {
-      intents[idx] = "strength";
-      strengthAssigned++;
+      intents[idx] = model.afterPractice;
+      firstQualityAssigned++;
       continue;
     }
     if (Math.min(s.pracB, s.pracA) >= 2) {
-      if (sprintAssigned < strengthAssigned && sprintAssigned < 2) {
-        intents[idx] = "sprint";
-        sprintAssigned++;
+      if (secondQualityAssigned < firstQualityAssigned && secondQualityAssigned < model.secondCapPerWeek) {
+        intents[idx] = model.quality[1];
+        secondQualityAssigned++;
       } else {
-        intents[idx] = "strength";
-        strengthAssigned++;
+        intents[idx] = model.quality[0];
+        firstQualityAssigned++;
       }
       continue;
     }
-    intents[idx] = "technical";
+    intents[idx] = model.sandwiched;
   }
   return intents;
 }
@@ -1497,7 +1552,8 @@ function substituteForWet(intent) {
   return intent === "taper-prime" ? "mobility" : "strength";
 }
 function planWeek(dayInputs, teamPracticeFlags, phases7, todayReadiness, todayAcwr) {
-  const intentHints = planWeekIntents(teamPracticeFlags, phases7);
+  const seasonPhases = dayInputs.map((d) => d.seasonPhase ?? null);
+  const intentHints = planWeekIntents(teamPracticeFlags, phases7, seasonPhases);
   const out = dayInputs.map(
     (input, i) => prescribeFor({ ...input, weeklyIntentHint: intentHints[i] })
   );

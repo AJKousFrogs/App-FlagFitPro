@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   prescribeFor,
   applyWeatherGuard,
+  planWeek,
 } from "../../angular/src/app/core/services/periodization-engine.ts";
 
 /**
@@ -91,5 +92,68 @@ describe("PHASE-2 harness — engine baseline (must not move in Phase 2)", () =>
   it("applyWeatherGuard(e: conditioning @33°C) — currently UNguarded (documents the inversion)", () => {
     const condRx = { intent: "conditioning", reasoning: "sustained conditioning" };
     expect(applyWeatherGuard(condRx, HEAT_33, false)).toMatchSnapshot();
+  });
+});
+
+// Phase 3 — off-season is now a real anchor-placed, phase-shaped GPP week (via
+// planWeek), not a flat "mixed" every day. These lock the week-level behavior.
+const offseasonWeek = (seasonPhase) => {
+  const mon = new Date("2026-07-13T08:00:00Z");
+  return Array.from({ length: 7 }, (_, i) => ({
+    date: new Date(mon.getTime() + i * 864e5),
+    phase: "transition",
+    upcoming: [],
+    lastEvent: null,
+    acwr: null,
+    readiness: 60,
+    bodyweightKg: 80,
+    density14d: null,
+    seasonPhase,
+  }));
+};
+
+describe("Phase 3 — off-season GPP week (planWeek)", () => {
+  for (const season of ["offseason", null]) {
+    it(`seasonPhase=${season}: GPP variety, not 5 flat "mixed"`, () => {
+      const week = planWeek(
+        offseasonWeek(season),
+        new Array(7).fill(false), // no team practices
+        new Array(7).fill("transition"), // off-season macro phase
+        60,
+        null,
+      );
+      const intents = week.map((d) => d.intent);
+      const count = (x) => intents.filter((i) => i === x).length;
+      expect(count("rest")).toBeGreaterThanOrEqual(2); // 2 rest days non-negotiable
+      expect(count("mixed")).toBeLessThan(5); // NOT the old flat-mixed bug
+      expect(count("strength")).toBeGreaterThanOrEqual(1); // GPP strength base
+      expect(new Set(intents).size).toBeGreaterThan(2); // real variety, not one type
+      // no max-velocity sprints in off-season GPP (those are pre-/in-season)
+      expect(count("sprint")).toBe(0);
+    });
+  }
+
+  it("adapts around REAL practice days (indices 1 & 3), not a fixed weekday shape", () => {
+    const flags = [false, true, false, true, false, false, false]; // practices on i1,i3
+    const noPractice = planWeek(
+      offseasonWeek("offseason"),
+      new Array(7).fill(false),
+      new Array(7).fill("transition"),
+      60,
+      null,
+    ).map((d) => d.intent);
+    const withPractice = planWeek(
+      offseasonWeek("offseason"),
+      flags,
+      new Array(7).fill("transition"),
+      60,
+      null,
+    ).map((d) => d.intent);
+    // the placement changes when the anchors change — it is NOT a fixed weekday shape
+    expect(withPractice).not.toEqual(noPractice);
+    // and the GPP properties still hold: ≤5 active, ≥2 rest, no off-season sprints
+    const active = withPractice.filter((i) => i !== "rest").length;
+    expect(active).toBeLessThanOrEqual(5);
+    expect(withPractice.filter((i) => i === "sprint").length).toBe(0);
   });
 });
