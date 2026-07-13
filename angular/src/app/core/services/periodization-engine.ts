@@ -516,18 +516,21 @@ const PRACTICE_PHASE_MODIFIERS: Record<string, PracticePhaseModifier> = {
   },
   // Sharp practice a few days out: still a real session → fuel as 'mixed', NOT a
   // glycogen top-up (top-up is only the final day, handled by the taper branch).
+  // Taper = cut VOLUME, hold INTENSITY (Bosquet 2007): RPE stays at the
+  // accumulation baseline (7); only the duration drops (90 → 60 min).
   taper: {
     intent: "mixed",
-    rpe: 6,
+    rpe: 7,
     minutes: 60,
     recoveryEmphasis: "medium",
     nutritionIntent: "mixed",
     framing: "sharp",
   },
-  // Final 48h of a taper → lighter walkthrough/activation + begin glycogen top-up.
+  // Final 48h of a taper → shorter, still-sharp walkthrough/activation + begin
+  // glycogen top-up. Intensity held at baseline (RPE 7); volume halved (90 → 45).
   taper_final: {
     intent: "mixed",
-    rpe: 5,
+    rpe: 7,
     minutes: 45,
     recoveryEmphasis: "medium",
     nutritionIntent: "taper-prime",
@@ -566,19 +569,32 @@ const TAPER_CONFIG = {
   finalThirdDaysOut: 2,
   /** Default day-of-taper when hours-to-event is unknown. */
   defaultDayOfTaper: 7,
-  /** Individual (non-practice) taper session targets. */
+  /**
+   * Individual (non-practice) taper session targets. A taper REDUCES VOLUME
+   * while MAINTAINING INTENSITY (Bosquet 2007 meta-analysis: −41–60% volume,
+   * intensity held; Mujika & Padilla 2003: intensity maintenance is the single
+   * decisive taper variable — cutting it detrains). So both rows keep
+   * `intent: "sprint"` and RPE at the accumulation sprint baseline (8), and cut
+   * only minutes + reps. The final 48h is SHORTER and SHARPER, never softer —
+   * it must not become mobility/technique (that deletes CNS/velocity work right
+   * before the game).
+   */
   individual: {
+    // Front of the taper (> finalThirdDaysOut): half the sprint volume, full
+    // intensity. baseline sprint = RPE 8 / 60min / 10 reps → 30min / 5 reps.
     regular: {
       intent: "sprint" as PrescriptionIntent,
-      rpe: 6,
-      minutes: 45,
-      sprintReps: 6,
-    },
-    final: {
-      intent: "mobility" as PrescriptionIntent,
-      rpe: 4,
+      rpe: 8,
       minutes: 30,
-      sprintReps: 4,
+      sprintReps: 5,
+    },
+    // Final 48h: minimal volume, still near-max efforts. A few crisp sprints to
+    // stay primed — NOT a mobility day. baseline → 20min / 3 reps at RPE 8.
+    final: {
+      intent: "sprint" as PrescriptionIntent,
+      rpe: 8,
+      minutes: 20,
+      sprintReps: 3,
     },
   },
 } as const;
@@ -940,8 +956,9 @@ function decideBasePrescription(
       });
 
     case "taper": {
-      // Inside taper window: keep CNS sharp, drop volume. Targets are config
-      // (TAPER_CONFIG.individual); closer to the event = the lighter "final" row.
+      // Inside taper window: keep CNS sharp (full sprint intensity), drop
+      // volume. Targets are config (TAPER_CONFIG.individual); closer to the
+      // event = the lower-VOLUME "final" row (same intensity, fewer reps).
       const dayOfTaper =
         hoursUntilNext !== null
           ? Math.max(1, Math.ceil(hoursUntilNext / 24))

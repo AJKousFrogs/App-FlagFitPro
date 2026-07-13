@@ -157,3 +157,68 @@ describe("Phase 3 — off-season GPP week (planWeek)", () => {
     expect(withPractice.filter((i) => i === "sprint").length).toBe(0);
   });
 });
+
+// Phase 4 — a taper CUTS VOLUME while HOLDING INTENSITY (rubric B6; Bosquet 2007
+// meta-analysis, Mujika & Padilla 2003). The accumulation sprint baseline is
+// RPE 8 / 60 min / 10 reps; every individual taper day must keep near-max sprint
+// work (never soften to mobility/technique) and reduce only minutes + reps. These
+// assertions FAILED before the fix (regular was RPE 6, final was mobility RPE 4).
+const SPRINT_BASELINE = { rpe: 8, minutes: 60, reps: 10 };
+const taperDay = (hoursOut) => ({
+  date: now,
+  phase: "taper",
+  upcoming: [
+    {
+      // engine reads camelCase startsAt/endsAt (periodization-engine.ts:2058)
+      startsAt: new Date(now.getTime() + hoursOut * 36e5).toISOString(),
+      endsAt: new Date(now.getTime() + hoursOut * 36e5).toISOString(),
+      importance: "regular",
+      competitionLevel: "national",
+      expectedGameCount: 1,
+      competitionShortName: "League",
+    },
+  ],
+  lastEvent: null,
+  acwr: 1.0,
+  readiness: 75,
+  bodyweightKg: 80,
+  density14d: null,
+  seasonPhase: "inseason",
+});
+
+describe("Phase 4 — taper holds intensity, cuts volume (B6)", () => {
+  // Front of taper (3 days out → the "regular" row) and final 48h (40h out → the
+  // "final" row; > 24h so the taper-prime game-eve gate does not fire first).
+  const cases = [
+    { name: "front of taper (72h out)", rx: prescribeFor(taperDay(72)) },
+    { name: "final 48h (40h out)", rx: prescribeFor(taperDay(40)) },
+  ];
+
+  for (const { name, rx } of cases) {
+    it(`${name}: keeps sprint velocity work — never mobility/technique`, () => {
+      expect(rx.intent).toBe("sprint"); // velocity/CNS work preserved
+      expect(rx.sprintReps).toBeGreaterThan(0);
+    });
+    it(`${name}: intensity MAINTAINED at the sprint baseline (RPE ${SPRINT_BASELINE.rpe})`, () => {
+      expect(rx.targetRpe).toBe(SPRINT_BASELINE.rpe); // not reduced
+    });
+    it(`${name}: volume reduced 40-60%+ vs baseline`, () => {
+      const minutesCut = 1 - rx.targetMinutes / SPRINT_BASELINE.minutes;
+      const repsCut = 1 - rx.sprintReps / SPRINT_BASELINE.reps;
+      expect(minutesCut).toBeGreaterThanOrEqual(0.4); // ≥40% less time
+      expect(repsCut).toBeGreaterThanOrEqual(0.4); // ≥40% fewer reps
+      expect(rx.strengthSets).toBe(0); // no strength volume in a taper
+    });
+    it(`${name}: prescription is locked (regression snapshot)`, () => {
+      expect(rx).toMatchSnapshot();
+    });
+  }
+
+  it("final 48h is LOWER VOLUME than the front of the taper (progressive), same intensity", () => {
+    const front = prescribeFor(taperDay(72));
+    const final = prescribeFor(taperDay(40));
+    expect(final.sprintReps).toBeLessThan(front.sprintReps); // fewer reps closer in
+    expect(final.targetMinutes).toBeLessThanOrEqual(front.targetMinutes);
+    expect(final.targetRpe).toBe(front.targetRpe); // intensity unchanged across taper
+  });
+});

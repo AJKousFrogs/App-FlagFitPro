@@ -386,10 +386,10 @@ exports[`periodization engine — golden parity fixtures > prescription is stabl
   "positionEmphasis": null,
   "reasoning": "Taper week. Keep nervous system sharp at low volume.",
   "recoveryEmphasis": "medium",
-  "sprintReps": 6,
+  "sprintReps": 5,
   "strengthSets": 0,
-  "targetMinutes": 45,
-  "targetRpe": 6,
+  "targetMinutes": 30,
+  "targetRpe": 8,
 }
 `;
 
