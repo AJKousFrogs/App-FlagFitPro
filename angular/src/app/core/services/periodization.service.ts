@@ -141,6 +141,7 @@ export class PeriodizationService {
         available?: boolean;
         temp?: number;
         apparentC?: number;
+        humidity?: number;
         weatherCode?: number;
         precipMm?: number;
         windKmh?: number;
@@ -155,6 +156,7 @@ export class PeriodizationService {
           this.weather.set({
             tempC: d.temp ?? null,
             apparentC: d.apparentC ?? d.temp ?? null,
+            humidityPct: d.humidity ?? null,
             condition: d.condition ?? null,
             weatherCode: d.weatherCode ?? null,
             precipMm: d.precipMm ?? null,
