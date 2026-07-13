@@ -231,8 +231,10 @@ describe("prescribeFor — phase defaults", () => {
     );
     expect(rx.intent).toBe("sprint"); // velocity preserved, not mobility
     expect(rx.targetRpe).toBe(8); // intensity held at the sprint baseline
-    expect(rx.sprintReps).toBe(3); // minimal volume — a few near-max efforts
-    expect(rx.targetMinutes).toBe(20);
+    // national tier (event() default): floor 0.55 × finalThird 0.66 →
+    // 60min→22, 10reps→4. A few near-max efforts, minimal volume.
+    expect(rx.sprintReps).toBe(4);
+    expect(rx.targetMinutes).toBe(22);
   });
 
   it("transition phase, no heavy density → mixed", () => {

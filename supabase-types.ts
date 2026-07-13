@@ -7659,6 +7659,7 @@ export type Database = {
           methodology_citation: string
           taper_days: number
           tournament_level: string
+          version: string
           volume_floor_pct: number
           volume_reduction_pct: number
         }
@@ -7669,6 +7670,7 @@ export type Database = {
           methodology_citation: string
           taper_days: number
           tournament_level: string
+          version?: string
           volume_floor_pct: number
           volume_reduction_pct: number
         }
@@ -7679,6 +7681,7 @@ export type Database = {
           methodology_citation?: string
           taper_days?: number
           tournament_level?: string
+          version?: string
           volume_floor_pct?: number
           volume_reduction_pct?: number
         }

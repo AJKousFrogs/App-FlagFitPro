@@ -125,9 +125,9 @@ exports[`Phase 4 — taper holds intensity, cuts volume (B6) > final 48h (40h ou
   "positionEmphasis": null,
   "reasoning": "2 days to League (1 games). Sharp, not heavy.",
   "recoveryEmphasis": "medium",
-  "sprintReps": 3,
+  "sprintReps": 4,
   "strengthSets": 0,
-  "targetMinutes": 20,
+  "targetMinutes": 22,
   "targetRpe": 8,
 }
 `;
@@ -157,9 +157,9 @@ exports[`Phase 4 — taper holds intensity, cuts volume (B6) > front of taper (7
   "positionEmphasis": null,
   "reasoning": "3 days to League (1 games). Sharp, not heavy.",
   "recoveryEmphasis": "medium",
-  "sprintReps": 5,
+  "sprintReps": 6,
   "strengthSets": 0,
-  "targetMinutes": 30,
+  "targetMinutes": 33,
   "targetRpe": 8,
 }
 `;

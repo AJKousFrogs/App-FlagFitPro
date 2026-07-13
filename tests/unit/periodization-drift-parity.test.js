@@ -164,7 +164,7 @@ describe("Phase 3 — off-season GPP week (planWeek)", () => {
 // work (never soften to mobility/technique) and reduce only minutes + reps. These
 // assertions FAILED before the fix (regular was RPE 6, final was mobility RPE 4).
 const SPRINT_BASELINE = { rpe: 8, minutes: 60, reps: 10 };
-const taperDay = (hoursOut) => ({
+const taperDay = (hoursOut, competitionLevel = "national") => ({
   date: now,
   phase: "taper",
   upcoming: [
@@ -173,7 +173,7 @@ const taperDay = (hoursOut) => ({
       startsAt: new Date(now.getTime() + hoursOut * 36e5).toISOString(),
       endsAt: new Date(now.getTime() + hoursOut * 36e5).toISOString(),
       importance: "regular",
-      competitionLevel: "national",
+      competitionLevel,
       expectedGameCount: 1,
       competitionShortName: "League",
     },
@@ -220,5 +220,24 @@ describe("Phase 4 — taper holds intensity, cuts volume (B6)", () => {
     expect(final.sprintReps).toBeLessThan(front.sprintReps); // fewer reps closer in
     expect(final.targetMinutes).toBeLessThanOrEqual(front.targetMinutes);
     expect(final.targetRpe).toBe(front.targetRpe); // intensity unchanged across taper
+  });
+
+  // Two-layer model (Phase 4b): the taper is GRADUATED by event level from the
+  // materialized ruleset — a World peak event gets a deeper taper than a local
+  // game — but EVERY level keeps sprint velocity and intensity ≥ 90% (RPE ≥ 7),
+  // never the old mobility-RPE-4 detraining error.
+  it("graduates by event level: bigger event → deeper volume cut, all keep sprint + RPE ≥ 7", () => {
+    const local = prescribeFor(taperDay(72, "club")); // → "local" rule
+    const national = prescribeFor(taperDay(72, "national"));
+    const world = prescribeFor(taperDay(72, "world"));
+    // deeper events cut more VOLUME (retain fewer minutes)
+    expect(world.targetMinutes).toBeLessThan(national.targetMinutes);
+    expect(national.targetMinutes).toBeLessThan(local.targetMinutes);
+    // …while intensity is held high everywhere (curated retention ≥ 0.90)
+    for (const rx of [local, national, world]) {
+      expect(rx.intent).toBe("sprint"); // velocity always preserved
+      expect(rx.targetRpe).toBeGreaterThanOrEqual(7); // never crashed to mobility
+    }
+    expect(world.targetRpe).toBe(8); // peak event holds full intensity
   });
 });

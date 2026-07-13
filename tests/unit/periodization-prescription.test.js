@@ -7,7 +7,100 @@ const {
   resolveAgeYears,
   isTeamPractice,
   travelFieldsFromLeg,
+  resolveTaperRuleset,
 } = __test__;
+
+// Minimal supabase stub for resolveTaperRuleset: from().select().eq() resolves
+// to { data, error }. resolveTaperRuleset only ever calls this one chain.
+const taperSupabase = (result) => ({
+  from: () => ({
+    select: () => ({
+      eq: () => Promise.resolve(result),
+    }),
+  }),
+});
+const FULL_TAPER_ROWS = [
+  {
+    tournament_level: "local",
+    volume_floor_pct: "0.70",
+    intensity_retention: "0.90",
+    taper_days: 3,
+    version: "v1-2026-07-13",
+    is_active: true,
+  },
+  {
+    tournament_level: "regional",
+    volume_floor_pct: "0.60",
+    intensity_retention: "0.95",
+    taper_days: 5,
+    version: "v1-2026-07-13",
+    is_active: true,
+  },
+  {
+    tournament_level: "national",
+    volume_floor_pct: "0.55",
+    intensity_retention: "0.95",
+    taper_days: 7,
+    version: "v1-2026-07-13",
+    is_active: true,
+  },
+  {
+    tournament_level: "international",
+    volume_floor_pct: "0.50",
+    intensity_retention: "1.00",
+    taper_days: 10,
+    version: "v1-2026-07-13",
+    is_active: true,
+  },
+  {
+    tournament_level: "world",
+    volume_floor_pct: "0.50",
+    intensity_retention: "1.00",
+    taper_days: 12,
+    version: "v1-2026-07-13",
+    is_active: true,
+  },
+];
+
+describe("resolveTaperRuleset — live-source hydration into the engine schema", () => {
+  it("materializes full active rows into a normalized live ruleset", async () => {
+    const rs = await resolveTaperRuleset(taperSupabase({ data: FULL_TAPER_ROWS }));
+    expect(rs.source).toBe("live");
+    expect(rs.version).toBe("v1-2026-07-13");
+    // string numerics from Postgres are coerced to numbers
+    expect(rs.byLevel.national).toEqual({
+      volumeFloorPct: 0.55,
+      intensityRetention: 0.95,
+      taperDays: 7,
+    });
+    expect(Object.keys(rs.byLevel).sort()).toEqual([
+      "international",
+      "local",
+      "national",
+      "regional",
+      "world",
+    ]);
+  });
+
+  it("returns null (→ engine embedded default) when a level is missing", async () => {
+    const partial = FULL_TAPER_ROWS.filter((r) => r.tournament_level !== "world");
+    expect(await resolveTaperRuleset(taperSupabase({ data: partial }))).toBeNull();
+  });
+
+  it("returns null on a malformed value (never feeds the engine a bad number)", async () => {
+    const bad = FULL_TAPER_ROWS.map((r) =>
+      r.tournament_level === "national" ? { ...r, volume_floor_pct: "2.0" } : r,
+    );
+    expect(await resolveTaperRuleset(taperSupabase({ data: bad }))).toBeNull();
+  });
+
+  it("returns null on a query error or empty table", async () => {
+    expect(
+      await resolveTaperRuleset(taperSupabase({ error: { message: "boom" } })),
+    ).toBeNull();
+    expect(await resolveTaperRuleset(taperSupabase({ data: [] }))).toBeNull();
+  });
+});
 
 /**
  * periodization-prescription.js is the server-side input-assembly for the ported

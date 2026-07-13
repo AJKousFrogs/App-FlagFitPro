@@ -14,6 +14,48 @@
 import { CompetitionEvent, CompetitionPhase } from "./schedule.models";
 
 /**
+ * The curated `taper_rules` vocabulary (5 tournament levels). The 7-value
+ * `CompetitionLevel` maps onto these (club→local, continental→international,
+ * olympic→world) via the engine's `taperLevelFor`.
+ */
+export type TaperTournamentLevel =
+  | "local"
+  | "regional"
+  | "national"
+  | "international"
+  | "world";
+
+/** One tournament level's taper policy (mirrors a `taper_rules` row). */
+export interface TaperLevelRule {
+  /** Fraction of baseline VOLUME (minutes/reps) retained, 0–1. Lower = deeper
+   * taper. Bosquet 2007: a full taper cuts volume 41–60% (floor 0.40–0.60). */
+  volumeFloorPct: number;
+  /** Fraction of baseline INTENSITY (RPE) retained, 0–1. Kept ≥ 0.90 so the
+   * taper never detrains (rubric B6 — Mujika & Padilla 2003). */
+  intensityRetention: number;
+  /** Calendar length of the taper for this level, in days (informational — the
+   * WHEN a taper starts is owned by `resolvePhase`, not this). */
+  taperDays: number;
+}
+
+/**
+ * A normalized, versioned taper policy the engine runs against. Two-layer model:
+ * the engine is deterministic and consumes ONLY this materialized object — never
+ * raw DB rows. The embedded default (`EMBEDDED_TAPER_RULES`) guarantees pure,
+ * offline, versioned behavior; the server may hydrate a live/override ruleset
+ * into this exact shape and pass it in. `source`/`version` give the app
+ * provenance ("what is happening") without the engine ever depending on a read.
+ */
+export interface TaperRuleset {
+  /** Version tag; the live layer can detect a newer ruleset vs the embedded one. */
+  version: string;
+  /** Provenance of the resolved ruleset. */
+  source: "embedded" | "live" | "override";
+  /** Policy keyed by the curated tournament-level vocabulary. */
+  byLevel: Record<TaperTournamentLevel, TaperLevelRule>;
+}
+
+/**
  * What the athlete should do today. Mutually exclusive — one intent per day.
  */
 export type PrescriptionIntent =
@@ -360,4 +402,12 @@ export interface PeriodizationInputs {
    * boolean so the pure algorithm stays dependency-free and testable.
    */
   weeklyProgressionUnsafe?: boolean | null;
+  /**
+   * Materialized taper policy (two-layer model). The engine runs the taper on
+   * this object — never on raw DB rows. Null/undefined → the engine's embedded
+   * `EMBEDDED_TAPER_RULES` default (pure/offline). The server hydrates the live
+   * `taper_rules` (active version / coach override) into this exact shape when
+   * available, so client and server share one deterministic computation.
+   */
+  taperRuleset?: TaperRuleset | null;
 }
