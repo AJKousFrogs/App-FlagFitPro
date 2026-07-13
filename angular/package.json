@@ -69,7 +69,7 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@fontsource/space-grotesk": "^5.2.10",
-    "@supabase/supabase-js": "^2.108.2",
+    "@supabase/supabase-js": "^2.110.2",
     "date-fns": "^4.4.0",
     "express": "^5.1.0",
     "iconify-icon": "^3.0.2",
