@@ -504,36 +504,6 @@ function selectWarmupVariant({
   return "field";
 }
 
-function getCurrentPeriodizationPhase(date = new Date()) {
-  const month = date.getMonth() + 1;
-
-  switch (month) {
-    case 11:
-      return "off_season_rest";
-    case 12:
-      return "foundation";
-    case 1:
-      return "strength_accumulation";
-    case 2:
-      return "power_development";
-    case 3:
-      return "speed_development";
-    case 4:
-    case 5:
-    case 6:
-      return "in_season_maintenance";
-    case 7:
-      return "mid_season_reload";
-    case 8:
-      return "peak";
-    case 9:
-    case 10:
-      return "in_season_maintenance";
-    default:
-      return "foundation";
-  }
-}
-
 function getPlyometricIntensity(phase, readinessScore) {
   if (readinessScore && readinessScore < 50) {
     return "low";
@@ -714,7 +684,6 @@ function tightnessTriageStretch(region, { soreRegions = [], injuryRegions = [] }
 export {
   WARMUP_TARGET_SECONDS,
   buildWarmupTemplate,
-  getCurrentPeriodizationPhase,
   getPlyometricIntensity,
   getSafeConditioningIntensity,
   selectWarmupVariant,

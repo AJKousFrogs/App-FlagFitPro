@@ -1,6 +1,3 @@
-import { parseIsoDateString } from "./date-utils.js";
-import { getCurrentPeriodizationPhase } from "./daily-protocol-training-logic.js";
-
 const PERIODIZATION_PHASE_NAMES = {
   off_season_rest: "Active Recovery",
   foundation: "Foundation Building",
@@ -16,6 +13,23 @@ const PERIODIZATION_PHASE_NAMES = {
 };
 
 const TRAINING_SESSIONS_TABLE = "training_sessions";
+
+// Fallback session labels when the COMPOSE layer sends an intent without a label
+// (it normally sends intentLabel). Keeps the rationale descriptor honest + aligned
+// with the hero. Not a periodization source — just display text for the intent.
+const COMPOSE_INTENT_LABELS = {
+  rest: "Rest + daily mobility",
+  recovery: "Active recovery",
+  mobility: "Mobility session",
+  travel: "Travel day",
+  competition: "Game day",
+  sprint: "Speed & acceleration",
+  "taper-prime": "Pre-game prime",
+  strength: "Strength session",
+  mixed: "Mixed session",
+  technical: "Technical skills",
+  practice_day: "Flag football practice",
+};
 
 const BASELINE_FOCUS_BY_DAY = {
   0: "recovery",
@@ -124,7 +138,19 @@ export async function buildProtocolDecisionContext({
   let trainingFocus = "strength";
   let aiRationale = "";
 
-  if (isPracticeDay && context.teamActivity?.activity) {
+  if (context.intent) {
+    // COMPOSE single authority (Phase 2 B4/B5): the rationale descriptor is the
+    // intent's OWN label — the exact text the hero and This-Week render — so a
+    // day-of-week `training_session_templates` row ("Monday - Speed") or
+    // BASELINE_FOCUS_BY_DAY can never override it. trainingFocus/isSprintSession/
+    // isGymTrainingDay are set authoritatively by the COMPOSE layer downstream
+    // (daily-protocol.js), so this branch owns only the framing text.
+    const label =
+      context.intentLabel ||
+      COMPOSE_INTENT_LABELS[context.intent] ||
+      "Today's session";
+    aiRationale = `📋 ${label}.`;
+  } else if (isPracticeDay && context.teamActivity?.activity) {
     const practiceTime =
       context.teamActivity.activity.startTimeLocal || "18:00";
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;
@@ -189,27 +215,33 @@ export async function buildProtocolDecisionContext({
     aiRationale += ` 👴 Age-adjusted recovery: ${Math.round((context.ageModifier.recovery_modifier - 1) * 100)}% more rest recommended (ACWR target: ${context.acwrTargetRange.min}-${context.acwrTargetRange.max.toFixed(2)}).`;
   }
 
-  if (context.currentPhase) {
-    aiRationale += ` 📅 Phase: ${context.currentPhase.name}.`;
-  }
-
-  // Phase resolution priority (highest → lowest):
-  // 1. context.dbSeasonPhase — team_season_phases DB row (set by daily-protocol.js)
-  // 2. context.seasonPhase   — client calendar-derived override (COMPOSE intent layer)
-  // 3. getCurrentPeriodizationPhase month-switch fallback
+  // SINGLE PHASE AUTHORITY (Phase 2 — kill the drift). The rationale renders ONE
+  // phase, and periodizationPhase derives ONLY from the resolved season phase —
+  // NEVER from the calendar month. The old chain fell back to a month-switch
+  // (getCurrentPeriodizationPhase → July="Mid-Season Reload"), which contradicted
+  // the canonical resolvePhase result and fabricated a plausible-but-wrong phase
+  // for an athlete with no season plan. Priority:
+  //   1. context.dbSeasonPhase — team_season_phases DB row (canonical, coach-set)
+  //   2. context.seasonPhase   — client calendar-derived (resolvePhase → COMPOSE)
+  //   3. no season info → a CONSERVATIVE base, and the rationale SAYS so (the
+  //      "no invented inputs" rule — never silently guess a mid-season block).
   const CLIENT_PHASE_MAP = {
     offseason: "off_season_rest",
     preseason: "competition_prep",
     inseason: "in_season_maintenance",
     transition: "active_recovery",
   };
+  const hasSeasonInfo = !!(context.dbSeasonPhase || context.seasonPhase);
   const periodizationPhase = context.dbSeasonPhase
     ? context.dbSeasonPhase
     : context.seasonPhase
-      ? (CLIENT_PHASE_MAP[context.seasonPhase] ??
-        getCurrentPeriodizationPhase(parseIsoDateString(date)))
-      : getCurrentPeriodizationPhase(parseIsoDateString(date));
-  aiRationale += ` 📊 Periodization: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
+      ? (CLIENT_PHASE_MAP[context.seasonPhase] ?? "off_season_rest")
+      : "off_season_rest";
+  aiRationale += ` 📅 Phase: ${PERIODIZATION_PHASE_NAMES[periodizationPhase] || periodizationPhase}.`;
+  if (!hasSeasonInfo) {
+    aiRationale +=
+      " (No season plan set — using a conservative base. Set your season calendar in Settings to periodize toward your first gameday.)";
+  }
 
   // Only surface the ACWR-elevated warning when ACWR is actually known.
   if (hasAcwr && acwrForLogic > 1.3) {

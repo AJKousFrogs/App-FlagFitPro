@@ -41,7 +41,6 @@ import {
   transformProtocolResponse,
 } from "./utils/daily-protocol-response.js";
 import {
-  getCurrentPeriodizationPhase,
   getPlyometricIntensity,
   getSafeConditioningIntensity,
   shouldIncludeNordicCurls,
@@ -1034,6 +1033,14 @@ async function generateProtocol(
   // league-average approximation that's wrong for any non-standard calendar.
   if (payload.seasonPhase) {
     context.seasonPhase = payload.seasonPhase;
+  }
+
+  // COMPOSE: thread the resolved intent + its label so the rationale descriptor is
+  // owned by the intent layer (single authority) — not a day-of-week template that
+  // can contradict it ("Rest day" hero vs "Monday - Speed" rationale, Phase 2 B5).
+  if (payload.intent) {
+    context.intent = payload.intent;
+    context.intentLabel = payload.intentLabel ?? null;
   }
 
   // DB authority: query team_season_phases for the athlete's team.
