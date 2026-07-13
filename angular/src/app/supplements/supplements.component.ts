@@ -15,6 +15,7 @@ import { LoggerService } from "../core/services/logger.service";
 import { ScheduleService } from "../core/services/schedule.service";
 import { SupabaseService } from "../core/services/supabase.service";
 import { EventGamesService } from "../core/services/event-games.service";
+import { FALLBACK_BODYWEIGHT_KG } from "../core/config/athlete-defaults";
 
 interface SuppLog {
   supplement_name?: string;
@@ -178,7 +179,6 @@ function betaAlanineEducation(
 // of calling the endpoint so the numbers can never drift from Merlin + the engine.
 const CAFFEINE_LEAD_MINUTES = "45–60"; // display only; server uses ~1 h pre-game
 const ASSUMED_BEDTIME_HOUR = 23; // no per-athlete bedtime setting exists yet
-const FALLBACK_BODYWEIGHT_KG = 80;
 
 /** Server caffeine⇄sleep guardrail response (GET /api/supplements/caffeine-timing). */
 interface CaffeineGuard {
