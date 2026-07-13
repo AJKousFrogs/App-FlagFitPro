@@ -19,6 +19,23 @@ export async function generateMainSessionFallback({
   let sessionCategory = "strength";
   let mainSessionGenerated = false;
 
+  // SAFETY INVARIANT: a low-load day type (rest / recovery / mobility / travel /
+  // competition) NEVER gets a training main session — not sprint, not gym, not
+  // field, not fallback. Its session is only the mobility / recovery / activation
+  // content the block builders add. This guard sits ABOVE the branches on purpose:
+  // a stray `isSprintSession` (e.g. a legacy day-of-week heuristic classifying
+  // "Monday = Speed") must not be able to bolt a sprint block onto a Rest day —
+  // the bug that put 10-Yard Burst + hill sprints under a "Rest + daily mobility"
+  // hero. The day type is the single authority for whether a main session exists.
+  if (isLowLoadFocus(trainingFocus)) {
+    logger.info("daily_protocol_low_load_day_no_main_session", { trainingFocus });
+    return {
+      mainSessionGenerated: false,
+      sessionType: "recovery",
+      sessionCategory: "recovery",
+    };
+  }
+
   if (isSprintSession) {
     sessionType = "sprint";
     sessionCategory = "sprint";
@@ -64,11 +81,10 @@ export async function generateMainSessionFallback({
     });
   }
 
-  // Low-load day types (rest / recovery / mobility / travel / competition) never
-  // get a generic strength/field "main session" — their session is the mobility /
-  // recovery / activation content the block builders add. Only genuine training
-  // days fall through to the fallback main session.
-  if (!mainSessionGenerated && !isLowLoadFocus(trainingFocus)) {
+  // A genuine training day with no sprint/gym/field session yet falls through to
+  // the generic fallback. (Low-load days already returned above, so no isLowLoadFocus
+  // check is needed here.)
+  if (!mainSessionGenerated) {
     mainSessionGenerated = await addFallbackMainSession({
       supabase,
       protocolExercises,
@@ -81,10 +97,6 @@ export async function generateMainSessionFallback({
       sessionType,
       sessionCategory,
     });
-  }
-
-  if (!mainSessionGenerated && isLowLoadFocus(trainingFocus)) {
-    logger.info("daily_protocol_low_load_day", { trainingFocus });
   }
 
   return {
