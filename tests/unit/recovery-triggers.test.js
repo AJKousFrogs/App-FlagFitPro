@@ -56,22 +56,22 @@ describe("generateRecoveryRecommendations: priority thresholds (RECOVERY_TRIGGER
 
   it("soreness 5 -> next-day active recovery recommended (NEXT_DAY_SORENESS boundary)", () => {
     const r = generateRecoveryRecommendations({ intensity: 3, soreness: 5 });
-    expect(
-      r.nextDay.some((rec) => rec.protocol === "active_recovery"),
-    ).toBe(true);
+    expect(r.nextDay.some((rec) => rec.protocol === "active_recovery")).toBe(
+      true,
+    );
   });
 
   it("intensity 7 -> next-day active recovery recommended (NEXT_DAY_INTENSITY boundary)", () => {
     const r = generateRecoveryRecommendations({ intensity: 7, soreness: 1 });
-    expect(
-      r.nextDay.some((rec) => rec.protocol === "active_recovery"),
-    ).toBe(true);
+    expect(r.nextDay.some((rec) => rec.protocol === "active_recovery")).toBe(
+      true,
+    );
   });
 
   it("low intensity+soreness -> no next-day active recovery push", () => {
     const r = generateRecoveryRecommendations({ intensity: 3, soreness: 2 });
-    expect(
-      r.nextDay.some((rec) => rec.protocol === "active_recovery"),
-    ).toBe(false);
+    expect(r.nextDay.some((rec) => rec.protocol === "active_recovery")).toBe(
+      false,
+    );
   });
 });

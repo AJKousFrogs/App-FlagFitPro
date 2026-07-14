@@ -43,9 +43,9 @@ describe("ACWR config drift: frontend presets vs backend authority", () => {
     });
 
     it(`preset '${id}': EWMA lambdas match the backend (±${LAMBDA_TOL})`, () => {
-      expect(Math.abs(acwr.acuteLambda - ACWR_DEFAULTS.acuteLambda)).toBeLessThan(
-        LAMBDA_TOL,
-      );
+      expect(
+        Math.abs(acwr.acuteLambda - ACWR_DEFAULTS.acuteLambda),
+      ).toBeLessThan(LAMBDA_TOL);
       expect(
         Math.abs(acwr.chronicLambda - ACWR_DEFAULTS.chronicLambda),
       ).toBeLessThan(LAMBDA_TOL);
@@ -61,7 +61,9 @@ describe("ACWR config drift: frontend presets vs backend authority", () => {
       );
       // A LOWER chronic floor makes ACWR more sensitive to spikes = more conservative,
       // so the client floor must not exceed the server's.
-      expect(acwr.minChronicLoad).toBeLessThanOrEqual(ACWR_DEFAULTS.minChronicLoad);
+      expect(acwr.minChronicLoad).toBeLessThanOrEqual(
+        ACWR_DEFAULTS.minChronicLoad,
+      );
     });
   }
 

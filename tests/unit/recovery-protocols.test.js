@@ -29,7 +29,10 @@ describe("resolveRecoveryProtocols: adaptation context-switch", () => {
   });
 
   it("tournament day INSIDE an adaptation block: CWI + contrast are withheld", () => {
-    const p = resolveRecoveryProtocols({ dayType: "tournament", phase: "adaptation" });
+    const p = resolveRecoveryProtocols({
+      dayType: "tournament",
+      phase: "adaptation",
+    });
     const keys = p.map((m) => m.key);
     expect(keys).not.toContain("cold_water_immersion");
     expect(keys).not.toContain("contrast_therapy");

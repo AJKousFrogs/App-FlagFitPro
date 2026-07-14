@@ -64,7 +64,9 @@ const FULL_TAPER_ROWS = [
 
 describe("resolveTaperRuleset — live-source hydration into the engine schema", () => {
   it("materializes full active rows into a normalized live ruleset", async () => {
-    const rs = await resolveTaperRuleset(taperSupabase({ data: FULL_TAPER_ROWS }));
+    const rs = await resolveTaperRuleset(
+      taperSupabase({ data: FULL_TAPER_ROWS }),
+    );
     expect(rs.source).toBe("live");
     expect(rs.version).toBe("v1-2026-07-13");
     // string numerics from Postgres are coerced to numbers
@@ -83,8 +85,12 @@ describe("resolveTaperRuleset — live-source hydration into the engine schema",
   });
 
   it("returns null (→ engine embedded default) when a level is missing", async () => {
-    const partial = FULL_TAPER_ROWS.filter((r) => r.tournament_level !== "world");
-    expect(await resolveTaperRuleset(taperSupabase({ data: partial }))).toBeNull();
+    const partial = FULL_TAPER_ROWS.filter(
+      (r) => r.tournament_level !== "world",
+    );
+    expect(
+      await resolveTaperRuleset(taperSupabase({ data: partial })),
+    ).toBeNull();
   });
 
   it("returns null on a malformed value (never feeds the engine a bad number)", async () => {

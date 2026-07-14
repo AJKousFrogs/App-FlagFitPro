@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   effect,
+  HostListener,
   inject,
   signal,
 } from "@angular/core";
@@ -282,6 +283,17 @@ export class TrainingComponent {
     const id = ex.exercise?.videoId;
     if (!id) return;
     this.videoModal.set({ name: ex.exercise?.name ?? "Exercise", videoId: id });
+  }
+  /** Close only when the backdrop itself was clicked — replaces the inner
+   * stopPropagation handler (which tripped the a11y lint rules on a
+   * non-interactive element). */
+  onModalBackdropClick(e: MouseEvent): void {
+    if (e.target === e.currentTarget) this.closeVideo();
+  }
+  /** Escape closes the modal regardless of focus position (WAI-ARIA dialog). */
+  @HostListener("document:keydown.escape")
+  onEscapeKey(): void {
+    if (this.videoModal()) this.closeVideo();
   }
   closeVideo(): void {
     this.videoModal.set(null);

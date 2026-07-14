@@ -25,20 +25,24 @@ describe("betweenGamesRefuel — tournament recovery windows", () => {
   });
 
   it("picks a GI-safe strategy by gap length", () => {
-    expect(betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 1 }).strategy).toBe(
-      "short",
-    );
-    expect(betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 3 }).strategy).toBe(
-      "medium",
-    );
-    expect(betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 6 }).strategy).toBe(
-      "long",
-    );
+    expect(
+      betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 1 }).strategy,
+    ).toBe("short");
+    expect(
+      betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 3 }).strategy,
+    ).toBe("medium");
+    expect(
+      betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 6 }).strategy,
+    ).toBe("long");
   });
 
   it("rejects nonsense input", () => {
-    expect(betweenGamesRefuel({ weightKg: 10, hoursUntilNextGame: 3 })).toBeNull();
-    expect(betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 0 })).toBeNull();
+    expect(
+      betweenGamesRefuel({ weightKg: 10, hoursUntilNextGame: 3 }),
+    ).toBeNull();
+    expect(
+      betweenGamesRefuel({ weightKg: 80, hoursUntilNextGame: 0 }),
+    ).toBeNull();
     expect(betweenGamesRefuel({})).toBeNull();
   });
 });
@@ -82,22 +86,30 @@ describe("caffeineSleepGuardrail — one night's sleep beats a marginal bump", (
   });
 
   it("rejects nonsense input", () => {
-    expect(caffeineSleepGuardrail({ weightKg: 5, gameStartHour: 14 })).toBeNull();
-    expect(caffeineSleepGuardrail({ weightKg: 80, gameStartHour: 30 })).toBeNull();
+    expect(
+      caffeineSleepGuardrail({ weightKg: 5, gameStartHour: 14 }),
+    ).toBeNull();
+    expect(
+      caffeineSleepGuardrail({ weightKg: 80, gameStartHour: 30 }),
+    ).toBeNull();
   });
 });
 
 describe("supplementContaminationRisk — strict-liability batch-testing", () => {
   it("flags pre-workouts / 'test boosters' as HIGH risk", () => {
-    expect(supplementContaminationRisk("Extreme Pre-Workout").risk).toBe("high");
-    expect(supplementContaminationRisk("Test Booster 9000").risk).toBe("high");
-    expect(supplementContaminationRisk("proprietary blend fat burner").risk).toBe(
+    expect(supplementContaminationRisk("Extreme Pre-Workout").risk).toBe(
       "high",
     );
+    expect(supplementContaminationRisk("Test Booster 9000").risk).toBe("high");
+    expect(
+      supplementContaminationRisk("proprietary blend fat burner").risk,
+    ).toBe("high");
   });
 
   it("rates single reputable ingredients LOW (but still batch-test)", () => {
-    expect(supplementContaminationRisk("Creatine Monohydrate").risk).toBe("low");
+    expect(supplementContaminationRisk("Creatine Monohydrate").risk).toBe(
+      "low",
+    );
     expect(supplementContaminationRisk("Vitamin D3").risk).toBe("low");
   });
 
@@ -108,7 +120,11 @@ describe("supplementContaminationRisk — strict-liability batch-testing", () =>
   });
 
   it("ALWAYS requires batch testing, regardless of tier", () => {
-    for (const name of ["Creatine Monohydrate", "Pre-Workout", "Random Blend"]) {
+    for (const name of [
+      "Creatine Monohydrate",
+      "Pre-Workout",
+      "Random Blend",
+    ]) {
       expect(supplementContaminationRisk(name).batchTestedRequired).toBe(true);
     }
     expect(BATCH_TESTED_IMPERATIVE).toMatch(/Informed Sport|NSF/);

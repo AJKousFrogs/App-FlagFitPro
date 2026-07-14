@@ -24,7 +24,12 @@ const CALF_ACHILLES_REGIONS = [
 ];
 
 // The plantarflexor tissue tags — loading ANY of these loads the Achilles.
-const PLANTARFLEXOR_TISSUES = ["achilles", "soleus", "gastrocnemius", "plantaris"];
+const PLANTARFLEXOR_TISSUES = [
+  "achilles",
+  "soleus",
+  "gastrocnemius",
+  "plantaris",
+];
 
 describe("injury safety filter — the Achilles complex is one unit", () => {
   it("maps every calf/Achilles region name to the full plantarflexor tissue set", () => {
@@ -40,7 +45,11 @@ describe("injury safety filter — the Achilles complex is one unit", () => {
   it("STRUCTURED path: a plantarflexor loader is UNSAFE for an Achilles injury even when its NAME hides the load", () => {
     for (const tissue of PLANTARFLEXOR_TISSUES) {
       // a machine whose name reveals nothing about the calf
-      const ex = { name: "Seated Resistance Machine", slug: "seated-machine", tissue_targets: [tissue] };
+      const ex = {
+        name: "Seated Resistance Machine",
+        slug: "seated-machine",
+        tissue_targets: [tissue],
+      };
       for (const region of CALF_ACHILLES_REGIONS) {
         expect(
           isExerciseSafeForInjuries(ex, [region]),
@@ -52,7 +61,11 @@ describe("injury safety filter — the Achilles complex is one unit", () => {
 
   it("KEYWORD fail-safe: an untagged calf loader is still UNSAFE for an Achilles injury", () => {
     // tissue_targets missing (a row not yet backfilled) — the name keyword must catch it
-    const ex = { name: "Standing Calf Raise", slug: "standing-calf-raise", tissue_targets: null };
+    const ex = {
+      name: "Standing Calf Raise",
+      slug: "standing-calf-raise",
+      tissue_targets: null,
+    };
     expect(isExerciseSafeForInjuries(ex, ["achilles"])).toBe(false);
     expect(isExerciseSafeForInjuries(ex, ["calf"])).toBe(false);
   });
@@ -88,18 +101,30 @@ describe("injury safety filter — the Achilles complex is one unit", () => {
   });
 
   it("cross-region: a hamstring loader is unsafe for a hamstring injury but safe for an Achilles injury", () => {
-    const ham = { name: "Nordic Hamstring Curl", slug: "nordic", tissue_targets: ["hamstring"] };
+    const ham = {
+      name: "Nordic Hamstring Curl",
+      slug: "nordic",
+      tissue_targets: ["hamstring"],
+    };
     expect(isExerciseSafeForInjuries(ham, ["hamstring"])).toBe(false);
     expect(isExerciseSafeForInjuries(ham, ["achilles"])).toBe(true);
   });
 
   it("patellar-tendon loaders are unsafe for a knee/patellar injury (both paths)", () => {
     // STRUCTURED path catches a name-hiding machine that loads the patellar tendon
-    const tagged = { name: "Machine X", slug: "machine-x", tissue_targets: ["patellar_tendon"] };
+    const tagged = {
+      name: "Machine X",
+      slug: "machine-x",
+      tissue_targets: ["patellar_tendon"],
+    };
     expect(isExerciseSafeForInjuries(tagged, ["knee"])).toBe(false);
     expect(isExerciseSafeForInjuries(tagged, ["patellar"])).toBe(false);
     // KEYWORD fail-safe catches a knee-named exercise even when untagged
-    const named = { name: "Knee Extension", slug: "knee-extension", tissue_targets: null };
+    const named = {
+      name: "Knee Extension",
+      slug: "knee-extension",
+      tissue_targets: null,
+    };
     expect(isExerciseSafeForInjuries(named, ["knee"])).toBe(false);
   });
 
@@ -109,9 +134,16 @@ describe("injury safety filter — the Achilles complex is one unit", () => {
     // it. This is exactly the gap tissue_targets closes: once tagged, the structured
     // path catches it (asserted above). Documented here so the fail-safe's limit is
     // explicit, not a surprise.
-    const untaggedHidden = { name: "Decline Squat", slug: "decline-squat", tissue_targets: null };
+    const untaggedHidden = {
+      name: "Decline Squat",
+      slug: "decline-squat",
+      tissue_targets: null,
+    };
     expect(isExerciseSafeForInjuries(untaggedHidden, ["patellar"])).toBe(true); // escapes — needs a tag
-    const taggedSame = { ...untaggedHidden, tissue_targets: ["patellar_tendon"] };
+    const taggedSame = {
+      ...untaggedHidden,
+      tissue_targets: ["patellar_tendon"],
+    };
     expect(isExerciseSafeForInjuries(taggedSame, ["patellar"])).toBe(false); // tagged → caught
   });
 });

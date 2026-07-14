@@ -65,8 +65,16 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     effect:
       "The single highest-leverage recovery tool. Extension improved sprint + skill accuracy (Mah 2011); <8 h/night raised injury risk 1.7× in athletes (Milewski 2014).",
     dose: { durationText: "8–10 h in bed nightly", frequencyPerWeek: 7 },
-    timing: "Nightly; consistent schedule; strategic 20–30 min naps between games.",
-    contexts: ["rest", "recovery", "travel", "tournament", "in_season", "adaptation"],
+    timing:
+      "Nightly; consistent schedule; strategic 20–30 min naps between games.",
+    contexts: [
+      "rest",
+      "recovery",
+      "travel",
+      "tournament",
+      "in_season",
+      "adaptation",
+    ],
     avoidWhen: [],
     cautions: [],
     debunked: null,
@@ -105,11 +113,19 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     effect:
       "Small real DOMS benefit; clears lactate fastest (~80% of threshold). No adaptation downside. Good between tournament games.",
     dose: {
-      durationText: "10–20 min @ ~60–80% of lactate threshold (easy jog/bike/swim)",
+      durationText:
+        "10–20 min @ ~60–80% of lactate threshold (easy jog/bike/swim)",
       frequencyPerWeek: 4,
     },
     timing: "Post- or between-session.",
-    contexts: ["recovery", "mobility", "travel", "tournament", "in_season", "adaptation"],
+    contexts: [
+      "recovery",
+      "mobility",
+      "travel",
+      "tournament",
+      "in_season",
+      "adaptation",
+    ],
     avoidWhen: [],
     cautions: [],
     debunked: null,
@@ -131,10 +147,21 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
       durationText: "30–120 s per muscle group",
       frequencyPerWeek: 7,
     },
-    timing: "Pre-session (warm-up, no force cost) AND/OR post-session (recovery).",
-    contexts: ["rest", "recovery", "mobility", "travel", "tournament", "in_season", "adaptation"],
+    timing:
+      "Pre-session (warm-up, no force cost) AND/OR post-session (recovery).",
+    contexts: [
+      "rest",
+      "recovery",
+      "mobility",
+      "travel",
+      "tournament",
+      "in_season",
+      "adaptation",
+    ],
     avoidWhen: [],
-    cautions: ["Avoid rolling directly over an acute injury or bony prominence."],
+    cautions: [
+      "Avoid rolling directly over an acute injury or bony prominence.",
+    ],
     debunked: "Does not 'break up fascia/adhesions' — the effect is neural.",
     injuryPrevention: false,
     citations: ["Wiewelhove 2019 (Front Physiol)", "Pearcey 2015"],
@@ -148,7 +175,10 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     priority: 3,
     effect:
       "Moderate reduction in DOMS, power loss, and CK; cheap and passive — wear overnight (Hill 2014 BJSM). Perceptual/soreness benefit, not performance restoration.",
-    dose: { durationText: "worn 24 h or overnight, 15–30 mmHg", frequencyPerWeek: 7 },
+    dose: {
+      durationText: "worn 24 h or overnight, 15–30 mmHg",
+      frequencyPerWeek: 7,
+    },
     timing: "Post-session / overnight; between games.",
     contexts: ["recovery", "travel", "tournament", "in_season"],
     avoidWhen: [],
@@ -172,11 +202,17 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     timing: "0–2 h post-exercise for DOMS.",
     contexts: ["recovery", "tournament", "in_season"],
     avoidWhen: [],
-    cautions: ["Avoid vigorous work over an acute strain/hematoma (may worsen bleeding)."],
+    cautions: [
+      "Avoid vigorous work over an acute strain/hematoma (may worsen bleeding).",
+    ],
     debunked:
       "Does NOT 'flush' lactate or improve blood flow — massage impairs post-exercise muscle blood flow (Wiltshire 2010).",
     injuryPrevention: false,
-    citations: ["Dupuy 2018", "Poppendieck 2016 (Sports Med)", "Wiltshire 2010 (MSSE)"],
+    citations: [
+      "Dupuy 2018",
+      "Poppendieck 2016 (Sports Med)",
+      "Wiltshire 2010 (MSSE)",
+    ],
   },
   percussion_gun: {
     key: "percussion_gun",
@@ -219,7 +255,8 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
       "Contraindicated with DVT, acute fracture, compartment syndrome, severe neuropathy, active infection/skin breakdown.",
       "Opportunity cost is the real harm — 30 min in boots is 30 min not sleeping.",
     ],
-    debunked: "The 'lactate flush' rationale is obsolete — lactate is not a driver of DOMS.",
+    debunked:
+      "The 'lactate flush' rationale is obsolete — lactate is not a driver of DOMS.",
     injuryPrevention: false,
     citations: ["Maia 2024 (Biol Sport)", "Gu 2025 (PM&R)"],
   },
@@ -297,8 +334,13 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     priority: 9,
     effect:
       "NOT a recovery tool: no effect on 24/48/72 h DOMS or strength recovery vs passive rest (Afonso 2021), and does not prevent injury (Lauersen 2014). Long holds pre-activity also transiently reduce strength/power.",
-    dose: { durationText: "if used for a genuine ROM restriction: <30 s/muscle, then re-potentiate", frequencyPerWeek: 0 },
-    timing: "Not as recovery. Only for a documented ROM restriction, as a separate session on non-damaged tissue.",
+    dose: {
+      durationText:
+        "if used for a genuine ROM restriction: <30 s/muscle, then re-potentiate",
+      frequencyPerWeek: 0,
+    },
+    timing:
+      "Not as recovery. Only for a documented ROM restriction, as a separate session on non-damaged tissue.",
     contexts: [],
     avoidWhen: ["recovery", "rest"],
     cautions: [
@@ -307,7 +349,11 @@ export const RECOVERY_PROTOCOLS = Object.freeze({
     debunked:
       "Increases stretch TOLERANCE, not muscle length (Weppler & Magnusson 2010); flexibility gains are neural, not structural.",
     injuryPrevention: false,
-    citations: ["Afonso 2021 (Front Physiol)", "Lauersen 2014 (BJSM)", "Weppler 2010"],
+    citations: [
+      "Afonso 2021 (Front Physiol)",
+      "Lauersen 2014 (BJSM)",
+      "Weppler 2010",
+    ],
   },
 });
 
