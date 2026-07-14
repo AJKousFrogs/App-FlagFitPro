@@ -28,7 +28,9 @@ export async function generateMainSessionFallback({
   // the bug that put 10-Yard Burst + hill sprints under a "Rest + daily mobility"
   // hero. The day type is the single authority for whether a main session exists.
   if (isLowLoadFocus(trainingFocus)) {
-    logger.info("daily_protocol_low_load_day_no_main_session", { trainingFocus });
+    logger.info("daily_protocol_low_load_day_no_main_session", {
+      trainingFocus,
+    });
     return {
       mainSessionGenerated: false,
       sessionType: "recovery",

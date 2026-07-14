@@ -26,9 +26,9 @@ describe("recovery recommendations are evidence-aligned (single-source catalogue
       muscleGroups: ["legs"],
       equipment: ["foam_roller", "massage_gun", "compression"],
     });
-    expect(
-      allRecs(r).some((rec) => rec.protocol === "static_stretching"),
-    ).toBe(false);
+    expect(allRecs(r).some((rec) => rec.protocol === "static_stretching")).toBe(
+      false,
+    );
   });
 
   it("carries the honest headline (Tier 1 dwarfs passive modalities)", () => {
@@ -44,16 +44,17 @@ describe("recovery recommendations are evidence-aligned (single-source catalogue
       equipment: ["ice_bath"],
     });
     // not prescribed in the actionable blocks
-    expect(r.immediate.some((rec) => rec.protocol === "cold_water_immersion")).toBe(
-      false,
-    );
-    expect(r.sameDay.some((rec) => rec.protocol === "cold_water_immersion")).toBe(
-      false,
-    );
+    expect(
+      r.immediate.some((rec) => rec.protocol === "cold_water_immersion"),
+    ).toBe(false);
+    expect(
+      r.sameDay.some((rec) => rec.protocol === "cold_water_immersion"),
+    ).toBe(false);
     // surfaced as an explicit "skipped on purpose" note instead
     expect(
       r.ongoing.some(
-        (rec) => rec.protocol === "cold_water_immersion" && rec.priority === "info",
+        (rec) =>
+          rec.protocol === "cold_water_immersion" && rec.priority === "info",
       ),
     ).toBe(true);
   });
@@ -64,7 +65,9 @@ describe("recovery recommendations are evidence-aligned (single-source catalogue
       intensity: 9,
       equipment: ["ice_bath"],
     });
-    const cwi = r.immediate.find((rec) => rec.protocol === "cold_water_immersion");
+    const cwi = r.immediate.find(
+      (rec) => rec.protocol === "cold_water_immersion",
+    );
     expect(cwi).toBeTruthy();
   });
 
@@ -74,15 +77,14 @@ describe("recovery recommendations are evidence-aligned (single-source catalogue
       intensity: 5,
       equipment: ["ice_bath"],
     });
-    expect(allRecs(r).some((rec) => rec.protocol === "cold_water_immersion")).toBe(
-      false,
-    );
+    expect(
+      allRecs(r).some((rec) => rec.protocol === "cold_water_immersion"),
+    ).toBe(false);
   });
 
   it("modality doses match the single-source catalogue (no drift)", async () => {
-    const { RECOVERY_PROTOCOLS } = await import(
-      "../../netlify/functions/utils/recovery-protocols.js"
-    );
+    const { RECOVERY_PROTOCOLS } =
+      await import("../../netlify/functions/utils/recovery-protocols.js");
     const r = generateRecoveryRecommendations({
       trainingType: "conditioning",
       intensity: 7,
@@ -90,6 +92,8 @@ describe("recovery recommendations are evidence-aligned (single-source catalogue
       equipment: ["foam_roller"],
     });
     const foam = r.immediate.find((rec) => rec.protocol === "foam_rolling");
-    expect(foam.duration).toBe(RECOVERY_PROTOCOLS.foam_rolling.dose.durationText);
+    expect(foam.duration).toBe(
+      RECOVERY_PROTOCOLS.foam_rolling.dose.durationText,
+    );
   });
 });

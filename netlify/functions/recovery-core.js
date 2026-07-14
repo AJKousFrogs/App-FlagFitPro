@@ -302,7 +302,8 @@ function generateRecoveryRecommendations(params) {
     recommendations.sameDay.push(
       modalityRec("compression_garment", {
         priority: "low",
-        reason: "Support venous return and reduce next-day soreness; wear overnight.",
+        reason:
+          "Support venous return and reduce next-day soreness; wear overnight.",
       }),
     );
   }
@@ -351,7 +352,8 @@ function generateRecoveryRecommendations(params) {
       modalityRec("percussion_gun", {
         priority: "medium",
         focus: muscleGroups,
-        reason: "Acute ROM gain with no force decrement — good for a tight spot.",
+        reason:
+          "Acute ROM gain with no force decrement — good for a tight spot.",
       }),
     );
   }

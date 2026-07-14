@@ -4,7 +4,7 @@
 var SEV_RANK = {
   minor: 1,
   moderate: 2,
-  severe: 3
+  severe: 3,
 };
 function normalizeSeverity(grade) {
   const map = {
@@ -13,23 +13,26 @@ function normalizeSeverity(grade) {
     "Grade 3": "severe",
     minor: "minor",
     moderate: "moderate",
-    severe: "severe"
+    severe: "severe",
   };
-  return grade && map[grade] || "minor";
+  return (grade && map[grade]) || "minor";
 }
 var SPRINT_RESTRICTING = /* @__PURE__ */ new Set([
   "sprint",
   "high_intensity",
   "plyometric",
-  "agility"
+  "agility",
 ]);
-var THROWING_RESTRICTING = /* @__PURE__ */ new Set(["throwing", "upper_strength"]);
+var THROWING_RESTRICTING = /* @__PURE__ */ new Set([
+  "throwing",
+  "upper_strength",
+]);
 function deriveRestrictions(injuries) {
-  const sprintInjuries = injuries.filter(
-    (i) => i.restrictionTypes.some((r) => SPRINT_RESTRICTING.has(r))
+  const sprintInjuries = injuries.filter((i) =>
+    i.restrictionTypes.some((r) => SPRINT_RESTRICTING.has(r)),
   );
-  const throwingInjuries = injuries.filter(
-    (i) => i.restrictionTypes.some((r) => THROWING_RESTRICTING.has(r))
+  const throwingInjuries = injuries.filter((i) =>
+    i.restrictionTypes.some((r) => THROWING_RESTRICTING.has(r)),
   );
   const restrictsSprint = sprintInjuries.length > 0;
   const restrictsThrowing = throwingInjuries.length > 0;
@@ -37,9 +40,7 @@ function deriveRestrictions(injuries) {
     return null;
   }
   const flagged = [...sprintInjuries, ...throwingInjuries];
-  const regions = [
-    ...new Set(flagged.map((i) => i.region).filter((r) => !!r))
-  ];
+  const regions = [...new Set(flagged.map((i) => i.region).filter((r) => !!r))];
   const severity = flagged.reduce((max, i) => {
     const s = normalizeSeverity(i.severityGrade);
     return SEV_RANK[s] > SEV_RANK[max] ? s : max;
@@ -53,8 +54,4 @@ function isTeamPractice(date, recurringDays, scheduleTrainingDays) {
   const iso = date.toISOString().slice(0, 10);
   return scheduleTrainingDays.includes(iso);
 }
-export {
-  deriveRestrictions,
-  isTeamPractice,
-  normalizeSeverity
-};
+export { deriveRestrictions, isTeamPractice, normalizeSeverity };

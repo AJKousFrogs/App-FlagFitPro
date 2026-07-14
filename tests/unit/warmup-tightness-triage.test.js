@@ -79,7 +79,9 @@ describe("tightnessTriageStretch — static stretch is triage-only", () => {
   });
 
   it("still fires for a tight region when a DIFFERENT region is sore", () => {
-    const s = tightnessTriageStretch("shoulder", { soreRegions: ["hamstring"] });
+    const s = tightnessTriageStretch("shoulder", {
+      soreRegions: ["hamstring"],
+    });
     expect(s).toBeTruthy();
     expect(s.region).toBe("shoulder");
   });

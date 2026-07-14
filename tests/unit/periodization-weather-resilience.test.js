@@ -16,9 +16,8 @@ vi.mock("../../netlify/functions/weather.js", () => ({
   getWeatherData: vi.fn(async () => null),
 }));
 
-const { __test__ } = await import(
-  "../../netlify/functions/periodization-prescription.js"
-);
+const { __test__ } =
+  await import("../../netlify/functions/periodization-prescription.js");
 const weatherModule = await import("../../netlify/functions/weather.js");
 const { resolveWeather } = __test__;
 
@@ -39,7 +38,9 @@ describe("resolveWeather — a null/failed weather provider never 500s the plan"
   });
 
   it("returns null when geocoding (home-city lookup) throws", async () => {
-    weatherModule.resolveTeamHomeCity.mockRejectedValue(new Error("Nominatim timeout"));
+    weatherModule.resolveTeamHomeCity.mockRejectedValue(
+      new Error("Nominatim timeout"),
+    );
     await expect(resolveWeather("user-1")).resolves.toBeNull();
   });
 

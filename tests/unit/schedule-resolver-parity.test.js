@@ -72,7 +72,9 @@ function comparePhase({ now, upcoming = [], lastEvent = null }) {
 
 describe("resolvePhase: client ⇔ server parity", () => {
   it("no events at all -> transition on both", () => {
-    const { client, server } = comparePhase({ now: new Date("2026-07-15T12:00:00Z") });
+    const { client, server } = comparePhase({
+      now: new Date("2026-07-15T12:00:00Z"),
+    });
     expect(client).toBe("transition");
     expect(server).toBe(client);
   });
