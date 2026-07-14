@@ -197,6 +197,10 @@ export async function addWarmupBlock({
     .eq("category", "warm_up")
     .eq("active", true)
     .not("subcategory", "eq", "morning_routine")
+    // Team-practice warm-up drills (sprint-prep ladders etc.) must never be
+    // keyword-matched into an individual gym/recovery warm-up (2026-07-14 bug:
+    // "Pogo Jumps" rendered as "Low Pogo + Ankling Prep Ladder").
+    .not("subcategory", "eq", "team_warmup")
     .limit(60);
 
   const isFitnessDay =
@@ -504,18 +508,43 @@ export async function addRecoveryBlocks({
   }
 }
 
-function findWarmupMatch(warmUpExercises, keywords = []) {
+export function findWarmupMatch(warmUpExercises, keywords = []) {
   if (!warmUpExercises || warmUpExercises.length === 0) {
     return null;
   }
 
-  return warmUpExercises.find((ex) => {
+  // Whole-word matching, not substring: "rotation" must not match "Walking
+  // Spiderman with Rotation" for a Thoracic Rotations item (2026-07-14 bug —
+  // the display name came from the mismatched library row). A keyword matches
+  // when every one of its words appears as a whole word in the name/slug.
+  const wordMatch = (haystack, keyword) => {
+    const words = keyword
+      .toLowerCase()
+      .split(/[\s-]+/)
+      .filter(Boolean);
+    return words.every((w) =>
+      new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(
+        haystack,
+      ),
+    );
+  };
+
+  const matches = warmUpExercises.filter((ex) => {
     const name = (ex.name || "").toLowerCase();
-    const slug = (ex.slug || "").toLowerCase();
+    const slug = (ex.slug || "").toLowerCase().replace(/-/g, " ");
     return keywords.some(
-      (keyword) => name.includes(keyword) || (slug && slug.includes(keyword)),
+      (keyword) =>
+        wordMatch(name, keyword) || (slug && wordMatch(slug, keyword)),
     );
   });
+  if (matches.length === 0) {
+    return null;
+  }
+  // Most specific candidate wins: the shortest matching name ("Pogo Hops"
+  // over "Low Pogo + Ankling Prep Ladder"-style compound drills).
+  return matches.sort(
+    (a, b) => (a.name || "").length - (b.name || "").length,
+  )[0];
 }
 
 function getPositionMobilityConfigs({ context, normalizedPosition }) {

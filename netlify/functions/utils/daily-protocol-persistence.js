@@ -110,7 +110,7 @@ export async function updateProtocolGenerationRequestStatus(
 
 function serializeProtocolExercises(protocolExercises) {
   return protocolExercises.map((ex) => ({
-    exercise_id: ex.exercise_id,
+    exercise_id: ex.exercise_id ?? null,
     exercise_name: ex.exercise_name || null,
     block_type: ex.block_type,
     sequence_order: ex.sequence_order,
@@ -118,6 +118,7 @@ function serializeProtocolExercises(protocolExercises) {
     prescribed_reps: ex.prescribed_reps ?? null,
     prescribed_hold_seconds: ex.prescribed_hold_seconds ?? null,
     prescribed_duration_seconds: ex.prescribed_duration_seconds ?? null,
+    rest_seconds: ex.rest_seconds ?? null,
     load_contribution_au: ex.load_contribution_au || 0,
     ai_note: ex.ai_note || null,
   }));
@@ -135,12 +136,13 @@ async function createProtocolWithoutRpc({
   confidenceMetadata,
   exercisesJson,
 }) {
-  const persistedExercises = exercisesJson.filter(
-    (exercise) => exercise.exercise_id,
-  );
+  // Persist EVERY generated item — a null exercise_id (no library match) keeps
+  // its intended exercise_name instead of being silently dropped (the bug that
+  // decimated a 16-item warm-up to 3 leftover rows, 2026-07-14).
+  const persistedExercises = exercisesJson;
 
   if (persistedExercises.length === 0) {
-    throw new Error("Cannot persist a protocol without exercise IDs");
+    throw new Error("Cannot persist a protocol without exercises");
   }
 
   const timestamp = new Date().toISOString();
@@ -181,6 +183,7 @@ async function createProtocolWithoutRpc({
         prescribed_reps: exercise.prescribed_reps,
         prescribed_hold_seconds: exercise.prescribed_hold_seconds,
         prescribed_duration_seconds: exercise.prescribed_duration_seconds,
+        rest_seconds: exercise.rest_seconds,
         load_contribution_au: exercise.load_contribution_au,
         ai_note: exercise.ai_note,
         status: "pending",
