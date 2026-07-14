@@ -61,7 +61,9 @@
                 ><span class="k">Sprints</span>
               </div>
               <div class="stat-chip">
-                <span class="v">{{ fluidTarget() != null ? fluidTarget() + "L" : "—" }}</span
+                <span class="v">{{
+                  fluidTarget() != null ? fluidTarget() + "L" : "—"
+                }}</span
                 ><span class="k">Fluid</span>
               </div>
             </div>
@@ -254,8 +256,8 @@
                 </div>
                 @if (m.dose?.durationText) {
                   <p class="rec-dose">
-                    {{ m.dose?.durationText
-                    }}@if (m.dose?.frequencyPerWeek) {
+                    {{ m.dose?.durationText }}
+                    @if (m.dose?.frequencyPerWeek) {
                       · {{ m.dose?.frequencyPerWeek }}×/week
                     }
                   </p>
@@ -327,7 +329,8 @@
               fluidTarget() != null
                 ? fluidTarget() + "L"
                 : "add your weight in Profile"
-            }}</strong>.
+            }}</strong
+            >.
           </p>
           <a class="btn btn--ghost" routerLink="/today">Open Today → Fuel</a>
         </div>
@@ -506,8 +509,16 @@
 
   <!-- ============ VIDEO MODAL ============ -->
   @if (videoModal(); as vm) {
-    <div class="modal is-open" (click)="closeVideo()">
-      <div class="modal-box" (click)="$event.stopPropagation()">
+    <div
+      class="modal is-open"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="vm.name"
+      tabindex="-1"
+      (click)="onModalBackdropClick($event)"
+      (keyup.escape)="closeVideo()"
+    >
+      <div class="modal-box">
         <app-yt-video [videoId]="vm.videoId" [title]="vm.name" />
         <div class="modal-foot">
           <span class="name">{{ vm.name }}</span>
