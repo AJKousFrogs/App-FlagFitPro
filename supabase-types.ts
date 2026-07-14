@@ -6020,7 +6020,8 @@ export type Database = {
           block_type: string
           completed_at: string | null
           created_at: string | null
-          exercise_id: string
+          exercise_id: string | null
+          exercise_name: string | null
           id: string
           load_contribution_au: number | null
           prescribed_duration_seconds: number | null
@@ -6030,6 +6031,7 @@ export type Database = {
           prescribed_weight_kg: number | null
           progression_note: string | null
           protocol_id: string
+          rest_seconds: number | null
           sequence_order: number
           status: string | null
           updated_at: string | null
@@ -6047,7 +6049,8 @@ export type Database = {
           block_type: string
           completed_at?: string | null
           created_at?: string | null
-          exercise_id: string
+          exercise_id?: string | null
+          exercise_name?: string | null
           id?: string
           load_contribution_au?: number | null
           prescribed_duration_seconds?: number | null
@@ -6057,6 +6060,7 @@ export type Database = {
           prescribed_weight_kg?: number | null
           progression_note?: string | null
           protocol_id: string
+          rest_seconds?: number | null
           sequence_order: number
           status?: string | null
           updated_at?: string | null
@@ -6074,7 +6078,8 @@ export type Database = {
           block_type?: string
           completed_at?: string | null
           created_at?: string | null
-          exercise_id?: string
+          exercise_id?: string | null
+          exercise_name?: string | null
           id?: string
           load_contribution_au?: number | null
           prescribed_duration_seconds?: number | null
@@ -6084,6 +6089,7 @@ export type Database = {
           prescribed_weight_kg?: number | null
           progression_note?: string | null
           protocol_id?: string
+          rest_seconds?: number | null
           sequence_order?: number
           status?: string | null
           updated_at?: string | null
