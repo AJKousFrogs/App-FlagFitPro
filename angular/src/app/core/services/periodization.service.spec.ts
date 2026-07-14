@@ -413,9 +413,9 @@ describe("prescribeFor — nutrition", () => {
         bodyweightKg: 80,
       }),
     );
-    expect(rx.nutrition.carbsG).toBe(Math.round(80 * 4.5));
-    expect(rx.nutrition.proteinG).toBe(Math.round(80 * 1.8));
-    expect(rx.nutrition.hydrationL).toBeCloseTo((80 * 35) / 1000, 1);
+    expect(rx.nutrition!.carbsG).toBe(Math.round(80 * 4.5));
+    expect(rx.nutrition!.proteinG).toBe(Math.round(80 * 1.8));
+    expect(rx.nutrition!.hydrationL).toBeCloseTo((80 * 35) / 1000, 1);
   });
 
   it("competition adds 1.5L water above baseline", () => {
@@ -433,7 +433,7 @@ describe("prescribeFor — nutrition", () => {
       }),
     );
     const baseline = (80 * 35) / 1000;
-    expect(rx.nutrition.hydrationL).toBeGreaterThanOrEqual(baseline + 1.4);
+    expect(rx.nutrition!.hydrationL).toBeGreaterThanOrEqual(baseline + 1.4);
   });
 
   it("heavy density adds 0.5L on training days", () => {
@@ -452,7 +452,7 @@ describe("prescribeFor — nutrition", () => {
       }),
     );
     expect(
-      rxHeavy.nutrition.hydrationL - rxNormal.nutrition.hydrationL,
+      rxHeavy.nutrition!.hydrationL - rxNormal.nutrition!.hydrationL,
     ).toBeCloseTo(0.5, 1);
   });
 
@@ -463,7 +463,7 @@ describe("prescribeFor — nutrition", () => {
         bodyweightKg: 80,
       }),
     );
-    expect(rx.nutrition.carbsG).toBe(80 * 3);
+    expect(rx.nutrition!.carbsG).toBe(80 * 3);
   });
 
   it("missing bodyweight → nutrition is NULL, never an 80kg fabrication (Law #7, audit C7)", () => {
@@ -1219,7 +1219,7 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
       }),
     );
     expect(
-      congested.nutrition.hydrationL - spread.nutrition.hydrationL,
+      congested.nutrition!.hydrationL - spread.nutrition!.hydrationL,
     ).toBeCloseTo(0.5, 1);
   });
 
@@ -1246,7 +1246,7 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
         },
       }),
     );
-    expect(a.nutrition.hydrationL).toBeCloseTo(b.nutrition.hydrationL, 1);
+    expect(a.nutrition!.hydrationL).toBeCloseTo(b.nutrition!.hydrationL, 1);
   });
 });
 
@@ -1272,7 +1272,7 @@ describe("prescribeFor — heat adds fluid", () => {
         weather: weather({ apparentC: 30, tempC: 30 }),
       }),
     );
-    expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(
+    expect(hot.nutrition!.hydrationL - cool.nutrition!.hydrationL).toBeCloseTo(
       0.5,
       1,
     );
