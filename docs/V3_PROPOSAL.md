@@ -112,7 +112,10 @@ backstop. Generated docs (`docs/generated/DATA_MODEL.md`, `ENDPOINTS.md`,
    the engine enforces. Where it is heterogeneous (menstrual-phase performance effects),
    the engine _informs and adapts expectations_ but does not restrict (§4.3). Every
    heuristic that isn't a personalized physiological model says so (the acclimatization
-   guard already sets this precedent).
+   guard already sets this precedent). Every evidence claim carries an explicit **grade
+   (A1–D) plus an applicability rating** (§3.6) — and the app never ranks by grade alone,
+   because a well-conducted B2 study in the right population can be better clinical
+   guidance than an A1 meta-analysis from a mismatched one.
 4. **Visual over tabular.** Dashboards are charts + cards; CSV export remains an escape
    hatch, never the primary surface (Phase 5).
 5. **Single source, everywhere.** One engine, one config module, one schema snapshot,
@@ -437,13 +440,57 @@ canonical stores) so the athlete sees _correlation with function_, which is the 
 story. Logging is athlete-initiated; no weight-entry nags (nudges are for wellness
 check-ins, which drive safety — weight does not).
 
-### 3.6 Education
+### 3.6 Education & evidence grading
 
-`knowledge_base_entries` + search are LIVE. Add short evidence-graded entries (claim →
-evidence strength → practical takeaway) for: ACWR, readiness, why ≥2 rest days,
-CNS recovery windows, cycle-phase basics (strong vs weak evidence, explicitly), fueling and
-sleep. Tooltips throughout v3 link into these entries rather than embedding copy (single
-source for education text too).
+`knowledge_base_entries` + `research_articles` + search are LIVE. Add short
+evidence-graded entries (claim → grade → practical takeaway) for: ACWR, readiness, why ≥2
+rest days, CNS recovery windows, cycle-phase basics, fueling and sleep. Tooltips
+throughout v3 link into these entries rather than embedding copy (single source for
+education text too).
+
+**Evidence grading scheme (two axes, both mandatory).** Every `research_articles` row and
+every claim in `knowledge_base_entries` gets graded. Axis 1 is **design grade** — internal
+validity of the study design (EBRO-style):
+
+| Grade | Meaning                                                                                         |
+| ----- | ----------------------------------------------------------------------------------------------- |
+| A1    | Systematic review / meta-analysis of ≥2 independent A2-level studies                            |
+| A2    | Individual randomized controlled trial of good quality and sufficient size                      |
+| B1    | Good-quality comparative study short of A2: non-randomized trial, small RCT, prospective cohort |
+| B2    | Retrospective cohort, case-control, cross-sectional                                             |
+| C     | Non-comparative studies (case series, case reports)                                             |
+| D     | Expert opinion, consensus statements, mechanistic reasoning                                     |
+
+Axis 2 is **applicability** — external validity for _this_ population:
+`direct` (flag football / comparable team-sport athletes matching sex, age band, and
+competitive level) · `adjacent` (other field/team sports or comparable athletic
+populations) · `general` (general population, military, clinical cohorts, other sports).
+
+**The ranking rule (deliberate, and the reason the second axis exists):** grade orders
+study design, not clinical usefulness. A B2 study graded `direct` — say, a retrospective
+cohort in female team-sport athletes — can legitimately outrank an A1 meta-analysis graded
+`general` when the two disagree, because the meta-analysis answers a question about a
+different population. When an entry's practical takeaway follows the lower-grade study,
+the entry says so explicitly ("best available evidence in athletes like you is B2; the A1
+evidence comes from a mixed general population") rather than hiding the judgment. No
+automated score combines the axes — the editorial judgment is the point, and it must stay
+visible.
+
+```ts
+type EvidenceGrade = "A1" | "A2" | "B1" | "B2" | "C" | "D";
+type Applicability = "direct" | "adjacent" | "general";
+```
+
+Storage: `research_articles` gains `evidence_grade`, `applicability`, `grading_note`,
+`graded_by`, `graded_at`; `knowledge_base_entries` gains claim-level `evidence_grade` +
+`applicability` derived from its best supporting article(s), shown as a badge pair
+(e.g. "A2 · adjacent") on every athlete- and staff-facing surface that cites it. Grading
+and re-grading are human editorial acts logged to the existing `knowledge_review_audit`
+table. The same convention extends to the engine's own citations: `monitoring_config`
+rows already carry a `citation` column (append the grade — e.g. "Gabbett 2016, B1 ·
+adjacent"), and Phase 2's `safety-config.ts` gets a citations map so every enforced
+threshold names its grade. Ungraded legacy entries render "not yet graded" — never a
+fabricated badge (Law #7 applies to evidence labels too).
 
 ---
 
@@ -492,12 +539,17 @@ says so.
 
 ### 4.3 Training adaptations — advisory by design
 
-Evidence, honestly summarized (and shown to the athlete in those terms, §3.6): meta-analytic
-performance effects across cycle phases are **small and heterogeneous** — trivial reductions
-in some outcomes during early follicular/menstruation for _some_ athletes; the widely-cited
-luteal/pre-menstrual soft-tissue-injury and follicular ACL-risk signals are suggestive but
-not strong enough for blanket prescription changes. Symptom burden, however, is real,
-individual, and actionable.
+Evidence, honestly summarized and graded per §3.6 (and shown to the athlete in those
+terms): meta-analytic performance effects across cycle phases are **small and
+heterogeneous** — A1-grade reviews exist but their pooled populations are mostly
+`general`/`adjacent`, and they report trivial reductions in some outcomes during early
+follicular/menstruation for _some_ athletes. The widely-cited luteal/pre-menstrual
+soft-tissue-injury and follicular ACL-risk signals are predominantly **B2 `adjacent`**
+(retrospective cohorts in other team sports) — suggestive but not strong enough for
+blanket prescription changes, which is precisely the grade-vs-applicability tension §3.6
+encodes: here neither axis is strong enough to enforce, so the guard stays advisory.
+Symptom burden, however, is real, individual, and actionable — and the athlete's own logs
+are the most `direct` data the app will ever have.
 
 Therefore the engine integration is a **`cycleAdvisoryGuard`** at the _lowest_ precedence
 slot (§2.3), and it is `advisoryOnly: true` — the type system prevents it from changing
@@ -662,7 +714,9 @@ Staff analytics (aggregate, anonymized, k ≥ 5): injury incidence vs ACWR zone-
 readiness/wellness trends by team and position, guard-firing frequencies (is the heat guard
 doing all the work in August?), and — consented adults only — cycle-phase × injury/wellness
 aggregates (§4.4). These views are also the evidence loop for the engine itself: threshold
-changes in `safety-config.ts` should cite them. Research export: a de-identified ETL
+changes in `safety-config.ts` should cite them — on the §3.6 scheme's own terms, internal
+observational analytics grade **B2 `direct` at best** (maximally applicable, weak design),
+so they refine thresholds alongside published evidence rather than replacing it. Research export: a de-identified ETL
 (stable pseudonymous IDs, dates coarsened to week, no free-text fields, k-anonymity
 verified) behind org-level agreement + per-athlete research consent (a _separate_
 `consent_research` flag in `user_preferences` — never bundled), documented ethics
