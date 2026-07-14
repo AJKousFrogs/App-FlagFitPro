@@ -1,0 +1,41 @@
+/* ================================================================
+   Screen-scoped palettes — Today (.td) and Training (.tr) redesigns
+   (2026-07-10). Decision 1 compliance (2026-07-14): hex lives ONLY in
+   scss/tokens; the component stylesheets consume var(--…) references.
+   Custom properties inherit through Angular's emulated view
+   encapsulation, so defining them here is visually identical to the
+   previous in-component definitions (same values, same scope).
+   Derived tokens that are pure var()/rgba() compositions stay in the
+   component files, next to the styles that use them.
+   ================================================================ */
+
+.td,
+.tr {
+  /* shared dark/mint ramp (mirrors the app system) */
+  --ink-950: #0b0e12;
+  --ink-900: #11151b;
+  --ink-850: #151a21;
+  --ink-800: #1a202a;
+  --ink-700: #242c38;
+  --ink-600: #313b4a;
+  --paper-100: #e8ecf1;
+  --paper-300: #aeb7c2;
+  --paper-500: #77828f;
+  --brand-300: #6ff0a4;
+  --brand-500: #2ce071;
+  --brand-600: #1dbf5c;
+  --amber-400: #f5b73b;
+  --red-400: #f0564d;
+
+  /* accent foreground on mint fills */
+  --accent-ink: #06210f;
+  --white: #fff;
+
+  /* gradient stops that previously sat inline in component styles */
+  --warn-grad-2: #f7cd74;
+  --danger-grad-1: #e0483f;
+  --hero-grad-1: #123722;
+  --hero-grad-2: #0e2a1b;
+  --hero-grad-3: #14324a;
+  --avatar-grad-2: #1a6e9e;
+}

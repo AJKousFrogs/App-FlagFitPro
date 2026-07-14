@@ -13,6 +13,7 @@
    (emits nothing here) so it can be included inside @layer components below, in
    correct cascade order without @import deprecation. */
 @use "scss/tokens/tokens";
+@use "scss/tokens/screen-palettes";
 @use "scss/system/system" as system;
 
 @layer reset, tokens, primitives, components,

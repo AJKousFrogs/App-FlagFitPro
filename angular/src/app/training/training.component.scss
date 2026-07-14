@@ -3,20 +3,9 @@
    view encapsulation. The completion bar is in-flow (not fixed) so it never
    overlaps the app shell's mobile bottom-nav / FAB. */
 .tr {
-  --ink-950: #0b0e12;
-  --ink-900: #11151b;
-  --ink-850: #151a21;
-  --ink-800: #1a202a;
-  --ink-700: #242c38;
-  --ink-600: #313b4a;
-  --paper-100: #e8ecf1;
-  --paper-300: #aeb7c2;
-  --paper-500: #77828f;
-  --brand-300: #6ff0a4;
-  --brand-500: #2ce071;
-  --brand-600: #1dbf5c;
-  --amber-400: #f5b73b;
-  --red-400: #f0564d;
+  /* Base hex ramp + accent-ink live in scss/tokens/_screen-palettes.scss
+     (Decision 1: hex only in the tokens layer). Custom properties inherit
+     through view encapsulation — values unchanged. */
 
   --surface: var(--ink-900);
   --surface-2: var(--ink-850);
@@ -28,7 +17,6 @@
   --text-3: var(--paper-500);
   --accent: var(--brand-500);
   --accent-soft: rgba(44, 224, 113, 0.12);
-  --accent-ink: #06210f;
   --warn: var(--amber-400);
   --warn-soft: rgba(245, 183, 59, 0.13);
   --danger: var(--red-400);
