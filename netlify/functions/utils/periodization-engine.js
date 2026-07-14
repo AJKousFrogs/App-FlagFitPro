@@ -1727,20 +1727,105 @@ function findCoolerHour(hourly, fromHour, currentWbgt) {
 function substituteForWet(intent) {
   return intent === "taper-prime" ? "mobility" : "strength";
 }
+var SPRINT_EXPOSURE_FLOOR_DAYS = 7;
+var SPRINT_FLOOR_MAINTENANCE_REPS = 5;
+var MESOCYCLE_VOLUME_FACTORS = {
+  1: 1,
+  2: 1.05,
+  3: 1.1,
+  4: 0.65
+};
+var MESOCYCLE_WAVED_INTENTS = /* @__PURE__ */ new Set(["sprint", "strength", "mixed", "technical"]);
+function mesocycleWeekFor(windows, date) {
+  if (!windows || windows.length === 0) return null;
+  const iso = toIsoDate(date);
+  const md = iso.slice(5);
+  for (const w of windows) {
+    if (!w || !w.from || !w.to) continue;
+    if (w.phase !== "offseason" && w.phase !== "preseason") continue;
+    if (!inSeasonWindow(iso, md, w.from, w.to)) continue;
+    let start;
+    if (w.from.length === 10) {
+      start = /* @__PURE__ */ new Date(`${w.from}T00:00:00`);
+    } else {
+      const wraps = w.from > w.to;
+      const beforeFrom = md < w.from;
+      const year = date.getFullYear() - (wraps && beforeFrom ? 1 : 0);
+      start = /* @__PURE__ */ new Date(`${year}-${w.from}T00:00:00`);
+    }
+    const days = Math.floor((date.getTime() - start.getTime()) / 864e5);
+    if (days < 0) continue;
+    return Math.floor(days / 7) % 4 + 1;
+  }
+  return null;
+}
+function applyMesocycleWave(days, dayInputs, teamPracticeFlags) {
+  return days.map((d, i) => {
+    const week = dayInputs[i]?.mesocycleWeek ?? null;
+    if (week === null || !(week in MESOCYCLE_VOLUME_FACTORS)) return d;
+    if (teamPracticeFlags[i]) return d;
+    if (d.phase !== "accumulation" && d.phase !== "transition") return d;
+    if (!MESOCYCLE_WAVED_INTENTS.has(d.intent)) return d;
+    const factor = MESOCYCLE_VOLUME_FACTORS[week];
+    if (factor === 1) return d;
+    return {
+      ...d,
+      targetMinutes: Math.max(15, Math.round(d.targetMinutes * factor)),
+      sprintReps: d.sprintReps > 0 ? Math.max(2, Math.round(d.sprintReps * factor)) : 0,
+      strengthSets: d.strengthSets > 0 ? Math.max(4, Math.round(d.strengthSets * factor)) : 0,
+      reasoning: week === 4 ? `${d.reasoning} Deload week (4 of 4): volume \u221235%, intensity held \u2014 the adaptation week.` : `${d.reasoning} Build week ${week} of 3: volume +${Math.round((factor - 1) * 100)}%.`,
+      secondSession: week === 4 ? null : d.secondSession
+    };
+  });
+}
 function planWeek(dayInputs, teamPracticeFlags, phases7, todayReadiness, todayAcwr) {
   const seasonPhases = dayInputs.map((d) => d.seasonPhase ?? null);
   const intentHints = planWeekIntents(teamPracticeFlags, phases7, seasonPhases);
+  const daysSinceHighSpeed = dayInputs[0]?.daysSinceHighSpeed ?? null;
+  let floorIdx = null;
+  const weekHasExposure = teamPracticeFlags.some(Boolean) || intentHints.some((x) => x === "sprint" || x === "mixed");
+  if (daysSinceHighSpeed !== null && daysSinceHighSpeed >= SPRINT_EXPOSURE_FLOOR_DAYS && !weekHasExposure) {
+    for (const candidate of ["technical", "mobility"]) {
+      const idx = intentHints.findIndex((x) => x === candidate);
+      if (idx !== -1) {
+        intentHints[idx] = "sprint";
+        floorIdx = idx;
+        break;
+      }
+    }
+  }
   const out = dayInputs.map(
     (input, i) => prescribeFor({ ...input, weeklyIntentHint: intentHints[i] })
   );
+  if (floorIdx !== null) {
+    const day = out[floorIdx];
+    if (day.intent === "sprint") {
+      out[floorIdx] = {
+        ...day,
+        targetMinutes: Math.min(day.targetMinutes, 60),
+        sprintReps: Math.min(day.sprintReps, SPRINT_FLOOR_MAINTENANCE_REPS),
+        reasoning: `Speed maintenance \u2014 first high-speed exposure in ${Math.round(
+          daysSinceHighSpeed
+        )} days. Short and crisp: ${SPRINT_FLOOR_MAINTENANCE_REPS}\xD7 relaxed 20-30 m builds at ~90%, full recovery. Regular near-max running protects hamstrings.`
+      };
+    } else {
+      out[floorIdx] = {
+        ...day,
+        reasoning: `${day.reasoning} High-speed exposure is overdue (${Math.round(
+          daysSinceHighSpeed
+        )} days) but a safety guard postponed it \u2014 when you feel fresh, add 4-6 relaxed 20-30 m strides.`
+      };
+    }
+  }
   const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
-  return addSecondSessions(
+  const withSeconds = addSecondSessions(
     capped,
     teamPracticeFlags,
     phases7,
     todayReadiness,
     todayAcwr
   );
+  return applyMesocycleWave(withSeconds, dayInputs, teamPracticeFlags);
 }
 function applyWeatherGuard(rx, weather, coachOverride, acclimatizationDay = null) {
   if (!weather || !HEAT_GUARDED.has(rx.intent)) {
@@ -2127,6 +2212,8 @@ var __periodization__ = {
   isHighCnsSessionType,
   planWeekIntents,
   planWeek,
+  mesocycleWeekFor,
+  applyMesocycleWave,
   detectTournamentRecoveryDay,
   modulateIntentForLoad,
   resolveTaperTargets,
@@ -2146,6 +2233,7 @@ export {
   findCoolerHour,
   isHighCnsSessionType,
   macroPhaseFor,
+  mesocycleWeekFor,
   planWeek,
   planWeekIntents,
   prescribeFor,

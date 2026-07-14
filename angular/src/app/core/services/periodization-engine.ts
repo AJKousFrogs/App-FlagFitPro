@@ -2051,6 +2051,98 @@ function substituteForWet(intent: PrescriptionIntent): PrescriptionIntent {
  * @param todayReadiness today's readiness for the PM-session pass.
  * @param todayAcwr today's ACWR for the PM-session pass.
  */
+/** Sprint-exposure floor (audit §3.2): plan a high-speed day when the athlete
+ * has gone this many days without one (no sprint/mixed session, practice, or
+ * game). Evidence: regular near-max-velocity running is hamstring-protective. */
+const SPRINT_EXPOSURE_FLOOR_DAYS = 7;
+/** The floor day's maintenance dose — a few crisp builds, not a full session. */
+const SPRINT_FLOOR_MAINTENANCE_REPS = 5;
+
+/**
+ * Mesocycle 3:1 volume wave (audit §3.1; Bompa & Buzzichelli 2018): three
+ * build weeks (+0/5/10% volume) then a deload (−35% volume, intensity HELD —
+ * the same volume-not-intensity principle as the taper). Applies only to
+ * quality sessions on free accumulation/transition days; event-driven days
+ * (competition/taper/recovery/travel) and practice days are never waved.
+ */
+const MESOCYCLE_VOLUME_FACTORS: Record<number, number> = {
+  1: 1.0,
+  2: 1.05,
+  3: 1.1,
+  4: 0.65,
+};
+const MESOCYCLE_WAVED_INTENTS: ReadonlySet<PrescriptionIntent> =
+  new Set<PrescriptionIntent>(["sprint", "strength", "mixed", "technical"]);
+
+/**
+ * Which week (1-4) of the current 3:1 mesocycle `date` falls in, derived from
+ * the athlete's declared season windows — week 1 starts at the active
+ * off-/pre-season window's start date. Null when no build window covers the
+ * date (in-season/peak/post regeneration don't wave, and no declared season →
+ * no fabricated cycle). Pure + exported: client wrapper and server assembly
+ * both call THIS, so the wave can't drift.
+ */
+export function mesocycleWeekFor(
+  windows: SeasonWindow[] | null | undefined,
+  date: Date,
+): number | null {
+  if (!windows || windows.length === 0) return null;
+  const iso = toIsoDate(date);
+  const md = iso.slice(5);
+  for (const w of windows) {
+    if (!w || !w.from || !w.to) continue;
+    if (w.phase !== "offseason" && w.phase !== "preseason") continue;
+    if (!inSeasonWindow(iso, md, w.from, w.to)) continue;
+    let start: Date;
+    if (w.from.length === 10) {
+      start = new Date(`${w.from}T00:00:00`);
+    } else {
+      // Recurring "MM-DD" window; a wrapping window (e.g. 11-01 → 02-28)
+      // started LAST year when today sits before the from-date.
+      const wraps = w.from > w.to;
+      const beforeFrom = md < w.from;
+      const year = date.getFullYear() - (wraps && beforeFrom ? 1 : 0);
+      start = new Date(`${year}-${w.from}T00:00:00`);
+    }
+    const days = Math.floor((date.getTime() - start.getTime()) / 86_400_000);
+    if (days < 0) continue;
+    return (Math.floor(days / 7) % 4) + 1;
+  }
+  return null;
+}
+
+/** Post-pass: apply the 3:1 volume wave. Week 4 also strips PM doubles. */
+function applyMesocycleWave(
+  days: DailyPrescription[],
+  dayInputs: PeriodizationInputs[],
+  teamPracticeFlags: boolean[],
+): DailyPrescription[] {
+  return days.map((d, i) => {
+    const week = dayInputs[i]?.mesocycleWeek ?? null;
+    if (week === null || !(week in MESOCYCLE_VOLUME_FACTORS)) return d;
+    if (teamPracticeFlags[i]) return d; // practice is the calendar, never waved
+    if (d.phase !== "accumulation" && d.phase !== "transition") return d;
+    if (!MESOCYCLE_WAVED_INTENTS.has(d.intent)) return d;
+    const factor = MESOCYCLE_VOLUME_FACTORS[week];
+    if (factor === 1) return d;
+    return {
+      ...d,
+      targetMinutes: Math.max(15, Math.round(d.targetMinutes * factor)),
+      sprintReps:
+        d.sprintReps > 0 ? Math.max(2, Math.round(d.sprintReps * factor)) : 0,
+      strengthSets:
+        d.strengthSets > 0
+          ? Math.max(4, Math.round(d.strengthSets * factor))
+          : 0,
+      reasoning:
+        week === 4
+          ? `${d.reasoning} Deload week (4 of 4): volume −35%, intensity held — the adaptation week.`
+          : `${d.reasoning} Build week ${week} of 3: volume +${Math.round((factor - 1) * 100)}%.`,
+      secondSession: week === 4 ? null : d.secondSession,
+    };
+  });
+}
+
 export function planWeek(
   dayInputs: PeriodizationInputs[],
   teamPracticeFlags: boolean[],
@@ -2060,17 +2152,76 @@ export function planWeek(
 ): DailyPrescription[] {
   const seasonPhases = dayInputs.map((d) => d.seasonPhase ?? null);
   const intentHints = planWeekIntents(teamPracticeFlags, phases7, seasonPhases);
+
+  // Sprint-exposure floor (2026-07-14, audit §3.2): regular near-max-velocity
+  // exposure is hamstring-protective ("speed vaccine" — Malone/Edouard line).
+  // If the athlete has had NO high-speed work (sprint/mixed session, practice,
+  // or game) in ≥ SPRINT_EXPOSURE_FLOOR_DAYS and this week plans none either,
+  // the earliest planned technical/mobility slot becomes a SHORT velocity
+  // session. Safety guards still run on top — a demotion by CNS/weather/injury
+  // stands, and the day then carries honest "exposure postponed" advice.
+  const daysSinceHighSpeed = dayInputs[0]?.daysSinceHighSpeed ?? null;
+  let floorIdx: number | null = null;
+  const weekHasExposure =
+    teamPracticeFlags.some(Boolean) ||
+    intentHints.some((x) => x === "sprint" || x === "mixed");
+  if (
+    daysSinceHighSpeed !== null &&
+    daysSinceHighSpeed >= SPRINT_EXPOSURE_FLOOR_DAYS &&
+    !weekHasExposure
+  ) {
+    for (const candidate of ["technical", "mobility"] as PrescriptionIntent[]) {
+      const idx = intentHints.findIndex((x) => x === candidate);
+      if (idx !== -1) {
+        intentHints[idx] = "sprint";
+        floorIdx = idx;
+        break;
+      }
+    }
+  }
+
   const out = dayInputs.map((input, i) =>
     prescribeFor({ ...input, weeklyIntentHint: intentHints[i] }),
   );
+
+  // Realize the floor day as a MAINTENANCE dose, not a full sprint session
+  // (4-6 relaxed accelerations, short) — unless a guard demoted it, in which
+  // case the postponement is stated instead of silently dropped.
+  if (floorIdx !== null) {
+    const day = out[floorIdx];
+    if (day.intent === "sprint") {
+      out[floorIdx] = {
+        ...day,
+        targetMinutes: Math.min(day.targetMinutes, 60),
+        sprintReps: Math.min(day.sprintReps, SPRINT_FLOOR_MAINTENANCE_REPS),
+        reasoning: `Speed maintenance — first high-speed exposure in ${Math.round(
+          daysSinceHighSpeed!,
+        )} days. Short and crisp: ${SPRINT_FLOOR_MAINTENANCE_REPS}× relaxed 20-30 m builds at ~90%, full recovery. Regular near-max running protects hamstrings.`,
+      };
+    } else {
+      out[floorIdx] = {
+        ...day,
+        reasoning: `${day.reasoning} High-speed exposure is overdue (${Math.round(
+          daysSinceHighSpeed!,
+        )} days) but a safety guard postponed it — when you feel fresh, add 4-6 relaxed 20-30 m strides.`,
+      };
+    }
+  }
+
   const capped = enforceWeeklyRestMinimum(out, teamPracticeFlags);
-  return addSecondSessions(
+  const withSeconds = addSecondSessions(
     capped,
     teamPracticeFlags,
     phases7,
     todayReadiness,
     todayAcwr,
   );
+
+  // Mesocycle 3:1 wave (2026-07-14, audit §3.1): weeks 1-3 build volume
+  // (+0/5/10%), week 4 deloads (volume −35%, intensity HELD — same principle
+  // as the taper). Applied last so the deload also strips PM doubles. Null
+  // mesocycleWeek (no declared build block) → untouched.
+  return applyMesocycleWave(withSeconds, dayInputs, teamPracticeFlags);
 }
 
 /**
@@ -2632,6 +2783,8 @@ export const __periodization__ = {
   isHighCnsSessionType,
   planWeekIntents,
   planWeek,
+  mesocycleWeekFor,
+  applyMesocycleWave,
   detectTournamentRecoveryDay,
   modulateIntentForLoad,
   resolveTaperTargets,
