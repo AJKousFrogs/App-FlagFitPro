@@ -108,8 +108,10 @@ export class TrainingComponent {
     const r = this.rx()?.targetRpe;
     return r == null ? "—" : String(r);
   });
+  // Null when no real bodyweight exists (Law #7, audit C7) — template renders
+  // an "add weight" hint instead of a fabricated litre target.
   readonly fluidTarget = computed(
-    () => this.rx()?.nutrition?.hydrationL ?? 3.2,
+    () => this.rx()?.nutrition?.hydrationL ?? null,
   );
 
   // ── conditions (weather) ────────────────────────────────────────────────────

@@ -1,4 +1,55 @@
 const WARMUP_TARGET_SECONDS = 25 * 60;
+// NMT / ACL-prevention segment (2026-07-14, audit §1.3): FIFA-11+-class
+// neuromuscular training roughly halves ACL injury in the meta-analytic
+// literature, and the new flag-specific evidence shows exactly the non-contact
+// cut/pivot pattern NMT targets (Grewal 2025, J Pediatr Orthop,
+// doi:10.1097/BPO.0000000000003154 — 21/24 knee surgeries were ACL, 87%
+// non-contact, only 2/24 injured athletes had done any prevention program).
+// Appended to the warm-up on individual quality days (strength / sprint /
+// mixed); the Nordic already present in those variants completes the set.
+const NMT_TARGET_SECONDS = 10 * 60;
+const NMT_PREVENTION_SEGMENT = [
+  {
+    name: "Lateral Hop-and-Stick",
+    keywords: ["lateral hop", "skater", "hop and stick"],
+    sets: 2,
+    reps: 6,
+    durationSeconds: 150,
+    note: "NMT/ACL block: hop laterally, STICK the landing 2s — knee over toes, no valgus collapse. 6/side.",
+  },
+  {
+    name: "Single-Leg Balance (Ball-Busy)",
+    keywords: ["single-leg balance", "single leg stance", "balance"],
+    sets: 2,
+    reps: null,
+    durationSeconds: 120,
+    note: "NMT/ACL block: 30s/side on one leg while catching/tossing a ball — knee soft, hip level.",
+  },
+  {
+    name: "Drop-Land Freeze (Landing Mechanics)",
+    keywords: ["stop-land", "drop land", "landing"],
+    sets: 3,
+    reps: 5,
+    durationSeconds: 150,
+    note: "NMT/ACL block: small drop, land soft and FREEZE — hips back, knees track the toes, silent feet.",
+  },
+  {
+    name: "Decel-to-Stop Runs",
+    keywords: ["decel", "deceleration"],
+    sets: 3,
+    reps: 1,
+    durationSeconds: 120,
+    note: "NMT/ACL block: build to ~80% over 10m, decelerate to a full stop in 3 steps. Braking strength is cut protection.",
+  },
+  {
+    name: "Copenhagen Side Plank (Short Lever)",
+    keywords: ["copenhagen"],
+    sets: 2,
+    reps: null,
+    durationSeconds: 60,
+    note: "NMT/ACL block: 15s/side, bent-knee version. Groin/adductor strength for cutting.",
+  },
+];
 
 function applyQuarterbackWarmupOverrides(plan) {
   const removeNames = new Set(["Ankle Rocker + Hip Circles", "5-10-5 Shuttle"]);
@@ -136,7 +187,17 @@ const PLANK_ACTIVATION_BLOCK = [
   },
 ];
 
-function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
+function buildWarmupTemplate({
+  variant,
+  isQB,
+  isCenter,
+  warmupFocus,
+  includeNmt = false,
+}) {
+  const withNmt = (plan) =>
+    includeNmt && variant !== "recovery"
+      ? [...plan, ...NMT_PREVENTION_SEGMENT]
+      : plan;
   // ── RECOVERY variant ─────────────────────────────────────────────────────
   // Low-intensity days: foam roll + mobility-led, still includes the mandatory
   // plank activation block. No sprint mechanics or potentiation work.
@@ -195,7 +256,12 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
       },
       {
         name: "Straight-Leg Kicks (Toy Soldiers)",
-        keywords: ["toy soldier", "straight leg", "leg kick", "hamstring mobility"],
+        keywords: [
+          "toy soldier",
+          "straight leg",
+          "leg kick",
+          "hamstring mobility",
+        ],
         sets: 2,
         reps: 10,
         durationSeconds: 90,
@@ -254,7 +320,7 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
   // Strength/power/gym days. Specific plank protocol replaces the old generic
   // "Plank Series". Total: 1500s (25 min).
   if (variant === "fitness") {
-    return [
+    return withNmt([
       {
         name: "Jump Rope",
         keywords: ["jump rope", "rope jump"],
@@ -354,7 +420,7 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
         durationSeconds: 120,
         note: "Finish raise phase: easy spin, smooth cadence.",
       },
-    ];
+    ]);
   }
 
   // ── FIELD variant (default) ──────────────────────────────────────────────
@@ -485,7 +551,7 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
     plan = applyQuarterbackWarmupOverrides(plan);
   }
 
-  return plan;
+  return withNmt(plan);
 }
 
 function selectWarmupVariant({
@@ -648,8 +714,13 @@ function normalizeTightnessRegion(region) {
   if (!region || typeof region !== "string") {
     return null;
   }
-  const k = region.trim().toLowerCase().replace(/[\s-]+/g, "_");
-  return TIGHTNESS_REGION_ALIASES[k] || (TIGHTNESS_TRIAGE_STRETCHES[k] ? k : null);
+  const k = region
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  return (
+    TIGHTNESS_REGION_ALIASES[k] || (TIGHTNESS_TRIAGE_STRETCHES[k] ? k : null)
+  );
 }
 
 /**
@@ -665,7 +736,10 @@ function normalizeTightnessRegion(region) {
  * @param {string[]} [ctx.injuryRegions]  active-injury regions (contraindication)
  * @returns {object|null} `{ name, durationSeconds, note, triage: true, region }` or null
  */
-function tightnessTriageStretch(region, { soreRegions = [], injuryRegions = [] } = {}) {
+function tightnessTriageStretch(
+  region,
+  { soreRegions = [], injuryRegions = [] } = {},
+) {
   const key = normalizeTightnessRegion(region);
   if (!key) {
     return null;
@@ -683,6 +757,8 @@ function tightnessTriageStretch(region, { soreRegions = [], injuryRegions = [] }
 
 export {
   WARMUP_TARGET_SECONDS,
+  NMT_TARGET_SECONDS,
+  NMT_PREVENTION_SEGMENT,
   buildWarmupTemplate,
   getPlyometricIntensity,
   getSafeConditioningIntensity,

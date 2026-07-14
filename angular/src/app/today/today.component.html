@@ -170,7 +170,7 @@
                 ><span class="k">Sprints</span>
               </div>
               <div class="stat-chip">
-                <span class="v">{{ hydroTarget() }}L</span
+                <span class="v">{{ hydroTarget() != null ? hydroTarget() + "L" : "—" }}</span
                 ><span class="k">Fluid</span>
               </div>
             </div>
@@ -452,7 +452,11 @@
               <span
                 ><strong>{{ hydroValue() }}</strong> L logged</span
               >
-              <span>target {{ hydroTarget() }} L</span>
+              <span>{{
+                hydroTarget() != null
+                  ? "target " + hydroTarget() + " L"
+                  : "add your weight in Profile to see targets"
+              }}</span>
             </div>
             <div class="bar" [attr.data-state]="hydroMsg()?.cls">
               <i [style.width.%]="hydroPct()"></i>

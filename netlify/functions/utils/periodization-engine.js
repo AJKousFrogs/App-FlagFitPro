@@ -201,9 +201,13 @@ var ADULT_FLAG_COMPETITIVE_V1 = {
       RESEARCH_CITATIONS.mclellan2011
     ],
     weightings: {
-      workload: 0.35,
-      wellness: 0.3,
-      sleep: 0.2,
+      // Re-weighted 2026-07-14 (mirrors calc-readiness.js): the only cluster-RCT
+      // of ACWR-guided load management found no effect (Dalen-Lorentsen 2021,
+      // BJSM) — workload is one input among several, and subjective wellness +
+      // sleep carry the stronger monitoring evidence (Saw 2016; Halson 2014).
+      workload: 0.25,
+      wellness: 0.35,
+      sleep: 0.25,
       proximity: 0.15
     },
     cutPoints: {
@@ -562,7 +566,6 @@ var RETURN_TO_PLAY_V1 = {
 };
 
 // angular/src/app/core/services/periodization-engine.ts
-var FALLBACK_BODYWEIGHT_KG = 80;
 var FALLBACK_READINESS = 70;
 var ACWR_UNDER = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotLow;
 var ACWR_ELEVATED = ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds.sweetSpotHigh;
@@ -992,7 +995,7 @@ function detectTournamentRecoveryDay(lastEvent, date) {
 }
 function applyPostTournamentRecovery(inputs, dayAfterTournament) {
   const { date, bodyweightKg, acwr, seasonPhase, upcoming, lastEvent } = inputs;
-  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const bodyweight = bodyweightKg ?? null;
   const gameCount = lastEvent.expectedGameCount ?? 0;
   const eventName = lastEvent.competitionShortName ?? lastEvent.competitionName ?? "your tournament";
   const hoursUntilNext = nextEventHours(date, upcoming);
@@ -1048,7 +1051,7 @@ function decideBasePrescription(inputs) {
   } = inputs;
   const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
   const hoursUntilNext = nextEventHours(date, upcoming);
-  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const bodyweight = bodyweightKg ?? null;
   const effectiveReadiness = readiness ?? FALLBACK_READINESS;
   const heavyDensity = !!density14d && (density14d.totalGames >= DENSITY_HEAVY_GAMES_14D || (density14d.peakDayGameCount ?? 0) >= DENSITY_CONGESTED_DAY_GAMES);
   const apparentTemp = inputs.weather?.apparentC ?? inputs.weather?.tempC ?? null;
@@ -1645,9 +1648,9 @@ function approxWBGT(tempC, humidityPct) {
   const e = humidityPct / 100 * 6.105 * Math.exp(17.27 * tempC / (237.7 + tempC));
   return 0.567 * tempC + 0.393 * e + 3.94;
 }
-var WBGT_CAUTION_C = 27.8;
-var WBGT_REDUCE_C = 30;
-var WBGT_RELOCATE_C = 32.2;
+var WBGT_CAUTION_C = 25.7;
+var WBGT_REDUCE_C = 27.8;
+var WBGT_RELOCATE_C = 30;
 var WBGT_STOP_C = 32.2;
 var HEAT_INTENSITY_WEIGHT = {
   sprint: 1,
@@ -2088,6 +2091,9 @@ var PROTEIN_PER_KG = 1.8;
 var FLUID_BASE_ML_PER_KG = 35;
 var FLUID_COMPETITION_BONUS_L = 1.5;
 function nutritionFor(intent, bodyweightKg, heavyDensity, hotDay = false) {
+  if (bodyweightKg == null || !(bodyweightKg > 0)) {
+    return null;
+  }
   const key = intent === "taper" ? "sprint" : intent === "transition" ? "mixed" : intent;
   const carbsG = Math.round(CARB_PER_KG[key] * bodyweightKg);
   const proteinG = Math.round(PROTEIN_PER_KG * bodyweightKg);

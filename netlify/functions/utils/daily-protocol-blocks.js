@@ -3,6 +3,7 @@ import {
   buildWarmupTemplate,
   selectWarmupVariant,
   WARMUP_TARGET_SECONDS,
+  NMT_TARGET_SECONDS,
 } from "./daily-protocol-training-logic.js";
 
 import { createLogger } from "./structured-logger.js";
@@ -217,21 +218,40 @@ export async function addWarmupBlock({
     isPracticeDay,
     trainingFocus,
   });
+  // NMT / ACL-prevention segment on individual QUALITY days (strength / sprint /
+  // mixed) — FIFA-11+-class neuromuscular training, default-on (audit §1.3).
+  // Practice days run the team warm-up; recovery/skill days keep the shorter
+  // warm-up. Compliance rides the existing per-exercise check-off.
+  const includeNmt =
+    !isPracticeDay &&
+    !isFilmRoomDay &&
+    (isSprintSession ||
+      [
+        "strength",
+        "power",
+        "gym",
+        "fitness",
+        "weights",
+        "conditioning",
+      ].includes(trainingFocus?.toLowerCase() || ""));
   const warmupPlan = buildWarmupTemplate({
     variant: warmupVariant,
     isQB: context?.isQB,
     isCenter: context?.isCenter,
     warmupFocus: context?.warmupFocus,
+    includeNmt,
   });
   const warmupTotalSeconds = warmupPlan.reduce(
     (sum, item) => sum + (item.durationSeconds || 0),
     0,
   );
 
-  if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
+  const warmupTargetSeconds =
+    WARMUP_TARGET_SECONDS + (includeNmt ? NMT_TARGET_SECONDS : 0);
+  if (warmupTotalSeconds !== warmupTargetSeconds) {
     logger.warn("daily_protocol_warmup_duration_mismatch", {
       actual: warmupTotalSeconds,
-      target: WARMUP_TARGET_SECONDS,
+      target: warmupTargetSeconds,
     });
   }
 
@@ -284,6 +304,12 @@ const REGION_KEYWORDS = {
   plantar: ["plantar", "foot", "toe raise", "heel raise", "heel drop"],
   "lower back": ["lower back", "lumbar"],
   shoulder: ["shoulder", "rotator"],
+  // Fingers are the #1 adult flag-football injury site in NEISS data — both
+  // overall (Locke 2025, doi:10.1177/19417381251326575) and for female
+  // athletes specifically (Balachandran 2025, doi:10.1177/23259671251360345);
+  // flag-pull and ball-handling keep the mechanism alive without contact.
+  finger: ["finger", "thumb", "grip", "hand"],
+  hand: ["hand", "finger", "thumb", "grip", "wrist"],
 };
 
 /**

@@ -153,9 +153,13 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
       RESEARCH_CITATIONS.mclellan2011,
     ],
     weightings: {
-      workload: 0.35,
-      wellness: 0.3,
-      sleep: 0.2,
+      // Re-weighted 2026-07-14 (mirrors calc-readiness.js): the only cluster-RCT
+      // of ACWR-guided load management found no effect (Dalen-Lorentsen 2021,
+      // BJSM) — workload is one input among several, and subjective wellness +
+      // sleep carry the stronger monitoring evidence (Saw 2016; Halson 2014).
+      workload: 0.25,
+      wellness: 0.35,
+      sleep: 0.25,
       proximity: 0.15,
     },
     cutPoints: {

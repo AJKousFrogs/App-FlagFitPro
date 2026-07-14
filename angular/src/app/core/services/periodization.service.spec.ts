@@ -466,21 +466,28 @@ describe("prescribeFor — nutrition", () => {
     expect(rx.nutrition.carbsG).toBe(80 * 3);
   });
 
-  it("missing bodyweight falls back to 80kg", () => {
+  it("missing bodyweight → nutrition is NULL, never an 80kg fabrication (Law #7, audit C7)", () => {
+    // The old 80kg fallback over-prescribed a 45kg athlete by ~78% on per-kg
+    // carbs/fluids. No real weight → no per-kg targets; the UI shows an
+    // explicit "add your weight" state instead of a defaulted number.
     const rxNull = prescribeFor(
       inputs({
         date: new Date("2026-05-05T10:00:00Z"),
         bodyweightKg: null,
       }),
     );
-    const rx80 = prescribeFor(
+    expect(rxNull.nutrition).toBeNull();
+    // The rest of the prescription is untouched by the missing weight.
+    expect(rxNull.intent).toBeTruthy();
+    expect(rxNull.targetMinutes).toBeGreaterThan(0);
+    // And a real weight still doses per-kg.
+    const rx60 = prescribeFor(
       inputs({
         date: new Date("2026-05-05T10:00:00Z"),
-        bodyweightKg: 80,
+        bodyweightKg: 60,
       }),
     );
-    expect(rxNull.nutrition.carbsG).toBe(rx80.nutrition.carbsG);
-    expect(rxNull.nutrition.proteinG).toBe(rx80.nutrition.proteinG);
+    expect(rx60.nutrition?.proteinG).toBe(108); // 1.8 g/kg × 60
   });
 });
 

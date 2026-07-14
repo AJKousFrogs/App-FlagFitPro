@@ -57,12 +57,14 @@ describe("approxWBGT — BoM shade formula (temp + humidity)", () => {
 });
 
 describe("applyWeatherGuard — WBGT: same temp, humidity flips the risk", () => {
-  it("30°C @ 40%RH (WBGT ~27.6) → benign; @ 70%RH (WBGT ~32.6) → STOP", () => {
+  it("30°C @ 40%RH (WBGT ~27.6) → advisory only; @ 70%RH (WBGT ~32.6) → STOP", () => {
     const dry = applyWeatherGuard(rx("sprint"), wx(30, 40), false);
     const humid = applyWeatherGuard(rx("sprint"), wx(30, 70), false);
-    // dry: below the caution WBGT → session untouched
+    // dry: 27.6 sits in the NATA caution band (25.7-27.8, 2026-07-14 bands) —
+    // hydration advisory, session UNCHANGED
     expect(dry.intent).toBe("sprint");
-    expect(dry.weatherAdjustment).toBeUndefined();
+    expect(dry.weatherAdjustment.applied).toBe(false);
+    expect(dry.weatherAdjustment.action).toBe("none");
     // humid: identical air temp, but WBGT crosses the stop line
     expect(humid.intent).toBe("recovery");
     expect(humid.weatherAdjustment.action).toBe("stop");
@@ -80,9 +82,13 @@ describe("applyWeatherGuard — D13 inversion fixed: technical is now heat-guard
 
 describe("applyWeatherGuard — scale cut is strain-scaled (WBGT × duration × intensity)", () => {
   it("a long sprint loses more volume than a short skills session at the same WBGT", () => {
-    // 31°C @ 55%RH → WBGT ~31.2, inside the SCALE band [30, 32.2).
-    const sprint = applyWeatherGuard(rx("sprint", 60, 10), wx(31, 55), false);
-    const technical = applyWeatherGuard(rx("technical", 30, 0), wx(31, 55), false);
+    // 29°C @ 55%RH → WBGT ~29.0, inside the NATA SCALE band [27.8, 30).
+    const sprint = applyWeatherGuard(rx("sprint", 60, 10), wx(29, 55), false);
+    const technical = applyWeatherGuard(
+      rx("technical", 30, 0),
+      wx(29, 55),
+      false,
+    );
     expect(sprint.weatherAdjustment.action).toBe("scale");
     expect(technical.weatherAdjustment.action).toBe("scale");
     const sprintCut = 1 - sprint.targetMinutes / 60;
