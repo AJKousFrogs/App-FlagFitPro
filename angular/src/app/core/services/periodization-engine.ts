@@ -115,7 +115,9 @@ export function isHighCnsSessionType(
   const t = type || "";
   // `competition` = a game: maximal CNS load, always spacing-worthy. (Included so
   // the server cns-spacing guard, which consumes this, agrees with the engine.)
-  if (/sprint|plyo|speed|max.?velocity|accel|agility|bound|competition/i.test(t))
+  if (
+    /sprint|plyo|speed|max.?velocity|accel|agility|bound|competition/i.test(t)
+  )
     return true;
   if (FLAG_DRILL_HIGH_CNS_PATTERN.test(t)) {
     // Unknown RPE → conservative (treat as high-CNS).
@@ -224,7 +226,10 @@ export function prescribeFor(inputs: PeriodizationInputs): DailyPrescription {
     const shift = findCoolerHour(
       inputs.weather?.hourly ?? null,
       inputs.preferredTrainingHour ?? inputs.date.getHours(),
-      approxWBGT(inputs.weather?.tempC ?? null, inputs.weather?.humidityPct ?? null),
+      approxWBGT(
+        inputs.weather?.tempC ?? null,
+        inputs.weather?.humidityPct ?? null,
+      ),
     );
     if (shift) return { ...result, timeShift: shift };
   }
@@ -665,8 +670,13 @@ export function resolveTaperTargets(
   ruleset: TaperRuleset,
   level: CompetitionLevel | null | undefined,
   isFinalThird: boolean,
-): { intent: PrescriptionIntent; rpe: number; minutes: number; sprintReps: number } {
-  const base = baseTargets("sprint"); // RPE 8 / 60min / 10 reps
+): {
+  intent: PrescriptionIntent;
+  rpe: number;
+  minutes: number;
+  sprintReps: number;
+} {
+  const base = baseTargets("sprint"); // RPE 8 / 90min (incl. warm-up+DOP) / 10 reps
   const rule =
     ruleset.byLevel[taperLevelFor(level)] ??
     EMBEDDED_TAPER_RULES.byLevel.national;
@@ -1094,7 +1104,12 @@ function decideBasePrescription(
           reasoning:
             "Off-season window. Maintain GPP base — easy aerobic + lift.",
           recoveryEmphasis: "low",
-          nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+          nutrition: nutritionFor(
+            "transition",
+            bodyweight,
+            heavyDensity,
+            hotDay,
+          ),
           driverEvent,
           hoursUntilNextEvent: hoursUntilNext,
           acwrAtIssue: acwr,
@@ -1124,7 +1139,14 @@ function decideBasePrescription(
         ) {
           intent = "technical";
         }
-        const t = baseTargets(intent);
+        // Off-season GPP is a BUILD block — lighter intents run heavier
+        // (technical = a real 90-min session, not the in-season practice
+        // complement). Post-season/transition regeneration and in-season/peak
+        // maintenance stay on the baseline targets.
+        const t =
+          seasonPhase === "offseason"
+            ? buildTargets(intent)
+            : baseTargets(intent);
         return finalize({
           date,
           phase,
@@ -1272,6 +1294,16 @@ interface PhaseSessionModel {
   quality: [PrescriptionIntent, PrescriptionIntent]; // well-buffered days, alternated
   secondCapPerWeek: number; // cap on quality[1] across the week
   sandwiched: PrescriptionIntent; // squeezed between anchors (no clear before/after)
+  /**
+   * Optional explicit week rotation for well-buffered quality slots, assigned
+   * chronologically (coach directive 2026-07-14: the off-season week mixes
+   * strength / sprint / mixed / technical — flag athletes need year-round
+   * sprint exposure, not a strength+mixed-only base). When two training days
+   * end up adjacent (the 5-day week), a rotation intent that would put two
+   * high-CNS days (sprint/mixed) back-to-back is deferred and `technical`
+   * fills the slot — the CNS-spacing guard stays the runtime backstop.
+   */
+  rotation?: PrescriptionIntent[];
 }
 
 function phaseSessionModel(season: SeasonPhase | null): PhaseSessionModel {
@@ -1313,12 +1345,22 @@ function phaseSessionModel(season: SeasonPhase | null): PhaseSessionModel {
     default:
       // GPP base. `null` (no declared season_calendar + no games/practices) is the
       // honest off-season inference — the rationale surfaces "set your season plan".
+      // Rotation (2026-07-14): strength-led GPP that KEEPS sprint exposure —
+      // sprinting is year-round protective work for flag athletes (hamstring
+      // "vaccine"), not an in-season-only stimulus. 5 free days rotate
+      // strength → sprint → mixed → strength → technical.
       return {
         afterPractice: "strength",
         beforePractice: "technical",
         quality: ["strength", "mixed"],
         secondCapPerWeek: 2,
         sandwiched: "technical",
+        // Order matters in the canonical 2-2-1 week (Mon+Tue / Thu+Fri / Sun):
+        // technical follows the first strength day so its PM sprint double
+        // ("morning strength, evening sprint") isn't blocked by a high-CNS
+        // tomorrow, and the two dedicated high-CNS days (sprint, mixed) land
+        // ~72h apart — clears even the masters (40+) CNS window.
+        rotation: ["strength", "technical", "sprint", "strength", "mixed"],
       };
   }
 }
@@ -1387,15 +1429,33 @@ export function planWeekIntents(
   const mandatoryCount = isLocked.filter(Boolean).length;
   const budget = Math.max(0, 5 - mandatoryCount);
 
-  // Select training slots greedily: best quality first; avoid consecutive days
-  // (Fri+Sat back-to-back after Thu practice is a common trap).
+  // Select training slots greedily: best quality first. Consecutive training
+  // days are LIMITED, not banned (2026-07-14): up to two adjacent pairs per
+  // week and never three days in a row. Under the old blanket no-consecutive
+  // rule the 5-active-day budget was mathematically unreachable in an
+  // anchor-less week (any 5 days in 7 contain ≥2 adjacencies — 5 days across
+  // at most 3 runs), so every off-season week silently became 4-on/3-off.
+  // The canonical 5-day shape is 2-2-1 (e.g. Mon+Tue, Thu+Fri, Sun).
+  const MAX_ADJACENT_TRAINING_PAIRS = 2;
   const sorted = [...slots].sort((a, b) => b.quality - a.quality);
   const trainingIdxs = new Set<number>();
+  let adjacentPairs = 0;
 
   for (const { idx } of sorted) {
     if (trainingIdxs.size >= budget) break;
-    if ([...trainingIdxs].some((t) => Math.abs(t - idx) === 1)) continue;
+    const nLeft = trainingIdxs.has(idx - 1);
+    const nRight = trainingIdxs.has(idx + 1);
+    const newPairs = (nLeft ? 1 : 0) + (nRight ? 1 : 0);
+    // Never create a 3-day run: no bridging two selected days, no extending
+    // an existing pair.
+    const createsTripleRun =
+      newPairs === 2 ||
+      (nLeft && trainingIdxs.has(idx - 2)) ||
+      (nRight && trainingIdxs.has(idx + 2));
+    if (createsTripleRun) continue;
+    if (adjacentPairs + newPairs > MAX_ADJACENT_TRAINING_PAIRS) continue;
     trainingIdxs.add(idx);
+    adjacentPairs += newPairs;
   }
 
   // Assign REST to non-selected free days.
@@ -1410,6 +1470,7 @@ export function planWeekIntents(
   // fitted around THEIR days, and off/pre/in/peak seasons differ.
   let firstQualityAssigned = 0;
   let secondQualityAssigned = 0;
+  let rotationCursor = 0;
   for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
     const s = slots.find((sl) => sl.idx === idx)!;
     const minGameDist = Math.min(s.gameB, s.gameA);
@@ -1436,8 +1497,27 @@ export function planWeekIntents(
     }
 
     // Good buffer from practices on both sides (≥ 2 days): a quality session.
-    // Alternate the phase's two quality types; cap the second per the phase model.
     if (Math.min(s.pracB, s.pracA) >= 2) {
+      // Phase rotation (2026-07-14): when the phase declares an explicit week
+      // rotation, well-buffered slots take it chronologically. A rotation
+      // intent that would put two high-CNS days (sprint/mixed) back-to-back
+      // is deferred — `technical` fills the slot and the quality session
+      // takes the next one. The runtime CNS-spacing guard stays the backstop.
+      if (model.rotation && model.rotation.length > 0) {
+        let candidate =
+          model.rotation[Math.min(rotationCursor, model.rotation.length - 1)];
+        const prev = intents[idx - 1];
+        const prevHighCns = prev != null && HIGH_CNS_INTENTS.has(prev);
+        if (prevHighCns && HIGH_CNS_INTENTS.has(candidate)) {
+          candidate = "technical";
+        } else {
+          rotationCursor++;
+        }
+        intents[idx] = candidate;
+        continue;
+      }
+      // No rotation: alternate the phase's two quality types; cap the second
+      // per the phase model.
       if (
         secondQualityAssigned < firstQualityAssigned &&
         secondQualityAssigned < model.secondCapPerWeek
@@ -1564,12 +1644,19 @@ export function addSecondSessions(
     (p) => p === "competition" || p === "taper" || p === "recovery",
   );
 
+  // Weekly ceiling (coach directive 2026-07-14): ≤ 2 doubles per week, so the
+  // week tops out at 5 training days + 2 PM sessions = 7 sessions — enough for
+  // flag football; the taper/tournament logic pulls this down near events.
+  const SECOND_SESSIONS_PER_WEEK_CAP = 2;
+  let secondSessionsAdded = 0;
+
   return prescriptions.map((p, i) => {
     const phase = p.seasonPhase;
     if (phase !== "preseason" && phase !== "offseason") return p;
     if (teamPracticeFlags[i]) return p;
     if (p.intent !== "strength") return p;
     if (p.targetRpe === null) return p; // already a rest/recovery override
+    if (secondSessionsAdded >= SECOND_SESSIONS_PER_WEEK_CAP) return p;
 
     // Require ≥ 2 days gap to the nearest high-load day — schedule-aware,
     // not weekday-based. This replaces the Mon/Thu DOW hard-lock.
@@ -1584,14 +1671,23 @@ export function addSecondSessions(
       if (todayAcwr !== null && todayAcwr > 1.2) return p;
     }
 
-    // Energy-system diversification: prefer technical PM when a practice follows
-    // tomorrow (avoids stacking two high-CNS sessions within ~18 h); otherwise
-    // sprint PM capitalises on the strength-primed CNS state.
+    // Energy-system diversification: prefer technical PM when a practice OR a
+    // planned high-CNS day (sprint/mixed) follows tomorrow — a PM sprint at
+    // 19:00 followed by a sprint day at 09:00 is a ~14 h high-CNS stack the
+    // planner must never schedule (the CNS guard would only catch it after the
+    // fact, from logged sessions). Otherwise sprint PM capitalises on the
+    // strength-primed CNS state.
     const practiceFollowsTomorrow = i + 1 < 7 && teamPracticeFlags[i + 1];
-    const secondIntent: PrescriptionIntent = practiceFollowsTomorrow
-      ? "technical"
-      : "sprint";
+    const highCnsTomorrow =
+      i + 1 < 7 && HIGH_CNS_INTENTS.has(prescriptions[i + 1].intent);
+    const highCnsYesterday =
+      i - 1 >= 0 && HIGH_CNS_INTENTS.has(prescriptions[i - 1].intent);
+    const secondIntent: PrescriptionIntent =
+      practiceFollowsTomorrow || highCnsTomorrow || highCnsYesterday
+        ? "technical"
+        : "sprint";
 
+    secondSessionsAdded++;
     return {
       ...p,
       secondSession: {
@@ -1757,9 +1853,7 @@ export function approxWBGT(
     return null;
   }
   const e =
-    (humidityPct / 100) *
-    6.105 *
-    Math.exp((17.27 * tempC) / (237.7 + tempC));
+    (humidityPct / 100) * 6.105 * Math.exp((17.27 * tempC) / (237.7 + tempC));
   return 0.567 * tempC + 0.393 * e + 3.94;
 }
 
@@ -1845,7 +1939,10 @@ function wbgtVolumeKeep(
   targetMinutes: number,
 ): number {
   const bandSpan = Math.max(0.1, relocateThreshold - reduceThreshold);
-  const bandFrac = Math.min(1, Math.max(0, (wbgt - reduceThreshold) / bandSpan));
+  const bandFrac = Math.min(
+    1,
+    Math.max(0, (wbgt - reduceThreshold) / bandSpan),
+  );
   const intensity = HEAT_INTENSITY_WEIGHT[intent] ?? 0.6;
   const durationFactor = Math.min(
     2,
@@ -1853,7 +1950,10 @@ function wbgtVolumeKeep(
   );
   // strain in [0,1]-ish → cut fraction, capped at HEAT_MAX_VOLUME_CUT.
   const strain = bandFrac * intensity * durationFactor;
-  const cut = Math.min(HEAT_MAX_VOLUME_CUT, Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5));
+  const cut = Math.min(
+    HEAT_MAX_VOLUME_CUT,
+    Math.max(0.2, (strain * HEAT_MAX_VOLUME_CUT) / 0.5),
+  );
   return 1 - cut;
 }
 
@@ -2085,7 +2185,11 @@ export function applyWeatherGuard(
     reason = `${cite} — cut intense volume ~${cutPct}%, train in the cooler hour, hydrate. Expect RPE to feel ~1 higher; log what you actually felt.${acclimNote}`;
   } else if (heatMetric !== null && heatMetric >= heatCautionEff) {
     reason = `${citeBare} — warm. Add hydration and breaks; session unchanged.${acclimNote}`;
-  } else if (nonHeatEligible && apparent !== null && apparent <= coldCautionEff) {
+  } else if (
+    nonHeatEligible &&
+    apparent !== null &&
+    apparent <= coldCautionEff
+  ) {
     reason = `${t(apparent)}°C — cold muscles. Extend your warm-up; ease into max-velocity work.${acclimNote}`;
   } else if (wind !== null && wind >= WIND_UNRELIABLE_KMH) {
     reason = `${t(wind)} km/h wind — throwing accuracy and sprint timing are unreliable; deprioritise testing.`;
@@ -2206,24 +2310,29 @@ function baseTargets(intent: PrescriptionIntent): {
         sprintReps: 0,
         strengthSets: 0,
       };
+    // Quality sessions target 90 minutes TOTAL — the full realized session
+    // including the ~25-min warm-up and the injury-prevention (DOP) block,
+    // not just the main work (coach directive 2026-07-14). The realization
+    // layer's honest block estimates (warm-up + DOP + main + cool-down) sum
+    // to approximately this number.
     case "sprint":
       return {
         targetRpe: 8,
-        targetMinutes: 60,
+        targetMinutes: 90,
         sprintReps: 10,
         strengthSets: 0,
       };
     case "strength":
       return {
         targetRpe: 7,
-        targetMinutes: 75,
+        targetMinutes: 90,
         sprintReps: 0,
         strengthSets: 18,
       };
     case "mixed":
       return {
         targetRpe: 6,
-        targetMinutes: 75,
+        targetMinutes: 90,
         sprintReps: 6,
         strengthSets: 8,
       };
@@ -2269,9 +2378,11 @@ const BUILD_TARGET_OVERRIDES: Partial<
   // Previous value (RPE 6) was a stale pre-refactor literal and is corrected here.
   rest: { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 },
   mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+  // A build-block technical day is a REAL training day (90-min total incl.
+  // warm-up + DOP), unlike the shorter in-season practice-complement technical.
   technical: {
     targetRpe: 6,
-    targetMinutes: 75,
+    targetMinutes: 90,
     sprintReps: 0,
     strengthSets: 0,
   },

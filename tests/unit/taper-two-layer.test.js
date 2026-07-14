@@ -48,7 +48,11 @@ describe("EMBEDDED_TAPER_RULES — mirrors the curated taper_rules table", () =>
     expect(EMBEDDED_TAPER_RULES.byLevel).toEqual({
       local: { volumeFloorPct: 0.7, intensityRetention: 0.9, taperDays: 3 },
       regional: { volumeFloorPct: 0.6, intensityRetention: 0.95, taperDays: 5 },
-      national: { volumeFloorPct: 0.55, intensityRetention: 0.95, taperDays: 7 },
+      national: {
+        volumeFloorPct: 0.55,
+        intensityRetention: 0.95,
+        taperDays: 7,
+      },
       international: {
         volumeFloorPct: 0.5,
         intensityRetention: 1.0,
@@ -77,16 +81,16 @@ describe("resolveTaperTargets — velocity held, volume graduated by level", () 
     expect(front("world").rpe).toBe(8); // 8 × 1.00 → 8
   });
 
-  it("front-of-taper volume = baseline × floor (60min/10reps)", () => {
-    expect(front("club")).toMatchObject({ minutes: 42, sprintReps: 7 }); // ×0.70
-    expect(front("national")).toMatchObject({ minutes: 33, sprintReps: 6 }); // ×0.55
-    expect(front("world")).toMatchObject({ minutes: 30, sprintReps: 5 }); // ×0.50
+  it("front-of-taper volume = baseline × floor (90min-total/10reps, 2026-07-14 base)", () => {
+    expect(front("club")).toMatchObject({ minutes: 63, sprintReps: 7 }); // ×0.70
+    expect(front("national")).toMatchObject({ minutes: 50, sprintReps: 6 }); // ×0.55
+    expect(front("world")).toMatchObject({ minutes: 45, sprintReps: 5 }); // ×0.50
   });
 
   it("final third cuts volume deeper (×0.66) at the SAME intensity", () => {
     const nf = final("national");
     expect(nf.rpe).toBe(front("national").rpe); // intensity unchanged
-    expect(nf.minutes).toBe(22); // 60 × 0.55 × 0.66
+    expect(nf.minutes).toBe(33); // 90 × 0.55 × 0.66
     expect(nf.sprintReps).toBe(4); // 10 × 0.55 × 0.66 → 3.63 → 4
     expect(nf.minutes).toBeLessThan(front("national").minutes);
   });
@@ -122,6 +126,6 @@ describe("resolveTaperTargets — velocity held, volume graduated by level", () 
       },
     };
     // override retains MORE volume (0.80) than the embedded national (0.55)
-    expect(resolveTaperTargets(override, "national", false).minutes).toBe(48);
+    expect(resolveTaperTargets(override, "national", false).minutes).toBe(72);
   });
 });

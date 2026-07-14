@@ -86,11 +86,18 @@ describe("PHASE-2 harness — engine baseline (must not move in Phase 2)", () =>
   // Weather fixtures (d,e) — the D13 inversion: a short sprint IS guarded while
   // sustained conditioning is NOT (conditioning isn't an OUTDOOR_INTENSE intent).
   it("applyWeatherGuard(d: sprint @33°C) — guarded", () => {
-    const sprintRx = { intent: "sprint", sprintReps: 6, reasoning: "sprint day" };
+    const sprintRx = {
+      intent: "sprint",
+      sprintReps: 6,
+      reasoning: "sprint day",
+    };
     expect(applyWeatherGuard(sprintRx, HEAT_33, false)).toMatchSnapshot();
   });
   it("applyWeatherGuard(e: conditioning @33°C) — currently UNguarded (documents the inversion)", () => {
-    const condRx = { intent: "conditioning", reasoning: "sustained conditioning" };
+    const condRx = {
+      intent: "conditioning",
+      reasoning: "sustained conditioning",
+    };
     expect(applyWeatherGuard(condRx, HEAT_33, false)).toMatchSnapshot();
   });
 });
@@ -128,8 +135,17 @@ describe("Phase 3 — off-season GPP week (planWeek)", () => {
       expect(count("mixed")).toBeLessThan(5); // NOT the old flat-mixed bug
       expect(count("strength")).toBeGreaterThanOrEqual(1); // GPP strength base
       expect(new Set(intents).size).toBeGreaterThan(2); // real variety, not one type
-      // no max-velocity sprints in off-season GPP (those are pre-/in-season)
-      expect(count("sprint")).toBe(0);
+      // 2026-07-14 coach directive: sprint exposure is YEAR-ROUND (hamstring-
+      // protective near-max running), so the off-season rotation includes a
+      // sprint day — the old "no off-season sprints" rule is retired. Never
+      // two high-CNS days (sprint/mixed) back-to-back.
+      expect(count("sprint")).toBeGreaterThanOrEqual(1);
+      // an anchor-less off-season week now reaches the full 5-day budget
+      expect(intents.filter((i) => i !== "rest").length).toBe(5);
+      for (let i = 1; i < 7; i++) {
+        const highCns = (x) => x === "sprint" || x === "mixed";
+        expect(highCns(intents[i - 1]) && highCns(intents[i])).toBe(false);
+      }
     });
   }
 
@@ -151,19 +167,21 @@ describe("Phase 3 — off-season GPP week (planWeek)", () => {
     ).map((d) => d.intent);
     // the placement changes when the anchors change — it is NOT a fixed weekday shape
     expect(withPractice).not.toEqual(noPractice);
-    // and the GPP properties still hold: ≤5 active, ≥2 rest, no off-season sprints
+    // and the GPP properties still hold: ≤5 active, ≥2 rest (sprint days are
+    // allowed year-round since 2026-07-14 — see the rotation directive above)
     const active = withPractice.filter((i) => i !== "rest").length;
     expect(active).toBeLessThanOrEqual(5);
-    expect(withPractice.filter((i) => i === "sprint").length).toBe(0);
   });
 });
 
 // Phase 4 — a taper CUTS VOLUME while HOLDING INTENSITY (rubric B6; Bosquet 2007
 // meta-analysis, Mujika & Padilla 2003). The accumulation sprint baseline is
-// RPE 8 / 60 min / 10 reps; every individual taper day must keep near-max sprint
+// RPE 8 / 90 min (total, incl. warm-up + DOP) / 10 reps; every individual taper
+// day must keep near-max sprint
 // work (never soften to mobility/technique) and reduce only minutes + reps. These
 // assertions FAILED before the fix (regular was RPE 6, final was mobility RPE 4).
-const SPRINT_BASELINE = { rpe: 8, minutes: 60, reps: 10 };
+// 2026-07-14: quality sessions target 90 min TOTAL (warm-up + DOP included).
+const SPRINT_BASELINE = { rpe: 8, minutes: 90, reps: 10 };
 const taperDay = (hoursOut, competitionLevel = "national") => ({
   date: now,
   phase: "taper",

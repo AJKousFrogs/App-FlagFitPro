@@ -232,9 +232,9 @@ describe("prescribeFor — phase defaults", () => {
     expect(rx.intent).toBe("sprint"); // velocity preserved, not mobility
     expect(rx.targetRpe).toBe(8); // intensity held at the sprint baseline
     // national tier (event() default): floor 0.55 × finalThird 0.66 →
-    // 60min→22, 10reps→4. A few near-max efforts, minimal volume.
+    // 90min(total)→33, 10reps→4. A few near-max efforts, minimal volume.
     expect(rx.sprintReps).toBe(4);
-    expect(rx.targetMinutes).toBe(22);
+    expect(rx.targetMinutes).toBe(33);
   });
 
   it("transition phase, no heavy density → mixed", () => {
@@ -577,7 +577,7 @@ describe("prescribeFor — weather guard", () => {
     expect(rx.intent).toBe("sprint");
     expect(rx.weatherAdjustment?.action).toBe("scale");
     expect(rx.weatherAdjustment?.heatLoadFactor).toBe(1.1);
-    expect(rx.targetMinutes).toBeLessThan(60); // 60 → 48
+    expect(rx.targetMinutes).toBeLessThan(90); // legacy scale keeps 80%: 90 → 72
     expect(rx.sprintReps).toBeLessThan(10);
   });
 

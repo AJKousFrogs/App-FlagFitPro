@@ -215,7 +215,11 @@ comment in `readiness-score.js` before touching it.
 (`FALLBACK_BODYWEIGHT_KG`), readiness **70** (`FALLBACK_READINESS`); a null
 ACWR fires no ACWR guard.
 
-`baseTargets(intent)` — the in-season/default per-intent targets:
+`baseTargets(intent)` — the per-intent targets. **Since 2026-07-14, quality
+sessions (sprint/strength/mixed) target 90 min TOTAL — the full realized
+session including the ~25-min warm-up and the injury-prevention (DOP) block**
+(coach directive), matching the realization layer's rest-inclusive block
+estimates (§5.1):
 
 | Intent | RPE | Minutes | Sprint reps | Strength sets |
 |---|---|---|---|---|
@@ -223,16 +227,19 @@ ACWR fires no ACWR guard.
 | recovery | 3 | 30 | 0 | 0 |
 | mobility | 4 | 45 | 0 | 0 |
 | technical | 5 | 60 | 0 | 0 |
-| sprint | 8 | 60 | 10 | 0 |
-| strength | 7 | 75 | 0 | 18 |
-| mixed | 6 | 75 | 6 | 8 |
+| sprint | 8 | **90** | 10 | 0 |
+| strength | 7 | **90** | 0 | 18 |
+| mixed | 6 | **90** | 6 | 8 |
 | taper-prime | 4 | 25 | 4 | 0 |
 | competition | — | 60 | 0 | 0 |
 | travel | — | 0 | 0 | 0 |
 
-`BUILD_TARGET_OVERRIDES` (pre-season/generic build block — lighter intents run
-heavier): mobility → RPE 6 / 75 min; technical → RPE 6 / 75 min; rest stays
-RPE 2 / 15.
+`BUILD_TARGET_OVERRIDES` (build blocks — lighter intents run heavier):
+mobility → RPE 6 / 75 min; technical → RPE 6 / **90** min (a build technical
+day is a real session, not the in-season practice complement); rest stays
+RPE 2 / 15. The season-shaped path uses `buildTargets` for **offseason** days
+and `baseTargets` for in-season/peak/post; the generic accumulation path uses
+`buildTargets` as before.
 
 **Practice-day phase modifiers** (`PRACTICE_PHASE_MODIFIERS` — practice is the
 session; the phase modifies it as data, not branches):
@@ -308,7 +315,18 @@ engine stays pure.
 
 ---
 
-## 7. Week-level passes (rest minimum & second sessions)
+## 7. Week-level passes (selection, rest minimum & second sessions)
+
+`planWeekIntents` slot selection (2026-07-14): budget **max 5 active days**
+(`5 − mandatoryCount`); up to **2 adjacent training pairs** per week
+(`MAX_ADJACENT_TRAINING_PAIRS`), **never 3 consecutive training days**
+(no bridging, no run-extension). Rationale: any 5 days in 7 contain ≥ 2
+adjacencies (5 days across ≤ 3 runs), so the old blanket no-consecutive rule
+made the 5-day budget unreachable without anchors — weeks silently became
+4-on/3-off. Canonical anchor-less shape: **2-2-1**. Off-season rotation
+(`phaseSessionModel.rotation`): **strength → technical → sprint → strength →
+mixed**; a rotation intent that would place two high-CNS days (sprint/mixed)
+back-to-back is deferred and `technical` fills the slot.
 
 `enforceWeeklyRestMinimum` — **≥ 2 full rest days per 7-day window**
 (`MIN_REST = 2`), non-negotiable. Never demotes team-practice, competition,
@@ -322,12 +340,17 @@ A demoted day becomes rest at RPE 2 / 15 min with `secondSession: null`.
 - the day's intent is `strength` (AM), not a team-practice day, not already an
   override (null RPE);
 - ≥ **2 days** from the nearest competition/taper/recovery day;
+- fewer than **2** second sessions already added this week
+  (`SECOND_SESSIONS_PER_WEEK_CAP` — weekly ceiling: 5 training days + 2
+  doubles = **7 sessions**);
 - **today only (day 0):** readiness ≥ **75** AND ACWR ≤ **1.2** (future days
   show as eligible without live gates — they re-gate when they become day 0).
 
-PM shape: `technical` when a practice follows tomorrow (no two high-CNS
-sessions within ~18 h), else `sprint`. PM RPE = `max(5, AM_RPE − 1)`; minutes:
-sprint 40, technical 45; assumed ≥ 6 h gap.
+PM shape: `sprint` after morning strength ("morning strength, evening
+sprint") — but `technical` when a practice OR a planned high-CNS day
+(sprint/mixed) sits tomorrow **or sat yesterday** (a 19:00 PM sprint must
+never be ~14 h from another high-CNS session). PM RPE = `max(5, AM_RPE − 1)`;
+minutes: sprint 40, technical 45; assumed ≥ 6 h gap.
 
 > The 75 / 1.2 pair gates second sessions ONLY — day demotion uses §6's
 > 1.5 / 55. (LOGIC.md conflated these before 2026-07-14.)
@@ -485,13 +508,13 @@ world/olympic → world · unknown/null → **national**.
 (`finalThirdVolumeFactor`); unknown hours-to-event assumes day **7** of taper.
 
 `resolveTaperTargets` (always a **sprint** — velocity/CNS preserved, never the
-mobility-day detraining error), from the sprint base (RPE 8 / 60 min / 10
-reps):
+mobility-day detraining error), from the sprint base (RPE 8 / 90 min total
+incl. warm-up + DOP / 10 reps, 2026-07-14):
 
 ```
 volFactor = volumeFloorPct × (0.66 if final third else 1)
 RPE       = round(8 × intensityRetention)          (≥ 0.90 ⇒ RPE never crashes)
-minutes   = round(60 × volFactor)
+minutes   = round(90 × volFactor)
 reps      = max(2, round(10 × volFactor))
 ```
 

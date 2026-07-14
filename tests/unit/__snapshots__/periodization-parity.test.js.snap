@@ -388,7 +388,7 @@ exports[`periodization engine — golden parity fixtures > prescription is stabl
   "recoveryEmphasis": "medium",
   "sprintReps": 6,
   "strengthSets": 0,
-  "targetMinutes": 33,
+  "targetMinutes": 50,
   "targetRpe": 8,
 }
 `;

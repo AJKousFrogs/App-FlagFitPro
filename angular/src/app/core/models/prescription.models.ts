@@ -219,7 +219,11 @@ export interface DailyPrescription {
   intentLabel: string;
   /** Target perceived effort, 0–10. Null on rest days. */
   targetRpe: number | null;
-  /** Target session duration in minutes (whole-number guidance). */
+  /** Target session duration in minutes (whole-number guidance). For quality
+   * sessions (sprint/strength/mixed/build-technical) this is the FULL session
+   * — warm-up and injury-prevention (DOP) blocks included — targeting ~90 min
+   * (coach directive 2026-07-14), matching the realization layer's honest
+   * rest-inclusive block estimates. */
   targetMinutes: number;
   /** Sprint volume — number of high-intensity reps. 0 if not a sprint day. */
   sprintReps: number;

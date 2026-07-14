@@ -665,7 +665,10 @@ function prescribeFor(inputs) {
     const shift = findCoolerHour(
       inputs.weather?.hourly ?? null,
       inputs.preferredTrainingHour ?? inputs.date.getHours(),
-      approxWBGT(inputs.weather?.tempC ?? null, inputs.weather?.humidityPct ?? null)
+      approxWBGT(
+        inputs.weather?.tempC ?? null,
+        inputs.weather?.humidityPct ?? null
+      )
     );
     if (shift) return { ...result, timeShift: shift };
   }
@@ -1233,7 +1236,12 @@ function decideBasePrescription(inputs) {
           strengthSets: 3,
           reasoning: "Off-season window. Maintain GPP base \u2014 easy aerobic + lift.",
           recoveryEmphasis: "low",
-          nutrition: nutritionFor("transition", bodyweight, heavyDensity, hotDay),
+          nutrition: nutritionFor(
+            "transition",
+            bodyweight,
+            heavyDensity,
+            hotDay
+          ),
           driverEvent,
           hoursUntilNextEvent: hoursUntilNext,
           acwrAtIssue: acwr
@@ -1246,7 +1254,7 @@ function decideBasePrescription(inputs) {
         if (weekHint === null && weeklyUnsafe && (intent2 === "sprint" || intent2 === "strength" || intent2 === "mixed")) {
           intent2 = "technical";
         }
-        const t2 = baseTargets(intent2);
+        const t2 = seasonPhase === "offseason" ? buildTargets(intent2) : baseTargets(intent2);
         return finalize({
           date,
           phase,
@@ -1352,7 +1360,13 @@ function phaseSessionModel(season) {
         beforePractice: "technical",
         quality: ["strength", "mixed"],
         secondCapPerWeek: 2,
-        sandwiched: "technical"
+        sandwiched: "technical",
+        // Order matters in the canonical 2-2-1 week (Mon+Tue / Thu+Fri / Sun):
+        // technical follows the first strength day so its PM sprint double
+        // ("morning strength, evening sprint") isn't blocked by a high-CNS
+        // tomorrow, and the two dedicated high-CNS days (sprint, mixed) land
+        // ~72h apart — clears even the masters (40+) CNS window.
+        rotation: ["strength", "technical", "sprint", "strength", "mixed"]
       };
   }
 }
@@ -1390,18 +1404,27 @@ function planWeekIntents(teamPracticeFlags, phases, seasonPhases = []) {
   });
   const mandatoryCount = isLocked.filter(Boolean).length;
   const budget = Math.max(0, 5 - mandatoryCount);
+  const MAX_ADJACENT_TRAINING_PAIRS = 2;
   const sorted = [...slots].sort((a, b) => b.quality - a.quality);
   const trainingIdxs = /* @__PURE__ */ new Set();
+  let adjacentPairs = 0;
   for (const { idx } of sorted) {
     if (trainingIdxs.size >= budget) break;
-    if ([...trainingIdxs].some((t) => Math.abs(t - idx) === 1)) continue;
+    const nLeft = trainingIdxs.has(idx - 1);
+    const nRight = trainingIdxs.has(idx + 1);
+    const newPairs = (nLeft ? 1 : 0) + (nRight ? 1 : 0);
+    const createsTripleRun = newPairs === 2 || nLeft && trainingIdxs.has(idx - 2) || nRight && trainingIdxs.has(idx + 2);
+    if (createsTripleRun) continue;
+    if (adjacentPairs + newPairs > MAX_ADJACENT_TRAINING_PAIRS) continue;
     trainingIdxs.add(idx);
+    adjacentPairs += newPairs;
   }
   for (const { idx } of slots) {
     if (!trainingIdxs.has(idx)) intents[idx] = "rest";
   }
   let firstQualityAssigned = 0;
   let secondQualityAssigned = 0;
+  let rotationCursor = 0;
   for (const idx of [...trainingIdxs].sort((a, b) => a - b)) {
     const s = slots.find((sl) => sl.idx === idx);
     const minGameDist = Math.min(s.gameB, s.gameA);
@@ -1420,6 +1443,18 @@ function planWeekIntents(teamPracticeFlags, phases, seasonPhases = []) {
       continue;
     }
     if (Math.min(s.pracB, s.pracA) >= 2) {
+      if (model.rotation && model.rotation.length > 0) {
+        let candidate = model.rotation[Math.min(rotationCursor, model.rotation.length - 1)];
+        const prev = intents[idx - 1];
+        const prevHighCns = prev != null && HIGH_CNS_INTENTS.has(prev);
+        if (prevHighCns && HIGH_CNS_INTENTS.has(candidate)) {
+          candidate = "technical";
+        } else {
+          rotationCursor++;
+        }
+        intents[idx] = candidate;
+        continue;
+      }
       if (secondQualityAssigned < firstQualityAssigned && secondQualityAssigned < model.secondCapPerWeek) {
         intents[idx] = model.quality[1];
         secondQualityAssigned++;
@@ -1472,12 +1507,15 @@ function addSecondSessions(prescriptions, teamPracticeFlags, competitionPhases, 
   const isHighLoad = competitionPhases.map(
     (p) => p === "competition" || p === "taper" || p === "recovery"
   );
+  const SECOND_SESSIONS_PER_WEEK_CAP = 2;
+  let secondSessionsAdded = 0;
   return prescriptions.map((p, i) => {
     const phase = p.seasonPhase;
     if (phase !== "preseason" && phase !== "offseason") return p;
     if (teamPracticeFlags[i]) return p;
     if (p.intent !== "strength") return p;
     if (p.targetRpe === null) return p;
+    if (secondSessionsAdded >= SECOND_SESSIONS_PER_WEEK_CAP) return p;
     const nearestHighLoad = Array.from(
       { length: 7 },
       (_, j) => isHighLoad[j] ? Math.abs(i - j) : 99
@@ -1488,7 +1526,10 @@ function addSecondSessions(prescriptions, teamPracticeFlags, competitionPhases, 
       if (todayAcwr !== null && todayAcwr > 1.2) return p;
     }
     const practiceFollowsTomorrow = i + 1 < 7 && teamPracticeFlags[i + 1];
-    const secondIntent = practiceFollowsTomorrow ? "technical" : "sprint";
+    const highCnsTomorrow = i + 1 < 7 && HIGH_CNS_INTENTS.has(prescriptions[i + 1].intent);
+    const highCnsYesterday = i - 1 >= 0 && HIGH_CNS_INTENTS.has(prescriptions[i - 1].intent);
+    const secondIntent = practiceFollowsTomorrow || highCnsTomorrow || highCnsYesterday ? "technical" : "sprint";
+    secondSessionsAdded++;
     return {
       ...p,
       secondSession: {
@@ -1628,14 +1669,20 @@ var OUTDOOR_INTENSE = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime"]
 var HEAT_GUARDED = /* @__PURE__ */ new Set(["sprint", "mixed", "taper-prime", "technical"]);
 function wbgtVolumeKeep(wbgt, reduceThreshold, relocateThreshold, intent, targetMinutes) {
   const bandSpan = Math.max(0.1, relocateThreshold - reduceThreshold);
-  const bandFrac = Math.min(1, Math.max(0, (wbgt - reduceThreshold) / bandSpan));
+  const bandFrac = Math.min(
+    1,
+    Math.max(0, (wbgt - reduceThreshold) / bandSpan)
+  );
   const intensity = HEAT_INTENSITY_WEIGHT[intent] ?? 0.6;
   const durationFactor = Math.min(
     2,
     Math.max(0.5, targetMinutes / HEAT_DURATION_REF_MIN)
   );
   const strain = bandFrac * intensity * durationFactor;
-  const cut = Math.min(HEAT_MAX_VOLUME_CUT, Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5));
+  const cut = Math.min(
+    HEAT_MAX_VOLUME_CUT,
+    Math.max(0.2, strain * HEAT_MAX_VOLUME_CUT / 0.5)
+  );
   return 1 - cut;
 }
 var TIMESHIFT_MAX_WAIT_HOURS = 6;
@@ -1856,24 +1903,29 @@ function baseTargets(intent) {
         sprintReps: 0,
         strengthSets: 0
       };
+    // Quality sessions target 90 minutes TOTAL — the full realized session
+    // including the ~25-min warm-up and the injury-prevention (DOP) block,
+    // not just the main work (coach directive 2026-07-14). The realization
+    // layer's honest block estimates (warm-up + DOP + main + cool-down) sum
+    // to approximately this number.
     case "sprint":
       return {
         targetRpe: 8,
-        targetMinutes: 60,
+        targetMinutes: 90,
         sprintReps: 10,
         strengthSets: 0
       };
     case "strength":
       return {
         targetRpe: 7,
-        targetMinutes: 75,
+        targetMinutes: 90,
         sprintReps: 0,
         strengthSets: 18
       };
     case "mixed":
       return {
         targetRpe: 6,
-        targetMinutes: 75,
+        targetMinutes: 90,
         sprintReps: 6,
         strengthSets: 8
       };
@@ -1905,9 +1957,11 @@ var BUILD_TARGET_OVERRIDES = {
   // Previous value (RPE 6) was a stale pre-refactor literal and is corrected here.
   rest: { targetRpe: 2, targetMinutes: 15, sprintReps: 0, strengthSets: 0 },
   mobility: { targetRpe: 6, targetMinutes: 75, sprintReps: 0, strengthSets: 0 },
+  // A build-block technical day is a REAL training day (90-min total incl.
+  // warm-up + DOP), unlike the shorter in-season practice-complement technical.
   technical: {
     targetRpe: 6,
-    targetMinutes: 75,
+    targetMinutes: 90,
     sprintReps: 0,
     strengthSets: 0
   }

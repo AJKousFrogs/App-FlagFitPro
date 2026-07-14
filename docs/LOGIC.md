@@ -90,18 +90,30 @@ Passes, in order:
    days** (anchors), phase-shaped. NOT a hardcoded weekday template: a player with
    Mon/Wed/Thu practices and one with Tue/Fri/Sun get different placements. Free
    days (including off-season `transition` days) are filled per the season's
-   `phaseSessionModel` (off-season = GPP strength+mixed base, no max sprints;
-   pre-season = strength+sprint build; in-season = maintain+skill, low sprint;
-   peak = sharp+rest; transition/post = active regeneration).
+   `phaseSessionModel` (off-season = GPP **rotation strength → technical →
+   sprint → strength → mixed** — sprint exposure is year-round since 2026-07-14,
+   the old "no off-season sprints" rule is retired; pre-season = strength+sprint
+   build; in-season = maintain+skill, low sprint; peak = sharp+rest;
+   transition/post = active regeneration). **Selection allows up to 2 adjacent
+   training pairs, never 3 days in a row** — under the old blanket
+   no-consecutive rule the 5-active-day budget was mathematically unreachable in
+   an anchor-less week (any 5 days in 7 contain ≥ 2 adjacencies), so every
+   off-season week silently became 4-on/3-off. Canonical 5-day shape: 2-2-1.
+   A rotation intent that would put two high-CNS days (sprint/mixed)
+   back-to-back is deferred (technical fills the slot).
 2. **`prescribeFor × 7`** — each day realized through the §1 pipeline.
 3. **`enforceWeeklyRestMinimum`** — **≥ 2 full rest days is non-negotiable**
    (soft-tissue recovery). If short, it DEMOTES the lowest-value active days to
    rest by `DEMOTION_PRIORITY` (taper-prime leads — it's the most natural rest in
    a loaded week).
 4. **`addSecondSessions`** — a PM second session, **preseason/offseason only**,
-   **never on a practice day**, and blocked when today's readiness < 75 or ACWR
-   > 1.2. Prefers a technical PM when a practice follows tomorrow (energy-system
-   diversification).
+   **never on a practice day**, **≤ 2 per week** (so the ceiling is 5 training
+   days + 2 doubles = 7 sessions — the flag-football weekly max; taper/
+   tournament logic pulls it down near events), and blocked when today's
+   readiness < 75 or ACWR > 1.2. The PM is a **sprint** after morning strength
+   ("morning strength, evening sprint") unless a practice OR a planned high-CNS
+   day (sprint/mixed) sits tomorrow or sat yesterday — then technical, so a
+   19:00 PM sprint is never ~14 h from another high-CNS session.
 
 ---
 
