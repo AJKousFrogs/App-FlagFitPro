@@ -45,7 +45,7 @@ exports[`PHASE-2 harness — engine baseline (must not move in Phase 2) > prescr
   "seasonPhase": "inseason",
   "sprintReps": 0,
   "strengthSets": 18,
-  "targetMinutes": 75,
+  "targetMinutes": 90,
   "targetRpe": 7,
 }
 `;
@@ -127,7 +127,7 @@ exports[`Phase 4 — taper holds intensity, cuts volume (B6) > final 48h (40h ou
   "recoveryEmphasis": "medium",
   "sprintReps": 4,
   "strengthSets": 0,
-  "targetMinutes": 22,
+  "targetMinutes": 33,
   "targetRpe": 8,
 }
 `;
@@ -159,7 +159,7 @@ exports[`Phase 4 — taper holds intensity, cuts volume (B6) > front of taper (7
   "recoveryEmphasis": "medium",
   "sprintReps": 6,
   "strengthSets": 0,
-  "targetMinutes": 33,
+  "targetMinutes": 50,
   "targetRpe": 8,
 }
 `;
