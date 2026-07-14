@@ -79,19 +79,36 @@ ACWR    = acute / chronic                       (3-decimal precision)
 EWMA recurrence over a zero-filled, contiguous daily series (oldest→newest):
 `v ← λ·load + (1−λ)·v`, seeded with the oldest day.
 
-`lowConfidence = true` when fewer than **14** non-zero-load days exist in the
-28-day span.
+**Graded confidence** (2026-07-14, audit C2 — the binary 14-day flag was
+permanently "low" for a 2-3×/week amateur): `confidence` = **high** ≥ 14
+non-zero-load days in the 28-day span · **medium** 8–13 · **low** < 8. Low
+confidence → ACWR is displayed with its grade but EXCLUDED from readiness
+scoring (weight redistributes as for a null ACWR). `lowConfidence` (boolean,
+< 14) is kept for back-compat.
 
-**Risk zones** (`ACWR_RISK_ZONES`, server-canonical; boundary inclusivity as
-implemented in `classifyAcwrZone`):
+**Return-to-training state** (2026-07-14, audit C3): raw chronic EWMA
+(pre-floor) < **50 AU** (`minChronicForRatio` — the point where the divisor
+becomes the artificial floor, not data) → `state: "building_base"` and
+**acwr is null by design** (one 300 AU return session used to read ACWR ≈ 6 →
+"Critical, rest"; the honest message is a re-entry ramp, ≤ 10–15%/week). The
+audit proposed ~150, rejected: a steady 2-3×/week amateur holds a chronic EWMA
+of ~100–150 and would be misclassified.
 
-| Zone | Range | Action | Relative injury risk |
-|---|---|---|---|
-| Detraining | < 0.8 | increase_load | 1.2× |
-| Safe | 0.8 – 1.3 (incl.) | maintain | 1.0× |
-| Caution | > 1.3 – 1.5 (incl.) | reduce_slightly | 1.5× |
-| Danger | > 1.5 – < 1.8 | reduce_significantly | 2.0× |
-| Critical | ≥ 1.8 | rest | 4.2× |
+**Zones** (`ACWR_RISK_ZONES` — **advisory bands, not risk facts**; boundary
+inclusivity as implemented in `classifyAcwrZone`). The former per-zone injury
+"risk multipliers" (1.2×/1.5×/2.0×/4.2×) were **retired 2026-07-14** (audit
+§1.1): the only cluster-RCT of ACWR-guided load management found no effect
+(Dalen-Lorentsen 2021 BJSM, PMID 33036995, verified on PubMed), and the
+association itself is analysis-dependent. `injuryRiskMultiplier` API fields
+now return null.
+
+| Zone | Range | Action |
+|---|---|---|
+| Detraining | < 0.8 | increase_load |
+| Safe | 0.8 – 1.3 (incl.) | maintain |
+| Caution | > 1.3 – 1.5 (incl.) | reduce_slightly |
+| Danger | > 1.5 – < 1.8 | reduce_significantly |
+| Critical | ≥ 1.8 | rest |
 
 **Population presets** (`evidence-presets.ts` — currently only the adult preset
 is ever active; youth/RTP are orphaned pending v3 M0 wiring, see SOT §5a):
@@ -115,14 +132,20 @@ The engine's `ACWR_UNDER / ACWR_ELEVATED / ACWR_DANGER` = the adult preset's
 `calc-readiness.js` → `readiness_scores`. Components, each scored 0–100 by
 deduction from 100:
 
-**Workload (ACWR-based)** — only when ACWR is known:
+**Workload (ACWR-based)** — only when ACWR is known AND confidence ≥ medium
+(§2; low-confidence/`building_base` redistribute like a null ACWR). The
+undertraining boundary was aligned to **0.8** on 2026-07-14 (audit C1 — 0.7
+here vs 0.8 in the zones/trigger was drift). **Taper dampening** (audit §1.1,
+Wang 2020): within **168 h** of the next game the < 0.8 deduction and the
+low-side safety trigger are suppressed — a taper's volume cut IS the plan, not
+detraining; high-side deductions always stand.
 
 | Condition | Deduction |
 |---|---|
 | ACWR > 1.8 | −40 |
 | ACWR > 1.5 | −30 |
 | ACWR > 1.3 | −15 |
-| ACWR < 0.7 | −10 |
+| ACWR < 0.8 (and > 168 h to next game) | −10 |
 
 **Wellness Index** — `calculateWellnessIndex` subscore (§4); fallback 60 when
 the subscore is non-finite.
@@ -144,8 +167,10 @@ the subscore is non-finite.
 | ≤ 48 | −15 |
 | ≤ 72 | −5 |
 
-**Weights** (team-sport optimized): workload **0.35**, wellness **0.30**,
-sleep **0.20**, proximity **0.15**.
+**Weights** (re-weighted 2026-07-14, audit §1.1 — the ACWR causal evidence
+weakened while wellness/sleep monitoring evidence held): workload **0.25**
+(was 0.35), wellness **0.35** (was 0.30), sleep **0.25** (was 0.20), proximity
+**0.15**. Mirrored in `evidence-presets.ts`.
 
 Weight redistribution — no fabricated components:
 - **ACWR unknown** → workload weight 0, redistributed proportionally across the
@@ -173,8 +198,9 @@ Weight redistribution — no fabricated components:
 | 55 – 75 | moderate | maintain |
 | < 55 | low | deload |
 
-**Safety override hook:** when ACWR is known and > 1.5 or < 0.8,
-`detectACWRTrigger` fires (non-fatal if it errors).
+**Safety override hook:** fires on ACWR > 1.5 (any known ACWR — never
+under-fires on the high side), or on ACWR < 0.8 when confidence ≥ medium AND
+not within the 168 h taper window. Non-fatal if it errors.
 
 **Data modes** (`determineDataMode`): wellness completeness ≥ **60%** → `full`;
 below → `reduced` (sleep-proxy weighting above); no wellness row at all →
@@ -211,9 +237,12 @@ comment in `readiness-score.js` before touching it.
 
 ## 5. Prescription base targets & fallbacks
 
-`periodization-engine.ts`. Input fallbacks: bodyweight **80 kg**
-(`FALLBACK_BODYWEIGHT_KG`), readiness **70** (`FALLBACK_READINESS`); a null
-ACWR fires no ACWR guard.
+`periodization-engine.ts`. Input fallbacks: readiness **70**
+(`FALLBACK_READINESS`); a null ACWR fires no ACWR guard. **Bodyweight has NO
+fallback since 2026-07-14** (audit C7, Law #7): the old 80 kg default
+over-prescribed a 45 kg athlete's per-kg carbs/fluids by ~78%. Null bodyweight
+→ `nutrition: null` → the UI shows an explicit "add your weight" state; the
+rest of the prescription is unaffected.
 
 `baseTargets(intent)` — the per-intent targets. **Since 2026-07-14, quality
 sessions (sprint/strength/mixed) target 90 min TOTAL — the full realized
@@ -391,13 +420,18 @@ path and the message says which metric it used (no fabricated humidity).
 
 ### Heat/cold/wind/rain thresholds (as implemented AND test-pinned)
 
+2026-07-14 (audit C8, user-approved): the **stricter NATA/ACSM bands are now
+implemented** — previously scale fired a band late (30.0) and relocate was
+dead code (32.2 == stop). The former stale in-code comment now matches the
+constants.
+
 | Band (WBGT path) | Threshold | Action |
 |---|---|---|
 | Storm (WMO 95–99) | — | STOP → recovery (beats everything; coach override still warns) |
 | Stop | WBGT ≥ **32.2** | STOP → recovery |
-| Relocate | WBGT ≥ **32.2** | dead under WBGT (stop fires first at the same value; live only on the legacy path) |
-| Scale | WBGT ≥ **30.0** | volume cut (strain-scaled, below), same intent |
-| Caution | WBGT ≥ **27.8** | advisory only (hydration/breaks), session unchanged |
+| Relocate | WBGT ≥ **30.0** | move indoors (mobility/skills) — no intense outdoor work |
+| Scale | WBGT ≥ **27.8** | volume cut (strain-scaled, below), same intent |
+| Caution | WBGT ≥ **25.7** | advisory only (hydration/breaks), session unchanged |
 
 Legacy apparent-temp path (no humidity): caution **28** / scale **32** /
 relocate **35** / stop **38** °C. Cold: caution ≤ **4** °C (warm-up advisory),
@@ -405,14 +439,10 @@ avoid ≤ **−5** °C → substitute mobility (OUTDOOR_INTENSE only). Wind ≥
 **40 km/h** → advisory. Wet (precip ≥ **0.5 mm** or WMO ≥ 61 < 95) +
 OUTDOOR_INTENSE → substitute indoor strength (taper-prime → mobility).
 
-> ⚠️ **Known stale in-code comment:** the NATA-style band comment above the
-> constants (`periodization-engine.ts` ~line 1766) describes scale at
-> 27.8–30 and relocate at 30–32.2. The constants and
-> `tests/unit/weather-wbgt-guard.test.js` ("SCALE band [30, 32.2)") implement
-> the table above instead. Tests+constants win; fix the comment when next
-> touching the engine (requires regenerating the server port). Whether the
-> guard *should* adopt the stricter NATA bands is a sports-science product
-> call — flagged in v3 M0, not silently changed.
+> ✅ **Resolved 2026-07-14:** the previously-stale NATA-style comment and the
+> constants now agree — the stricter bands above are implemented (audit C8,
+> user-approved), the relocate branch is live again, and the tests pin the new
+> boundaries.
 
 Guarded intent sets: `HEAT_GUARDED` = sprint, mixed, taper-prime, technical;
 `OUTDOOR_INTENSE` (storm/wet/cold/wind) = sprint, mixed, taper-prime.
@@ -425,7 +455,7 @@ Guarded intent sets: `HEAT_GUARDED` = sprint, mixed, taper-prime, technical;
 Scale-band volume keep (`wbgtVolumeKeep` — WBGT path):
 
 ```
-bandFrac       = clamp((WBGT − 30.0) / (32.2 − 30.0), 0, 1)
+bandFrac       = clamp((WBGT − 27.8) / (30.0 − 27.8), 0, 1)
 intensity      = 1.0 sprint · 0.9 mixed · 0.6 taper-prime/technical (default 0.6)
 durationFactor = clamp(minutes / 45, 0.5, 2)
 strain         = bandFrac × intensity × durationFactor
@@ -553,6 +583,8 @@ Label mapping: `taper` → sprint bucket; `transition` → mixed bucket.
   (non-rest). Rounded to 0.1 L.
 - Athlete-facing copy is food-first (Law #3) — g/kg lives here and in the
   engine, not in the UI.
+- **No bodyweight → no targets** (`nutritionFor` returns null; audit C7) —
+  per-kg dosing is never computed from a fabricated default.
 
 ---
 
@@ -576,7 +608,8 @@ same commit** — until the generated-constants mechanization lands (v3 M0),
 this file is the hand-synced contract. A number in this file the code
 contradicts is a bug in this file. Known open items:
 
-1. Stale WBGT band comment in the engine source (§9 warning box).
+1. ~~Stale WBGT band comment in the engine source~~ — RESOLVED 2026-07-14:
+   the stricter NATA bands are implemented and the comment now matches.
 2. Youth/RTP presets orphaned — documented in §2, wiring planned (v3 M0).
 3. `docs:regen` generation of the constants tables + CI freshness test
    (v3 M0, `docs/v3/V3-DESIGN.md` §2.2).

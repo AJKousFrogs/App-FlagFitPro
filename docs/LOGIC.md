@@ -39,6 +39,14 @@ Everything the athlete sees flows through **two engines, in one direction:**
   session") → DOP + plyo + reduced strength + real conditioning; skill → DOP +
   skills-led main. Every gym day keeps the isometrics block — that is the
   injury-prevention (DOP) slot.
+- **NMT / ACL-prevention block (2026-07-14, audit §1.3):** individual quality
+  days (strength / sprint / mixed) append a ~10-min neuromuscular-training
+  segment to the warm-up (`NMT_PREVENTION_SEGMENT`: hop-and-stick, single-leg
+  balance, drop-land mechanics, decel-to-stop, Copenhagen — Nordic already
+  present). FIFA-11+-class NMT roughly halves ACL injury in female athletes;
+  the flag-direct anchor is Grewal 2025 (87% of girls'-flag knee surgeries
+  non-contact ACL, 2/24 had done ANY prevention). Default-on; compliance rides
+  the existing per-exercise check-off. Recovery/skill/practice days skip it.
 - **A DOW template must EARN its day (2026-07-14):** `templateMatchesFocus`
   gates `training_session_templates` — the template runs only when its
   `session_type` belongs to the day's focus family, never on a low-load day,
@@ -169,13 +177,12 @@ else                                                 → accumulation
    ```
    storm (WMO 95-99)            → STOP → recovery
    WBGT ≥ stop (32.2)           → STOP → recovery
-   WBGT ≥ relocate (32.2)       → RELOCATE → indoor mobility  (dead under WBGT —
-                                  stop fires first at the same threshold; live only
-                                  on the legacy path, where avoid 35 < stop 38)
+   WBGT ≥ relocate (30.0)       → RELOCATE → indoor mobility (live again —
+                                  2026-07-14 stricter NATA bands, audit C8)
    wet grass (OUTDOOR_INTENSE)  → SUBSTITUTE → indoor strength/tempo (NOT technical)
    cold ≤ avoid −5° (OUTDOOR_INTENSE) → SUBSTITUTE → mobility
-   WBGT ≥ scale (30.0)          → SCALE volume (strain-scaled cut), same intent
-   WBGT ≥ caution (27.8) / cold ≤ caution (4°) / wind ≥ 40 km/h → advisory note,
+   WBGT ≥ scale (27.8)          → SCALE volume (strain-scaled cut), same intent
+   WBGT ≥ caution (25.7) / cold ≤ caution (4°) / wind ≥ 40 km/h → advisory note,
                                   session unchanged
    else                         → unchanged
    ```
