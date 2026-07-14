@@ -682,11 +682,14 @@ export class TodayComponent {
     this.hydroLogged.set(0);
   }
   readonly hydroMsg = computed<{ text: string; cls: string } | null>(() => {
-    const ratio = this.hydroLogged() / this.hydroTarget();
+    const target = this.hydroTarget();
+    // No real bodyweight → no target (Law #7) → no over/under messaging.
+    if (target == null || target <= 0) return null;
+    const ratio = this.hydroLogged() / target;
     if (ratio > 1.75)
       return {
         cls: "is-danger",
-        text: `You're ${(this.hydroLogged() - this.hydroTarget()).toFixed(1)}L over target — overdrinking dilutes blood sodium (hyponatremia). Switch to electrolytes and drink to thirst.`,
+        text: `You're ${(this.hydroLogged() - target).toFixed(1)}L over target — overdrinking dilutes blood sodium (hyponatremia). Switch to electrolytes and drink to thirst.`,
       };
     if (ratio > 1.25)
       return {
