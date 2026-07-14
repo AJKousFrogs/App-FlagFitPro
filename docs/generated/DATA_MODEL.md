@@ -2,7 +2,7 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-13** · doc regenerated: 2026-07-13
+> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-14
 
 **176 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
@@ -1866,7 +1866,7 @@ Touched by: `daily-protocol`, `exercise-progression`
 
 - `id` uuid · not null
 - `protocol_id` uuid · not null
-- `exercise_id` uuid · not null
+- `exercise_id` uuid
 - `block_type` text · not null
 - `sequence_order` integer · not null
 - `prescribed_sets` integer
@@ -1889,6 +1889,8 @@ Touched by: `daily-protocol`, `exercise-progression`
 - `load_contribution_au` integer
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
+- `exercise_name` text
+- `rest_seconds` integer
 
 ### `protocol_generation_requests`
 Touched by: _(no endpoint references this table)_

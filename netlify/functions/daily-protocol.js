@@ -94,6 +94,8 @@ import {
   positionFlagsFor,
   mapIntentToSession,
   isLowLoadFocus,
+  gymBlockPlanFor,
+  templateMatchesFocus,
 } from "./utils/daily-protocol-compose.js";
 import {
   completeExercise,
@@ -1417,33 +1419,42 @@ async function generateProtocol(
   }
 
   if (isGymTrainingDay) {
+    // The day's INTENT owns the block shape (COMPOSE contract): a strength day,
+    // a mixed day and a technical day are no longer the identical five-block
+    // dump — gymBlockPlanFor(trainingFocus) decides which blocks compose the
+    // session (2026-07-14 production bug: a "Strength session" hero rendered
+    // agility mains + field conditioning + WR stations).
+    const gymPlan = gymBlockPlanFor(trainingFocus);
+
     // ============================================================================
-    // 4. ISOMETRICS BLOCK (15 min)
+    // 4. ISOMETRICS / DOP BLOCK (~15 min) — injury prevention, every gym day
     // Evidence: 3-5 sets × 3-6 sec maximal contractions, 30-60s rest
     // Source: VALD Practitioner's Guide to Isometrics
     // ============================================================================
 
     // Single source of truth: the `exercises` table, resolved via
     // EXERCISE_CATEGORY_ALIASES (legacy isometrics_exercises table retired 2026-07-12).
-    const allIsometrics = prioritizeExercises(
-      await fetchExercisesByCategories(
-        supabase,
-        EXERCISE_CATEGORY_ALIASES.isometrics,
-        30,
-        log,
-      ),
-      [
-        "isometric",
-        "hold",
-        "plank",
-        "pallof",
-        "copenhagen",
-        "activation",
-        "wall",
-        "adductor",
-      ],
-      5,
-    );
+    const allIsometrics = !gymPlan.isometrics
+      ? []
+      : prioritizeExercises(
+          await fetchExercisesByCategories(
+            supabase,
+            EXERCISE_CATEGORY_ALIASES.isometrics,
+            30,
+            log,
+          ),
+          [
+            "isometric",
+            "hold",
+            "plank",
+            "pallof",
+            "copenhagen",
+            "activation",
+            "wall",
+            "adductor",
+          ],
+          5,
+        );
 
     if (allIsometrics.length > 0) {
       // Select 4-5 isometric exercises for ~15 min block
@@ -1504,16 +1515,20 @@ async function generateProtocol(
 
     // Single source of truth: the `exercises` table, resolved via
     // EXERCISE_CATEGORY_ALIASES (legacy plyometrics_exercises table retired 2026-07-12).
-    let allPlyometrics = prioritizeExercises(
-      await fetchExercisesByCategories(
-        supabase,
-        EXERCISE_CATEGORY_ALIASES.plyometrics,
-        20,
-        log,
-      ),
-      ["jump", "bound", "hop", "skater", "medicine ball", "explosive"],
-      5,
-    );
+    // Plan-gated: plyo block belongs to the mixed day; pure strength days keep
+    // their elastic primers in the gym warm-up instead.
+    let allPlyometrics = !gymPlan.plyometrics
+      ? []
+      : prioritizeExercises(
+          await fetchExercisesByCategories(
+            supabase,
+            EXERCISE_CATEGORY_ALIASES.plyometrics,
+            20,
+            log,
+          ),
+          ["jump", "bound", "hop", "skater", "medicine ball", "explosive"],
+          5,
+        );
 
     if (allPlyometrics.length > 0) {
       // Calculate contacts per session (divide weekly target by ~3 sessions)
@@ -1585,12 +1600,14 @@ async function generateProtocol(
     // Source: VALD Practitioner's Guide to Hamstrings
     // ============================================================================
 
-    const strengthExercises = await fetchExercisesByCategories(
-      supabase,
-      EXERCISE_CATEGORY_ALIASES.strength,
-      30,
-      log,
-    );
+    const strengthExercises = !gymPlan.strength
+      ? []
+      : await fetchExercisesByCategories(
+          supabase,
+          EXERCISE_CATEGORY_ALIASES.strength,
+          30,
+          log,
+        );
 
     if (strengthExercises && strengthExercises.length > 0) {
       const selectedStrength = [];
@@ -1659,7 +1676,8 @@ async function generateProtocol(
         });
       }
 
-      // Add 2-3 general strength exercises
+      // Add general strength exercises — count is plan-driven: a strength-focus
+      // day carries the full complement, a mixed day a reduced one.
       const generalStrength = strengthExercises
         .filter(
           (ex) =>
@@ -1671,7 +1689,7 @@ async function generateProtocol(
           (a, b) =>
             seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
         )
-        .slice(0, 3);
+        .slice(0, gymPlan.generalStrengthCount);
 
       generalStrength.forEach((ex, idx) => {
         const sequenceStart =
@@ -1698,12 +1716,14 @@ async function generateProtocol(
     // Source: VALD Practitioner's Guide to Preseason, Gabbett 2016
     // ============================================================================
 
-    const conditioningExercises = await fetchExercisesByCategories(
-      supabase,
-      EXERCISE_CATEGORY_ALIASES.conditioning,
-      20,
-      log,
-    );
+    const conditioningExercises = !gymPlan.conditioning
+      ? []
+      : await fetchExercisesByCategories(
+          supabase,
+          EXERCISE_CATEGORY_ALIASES.conditioning,
+          20,
+          log,
+        );
 
     if (conditioningExercises && conditioningExercises.length > 0) {
       // Filter based on safe intensity
@@ -1745,9 +1765,14 @@ async function generateProtocol(
           exercise_name: ex.name,
           block_type: "conditioning",
           sequence_order: idx + 1,
-          prescribed_sets: Math.max(1, readinessSets - 1), // conditioning: 1-2 sets
-          prescribed_duration_seconds: 30,
-          rest_seconds: 45,
+          prescribed_sets: readinessSets, // 1-3 sets, readiness-scaled
+          // Honest work bout: the exercise's own default duration (a gasser or
+          // tempo run is not a 30-second item), floor 60s.
+          prescribed_duration_seconds: Math.max(
+            60,
+            ex.default_duration_seconds || 0,
+          ),
+          rest_seconds: 60,
           load_contribution_au: Math.round(
             (ex.load_contribution_au || 15) *
               (safeConditioning.maxIntensity / 100),
@@ -1765,13 +1790,16 @@ async function generateProtocol(
     // Source: VALD Speed Testing Guide, Flag Football Periodization
     // ============================================================================
 
-    // Combine skill and agility exercises
-    const skillExercises = await fetchExercisesByCategories(
-      supabase,
-      EXERCISE_CATEGORY_ALIASES.skill_drills,
-      20,
-      log,
-    );
+    // Combine skill and agility exercises. Plan-gated: skill stations belong to
+    // the technical day, where they ARE the session — not bolted onto strength.
+    const skillExercises = !gymPlan.skills
+      ? []
+      : await fetchExercisesByCategories(
+          supabase,
+          EXERCISE_CATEGORY_ALIASES.skill_drills,
+          20,
+          log,
+        );
 
     if (skillExercises && skillExercises.length > 0) {
       // Filter for position-specific where available
@@ -1820,7 +1848,7 @@ async function generateProtocol(
           (a, b) =>
             seededOrderKey(varietySeed, a) - seededOrderKey(varietySeed, b),
         )
-        .slice(0, 4);
+        .slice(0, gymPlan.skillsCount || 4);
 
       selectedSkills.forEach((ex, idx) => {
         protocolExercises.push({
@@ -1864,16 +1892,46 @@ async function generateProtocol(
 
   let mainSessionGenerated = false;
 
-  // Priority 1: Use session template if it exists (unless it's a practice/film room day)
+  // Priority 1: a day-of-week session template — but ONLY when it belongs to
+  // this day (2026-07-14 fix). The intent owns the day (LOGIC §0): the template
+  // must match the day's focus family, may not run on low-load days, and may
+  // not stack a second "Main Session" onto a gym day whose split blocks are
+  // already the session.
+  const gymSplitBlockTypes = [
+    "isometrics",
+    "plyometrics",
+    "strength",
+    "conditioning",
+    "skill_drills",
+  ];
+  const gymBlocksGenerated = protocolExercises.some((ex) =>
+    gymSplitBlockTypes.includes(ex.block_type),
+  );
   if (context.sessionTemplate && !isPracticeDay && !isFilmRoomDay) {
-    mainSessionGenerated = await generateTemplateMainSession({
-      supabase,
-      userId,
-      protocolExercises,
-      context,
-      readinessForLogic,
-      acwrForLogic,
-    });
+    const templateAllowed =
+      !isLowLoadFocus(trainingFocus) &&
+      !gymBlocksGenerated &&
+      templateMatchesFocus(
+        context.sessionTemplate.session_type,
+        trainingFocus,
+        isSprintSession,
+      );
+    if (templateAllowed) {
+      mainSessionGenerated = await generateTemplateMainSession({
+        supabase,
+        userId,
+        protocolExercises,
+        context,
+        readinessForLogic,
+        acwrForLogic,
+      });
+    } else {
+      log.info("daily_protocol_session_template_skipped", {
+        template_session_type: context.sessionTemplate.session_type ?? null,
+        training_focus: trainingFocus,
+        gym_blocks_generated: gymBlocksGenerated,
+      });
+    }
   }
 
   if (!mainSessionGenerated && !isPracticeDay && !isFilmRoomDay) {

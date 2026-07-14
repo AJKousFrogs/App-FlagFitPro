@@ -310,16 +310,47 @@ export function transformProtocolResponse(
       (e) => e.status === "complete",
     ).length;
 
-    // Compute actual block duration from exercises rather than relying on the
-    // hardcoded blockTypes lookup — that lookup has nulls for many block types,
-    // causing the UI to show nothing or a wrong fixed value.
+    // Compute an HONEST block duration from the exercises. The previous
+    // estimate summed pure work time (sets × hold/reps×4s) with NO rest, so 17
+    // working strength sets displayed as "~10 min" and a 5-exercise isometric
+    // block as "~2 min" (2026-07-14 production bug report).
+    //
+    // Continuous blocks (warm-up, mobility, foam roll, cool-down, recovery)
+    // carry item-total durations by design (the gym warm-up template sums to
+    // 25 min) — no rest added, and sets are already baked into the duration.
+    // Set-based blocks add inter-set rest: prescribed rest_seconds when the
+    // generator set it, else a conservative per-block default.
+    const CONTINUOUS_BLOCKS = new Set([
+      "morning_mobility",
+      "foam_roll",
+      "warm_up",
+      "cool_down",
+      "evening_recovery",
+      "evening_mobility",
+    ]);
+    const DEFAULT_REST_SECONDS = {
+      isometrics: 45,
+      plyometrics: 90,
+      strength: 90,
+      conditioning: 60,
+      skill_drills: 30,
+      main_session: 60,
+      rehab_progression: 45,
+    };
     const totalSeconds = blockExercises.reduce((sum, ex) => {
       const sets = ex.prescribedSets ?? 1;
       const reps = ex.prescribedReps ?? 0;
       // prescribed_duration_seconds = explicit hold/duration per set
       const dur = ex.prescribedDurationSeconds ?? ex.prescribedHoldSeconds ?? 0;
       // Fallback: estimate 4 s/rep for movement exercises (conservative).
-      return sum + sets * (dur || reps * 4);
+      const workPerSet = dur || reps * 4;
+      if (CONTINUOUS_BLOCKS.has(type)) {
+        // Item duration is the item's total time; hold-based items (e.g. a
+        // 30s cool-down stretch per side) still scale by sets.
+        return sum + (ex.prescribedDurationSeconds ?? sets * workPerSet);
+      }
+      const rest = ex.restSeconds ?? DEFAULT_REST_SECONDS[type] ?? 60;
+      return sum + sets * (workPerSet + rest);
     }, 0);
     const actualMinutes =
       totalSeconds > 0
@@ -524,6 +555,7 @@ export function transformExercise(protocolExercise) {
       prescribedReps: protocolExercise.prescribed_reps,
       prescribedHoldSeconds: protocolExercise.prescribed_hold_seconds,
       prescribedDurationSeconds: protocolExercise.prescribed_duration_seconds,
+      restSeconds: protocolExercise.rest_seconds ?? null,
       prescribedWeightKg: protocolExercise.prescribed_weight_kg,
       yesterdaySets: protocolExercise.yesterday_sets,
       yesterdayReps: protocolExercise.yesterday_reps,
