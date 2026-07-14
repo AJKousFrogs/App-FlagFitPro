@@ -1,6 +1,6 @@
 # V2 — Implementation Tracker
 
-This folder tracks the _build_ against the vision in [`../V2_PROPOSAL.md`](../V2_PROPOSAL.md) (the original audit + full roadmap). Each phase doc below is a living status record — **status reflects what's actually verified in this repo right now** (typecheck/build/tests run, or explicitly not), not what's planned. Update it in the same PR as the code, same rule as the Feature Status Ledger in `SOURCE_OF_TRUTH.md` §4.
+This folder tracks the _build_ against the original v2 vision (an audit + full roadmap; that proposal document was never committed to the repo — the phase docs below are the authoritative record. The v3 counterpart, [`../V3_PROPOSAL.md`](../V3_PROPOSAL.md), _is_ committed). Each phase doc below is a living status record — **status reflects what's actually verified in this repo right now** (typecheck/build/tests run, or explicitly not), not what's planned. Update it in the same PR as the code, same rule as the Feature Status Ledger in `SOURCE_OF_TRUTH.md` §4.
 
 Status legend: **LIVE** (built, verified, migrations applied to the live DB) · **BUILT, NOT DEPLOYED** (built + verified, migration not yet applied to the live DB) · **PARTIAL** (some of the phase's scope landed) · **SPEC** (designed, not built) · **PLANNED** (not started).
 
