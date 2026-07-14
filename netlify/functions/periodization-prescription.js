@@ -43,6 +43,8 @@ import { resolveTeamHomeCity, getWeatherData } from "./weather.js";
 import {
   planWeek,
   macroPhaseFor,
+  mesocycleWeekFor,
+  isHighCnsSessionType,
   EMBEDDED_TAPER_RULES,
 } from "./utils/periodization-engine.js";
 import {
@@ -256,7 +258,10 @@ function parseTrainingHour(time) {
 
 async function assemblePeriodizationInputs(userId, now) {
   const dayStr = now.toISOString().slice(0, 10);
-  const recentSince = new Date(now.getTime() - 4 * 86_400_000).toISOString();
+  // 14-day lookback: the CNS-spacing guard only reacts inside its 48-72h
+  // window (older rows are inert), and the sprint-exposure floor needs the
+  // full two weeks to know when the last high-speed day was.
+  const recentSince = new Date(now.getTime() - 14 * 86_400_000).toISOString();
 
   const [
     scheduleResult,
@@ -337,6 +342,24 @@ async function assemblePeriodizationInputs(userId, now) {
     rpe: typeof r.rpe === "number" ? r.rpe : null,
   }));
 
+  // Sprint-exposure floor input (audit §3.2): days since the last HIGH-SPEED
+  // session (sprint/practice/game — isHighCnsSessionType). Sessions logged but
+  // none high-speed → capped 14 ("at least two weeks") so the floor fires;
+  // ZERO logged sessions → null (an athlete who logs nothing gets no floor —
+  // no fabricated exposure data, same philosophy as the log-practice nudge).
+  const highSpeedTimes = recentSessions
+    .filter((s) => isHighCnsSessionType(s.type, s.rpe))
+    .map((s) => new Date(s.at).getTime())
+    .filter((t) => Number.isFinite(t));
+  const daysSinceHighSpeed =
+    recentSessions.length === 0
+      ? null
+      : highSpeedTimes.length === 0
+        ? 14
+        : Math.floor(
+            (now.getTime() - Math.max(...highSpeedTimes)) / 86_400_000,
+          );
+
   const acwrVal =
     typeof readinessRow.data?.acwr === "number" ? readinessRow.data.acwr : null;
   const readinessVal =
@@ -393,6 +416,8 @@ async function assemblePeriodizationInputs(userId, now) {
       bodyweightKg: weightKg,
       density14d,
       seasonPhase: macroPhaseFor(d, seasonCalendar),
+      mesocycleWeek: mesocycleWeekFor(seasonCalendar, d),
+      daysSinceHighSpeed,
       weather: i === 0 ? weather : null,
       recentSessions,
       ageYears,

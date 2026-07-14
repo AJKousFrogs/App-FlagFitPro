@@ -40,7 +40,12 @@ import { InjuryService } from "./injury.service";
 import { EventTravelService } from "./event-travel.service";
 import { RemoteTelemetryService } from "./remote-telemetry.service";
 import { firstValueFrom } from "rxjs";
-import { macroPhaseFor, planWeek } from "./periodization-engine";
+import {
+  macroPhaseFor,
+  planWeek,
+  mesocycleWeekFor,
+  isHighCnsSessionType,
+} from "./periodization-engine";
 import { isTeamPractice as isTeamPracticeShared } from "./periodization-input-helpers";
 
 /**
@@ -96,6 +101,24 @@ export class PeriodizationService {
    * guard so a sprint can't be prescribed within 48h of the last sprint.
    */
   readonly recentSessions = signal<RecentSession[]>([]);
+
+  /**
+   * Days since the last HIGH-SPEED session (sprint/practice/game) in the
+   * 14-day lookback — the sprint-exposure floor input (audit §3.2). Sessions
+   * logged but none high-speed → capped 14 so the floor fires; ZERO logged
+   * sessions → null (no fabricated exposure data — an athlete who logs
+   * nothing gets the log-practice nudge, not a floor).
+   */
+  readonly daysSinceHighSpeed = computed<number | null>(() => {
+    const sessions = this.recentSessions();
+    if (sessions.length === 0) return null;
+    const highSpeed = sessions
+      .filter((s) => isHighCnsSessionType(s.type, s.rpe))
+      .map((s) => new Date(s.at).getTime())
+      .filter((t) => Number.isFinite(t));
+    if (highSpeed.length === 0) return 14;
+    return Math.floor((Date.now() - Math.max(...highSpeed)) / 86_400_000);
+  });
 
   /** Guards the per-user bootstrap loads below against re-running for the same user. */
   private lastRecentSessionsUserId: string | null = null;
@@ -320,7 +343,9 @@ export class PeriodizationService {
    */
   private async loadRecentSessions(userId: string): Promise<void> {
     if (!userId) return;
-    const since = new Date(Date.now() - 4 * 86_400_000).toISOString();
+    // 14-day lookback: CNS spacing only reacts inside its 48-72h window
+    // (older rows inert); the sprint-exposure floor needs the full two weeks.
+    const since = new Date(Date.now() - 14 * 86_400_000).toISOString();
     try {
       const { data, error } = await this.supabase.client
         .from("training_sessions")
@@ -465,6 +490,8 @@ export class PeriodizationService {
           }
         : null,
       seasonPhase: seasonPhases7[i],
+      mesocycleWeek: mesocycleWeekFor(this.seasonCalendar(), date),
+      daysSinceHighSpeed: this.daysSinceHighSpeed(),
       weather: i === 0 ? this.weather() : null,
       arrivalDayTravelHours:
         i === 0 ? this.eventTravel.arrivalDayTravelHours() : null,

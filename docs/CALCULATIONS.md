@@ -357,6 +357,23 @@ made the 5-day budget unreachable without anchors — weeks silently became
 mixed**; a rotation intent that would place two high-CNS days (sprint/mixed)
 back-to-back is deferred and `technical` fills the slot.
 
+**Sprint-exposure floor** (2026-07-14, audit §3.2):
+`SPRINT_EXPOSURE_FLOOR_DAYS = 7` — days without a high-speed exposure
+(`isHighCnsSessionType` over a **14-day** session lookback, shared with CNS
+spacing) before the week must plan one. Maintenance dose:
+`SPRINT_FLOOR_MAINTENANCE_REPS = 5` builds, ≤ 60 min. Derivation rule (both
+sides identical): sessions logged but none high-speed → **14** (floor fires);
+zero logged sessions → **null** (no floor — no fabricated exposure).
+
+**Mesocycle 3:1 wave** (2026-07-14, audit §3.1): `MESOCYCLE_VOLUME_FACTORS` =
+week 1 ×1.00 · week 2 ×1.05 · week 3 ×1.10 · week 4 ×**0.65** (deload —
+volume only, intensity/RPE held; PM doubles stripped). Applies to
+sprint/strength/mixed/technical on free accumulation/transition days only.
+Week index: `mesocycleWeekFor(season_calendar, date)` — weeks since the active
+off-/pre-season window's start, mod 4; recurring "MM-DD" windows resolve their
+cycle start (wrapping handled); non-build phases → null. Floors: minutes ≥ 15,
+reps ≥ 2, sets ≥ 4.
+
 `enforceWeeklyRestMinimum` — **≥ 2 full rest days per 7-day window**
 (`MIN_REST = 2`), non-negotiable. Never demotes team-practice, competition,
 rest, or recovery days. Demotion order (`DEMOTION_PRIORITY`, least disruptive

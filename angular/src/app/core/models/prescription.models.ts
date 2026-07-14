@@ -475,4 +475,19 @@ export interface PeriodizationInputs {
    * fabricated default — it's their planned time or the current time).
    */
   preferredTrainingHour?: number | null;
+  /**
+   * Days since the athlete's last HIGH-SPEED exposure (sprint/mixed session,
+   * practice, or game — anything isHighCnsSessionType recognizes), from a
+   * ~14-day session lookback. Feeds the sprint-exposure floor (audit §3.2):
+   * ≥ 7 days without one and none planned → the week gets a short velocity
+   * maintenance day. Null/undefined → no floor (no data, no fabrication).
+   */
+  daysSinceHighSpeed?: number | null;
+  /**
+   * Week 1-4 of the current 3:1 mesocycle, from `mesocycleWeekFor` over the
+   * athlete's declared season windows (off-/pre-season build blocks only).
+   * Weeks 1-3 build volume (+0/5/10%), week 4 deloads (−35%, intensity held).
+   * Null/undefined → no wave (in-season/peak, or no declared season).
+   */
+  mesocycleWeek?: number | null;
 }

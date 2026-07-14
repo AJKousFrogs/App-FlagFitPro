@@ -109,12 +109,21 @@ Passes, in order:
    off-season week silently became 4-on/3-off. Canonical 5-day shape: 2-2-1.
    A rotation intent that would put two high-CNS days (sprint/mixed)
    back-to-back is deferred (technical fills the slot).
-2. **`prescribeFor × 7`** — each day realized through the §1 pipeline.
-3. **`enforceWeeklyRestMinimum`** — **≥ 2 full rest days is non-negotiable**
+2. **Sprint-exposure floor (2026-07-14, audit §3.2)** — before realization: if
+   the athlete has had NO high-speed exposure (sprint/mixed session, practice,
+   or game) in ≥ 7 days AND this week plans none, the earliest planned
+   technical/mobility slot becomes a SHORT velocity-maintenance day (≤60 min,
+   ≤5 relaxed 20-30 m builds — the "speed vaccine"). Safety guards still run on
+   top; a guard demotion stands and the day then says "exposure postponed — add
+   4-6 relaxed strides when fresh" instead of silently dropping speed. Logged
+   sessions with none high-speed → floor at 14 days; ZERO logged sessions →
+   null → no floor (no fabricated exposure).
+3. **`prescribeFor × 7`** — each day realized through the §1 pipeline.
+4. **`enforceWeeklyRestMinimum`** — **≥ 2 full rest days is non-negotiable**
    (soft-tissue recovery). If short, it DEMOTES the lowest-value active days to
    rest by `DEMOTION_PRIORITY` (taper-prime leads — it's the most natural rest in
    a loaded week).
-4. **`addSecondSessions`** — a PM second session, **preseason/offseason only**,
+5. **`addSecondSessions`** — a PM second session, **preseason/offseason only**,
    **never on a practice day**, **≤ 2 per week** (so the ceiling is 5 training
    days + 2 doubles = 7 sessions — the flag-football weekly max; taper/
    tournament logic pulls it down near events), and blocked when today's
@@ -122,6 +131,14 @@ Passes, in order:
    ("morning strength, evening sprint") unless a practice OR a planned high-CNS
    day (sprint/mixed) sits tomorrow or sat yesterday — then technical, so a
    19:00 PM sprint is never ~14 h from another high-CNS session.
+6. **`applyMesocycleWave` (2026-07-14, audit §3.1)** — the 3:1 volume wave,
+   applied last (so a deload also strips PM doubles): weeks 1-3 build volume
+   (+0/5/10%), week 4 deloads (−35%, **intensity held** — the taper's
+   volume-not-intensity principle). Only quality sessions on free
+   accumulation/transition days wave; practice and event-driven days never do.
+   Week index derives from the athlete's declared off-/pre-season window start
+   (`mesocycleWeekFor`, shared client/server); no declared build window → no
+   wave (nothing fabricated).
 
 ---
 
