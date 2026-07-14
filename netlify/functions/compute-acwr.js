@@ -48,7 +48,10 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
     const load = Math.round((dailyLoads.get(sessionDate) || 0) * 100) / 100;
 
     // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
-    const { acuteLoad, chronicLoad, acwr } = computeAcwrAt(dailyLoads, cursor);
+    const { acuteLoad, chronicLoad, acwr, confidence, state } = computeAcwrAt(
+      dailyLoads,
+      cursor,
+    );
 
     rows.push({
       session_date: sessionDate,
@@ -56,6 +59,11 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
       acute_load: acuteLoad,
       chronic_load: chronicLoad,
       acwr,
+      // Graded trust (audit C2/C3): "high"|"medium"|"low" confidence, and
+      // state "building_base" ⇒ acwr is null by design (return-to-training
+      // ramp guidance, not a floored ratio).
+      confidence,
+      state,
     });
   }
 
@@ -190,6 +198,8 @@ const handler = async (event, context) => {
           summary: {
             athleteId,
             current_acwr: series.at(-1)?.acwr ?? null,
+            acwr_confidence: series.at(-1)?.confidence ?? null,
+            acwr_state: series.at(-1)?.state ?? null,
             acute_load: series.at(-1)?.acute_load ?? null,
             chronic_load: series.at(-1)?.chronic_load ?? null,
             latest_session_date: series.at(-1)?.session_date ?? null,

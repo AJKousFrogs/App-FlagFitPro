@@ -155,7 +155,7 @@ async function calculateACWR(userId, date) {
     riskZone,
     acuteLoad: Math.round(result.acuteLoad),
     chronicLoad: Math.round(result.chronicLoad),
-    injuryRiskMultiplier: ACWR_ZONES[riskZone]?.risk || 1.0,
+    injuryRiskMultiplier: null, // multipliers retired 2026-07-14 (contested estimates)
     lowConfidence: result.lowConfidence,
   };
 }
@@ -400,7 +400,6 @@ function generateRecommendations(data) {
     recommendations.intensityModifier *= 0.7;
     recommendations.warnings.push(
       `⚠️ ACWR at ${acwr.acwr} - ${acwr.riskZone.toUpperCase()} zone`,
-      `Injury risk multiplier: ${acwr.injuryRiskMultiplier}x`,
       "Reduce training load immediately",
     );
   } else if (acwr.riskZone === "caution") {

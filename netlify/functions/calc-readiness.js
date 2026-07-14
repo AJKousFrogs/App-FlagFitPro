@@ -515,6 +515,11 @@ const handler = async (event, context) => {
       // penalty and (b) trip the acwr<0.8 safety override on day one — both false.
       const acwr = acwrResult.acwr;
       const hasAcwr = isFiniteNumber(acwr);
+      // Graded confidence (audit C2): below 8 loaded days in the 28-day span the
+      // ratio is noise for a 2-3×/week amateur — it INFORMS (displayed with its
+      // confidence) but does not score readiness; its weight redistributes like
+      // a null ACWR. medium/high confidence scores as before.
+      const acwrUsable = hasAcwr && acwrResult.confidence !== "low";
 
       // 2) Get wellness log for the day
       requestLogger.debug("readiness_wellness_fetch_started", {
@@ -595,19 +600,27 @@ const handler = async (event, context) => {
 
       // 4) Evidence-informed scoring with team-sport optimized weightings
 
-      // Workload score (ACWR-based)
-      // Literature flags >1.5 as high risk, ~0.8-1.3 safer range (Gabbett 2016)
-      // Only score workload when ACWR is known; when null its weight is
-      // redistributed below (so an unknown load never penalises or flatters).
+      // Workload score (ACWR-based) — ADVISORY bands (the only cluster-RCT of
+      // ACWR-guided management found no effect: Dalen-Lorentsen 2021 BJSM).
+      // Only scored when ACWR is known AND confidence ≥ medium; otherwise its
+      // weight is redistributed below (an unknown/noisy load never penalises
+      // or flatters). Undertraining boundary aligned to 0.8 (audit C1 — the
+      // 0.7 here vs 0.8 in the zones/trigger was drift, not intent).
+      // TAPER DAMPENING (audit §1.1, Wang 2020): inside ~7 days of the next
+      // game a volume cut is the PLAN — the EWMA ratio dropping below 0.8 is
+      // the taper working, not detraining, so the low-side deduction is
+      // suppressed. High-side deductions always stand (a pre-game spike is
+      // still dangerous).
+      const inTaperWindow = gameProximityHours <= 168;
       let workloadScore = 100;
-      if (hasAcwr) {
+      if (acwrUsable) {
         if (acwr > 1.8) {
           workloadScore -= 40;
         } else if (acwr > 1.5) {
           workloadScore -= 30;
         } else if (acwr > 1.3) {
           workloadScore -= 15;
-        } else if (acwr < 0.7) {
+        } else if (acwr < 0.8 && !inTaperWindow) {
           workloadScore -= 10;
         }
       }
@@ -654,11 +667,14 @@ const handler = async (event, context) => {
         proximityScore -= 5;
       }
 
-      // Team-sport optimized weightings (evidence-based adjustments)
-      // Increased wellness/sleep influence based on team-sport research
-      let workloadWeight = 0.35; // Reduced from 0.40
-      let wellnessWeight = 0.3; // Increased from 0.25
-      let sleepWeight = 0.2; // Maintained (strong evidence)
+      // Re-weighted 2026-07-14 (audit §1.1): the ACWR evidence base weakened
+      // (Dalen-Lorentsen 2021 RCT null; method-dependence critiques), while
+      // subjective wellness has the stronger monitoring evidence (Saw 2016)
+      // and sleep the strongest single-signal base (Halson 2014, Fullagar
+      // 2015). Workload is one input among several — the weights now say so.
+      let workloadWeight = 0.25; // ↓ from 0.35
+      let wellnessWeight = 0.35; // ↑ from 0.30
+      let sleepWeight = 0.25; // ↑ from 0.20
       let proximityWeight = 0.15; // Maintained
 
       // No ACWR yet (new athlete / insufficient chronic data): drop the workload
@@ -666,7 +682,7 @@ const handler = async (event, context) => {
       // composite reflects only what's actually known (mirrors the reduced-data
       // path). Without this, a null ACWR scored as 100×0.35 silently inflates the
       // result for an athlete we know nothing about.
-      if (!hasAcwr) {
+      if (!acwrUsable) {
         const others = wellnessWeight + sleepWeight + proximityWeight;
         wellnessWeight += workloadWeight * (wellnessWeight / others);
         sleepWeight += workloadWeight * (sleepWeight / others);
@@ -804,7 +820,10 @@ const handler = async (event, context) => {
 
       // Safety override: Check ACWR danger zone — only when ACWR is actually
       // known (a null ACWR must not fire a false override on a data-less day).
-      if (hasAcwr && (acwr > 1.5 || acwr < 0.8)) {
+      if (
+        (hasAcwr && acwr > 1.5) ||
+        (acwrUsable && acwr < 0.8 && !inTaperWindow)
+      ) {
         requestLogger.info("readiness_acwr_danger_zone_detected", {
           athlete_id: athleteId,
           acwr,
@@ -837,7 +856,12 @@ const handler = async (event, context) => {
         score,
         level,
         suggestion,
-        acwr: Math.round(acwr * 100) / 100,
+        // null stays null — Math.round(null*100)/100 fabricated a 0 before.
+        acwr: hasAcwr ? Math.round(acwr * 100) / 100 : null,
+        // Graded ACWR trust (audit C2/C3): low confidence → displayed, not
+        // scored; building_base → no ratio at all, ramp guidance instead.
+        acwrConfidence: acwrResult.confidence,
+        acwrState: acwrResult.state,
         acuteLoad: Math.round(acuteLoad * 100) / 100,
         chronicLoad: Math.round(chronicLoad * 100) / 100,
         dataMode, // 'full' or 'reduced'

@@ -119,9 +119,10 @@ describe("classifyAcwrZone", () => {
   it("zone boundaries are contiguous with ACWR_RISK_ZONES metadata", () => {
     expect(ACWR_RISK_ZONES.safe.min).toBe(0.8);
     expect(ACWR_RISK_ZONES.critical.max).toBe(Infinity);
-    expect(ACWR_RISK_ZONES.danger.risk).toBeGreaterThan(
-      ACWR_RISK_ZONES.safe.risk,
-    );
+    // risk multipliers retired 2026-07-14 (contested point estimates) —
+    // zones carry labels + actions only.
+    expect(ACWR_RISK_ZONES.danger.risk).toBeUndefined();
+    expect(ACWR_RISK_ZONES.danger.action).toBe("reduce_significantly");
   });
 
   it("never drifts from ACWR_RISK_ZONES ranges (single source of truth)", () => {

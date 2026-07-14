@@ -32,6 +32,18 @@ export const ACWR_DEFAULTS = Object.freeze({
   chronicLambda: 2 / (21 + 1), // ~0.0909
   minChronicLoad: 50, // AU floor — divide-by-small guard on return from layoff
   minDaysWithData: 14, // < 14 nonzero-load days in the 28d span => low confidence
+  // Graded confidence (2026-07-14 audit C2): a binary low-confidence flag at 14
+  // days is permanently "low" for a typical 2-3×/week amateur (~8-12 loaded
+  // days/28) and stops carrying information. high ≥ 14 · medium 8-13 · low < 8.
+  mediumDaysWithData: 8,
+  // Below this RAW chronic EWMA (pre-floor) the ratio is not a meaningful
+  // training signal — the divisor becomes the artificial minChronicLoad floor,
+  // so a single 300 AU return session against a ~0 chronic produces ACWR ≈ 6 →
+  // "Critical, rest", when the athlete actually needs a gradual re-entry ramp
+  // (audit C3). Set AT the floor (50): above it the ratio divides real data.
+  // (The audit proposed ~150, but a steady 2-3×/week amateur holds a chronic
+  // EWMA of ~100-150 — that would misclassify real training as "no base".)
+  minChronicForRatio: 50,
   precision: 3,
 });
 
@@ -108,12 +120,31 @@ export function computeAcwrAt(dailyLoads, targetDate, opts = {}) {
     (v) => v > 0,
   ).length;
 
+  // Return-to-training state (audit C3): with a raw chronic below the ratio
+  // threshold, the ratio is dominated by the divide-by-small floor and reads
+  // as fabricated risk ("ACWR 6 — Critical, rest" after one return session).
+  // The honest signal is "building base — ramp gradually", not a ratio.
+  const buildingBase = chronicRaw < cfg.minChronicForRatio;
+
+  const confidence =
+    daysWithData >= cfg.minDaysWithData
+      ? "high"
+      : daysWithData >= cfg.mediumDaysWithData
+        ? "medium"
+        : "low";
+
   return {
     acwr:
-      chronicLoad > 0 ? round(acuteLoad / chronicLoad, cfg.precision) : null,
+      buildingBase || chronicLoad <= 0
+        ? null
+        : round(acuteLoad / chronicLoad, cfg.precision),
     acuteLoad,
     chronicLoad,
     lowConfidence: daysWithData < cfg.minDaysWithData,
+    /** "high" | "medium" | "low" — graded (audit C2); scale decision weight, don't binarize. */
+    confidence,
+    /** "normal" | "building_base" — building_base ⇒ acwr is null by design. */
+    state: buildingBase ? "building_base" : "normal",
     daysWithData,
   };
 }
@@ -138,10 +169,14 @@ export function computeSessionLoad(session) {
 }
 
 /**
- * ACWR risk zones (evidence-based thresholds — Gabbett 2016 / Lolli 2017).
- * `risk` = relative injury-risk multiplier; `action` = load recommendation.
- * Single source for both the zone label and the per-zone metadata that
- * training-plan and smart-training-recommendations previously duplicated.
+ * ACWR zones — ADVISORY bands, not risk facts. The former per-zone
+ * `risk` multipliers (1.2×/1.5×/2.0×/4.2×) were point estimates from the
+ * contested Hulin/Gabbett-era association studies; the only cluster-RCT of
+ * ACWR-guided load management found no effect (Dalen-Lorentsen 2021, BJSM,
+ * doi:10.1136/bjsports-2020-103003), and whether ACWR associates with injury
+ * at all is method-dependent (Dalen-Lorentsen 2021 JOSPT; Impellizzeri 2020).
+ * Presenting multipliers as facts was false precision — removed 2026-07-14
+ * (audit §1.1). Zones keep their labels + load-recommendation actions only.
  */
 export const ACWR_RISK_ZONES = Object.freeze({
   detraining: {
@@ -149,29 +184,25 @@ export const ACWR_RISK_ZONES = Object.freeze({
     max: 0.8,
     label: "Detraining",
     action: "increase_load",
-    risk: 1.2,
   },
-  safe: { min: 0.8, max: 1.3, label: "Safe", action: "maintain", risk: 1.0 },
+  safe: { min: 0.8, max: 1.3, label: "Safe", action: "maintain" },
   caution: {
     min: 1.3,
     max: 1.5,
     label: "Caution",
     action: "reduce_slightly",
-    risk: 1.5,
   },
   danger: {
     min: 1.5,
     max: 1.8,
     label: "Danger",
     action: "reduce_significantly",
-    risk: 2.0,
   },
   critical: {
     min: 1.8,
     max: Infinity,
     label: "Critical",
     action: "rest",
-    risk: 4.2,
   },
 });
 
