@@ -206,26 +206,35 @@ export const ACWR_RISK_ZONES = Object.freeze({
   },
 });
 
-/** Classify an ACWR ratio into a zone key, or null if not a finite number. */
-export function classifyAcwrZone(acwr) {
+/**
+ * Classify an ACWR ratio into a zone key, or null if not a finite number.
+ * `thresholds` (2026-07-14, cohort-aware backend): optional cohort boundaries
+ * ({ sweetSpotLow, sweetSpotHigh, dangerHigh } — see utils/cohort.js).
+ * Omitted → the adult ACWR_RISK_ZONES boundaries (back-compat; display lanes
+ * that don't know the athlete's cohort stay on the adult baseline, which the
+ * client tightens per the safe-direction rule). The critical line sits at
+ * dangerHigh + 0.3, mirroring the adult 1.5→1.8 gap. Inclusivity preserved:
+ * detraining/danger open at the top; safe/caution closed.
+ */
+export function classifyAcwrZone(acwr, thresholds = null) {
   if (!Number.isFinite(acwr)) {
     return null;
   }
-  // Boundaries are read from ACWR_RISK_ZONES (the single source of truth) instead
-  // of repeating the literals here — the classifier and the zone metadata can no
-  // longer silently drift. The inequalities preserve the original per-zone
-  // inclusivity exactly (detraining/danger open at the top; safe/caution closed).
   const Z = ACWR_RISK_ZONES;
-  if (acwr < Z.safe.min) {
+  const low = thresholds?.sweetSpotLow ?? Z.safe.min;
+  const high = thresholds?.sweetSpotHigh ?? Z.safe.max;
+  const danger = thresholds?.dangerHigh ?? Z.caution.max;
+  const critical = thresholds ? danger + 0.3 : Z.critical.min;
+  if (acwr < low) {
     return "detraining";
   }
-  if (acwr <= Z.safe.max) {
+  if (acwr <= high) {
     return "safe";
   }
-  if (acwr <= Z.caution.max) {
+  if (acwr <= danger) {
     return "caution";
   }
-  if (acwr < Z.critical.min) {
+  if (acwr < critical) {
     return "danger";
   }
   return "critical";

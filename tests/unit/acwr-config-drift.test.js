@@ -2,8 +2,16 @@ import { describe, it, expect } from "vitest";
 import {
   ACWR_DEFAULTS,
   ACWR_RISK_ZONES,
+  classifyAcwrZone,
 } from "../../netlify/functions/utils/acwr.js";
-import { EVIDENCE_PRESETS } from "../../angular/src/app/core/config/evidence-presets.ts";
+import {
+  COHORT_ACWR_THRESHOLDS,
+  deriveCohortPresetId,
+} from "../../netlify/functions/utils/cohort.js";
+import {
+  EVIDENCE_PRESETS,
+  derivePresetId,
+} from "../../angular/src/app/core/config/evidence-presets.ts";
 
 /**
  * DRIFT GUARD — the frontend must not compute/classify ACWR in a way that drifts
@@ -14,13 +22,13 @@ import { EVIDENCE_PRESETS } from "../../angular/src/app/core/config/evidence-pre
  *
  * Imports BOTH real sources (no reimplementation) and fails on drift.
  *
- * KNOWN, INTENTIONAL divergence documented here: the backend risk classifier is
- * currently POPULATION-BLIND — it uses one set of risk-zone boundaries + chronic
- * floor (the adult baseline) for EVERY athlete, while the frontend tightens them for
- * youth and return-to-play (e.g. RTP flags danger at ACWR 1.3 vs the server's 1.5).
- * So a returning-from-injury athlete's UI shows danger the server treats as safe.
- * Making the backend population-aware is the backend-authoritative migration target
- * (Batch 3). Until then this guard enforces the safe direction only.
+ * 2026-07-14 (audit batch 4): the backend is COHORT-AWARE for the canonical
+ * readiness score — calc-readiness resolves the athlete's cohort
+ * (utils/cohort.js) and scores against its bands. This guard now ALSO asserts
+ * the server cohort table + derivation rule are byte-equal to the client
+ * presets (below). Display lanes without an athlete context (load-management,
+ * smart-training) stay on the adult classifyAcwrZone default; the client
+ * tightens those per the safe-direction rule.
  */
 describe("ACWR config drift: frontend presets vs backend authority", () => {
   const LAMBDA_TOL = 1e-3;
@@ -74,5 +82,53 @@ describe("ACWR config drift: frontend presets vs backend authority", () => {
     expect(acwr.thresholds.sweetSpotHigh).toBe(ACWR_RISK_ZONES.safe.max);
     expect(acwr.thresholds.dangerHigh).toBe(ACWR_RISK_ZONES.danger.min);
     expect(acwr.minChronicLoad).toBe(ACWR_DEFAULTS.minChronicLoad);
+  });
+});
+
+describe("cohort drift guard (batch 4): server mirror === client presets", () => {
+  it("every client preset's ACWR thresholds equal the server cohort table", () => {
+    for (const [id, preset] of Object.entries(EVIDENCE_PRESETS)) {
+      expect(
+        COHORT_ACWR_THRESHOLDS[id],
+        `server table missing '${id}'`,
+      ).toBeTruthy();
+      expect(COHORT_ACWR_THRESHOLDS[id]).toEqual({
+        sweetSpotLow: preset.acwr.thresholds.sweetSpotLow,
+        sweetSpotHigh: preset.acwr.thresholds.sweetSpotHigh,
+        dangerHigh: preset.acwr.thresholds.dangerHigh,
+      });
+    }
+    // and no server cohort exists without a client preset
+    for (const id of Object.keys(COHORT_ACWR_THRESHOLDS)) {
+      expect(
+        EVIDENCE_PRESETS[id],
+        `client preset missing '${id}'`,
+      ).toBeTruthy();
+    }
+  });
+
+  it("the derivation rule is identical on both sides across the grid", () => {
+    const ages = [null, 16, 17, 18, 25, 34, 35, 40, 60];
+    for (const age of ages) {
+      for (const rtp of [false, true]) {
+        expect(deriveCohortPresetId(age, rtp)).toBe(derivePresetId(age, rtp));
+      }
+    }
+  });
+
+  it("cohort-aware zones only ever TIGHTEN vs adult (safe direction, per band)", () => {
+    const order = ["detraining", "safe", "caution", "danger", "critical"];
+    for (const [id, t] of Object.entries(COHORT_ACWR_THRESHOLDS)) {
+      for (const acwr of [
+        0.6, 0.75, 0.85, 1.15, 1.25, 1.35, 1.45, 1.55, 1.75, 1.9,
+      ]) {
+        const adult = order.indexOf(classifyAcwrZone(acwr));
+        const cohort = order.indexOf(classifyAcwrZone(acwr, t));
+        // On the HIGH side a cohort may escalate earlier, never later.
+        if (acwr >= 0.8) {
+          expect(cohort, `${id} lax at ${acwr}`).toBeGreaterThanOrEqual(adult);
+        }
+      }
+    }
   });
 });
