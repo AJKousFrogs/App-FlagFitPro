@@ -4,9 +4,10 @@
  * The backend (`netlify/functions/qb-throwing.js`, `qb_throwing_sessions`) has
  * existed since before V2 with zero frontend callers — the SOURCE_OF_TRUTH
  * ledger flagged it ORPHANED. V2.2 wires a minimal logger card so a QB can
- * actually log throw counts, which is the data the engine's
- * `QB_THROW_ADAPTATION` dosing policy (position-volume.config.ts) has always
- * needed and never had.
+ * actually log throw counts. 2026-07-14 (audit §5): the old interception-rate
+ * `QB_THROW_ADAPTATION` policy is retired — the logger now feeds the
+ * `QB_THROW_MONITOR` (week-over-week ramp + arm-feeling fatigue flags,
+ * cohort-gated: youth gets a genuine progression + rest-day rule).
  */
 
 export type QbSessionType = "practice" | "game" | "individual" | "bullpen";

@@ -115,9 +115,14 @@ is ever active; youth/RTP are orphaned pending v3 M0 wiring, see SOT §5a):
 
 | Preset | sweetSpotLow | sweetSpotHigh | dangerHigh |
 |---|---|---|---|
-| `adult_flag_competitive_v1` (active) | 0.8 | 1.3 | 1.5 |
-| `youth_flag_v1` | 0.8 | 1.2 | 1.4 |
-| `return_to_play_v1` | 0.7 | 1.1 | 1.3 |
+| `adult_flag_competitive_v1` (default/unknown age) | 0.8 | 1.3 | 1.5 |
+| `youth_flag_v1` (age < 18) | 0.8 | 1.2 | 1.4 |
+| `masters_flag_v1` (age ≥ 35, heuristic tier — 2026-07-14) | 0.8 | 1.2 | 1.4 |
+| `return_to_play_v1` (active RTP protocol) | 0.7 | 1.1 | 1.3 |
+
+Assignment is **derived** (`derivePresetId(ageYears, hasActiveRtp)`, audit
+§4.1 — no longer orphaned): RTP > youth > masters > adult; unknown age →
+adult (the server baseline). Manual override available, wins until cleared.
 
 Safe-direction rule (LOGIC §10): the client may classify STRICTER than the
 server, never laxer.
@@ -316,6 +321,31 @@ rest**, so 17 working strength sets displayed as "~10 min".
 
 Conditioning work bouts floor at **60 s** (`max(60, exercises.default_duration_seconds)`
 — a gasser is not a 30-second item).
+
+### 5.2 Strength double progression (2026-07-14, audit §3.3)
+
+`utils/daily-protocol-progression.js` `progressPrescription(prev, baseReps)`,
+driven by the athlete's own last completed `protocol_exercises.actual_*`
+(21-day lookback, latest per exercise):
+
+```
+no history            → base reps, no note (nothing fabricated — Law #7)
+below the rep ceiling → prev reps + 1 (never below base), load held
+at the ceiling (12; hip work 15) → load × 1.025 (rounded to 0.5 kg), reps reset
+                        to base; no logged load → "harder variation" note
+```
+
+Applied to the strength block's hip (base 10, max 15) and general (base 8,
+max 12) exercises; the Nordic keeps its dedicated evidence protocol.
+
+### 5.3 QB throwing monitor (2026-07-14, audit §5 — replaces the retired
+interception-rate `QB_THROW_ADAPTATION`)
+
+`QB_THROW_MONITOR`: weekly-volume spike flag at > **1.4×** week-over-week;
+arm-feeling drop flag at **≥ 2** (before − after, last session). Youth
+(< 18, derived cohort): ramp ≤ **1.2×**/week and ≥ **2** full no-throw
+days/week. No pitch counts for adults — flag deletes the contact mechanism
+that drives QB arm injury. Arm pain → clinician, not algorithm.
 
 ---
 

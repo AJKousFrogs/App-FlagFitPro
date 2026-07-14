@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, computed, inject, signal } from "@angular/core";
+import { QB_THROW_MONITOR } from "../config/position-volume.config";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
@@ -11,7 +12,8 @@ import {
 /**
  * QB Throwing Service — thin client for the previously-orphaned
  * `/api/qb-throwing` lane (V2.2). Wires the throw-count logger the engine's
- * `QB_THROW_ADAPTATION` dosing policy has always assumed exists.
+ * `QB_THROW_MONITOR` (2026-07-14 re-anchor) consumes: ramp + arm-feeling
+ * fatigue flags, never a borrowed pitch count.
  */
 @Injectable({ providedIn: "root" })
 export class QbThrowingService {
@@ -69,4 +71,54 @@ export class QbThrowingService {
       this._saving.set(false);
     }
   }
+
+  /**
+   * QB throwing monitor (audit §5): mechanics-fatigue + progressive-load
+   * advisories from the athlete's own logged sessions — the flag-specific
+   * re-anchor (ramp + arm signals), NOT a pitch-count throttle.
+   */
+  readonly monitor = computed<{ flags: string[]; youthNote: string | null }>(
+    () => {
+      const data = this._data();
+      const sessions = data?.recentSessions ?? [];
+      const flags: string[] = [];
+      if (sessions.length === 0) return { flags, youthNote: null };
+
+      const now = Date.now();
+      const DAY = 86_400_000;
+      const volumeIn = (fromDaysAgo: number, toDaysAgo: number) =>
+        sessions
+          .filter((x) => {
+            const t = new Date(x.sessionDate).getTime();
+            return t > now - fromDaysAgo * DAY && t <= now - toDaysAgo * DAY;
+          })
+          .reduce((sum, x) => sum + (x.totalThrows || 0), 0);
+
+      const thisWeek = volumeIn(7, 0);
+      const lastWeek = volumeIn(14, 7);
+      if (
+        lastWeek > 0 &&
+        thisWeek > lastWeek * QB_THROW_MONITOR.weeklyVolumeSpikeFactor
+      ) {
+        flags.push(
+          `Throw volume jumped ${Math.round((thisWeek / lastWeek - 1) * 100)}% vs last week (${lastWeek} → ${thisWeek}). Ramp, don't spike — spread the extra volume across the next two weeks.`,
+        );
+      }
+
+      const latest = sessions[0];
+      if (
+        latest &&
+        latest.armFeelingBefore != null &&
+        latest.armFeelingAfter != null &&
+        latest.armFeelingBefore - latest.armFeelingAfter >=
+          QB_THROW_MONITOR.armFeelingDropFlag
+      ) {
+        flags.push(
+          `Arm feeling dropped ${latest.armFeelingBefore}→${latest.armFeelingAfter} in your last session — that in-session falloff is the fatigue stop-cue. End the next session when crispness fades, and do the post-throw arm care.`,
+        );
+      }
+
+      return { flags, youthNote: null };
+    },
+  );
 }

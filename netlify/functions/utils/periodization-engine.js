@@ -564,6 +564,33 @@ var RETURN_TO_PLAY_V1 = {
     "v1.0 (2026-01-01): Initial release with very conservative thresholds for return-to-play"
   ]
 };
+var MASTERS_FLAG_V1 = {
+  ...ADULT_FLAG_COMPETITIVE_V1,
+  id: "masters_flag_v1",
+  name: "Masters Flag Football v1 (35+)",
+  version: "1.0",
+  description: "Conservative configuration for masters flag football players (35+ years): tighter ACWR bands on top of the engine's age-scaled CNS recovery windows. Heuristic extrapolation \u2014 tightening only.",
+  population: {
+    ...ADULT_FLAG_COMPETITIVE_V1.population,
+    ageRange: "35+ years",
+    notes: "Masters population \u2014 slower connective-tissue recovery; conservative load-change tolerance. No masters-specific flag dataset yet (heuristic tier)."
+  },
+  acwr: {
+    ...ADULT_FLAG_COMPETITIVE_V1.acwr,
+    population: {
+      ...ADULT_FLAG_COMPETITIVE_V1.acwr.population,
+      ageRange: "35+ years"
+    },
+    thresholds: {
+      ...ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds,
+      sweetSpotLow: 0.8,
+      sweetSpotHigh: 1.2,
+      // tighter than adult 1.3
+      dangerHigh: 1.4
+      // tighter than adult 1.5
+    }
+  }
+};
 
 // angular/src/app/core/services/periodization-engine.ts
 var FALLBACK_READINESS = 70;

@@ -265,15 +265,33 @@ so the athlete knows why a score is what it is.
 
 ---
 
-## 10. ACWR population / safe-direction logic
+## 10. ACWR population / cohort / safe-direction logic
 
-The backend risk classifier is **population-blind** (one adult baseline for
-everyone). The frontend **tightens** for youth and return-to-play (RTP flags danger
-at ACWR 1.3 vs the server's 1.5). The drift guard enforces only the **safe
-direction** — the client may be STRICTER than the server, never laxer (a lax client
-would tell an athlete "safe" while the server sees risk = an injury vector). Making
-the backend population-aware is the migration target; until then the divergence is
-documented and one-directional.
+**Cohort assignment is DERIVED (2026-07-14, audit §4.1)** — `derivePresetId`:
+active RTP protocol → `return_to_play_v1` (0.7/1.1/1.3) · age < 18 →
+`youth_flag_v1` (0.8/1.2/1.4) · age ≥ 35 → `masters_flag_v1` (0.8/1.2/1.4,
+heuristic tier) · else/unknown age → adult (0.8/1.3/1.5). Age from the shared
+`ageYearsFromUserMetadata` (same source as the engine's CNS age-scaling). An
+explicit `setActivePreset()` override wins until cleared. Competitive tier
+never changes safety thresholds.
+
+The backend risk classifier remains **population-blind** (one adult baseline).
+The frontend tightens per cohort as above. The drift guard enforces only the
+**safe direction** — the client may be STRICTER than the server, never laxer
+(a lax client would tell an athlete "safe" while the server sees risk = an
+injury vector). Making the backend cohort-aware is the migration target — it
+changes the canonical readiness number per cohort, so it ships as its own PR
+with the full before/after safety treatment.
+
+### 10b. QB throwing monitor (2026-07-14, audit §5)
+
+Flag QBs are NOT pitchers (their injuries are predominantly contact — which
+flag deletes), so there is NO pitch count. `QB_THROW_MONITOR`: flag a
+week-over-week throw-volume jump > 1.4×, and an in-session arm-feeling drop
+≥ 2 (before → after) — the fatigue stop-cue is the arm's own signal and
+accuracy falloff, never a borrowed cap. Youth (< 18, via the derived cohort)
+is the exception where overuse is real: ≤ 1.2× weekly ramp + ≥ 2 full
+no-throw days/week guidance. Arm PAIN is a clinician call, not an app rule.
 
 ---
 
