@@ -31,7 +31,10 @@ import { ADULT_FLAG_COMPETITIVE_V1 } from "../config/evidence-presets";
 // Same inputs → same output. Tested without DI. Server-mirror friendly.
 // =============================================================================
 
-const FALLBACK_BODYWEIGHT_KG = 80;
+// FALLBACK_BODYWEIGHT_KG (80) was removed 2026-07-14 (audit C7): per-kg
+// nutrition/hydration from a fabricated weight over-prescribed a 45 kg athlete
+// by ~78% (Law #7 — a defaulted bodyweight IS fabricated data). No bodyweight →
+// nutrition is null → the UI shows an explicit "add your weight" state.
 const FALLBACK_READINESS = 70;
 // Single-sourced from the adult evidence preset's ACWR thresholds (itself CI
 // drift-guarded against the backend's ACWR_RISK_ZONES, tests/unit/
@@ -743,7 +746,7 @@ function applyPostTournamentRecovery(
   dayAfterTournament: number,
 ): DailyPrescription {
   const { date, bodyweightKg, acwr, seasonPhase, upcoming, lastEvent } = inputs;
-  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const bodyweight = bodyweightKg ?? null;
   const gameCount = lastEvent!.expectedGameCount ?? 0;
   const eventName =
     lastEvent!.competitionShortName ??
@@ -831,7 +834,7 @@ function decideBasePrescription(
 
   const driverEvent = pickDriverEvent(date, upcoming, lastEvent);
   const hoursUntilNext = nextEventHours(date, upcoming);
-  const bodyweight = bodyweightKg ?? FALLBACK_BODYWEIGHT_KG;
+  const bodyweight = bodyweightKg ?? null;
   const effectiveReadiness = readiness ?? FALLBACK_READINESS;
   // Heavy density = a high 14-day game total OR a single congested day. A
   // tournament of 8 games over 2 days (4/day) never reaches the 10-games/14d
@@ -1859,14 +1862,19 @@ export function approxWBGT(
 
 // WBGT activity thresholds (°C WBGT) — NATA/ACSM continuous-activity categories
 // for unhelmeted athletes (flag football has no pads/helmet, so the general
-// thresholds apply, not the tighter padded-football ones):
-//   < 27.8  normal   → session unchanged (hydration nudge as it climbs)
-//   27.8-30 high     → SCALE volume (cut, more breaks); deeper for long/hard work
-//   30-32.2 very high→ RELOCATE indoors (no intense outdoor work)
-//   ≥ 32.2  extreme  → STOP outdoor training (indoor recovery / rest)
-const WBGT_CAUTION_C = 27.8;
-const WBGT_REDUCE_C = 30.0;
-const WBGT_RELOCATE_C = 32.2;
+// thresholds apply, not the tighter padded-football ones). 2026-07-14: the
+// implemented bands were one category LOOSER than this table (scale fired at
+// 30.0, relocate was dead code at 32.2) — the stricter NATA bands below are now
+// implemented as documented (audit C8, user-approved: LA-July / summer-Europe
+// competition calendar):
+//   < 25.7    moderate → session unchanged (hydration advisory from 25.7)
+//   25.7-27.8 high     → advisory: hydration + breaks, session unchanged
+//   27.8-30   very high→ SCALE volume (strain-scaled cut, same intent)
+//   30-32.2   extreme  → RELOCATE indoors (no intense outdoor work)
+//   ≥ 32.2    stop     → STOP outdoor training (indoor recovery / rest)
+const WBGT_CAUTION_C = 25.7;
+const WBGT_REDUCE_C = 27.8;
+const WBGT_RELOCATE_C = 30.0;
 const WBGT_STOP_C = 32.2;
 
 // Metabolic intensity weight per FIELD intent — scales heat strain by how hard
@@ -2562,10 +2570,15 @@ const FLUID_COMPETITION_BONUS_L = 1.5;
 
 function nutritionFor(
   intent: PrescriptionIntent | "taper" | "transition",
-  bodyweightKg: number,
+  bodyweightKg: number | null,
   heavyDensity: boolean,
   hotDay = false,
-): NutritionTargets {
+): NutritionTargets | null {
+  // No real bodyweight → no per-kg targets (Law #7). The UI renders an explicit
+  // "add your weight to see fueling targets" state instead of a defaulted number.
+  if (bodyweightKg == null || !(bodyweightKg > 0)) {
+    return null;
+  }
   // Map non-Intent labels onto a real bucket
   const key: PrescriptionIntent =
     intent === "taper"

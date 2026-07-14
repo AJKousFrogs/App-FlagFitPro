@@ -455,11 +455,12 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     };
   }
 
-  // Risk zone + injury-risk multiplier from the single source of truth
-  // (classifyAcwrZone / ACWR_RISK_ZONES, Gabbett's research). Boundaries and
-  // multipliers are no longer duplicated here.
+  // Risk zone from the single source of truth (classifyAcwrZone /
+  // ACWR_RISK_ZONES). The injury-risk MULTIPLIER was retired 2026-07-14 —
+  // contested point estimates presented as fact (see ACWR_RISK_ZONES doc);
+  // the field stays null for API-shape compatibility.
   const riskZone = classifyAcwrZone(acwr) ?? "safe";
-  const injuryRiskMultiplier = ACWR_RISK_ZONES[riskZone].risk;
+  const injuryRiskMultiplier = null;
   const recommendation = ACWR_ZONE_RECOMMENDATIONS[riskZone];
 
   return {

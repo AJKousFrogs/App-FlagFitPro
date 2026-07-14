@@ -663,14 +663,18 @@ export class TodayComponent {
   });
 
   // ── hydration ─────────────────────────────────────────────────────────────────
+  // Null when no real bodyweight exists (nutrition is null) — the tile shows
+  // "add your weight" instead of a fabricated default (Law #7, audit C7).
   readonly hydroTarget = computed(
-    () => this.rx()?.nutrition?.hydrationL ?? 3.2,
+    () => this.rx()?.nutrition?.hydrationL ?? null,
   );
   private readonly hydroLogged = signal(0);
   readonly hydroValue = computed(() => this.hydroLogged());
-  readonly hydroPct = computed(() =>
-    Math.min(100, (this.hydroLogged() / this.hydroTarget()) * 100),
-  );
+  readonly hydroPct = computed(() => {
+    const target = this.hydroTarget();
+    if (target == null || target <= 0) return 0;
+    return Math.min(100, (this.hydroLogged() / target) * 100);
+  });
   addWater(ml: number): void {
     this.hydroLogged.update((v) => Math.round((v + ml / 1000) * 100) / 100);
   }
@@ -678,11 +682,14 @@ export class TodayComponent {
     this.hydroLogged.set(0);
   }
   readonly hydroMsg = computed<{ text: string; cls: string } | null>(() => {
-    const ratio = this.hydroLogged() / this.hydroTarget();
+    const target = this.hydroTarget();
+    // No real bodyweight → no target (Law #7) → no over/under messaging.
+    if (target == null || target <= 0) return null;
+    const ratio = this.hydroLogged() / target;
     if (ratio > 1.75)
       return {
         cls: "is-danger",
-        text: `You're ${(this.hydroLogged() - this.hydroTarget()).toFixed(1)}L over target — overdrinking dilutes blood sodium (hyponatremia). Switch to electrolytes and drink to thirst.`,
+        text: `You're ${(this.hydroLogged() - target).toFixed(1)}L over target — overdrinking dilutes blood sodium (hyponatremia). Switch to electrolytes and drink to thirst.`,
       };
     if (ratio > 1.25)
       return {

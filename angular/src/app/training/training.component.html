@@ -61,7 +61,7 @@
                 ><span class="k">Sprints</span>
               </div>
               <div class="stat-chip">
-                <span class="v">{{ fluidTarget() }}L</span
+                <span class="v">{{ fluidTarget() != null ? fluidTarget() + "L" : "—" }}</span
                 ><span class="k">Fluid</span>
               </div>
             </div>
@@ -323,7 +323,11 @@
           <p class="rail-note">
             Targets, the hydration log and the supplement stack live on
             <strong>Today</strong> — one source, no drift. Session fluid target:
-            <strong>{{ fluidTarget() }}L</strong>.
+            <strong>{{
+              fluidTarget() != null
+                ? fluidTarget() + "L"
+                : "add your weight in Profile"
+            }}</strong>.
           </p>
           <a class="btn btn--ghost" routerLink="/today">Open Today → Fuel</a>
         </div>

@@ -413,9 +413,9 @@ describe("prescribeFor — nutrition", () => {
         bodyweightKg: 80,
       }),
     );
-    expect(rx.nutrition.carbsG).toBe(Math.round(80 * 4.5));
-    expect(rx.nutrition.proteinG).toBe(Math.round(80 * 1.8));
-    expect(rx.nutrition.hydrationL).toBeCloseTo((80 * 35) / 1000, 1);
+    expect(rx.nutrition!.carbsG).toBe(Math.round(80 * 4.5));
+    expect(rx.nutrition!.proteinG).toBe(Math.round(80 * 1.8));
+    expect(rx.nutrition!.hydrationL).toBeCloseTo((80 * 35) / 1000, 1);
   });
 
   it("competition adds 1.5L water above baseline", () => {
@@ -433,7 +433,7 @@ describe("prescribeFor — nutrition", () => {
       }),
     );
     const baseline = (80 * 35) / 1000;
-    expect(rx.nutrition.hydrationL).toBeGreaterThanOrEqual(baseline + 1.4);
+    expect(rx.nutrition!.hydrationL).toBeGreaterThanOrEqual(baseline + 1.4);
   });
 
   it("heavy density adds 0.5L on training days", () => {
@@ -452,7 +452,7 @@ describe("prescribeFor — nutrition", () => {
       }),
     );
     expect(
-      rxHeavy.nutrition.hydrationL - rxNormal.nutrition.hydrationL,
+      rxHeavy.nutrition!.hydrationL - rxNormal.nutrition!.hydrationL,
     ).toBeCloseTo(0.5, 1);
   });
 
@@ -463,24 +463,31 @@ describe("prescribeFor — nutrition", () => {
         bodyweightKg: 80,
       }),
     );
-    expect(rx.nutrition.carbsG).toBe(80 * 3);
+    expect(rx.nutrition!.carbsG).toBe(80 * 3);
   });
 
-  it("missing bodyweight falls back to 80kg", () => {
+  it("missing bodyweight → nutrition is NULL, never an 80kg fabrication (Law #7, audit C7)", () => {
+    // The old 80kg fallback over-prescribed a 45kg athlete by ~78% on per-kg
+    // carbs/fluids. No real weight → no per-kg targets; the UI shows an
+    // explicit "add your weight" state instead of a defaulted number.
     const rxNull = prescribeFor(
       inputs({
         date: new Date("2026-05-05T10:00:00Z"),
         bodyweightKg: null,
       }),
     );
-    const rx80 = prescribeFor(
+    expect(rxNull.nutrition).toBeNull();
+    // The rest of the prescription is untouched by the missing weight.
+    expect(rxNull.intent).toBeTruthy();
+    expect(rxNull.targetMinutes).toBeGreaterThan(0);
+    // And a real weight still doses per-kg.
+    const rx60 = prescribeFor(
       inputs({
         date: new Date("2026-05-05T10:00:00Z"),
-        bodyweightKg: 80,
+        bodyweightKg: 60,
       }),
     );
-    expect(rxNull.nutrition.carbsG).toBe(rx80.nutrition.carbsG);
-    expect(rxNull.nutrition.proteinG).toBe(rx80.nutrition.proteinG);
+    expect(rx60.nutrition?.proteinG).toBe(108); // 1.8 g/kg × 60
   });
 });
 
@@ -1212,7 +1219,7 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
       }),
     );
     expect(
-      congested.nutrition.hydrationL - spread.nutrition.hydrationL,
+      congested.nutrition!.hydrationL - spread.nutrition!.hydrationL,
     ).toBeCloseTo(0.5, 1);
   });
 
@@ -1239,7 +1246,7 @@ describe("prescribeFor — tournament congestion (peak-day games)", () => {
         },
       }),
     );
-    expect(a.nutrition.hydrationL).toBeCloseTo(b.nutrition.hydrationL, 1);
+    expect(a.nutrition!.hydrationL).toBeCloseTo(b.nutrition!.hydrationL, 1);
   });
 });
 
@@ -1265,7 +1272,7 @@ describe("prescribeFor — heat adds fluid", () => {
         weather: weather({ apparentC: 30, tempC: 30 }),
       }),
     );
-    expect(hot.nutrition.hydrationL - cool.nutrition.hydrationL).toBeCloseTo(
+    expect(hot.nutrition!.hydrationL - cool.nutrition!.hydrationL).toBeCloseTo(
       0.5,
       1,
     );

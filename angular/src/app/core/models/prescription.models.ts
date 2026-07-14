@@ -232,7 +232,10 @@ export interface DailyPrescription {
   /** Why this prescription, in one sentence the athlete can scan in 2 seconds. */
   reasoning: string;
   recoveryEmphasis: RecoveryEmphasis;
-  nutrition: NutritionTargets;
+  /** Null when no real bodyweight exists — per-kg targets are never computed
+   * from a fabricated default (Law #7, audit C7 2026-07-14). UI shows an
+   * explicit "add your weight" state. */
+  nutrition: NutritionTargets | null;
   /** The event driving today's decisions, if any. Null on transition days. */
   driverEvent: CompetitionEvent | null;
   /** Hours until the next event. Null if nothing scheduled. */
@@ -353,7 +356,9 @@ export interface PeriodizationInputs {
   acwr: number | null;
   /** 0–100 readiness; falls back to 70 when null. */
   readiness: number | null;
-  /** Athlete bodyweight in kg. Falls back to 80kg if not set. */
+  /** Athlete bodyweight in kg. Null → nutrition targets are null (no per-kg
+   * dosing from a fabricated default — Law #7; the old 80 kg fallback
+   * over-prescribed a 45 kg athlete by ~78%, audit C7). */
   bodyweightKg: number | null;
   /**
    * Density of upcoming load over 14 days. Used for week-scale modulation.
