@@ -9,6 +9,8 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 
 import { PeriodizationService } from "../core/services/periodization.service";
+import { EvidenceConfigService } from "../core/services/evidence-config.service";
+import { QB_THROW_MONITOR } from "../core/config/position-volume.config";
 import { QbThrowingService } from "../core/services/qb-throwing.service";
 import { QbSessionType } from "../core/models/qb-throwing.models";
 
@@ -19,7 +21,8 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
  *
  * Wires the previously-orphaned `/api/qb-throwing` lane (built, zero
  * frontend callers per the SOURCE_OF_TRUTH ledger) — this is the data the
- * engine's `QB_THROW_ADAPTATION` dosing policy has always assumed exists.
+ * `QB_THROW_MONITOR` (2026-07-14 re-anchor) consumes — ramp + arm-signal
+ * flags, cohort-gated for youth; never a borrowed pitch count.
  * See docs/v2/V2.2-breadth-calibration.md.
  */
 @Component({
@@ -39,6 +42,17 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
             >
           </div>
           <small class="muted">{{ p.recommendation }}</small>
+        }
+
+        @for (flag of monitorFlags(); track flag) {
+          <small class="muted" style="display:block;margin-top:var(--s-2)"
+            >⚠️ {{ flag }}</small
+          >
+        }
+        @if (youthGuidance(); as yg) {
+          <small class="muted" style="display:block;margin-top:var(--s-2)">{{
+            yg
+          }}</small>
         }
 
         @if (!logging()) {
@@ -214,11 +228,29 @@ import { QbSessionType } from "../core/models/qb-throwing.models";
 export class QbArmCareCardComponent {
   private readonly periodization = inject(PeriodizationService);
   private readonly qbThrowing = inject(QbThrowingService);
+  private readonly evidenceConfig = inject(EvidenceConfigService);
 
   readonly isQb = computed(() => this.periodization.position() === "qb");
   readonly progression = computed(
     () => this.qbThrowing.data()?.progression ?? null,
   );
+
+  /** Ramp + arm-signal flags (QB_THROW_MONITOR — the §5 re-anchor). */
+  readonly monitorFlags = computed(() => this.qbThrowing.monitor().flags);
+
+  /**
+   * Youth (<18) is the one cohort where throwing OVERUSE is real (~36% of
+   * youth QB shoulder/elbow injuries are chronic — Radel 2020, Kobelski
+   * 2022): a genuine progression + rest-day rule, derived from the cohort
+   * system, never a global cap that would bench healthy adults.
+   */
+  readonly youthGuidance = computed<string | null>(() => {
+    if (this.evidenceConfig.activePreset().id !== "youth_flag_v1") return null;
+    const y = QB_THROW_MONITOR.youth;
+    return `Youth throwing rules: increase weekly volume by at most ${Math.round(
+      (y.maxWeeklyVolumeIncreaseFactor - 1) * 100,
+    )}%, and keep ≥ ${y.minNoThrowDaysPerWeek} full no-throw days per week — growing arms accumulate real overuse.`;
+  });
   readonly saving = this.qbThrowing.saving;
   readonly error = this.qbThrowing.error;
 
@@ -227,9 +259,9 @@ export class QbArmCareCardComponent {
   readonly totalThrows = signal(50);
   readonly armFeelingBefore = signal(5);
   readonly armFeelingAfter = signal(5);
-  // Optional distance breakdown — the engine's QB_THROW_ADAPTATION cares about
-  // long-ball volume (high-stress), so a short/medium/long split is richer than
-  // a bare total. Left at 0 = "didn't break it down" (omitted on submit).
+  // Optional distance breakdown — long-ball volume is the higher-stress subset,
+  // so a short/medium/long split is richer than a bare total for the
+  // QB_THROW_MONITOR. Left at 0 = "didn't break it down" (omitted on submit).
   readonly shortThrows = signal(0);
   readonly mediumThrows = signal(0);
   readonly longThrows = signal(0);

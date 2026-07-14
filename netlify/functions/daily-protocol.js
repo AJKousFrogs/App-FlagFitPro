@@ -98,6 +98,10 @@ import {
   templateMatchesFocus,
 } from "./utils/daily-protocol-compose.js";
 import {
+  progressPrescription,
+  loadRecentStrengthActuals,
+} from "./utils/daily-protocol-progression.js";
+import {
   completeExercise,
   skipExercise,
   completeBlock,
@@ -1608,6 +1612,11 @@ async function generateProtocol(
           30,
           log,
         );
+    // Double progression (audit §3.3): the athlete's own last completed
+    // actuals drive reps/load forward — no history → static base targets.
+    const strengthActuals = !gymPlan.strength
+      ? new Map()
+      : await loadRecentStrengthActuals(supabase, userId);
 
     if (strengthExercises && strengthExercises.length > 0) {
       const selectedStrength = [];
@@ -1661,6 +1670,9 @@ async function generateProtocol(
           .slice(0, 2);
 
         selectedHip.forEach((ex, idx) => {
+          const prog = progressPrescription(strengthActuals.get(ex.id), 10, {
+            maxReps: 15,
+          });
           protocolExercises.push({
             // protocol_id will be assigned by RPC
             exercise_id: ex.id,
@@ -1668,7 +1680,9 @@ async function generateProtocol(
             block_type: "strength",
             sequence_order: (includeNordics ? 2 : 1) + idx,
             prescribed_sets: readinessSets,
-            prescribed_reps: 10,
+            prescribed_reps: prog.reps,
+            prescribed_weight_kg: prog.weightKg,
+            progression_note: prog.note,
             rest_seconds: 60,
             load_contribution_au: ex.load_contribution_au || 20,
             ai_note: `🦵 Hip Strength: Targets Add:Abd ratio (target 0.8-1.2). Prevents groin injuries common in cutting sports.`,
@@ -1694,6 +1708,9 @@ async function generateProtocol(
       generalStrength.forEach((ex, idx) => {
         const sequenceStart =
           (includeNordics ? 2 : 1) + (hipExercises.length > 0 ? 2 : 0);
+        const prog = progressPrescription(strengthActuals.get(ex.id), 8, {
+          maxReps: 12,
+        });
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
@@ -1701,7 +1718,9 @@ async function generateProtocol(
           block_type: "strength",
           sequence_order: sequenceStart + idx,
           prescribed_sets: readinessSets,
-          prescribed_reps: 8,
+          prescribed_reps: prog.reps,
+          prescribed_weight_kg: prog.weightKg,
+          progression_note: prog.note,
           rest_seconds: 90,
           load_contribution_au: ex.load_contribution_au || 20,
           ai_note: `💪 Strength Phase: ${currentPhase}. Focus on quality movement over load.`,

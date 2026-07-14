@@ -40,6 +40,7 @@ import { InjuryService } from "./injury.service";
 import { EventTravelService } from "./event-travel.service";
 import { RemoteTelemetryService } from "./remote-telemetry.service";
 import { firstValueFrom } from "rxjs";
+import { ageYearsFromUserMetadata } from "../utils/age-years.util";
 import {
   macroPhaseFor,
   planWeek,
@@ -576,22 +577,8 @@ export class PeriodizationService {
    */
   private readAgeYears(): number | null {
     const user = this.supabase.currentUser?.();
-    const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
-    const dob =
-      meta["date_of_birth"] ?? meta["birth_date"] ?? meta["dateOfBirth"];
-    if (typeof dob !== "string" && typeof dob !== "number") {
-      return null;
-    }
-    const born = new Date(dob);
-    if (Number.isNaN(born.getTime())) {
-      return null;
-    }
-    const now = new Date();
-    let age = now.getFullYear() - born.getFullYear();
-    const m = now.getMonth() - born.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < born.getDate())) {
-      age -= 1;
-    }
-    return age >= 16 && age <= 80 ? age : null;
+    return ageYearsFromUserMetadata(
+      (user?.user_metadata ?? {}) as Record<string, unknown>,
+    );
   }
 }

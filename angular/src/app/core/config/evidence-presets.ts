@@ -551,11 +551,66 @@ export const RETURN_TO_PLAY_V1: EvidencePreset = {
 /**
  * All available presets
  */
+/**
+ * Masters preset (2026-07-14, audit §4.1): athletes 35+. The engine already
+ * lengthens the CNS window with age (60h at 35-39, 72h at 40+); this preset
+ * additionally tightens the ACWR bands (sweet spot top 1.2, danger 1.4 —
+ * matching the youth conservatism, for slower tissue recovery rather than
+ * growth). Evidence tier: heuristic-conservative extrapolation from the adult
+ * bands — masters-specific flag data does not exist yet; tightening is the
+ * safe direction (LOGIC §10), never loosening.
+ */
+export const MASTERS_FLAG_V1: EvidencePreset = {
+  ...ADULT_FLAG_COMPETITIVE_V1,
+  id: "masters_flag_v1",
+  name: "Masters Flag Football v1 (35+)",
+  version: "1.0",
+  description:
+    "Conservative configuration for masters flag football players (35+ years): tighter ACWR bands on top of the engine's age-scaled CNS recovery windows. Heuristic extrapolation — tightening only.",
+  population: {
+    ...ADULT_FLAG_COMPETITIVE_V1.population,
+    ageRange: "35+ years",
+    notes:
+      "Masters population — slower connective-tissue recovery; conservative load-change tolerance. No masters-specific flag dataset yet (heuristic tier).",
+  },
+  acwr: {
+    ...ADULT_FLAG_COMPETITIVE_V1.acwr,
+    population: {
+      ...ADULT_FLAG_COMPETITIVE_V1.acwr.population,
+      ageRange: "35+ years",
+    },
+    thresholds: {
+      ...ADULT_FLAG_COMPETITIVE_V1.acwr.thresholds,
+      sweetSpotLow: 0.8,
+      sweetSpotHigh: 1.2, // tighter than adult 1.3
+      dangerHigh: 1.4, // tighter than adult 1.5
+    },
+  },
+};
+
 export const EVIDENCE_PRESETS: Record<string, EvidencePreset> = {
   adult_flag_competitive_v1: ADULT_FLAG_COMPETITIVE_V1,
   youth_flag_v1: YOUTH_FLAG_V1,
+  masters_flag_v1: MASTERS_FLAG_V1,
   return_to_play_v1: RETURN_TO_PLAY_V1,
 };
+
+/**
+ * Derived cohort assignment (2026-07-14, audit §4.1 — presets are DERIVED,
+ * not selected; this pure function is the single rule, unit-tested):
+ * active return-to-play protocol beats everything; then age. Unknown age →
+ * adult (the server's baseline — never a fabricated cohort). Competitive
+ * tier never changes safety thresholds (safe-direction rule).
+ */
+export function derivePresetId(
+  ageYears: number | null,
+  hasActiveRtp: boolean,
+): string {
+  if (hasActiveRtp) return "return_to_play_v1";
+  if (ageYears !== null && ageYears < 18) return "youth_flag_v1";
+  if (ageYears !== null && ageYears >= 35) return "masters_flag_v1";
+  return "adult_flag_competitive_v1";
+}
 
 /**
  * Get preset by ID

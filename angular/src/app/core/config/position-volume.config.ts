@@ -267,13 +267,28 @@ export const TOURNAMENT_DAY = {
 } as const;
 
 /**
- * Adaptive throwing policy (QB). A high interception/error rate is a fatigue or
- * mechanics signal — back the throw volume off and bias to quality/rest rather
- * than grinding bad reps. Tunable; applied once throw + interception logging is
- * wired into the engine.
+ * QB throwing monitor (2026-07-14, audit §5 — replaces QB_THROW_ADAPTATION,
+ * whose interception-rate trigger never had a data source and whose framing
+ * imported the wrong template). Flag QBs are NOT pitchers: their injuries are
+ * predominantly contact/trauma, and flag deletes the contact mechanism — so a
+ * borrowed pitch-count throttle would bench healthy adults. What transfers
+ * cleanly from the overhead-throwing world: (1) never SPIKE volume after a
+ * layoff — ramp; (2) within/between-session ARM-FEELING and accuracy falloff
+ * is the fatigue stop-cue, not a fixed count. Youth (<18) is the exception
+ * where genuine overuse exists (~36% of youth QB shoulder/elbow injuries are
+ * chronic) — the youth cohort gets a real progression + rest-day rule.
+ * Evidence tags: adult rules `flag-direct-adjacent`; youth `team-sport-transfer`.
  */
-export const QB_THROW_ADAPTATION = {
-  highInterceptionRate: 0.1,
-  reducedVolumeFactor: 0.6,
-  note: "If interception/error rate is high, reduce throwing volume and prioritise mechanics + rest — more bad reps ingrain the fault and add arm load for no gain.",
+export const QB_THROW_MONITOR = {
+  /** Week-over-week throw-volume jump that draws a ramp warning (adults). */
+  weeklyVolumeSpikeFactor: 1.4,
+  /** Arm feeling after − before ≤ −this → mechanics-fatigue flag. */
+  armFeelingDropFlag: 2,
+  youth: {
+    /** Max sensible week-over-week volume increase for <18. */
+    maxWeeklyVolumeIncreaseFactor: 1.2,
+    /** Minimum full no-throw days per week for <18. */
+    minNoThrowDaysPerWeek: 2,
+  },
+  note: "Monitor the ramp and the arm's own signals — never a borrowed pitch count. Arm PAIN (not fatigue) in any athlete is a clinician call, not an app decision.",
 } as const;

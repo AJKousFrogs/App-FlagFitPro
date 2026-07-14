@@ -148,6 +148,10 @@ async function addSprintMainSession({
       "short_acceleration",
       "resisted_acceleration",
       "flying_sprints",
+      // COD dosing (2026-07-14, audit §3.6): flag is a CUTTING sport — decel/
+      // change-of-direction work stays in EVERY sprint phase, not just base
+      // blocks (Grewal 2025: 18/24 injuries on pivot/cut/stop).
+      "deceleration_training",
     ];
     useHillSprints = false;
   } else if (sprintPhase === "speed_development") {
@@ -156,6 +160,8 @@ async function addSprintMainSession({
       "flying_sprints",
       "in_and_out_sprints",
       "repeated_sprint_ability",
+      // COD year-round (audit §3.6) — see power_development note.
+      "deceleration_training",
     ];
     useHillSprints = false;
   } else if (sprintPhase === "competition") {
