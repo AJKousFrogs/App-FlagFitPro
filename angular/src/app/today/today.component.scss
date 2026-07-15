@@ -761,6 +761,66 @@
     color: var(--brand-500);
   }
 
+  /* perf-viz tracking tiles (2026-07-15) — readiness ring + 4 KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.9fr) repeat(4, 1fr);
+    gap: var(--sp-4);
+    align-items: stretch;
+  }
+  .ring-card {
+    background: linear-gradient(180deg, var(--surface-2, var(--surface)), var(--surface));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .ring-card.empty:hover {
+    border-color: var(--line-strong);
+  }
+  .ring-link {
+    font-family: var(--font-mono, "JetBrains Mono"), monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    text-decoration: none;
+    text-align: center;
+  }
+  .ring-link:hover {
+    color: var(--brand-500);
+  }
+  .kpi-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  @media (max-width: 860px) {
+    .kpi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ring-card {
+      grid-column: span 2;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: var(--sp-4) var(--sp-5);
+    }
+  }
+  @media (max-width: 480px) {
+    .kpi-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ring-card {
+      grid-column: span 2;
+    }
+  }
+
   /* body check */
   .bodycheck {
     display: grid;

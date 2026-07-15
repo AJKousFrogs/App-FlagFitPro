@@ -75,6 +75,20 @@ export interface ReadinessResponse {
     sleep: number;
     proximity: number;
   };
+  /** Cohort that scored this readiness (audit batch 4). */
+  cohort?: string;
+  /** Graded ACWR trust (audit C2/C3). */
+  acwrConfidence?: "high" | "medium" | "low";
+  acwrState?: "normal" | "building_base";
+  /** Personal readiness cut-points that classified today's level (audit C6). */
+  baseline?: {
+    low: number;
+    high: number;
+    personalized: boolean;
+    n: number;
+    mean: number | null;
+    sd: number | null;
+  };
   calibrationNote?: string;
 }
 

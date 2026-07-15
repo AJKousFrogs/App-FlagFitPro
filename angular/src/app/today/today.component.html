@@ -258,87 +258,69 @@
       </section>
     </div>
 
-    <!-- ============ TRACKING TILES ============ -->
-    <div class="grid-4">
-      <a class="tile" routerLink="/wellness">
-        <span class="k">Readiness</span>
-        @if (readinessBand(); as b) {
-          <span class="v"
-            >{{ readinessScore() | number: "1.0-0" }}
-            <span class="pill pill--{{ b.cls === 'good' ? 'ok' : 'ghost' }}">{{
-              b.label.split("·")[1]
-            }}</span></span
+    <!-- ============ TRACKING TILES (perf-viz) ============ -->
+    <div class="kpi-grid">
+      @if (readinessScore() !== null) {
+        <div class="ring-card">
+          <app-ff-readiness-ring
+            [score]="readinessScore()"
+            [baseline]="readinessBaseline()"
+            [size]="118"
+          />
+          <a class="ring-link" routerLink="/wellness"
+            >Readiness · log a check-in →</a
           >
-        } @else {
-          <span class="v"
-            >— <span class="pill pill--ghost">not logged</span></span
-          >
-        }
-        @if (readinessSpark(); as pts) {
-          <svg
-            class="spark"
-            width="120"
-            height="26"
-            viewBox="0 0 120 26"
-            fill="none"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <defs>
-              <linearGradient id="tdSparkLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" style="stop-color: var(--chart-stroke-a)" />
-                <stop offset="1" style="stop-color: var(--chart-stroke-b)" />
-              </linearGradient>
-            </defs>
-            <polyline stroke="url(#tdSparkLine)" [attr.points]="pts" />
-          </svg>
-        }
-        <span class="note">Log a check-in to keep this fresh.</span>
+        </div>
+      } @else {
+        <a class="ring-card empty" routerLink="/wellness">
+          <app-ff-readiness-ring [score]="null" [size]="118" />
+          <span class="ring-link">Log today's check-in →</span>
+        </a>
+      }
+
+      <a routerLink="/wellness" class="kpi-link">
+        <app-ff-kpi-card
+          label="Readiness"
+          [value]="readinessScore() !== null ? (readinessScore() | number: '1.0-0') : null"
+          unit="/ 100"
+          emptyHint="not logged"
+          [delta]="readinessDelta()"
+          [series]="readinessSeries()"
+        />
       </a>
 
-      <a class="tile" routerLink="/wellness">
-        <span class="k">Sleep last night</span>
-        @if (sleepHours(); as h) {
-          <span class="v">{{ h }}h</span>
-          <div class="bar"><i [style.width.%]="(h / 8) * 100"></i></div>
-          <span class="note"
-            >Target <strong>8h</strong>. The biggest recovery lever — worth more
-            than any supplement.</span
-          >
-        } @else {
-          <span class="v">—</span>
-          <span class="note">Log your check-in to track sleep.</span>
-        }
+      <a routerLink="/wellness" class="kpi-link">
+        <app-ff-kpi-card
+          label="Sleep"
+          [value]="sleepHours()"
+          unit="h / night"
+          emptyHint="log check-in"
+          [delta]="sleepDelta()"
+          deltaUnit="h"
+          [series]="sleepSeries()"
+        />
       </a>
 
-      <a class="tile" routerLink="/acwr">
-        <span class="k">Load (ACWR)</span>
-        @if (acwrBand(); as b) {
-          <span class="v"
-            >{{ acwrRatio() | number: "1.2-2"
-            }}<span class="pill pill--ghost">{{
-              b.label.split("·")[1]
-            }}</span></span
-          >
-        } @else {
-          <span class="v"
-            >— <span class="pill pill--ghost">building</span></span
-          >
-          <div class="bar"><i [style.width.%]="acwrReliabilityPct()"></i></div>
-        }
-        <span class="note"
-          >No ratio until the data supports one.
-          <strong>{{ 21 - daysLogged() }} days to go.</strong></span
-        >
+      <a routerLink="/acwr" class="kpi-link">
+        <app-ff-kpi-card
+          label="Load · ACWR"
+          [value]="acwrSufficient() && acwrRatio() != null ? (acwrRatio() | number: '1.2-2') : null"
+          unit="ratio"
+          [emptyHint]="(21 - daysLogged()) + 'd to go'"
+          [delta]="acwrDelta()"
+          [deltaDigits]="2"
+          [series]="acwrSeries()"
+        />
       </a>
 
-      <a class="tile" routerLink="/settings">
-        <span class="k">Body mass</span>
-        <span class="v">— <span class="pill pill--ghost">sync</span></span>
-        <span class="note"
-          >Connect a scale in Settings to track weight trends and flag acute
-          drops.</span
-        >
+      <a routerLink="/stats" class="kpi-link">
+        <app-ff-kpi-card
+          label="Body mass"
+          [value]="null"
+          emptyHint="add in Stats"
+          chip="track"
+          chipTone="neutral"
+        />
       </a>
     </div>
 
