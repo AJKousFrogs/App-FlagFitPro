@@ -114,9 +114,19 @@ export class LandingComponent {
     this.busy.set(true);
     this.error.set(null);
     try {
-      const { data, error } = await this.supabase.signUp(email, pwd, {
-        fullName: name,
-      });
+      const { data, error } = await this.supabase.signUp(
+        email,
+        pwd,
+        { fullName: name },
+        {
+          // The confirm link must return the player HERE, not the Supabase
+          // project's Site URL (which pointed at localhost — 2026-07-15
+          // production bug: players confirmed fine server-side but landed on
+          // a dead localhost page and gave up). /login matches the resend
+          // flow in verify-email.component.
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
+      );
       if (error) {
         this.error.set(error.message ?? "Sign-up failed");
         return;
