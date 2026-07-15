@@ -14,6 +14,7 @@ import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 import { AcwrTrendComponent } from "../shared/acwr-trend.component";
 import { LoadCalendarComponent } from "../shared/load-calendar.component";
 import { LoadDay } from "../shared/utils/load-calendar.util";
+import { LoadTimelineComponent } from "../shared/perf-viz";
 
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
@@ -50,6 +51,7 @@ const clamp = (v: number, lo: number, hi: number) =>
     ReadinessTrendComponent,
     AcwrTrendComponent,
     LoadCalendarComponent,
+    LoadTimelineComponent,
     RouterLink,
     LucideAngularModule,
   ],
@@ -70,6 +72,30 @@ export class StatsComponent {
   readonly loadDays = signal(35);
   readonly loadLoading = signal(true);
   readonly hasLoad = computed(() => this.loadSeries().length > 0);
+  /**
+   * Load timeline (bars + acute/chronic EWMA) from the last 21 days of the
+   * daily-load series — the acute:chronic STORY the calendar heatmap can't
+   * show. EWMA parameters mirror the engine (acute λ=0.25 / chronic λ≈0.09);
+   * this is a display derivation of the same canonical daily AU, not a second
+   * ACWR authority.
+   */
+  readonly loadTimeline = computed(() => {
+    const days = [...this.loadSeries()]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-21);
+    const daily = days.map((d) => d.load);
+    const acute: number[] = [];
+    const chronic: number[] = [];
+    let a = 0;
+    let c = 0;
+    daily.forEach((v, i) => {
+      a = i === 0 ? v : 0.25 * v + 0.75 * a;
+      c = i === 0 ? v : (2 / 22) * v + (20 / 22) * c;
+      acute.push(Math.round(a));
+      chronic.push(Math.round(c));
+    });
+    return { daily, acute, chronic, enough: daily.length > 1 };
+  });
   readonly daysLogged = signal(0);
   /** True until the 28-day history fetch settles — drives the readiness chart
    * skeleton. Without it the chart falls to its "building up" empty state on
