@@ -202,13 +202,24 @@ Weight redistribution — no fabricated components:
   Grade 2 → −10; minor/Grade 1 → −5. Highest applicable penalty wins (max, not
   sum).
 
-**Cut-points** (starting points — teams should calibrate):
+**Cut-points — PERSONAL since 2026-07-15 (audit C6/§4.2):**
+`utils/readiness-baseline.js` `computePersonalCutoffs`. The athlete's trailing
+**28-day** score distribution sets z-cuts — low at `mean − 1.5σ`, high at
+`mean + 0.5σ` — blended toward the population priors (55/75) by
+`w = n/(n + 14)` (day 1 = pure prior; two weeks of daily scores ≈
+half-personal). Safeguards: < **10** observations → priors verbatim (Law #7);
+σ floored at **5**; low clamped to [40, 65], high to [65, 85], minimum gap
+**10**. The classified level/suggestion uses the personal cuts; the response
+carries `baseline {low, high, personalized, n, mean, sd}`. **The engine's
+day-0 demotion keeps the ABSOLUTE 55 floor** (`READINESS_LOW`) — a deep
+absolute collapse always demotes the day; personalization adds relative
+sensitivity, never removes the net.
 
-| Score | Level | Suggestion |
+| Score (personal cuts; priors shown) | Level | Suggestion |
 |---|---|---|
-| > 75 (and not injury-capped) | high | push |
-| 55 – 75 | moderate | maintain |
-| < 55 | low | deload |
+| > high (prior 75; not injury-capped) | high | push |
+| low – high (priors 55–75) | moderate | maintain |
+| < low (prior 55) | low | deload |
 
 **Safety override hook:** fires on ACWR > 1.5 (any known ACWR — never
 under-fires on the high side), or on ACWR < 0.8 when confidence ≥ medium AND

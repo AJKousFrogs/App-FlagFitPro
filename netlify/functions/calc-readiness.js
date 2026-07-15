@@ -19,6 +19,10 @@ import {
 } from "./utils/structured-logger.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
 import { resolveCohort } from "./utils/cohort.js";
+import {
+  computePersonalCutoffs,
+  fetchBaselineScores,
+} from "./utils/readiness-baseline.js";
 import { calculateWellnessIndex } from "./utils/readiness-score.js";
 import { normalizeSeverity } from "./utils/periodization-input-helpers.js";
 
@@ -775,17 +779,32 @@ const handler = async (event, context) => {
         Math.max(0, Math.min(100, rawScore - travelPenalty - injuryPenalty)),
       );
 
-      // Evidence-based cut-points (starting points - require team calibration)
-      // These thresholds are based on common athlete monitoring scales
-      // Teams should calibrate using their own injury/performance history over time
-      const LOW_MAX = 55; // Below this = Low readiness → Deload
-      const MODERATE_MAX = 75; // Below this = Moderate → Maintain, Above = High → Push
+      // Cut-points (2026-07-15, audit C6): PERSONAL, not population-absolute.
+      // The athlete's trailing 28-day score distribution sets z-based cuts
+      // (low = mean − 1.5σ, high = mean + 0.5σ) blended toward the 55/75
+      // population priors by w = n/(n+14) — day 1 is pure prior, two weeks of
+      // daily scores is half-personal. A chronically-8h sleeper and a
+      // chronically-6h sleeper stop being scored on the same ruler. Fewer
+      // than 10 observations → the priors unchanged (nothing fabricated).
+      // The engine's day-0 demotion keeps the ABSOLUTE 55 floor regardless —
+      // personalization adds relative sensitivity, never removes the net.
+      const LOW_MAX = 55; // population prior (and the engine's absolute floor)
+      const MODERATE_MAX = 75; // population prior
+      const baselineScores = await fetchBaselineScores(
+        supabaseAdmin,
+        athleteId,
+        dayStr,
+      );
+      const cuts = computePersonalCutoffs(baselineScores, {
+        low: LOW_MAX,
+        high: MODERATE_MAX,
+      });
 
       let level, suggestion;
-      if (score > MODERATE_MAX && !injuryForcedModerate) {
+      if (score > cuts.high && !injuryForcedModerate) {
         level = "high";
         suggestion = "push";
-      } else if (score >= LOW_MAX) {
+      } else if (score >= cuts.low) {
         level = "moderate";
         suggestion = "maintain";
       } else {
@@ -849,11 +868,13 @@ const handler = async (event, context) => {
         }
       }
 
-      // Calibration note for teams
-      const calibrationNote =
-        `Readiness thresholds (Low: <${LOW_MAX}, Moderate: ${LOW_MAX}-${MODERATE_MAX}, High: >${MODERATE_MAX}) ` +
-        `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
-        `injury and performance history over time for optimal accuracy.`;
+      // Calibration note — honest about which ruler scored today (C6)
+      const calibrationNote = cuts.personalized
+        ? `Readiness thresholds are personalized to YOUR trailing ${cuts.n}-day baseline ` +
+          `(mean ${cuts.mean}, low < ${cuts.low}, high > ${cuts.high}), blended with the ` +
+          `population starting points (${LOW_MAX}/${MODERATE_MAX}).`
+        : `Readiness thresholds (Low: <${LOW_MAX}, Moderate: ${LOW_MAX}-${MODERATE_MAX}, High: >${MODERATE_MAX}) ` +
+          `are population starting points — they personalize to your own baseline once ~10 days of scores exist.`;
 
       requestLogger.info("readiness_calculation_completed", {
         athlete_id: athleteId,
@@ -874,6 +895,15 @@ const handler = async (event, context) => {
         acwrState: acwrResult.state,
         /** The cohort whose bands scored this readiness (batch 4). */
         cohort: cohort.presetId,
+        /** Personal cut-points that classified today's level (audit C6). */
+        baseline: {
+          low: cuts.low,
+          high: cuts.high,
+          personalized: cuts.personalized,
+          n: cuts.n,
+          mean: cuts.mean,
+          sd: cuts.sd,
+        },
         acuteLoad: Math.round(acuteLoad * 100) / 100,
         chronicLoad: Math.round(chronicLoad * 100) / 100,
         dataMode, // 'full' or 'reduced'
