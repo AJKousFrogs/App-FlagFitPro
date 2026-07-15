@@ -30,7 +30,7 @@ import { bars, linePath, type Bar } from "./perf-viz.geometry";
           </linearGradient>
         </defs>
         @for (g of gridLines(); track g.v) {
-          <line class="gl" x1="{{ L }}" [attr.x2]="W - R" [attr.y1]="g.y" [attr.y2]="g.y" />
+          <line class="gl" [attr.x1]="L" [attr.x2]="W - R" [attr.y1]="g.y" [attr.y2]="g.y" />
           <text class="ax" [attr.x]="L - 6" [attr.y]="g.y + 3" text-anchor="end">
             {{ g.v }}
           </text>

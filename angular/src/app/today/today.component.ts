@@ -452,8 +452,11 @@ export class TodayComponent {
     return Math.round(d * f) / f;
   }
 
-  /** Days of readiness history logged — feeds the ACWR "days to go" hint. */
+  /** Days of readiness history logged — the ACWR-reliability progress (need ~21). */
   readonly daysLogged = computed(() => this.readinessSvc.history().length);
+  readonly acwrReliabilityPct = computed(() =>
+    Math.min(100, Math.round((this.daysLogged() / 21) * 100)),
+  );
   readonly acwrSufficient = this.acwrSvc.sufficientDataForACWR;
   readonly acwrRatio = this.acwrSvc.acwrRatio;
 
