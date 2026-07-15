@@ -7,6 +7,11 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import {
+  ReadinessRingComponent,
+  WeightTrendComponent,
+  type WeightPoint,
+} from "../../shared/perf-viz";
 
 import { ApiService } from "../../core/services/api.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -73,7 +78,12 @@ const RTP_PHASES = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Cleared"];
  */
 @Component({
   selector: "app-athlete-detail",
-  imports: [LucideAngularModule, RouterLink],
+  imports: [
+    LucideAngularModule,
+    RouterLink,
+    ReadinessRingComponent,
+    WeightTrendComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./athlete-detail.component.html",
 })
@@ -201,6 +211,14 @@ export class AthleteDetailComponent {
     const word = v < 55 ? "deload" : v <= 75 ? "maintain" : "push";
     return { label: `${v} · ${word}`, cls };
   });
+
+  /** Body-mass points (chronological) for the weight-fluctuation chart —
+   *  the coach/nutritionist view of the athlete's own shared measurements. */
+  readonly weightPoints = computed<WeightPoint[]>(() =>
+    this.body()
+      .filter((b) => b.date && Number.isFinite(b.weight))
+      .map((b) => ({ date: b.date as string, kg: b.weight as number })),
+  );
   injuryBand(status?: string): string {
     const s = (status ?? "").toLowerCase();
     if (/(active|acute)/.test(s)) return "danger";
