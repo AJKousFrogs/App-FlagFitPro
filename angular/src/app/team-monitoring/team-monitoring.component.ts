@@ -7,8 +7,13 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import {
+  ScatterComponent,
+  type ScatterPoint,
+} from "../shared/perf-viz";
 import { AvatarComponent } from "../shared/avatar.component";
 import { ApiService } from "../core/services/api.service";
+
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 interface Flags {
@@ -71,7 +76,7 @@ interface Payload {
 @Component({
   selector: "app-team-monitoring",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LucideAngularModule, AvatarComponent],
+  imports: [RouterLink, LucideAngularModule, AvatarComponent, ScatterComponent],
   templateUrl: "./team-monitoring.component.html",
   styleUrl: "./team-monitoring.component.scss",
 })
@@ -86,6 +91,41 @@ export class TeamMonitoringComponent {
   readonly mean = computed(() => this.payload()?.mean ?? null);
   readonly visibleCount = computed(() => this.payload()?.visibleCount ?? 0);
   readonly hasTeam = computed(() => !!this.payload()?.teamId);
+
+  /**
+   * Load × readiness scatter points (audit §5.2 — the "who needs a conversation"
+   * view). Only athletes with BOTH a session-load and a readiness value plot;
+   * consent-pending / no-check-in rows are absent, never fabricated at 0.
+   */
+  readonly scatterPoints = computed<ScatterPoint[]>(() =>
+    this.rows()
+      .filter(
+        (r) =>
+          typeof r.load?.srpe === "number" &&
+          typeof r.wellness?.readiness === "number",
+      )
+      .map((r) => ({
+        label: r.name?.split(" ")[0] || `#${r.jersey ?? "?"}`,
+        x: r.load!.srpe as number,
+        y: r.wellness!.readiness as number,
+      })),
+  );
+
+  /** Squad readiness distribution — counts by band (deload/monitor/ready). */
+  readonly readinessDist = computed(() => {
+    let deload = 0;
+    let monitor = 0;
+    let ready = 0;
+    let none = 0;
+    for (const r of this.rows()) {
+      const s = r.wellness?.readiness;
+      if (typeof s !== "number") none++;
+      else if (s < 55) deload++;
+      else if (s <= 75) monitor++;
+      else ready++;
+    }
+    return { deload, monitor, ready, none };
+  });
 
   constructor() {
     this.api.get<Payload>("/api/team-monitoring").subscribe({
