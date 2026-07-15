@@ -326,6 +326,17 @@
   </div>
 
   <!-- readiness (server-canonical) -->
+  @if (wellnessBarRows().length) {
+    <div class="section-h"><h2>Today vs your baseline</h2></div>
+    <div class="card">
+      <app-ff-wellness-bars [rows]="wellnessBarRows()" />
+      <p class="note" style="margin: var(--s-3) 0 0">
+        The tick marks your own recent norm. Change against it matters more than
+        any single day's number.
+      </p>
+    </div>
+  }
+
   <div class="section-h"><h2>Your readiness</h2></div>
   @if (readinessPct(); as pct) {
     <div class="hero">

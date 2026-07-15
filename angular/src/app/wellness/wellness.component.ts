@@ -12,6 +12,10 @@ import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
 import { TopbarComponent } from "../shared/topbar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
+import {
+  WellnessBarsComponent,
+  type WellnessRow,
+} from "../shared/perf-viz";
 
 /** Shape of a row from GET /api/supplements/recent. */
 interface SuppLog {
@@ -41,6 +45,7 @@ import { WELLNESS } from "../core/constants/wellness.constants";
     NgOptimizedImage,
     TopbarComponent,
     ReadinessTrendComponent,
+    WellnessBarsComponent,
     RouterLink,
     LucideAngularModule,
   ],
@@ -89,6 +94,38 @@ export class WellnessComponent {
   readonly reportingTight = signal(false);
   readonly tightMsg = signal<string | null>(null);
   readonly activeInjuries = this.injurySvc.active;
+
+  /**
+   * Wellness items for the perf-viz bars: today's values on a 0–100 scale
+   * (the check-in is 1–10 → ×10) against the athlete's own trailing average
+   * (a tick). Soreness + stress are higher-is-worse (warm fill, inverted
+   * delta). Null items are skipped — never a fabricated bar (Law #7).
+   */
+  readonly wellnessBarRows = computed<WellnessRow[]>(() => {
+    const latest = this.wellnessSvc.latestWellnessEntry();
+    const avg = this.wellnessSvc.averages();
+    if (!latest) return [];
+    const scale = (v: number | null | undefined) =>
+      typeof v === "number" && Number.isFinite(v)
+        ? Math.min(100, Math.max(0, v * 10))
+        : null;
+    const rows: WellnessRow[] = [];
+    const push = (
+      label: string,
+      value: number | null | undefined,
+      baseline: number | null | undefined,
+      invert = false,
+    ) => {
+      const v = scale(value);
+      if (v === null) return;
+      rows.push({ label, value: v, baseline: scale(baseline), invert });
+    };
+    push("Sleep", latest.sleep, avg?.sleep);
+    push("Energy", latest.energy, avg?.energy);
+    push("Soreness", latest.soreness, avg?.soreness, true);
+    push("Stress", latest.stress, avg?.stress, true);
+    return rows;
+  });
 
   setTightSeverity(s: InjurySeverity): void {
     this.tightSeverity.set(s);
