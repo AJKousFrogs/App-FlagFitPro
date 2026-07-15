@@ -19,6 +19,10 @@ import { WellnessService } from "../core/services/wellness.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
 import { LoggerService } from "../core/services/logger.service";
 import { resolveUnloggedPractice } from "./unlogged-practice";
+import {
+  KpiCardComponent,
+  ReadinessRingComponent,
+} from "../shared/perf-viz";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
 const QUOTES: readonly [string, string][] = [
@@ -123,6 +127,8 @@ interface Supplement {
     DatePipe,
     DecimalPipe,
     UpperCasePipe,
+    KpiCardComponent,
+    ReadinessRingComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> food glyphs
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -395,60 +401,61 @@ export class TodayComponent {
   // ── tracking tiles ──────────────────────────────────────────────────────────
   readonly readiness = this.readinessSvc.current;
   readonly readinessScore = computed(() => this.readiness()?.score ?? null);
-  readonly readinessBand = computed<{ label: string; cls: string } | null>(
-    () => {
-      const s = this.readinessScore();
-      if (s == null) return null;
-      const v = Math.round(s);
-      const cls = v < 55 ? "danger" : v <= 75 ? "caution" : "good";
-      const word = v < 55 ? "deload" : v <= 75 ? "maintain" : "ready";
-      return { label: `${v} · ${word}`, cls };
-    },
-  );
-
-  /** Readiness sparkline points from the 28-day history (SVG 120×26). */
-  readonly readinessSpark = computed(() => {
-    const scores = this.readinessSvc
-      .history()
-      .map((h) => h.score)
-      .filter((v): v is number => Number.isFinite(v))
-      .slice(-12);
-    if (scores.length < 2) return "";
-    const max = Math.max(...scores, 100);
-    const min = Math.min(...scores, 0);
-    const span = max - min || 1;
-    return scores
-      .map((v, i) => {
-        const x = (i / (scores.length - 1)) * 118 + 1;
-        const y = 22 - ((v - min) / span) * 18;
-        return `${x.toFixed(0)},${y.toFixed(0)}`;
-      })
-      .join(" ");
-  });
 
   readonly sleepHours = computed(() => {
     const e = this.wellnessSvc.latestWellnessEntry();
     return e?.sleepHours ?? e?.sleep ?? null;
   });
 
-  /** Days of readiness history logged — the ACWR-reliability progress (need ~21). */
-  readonly daysLogged = computed(() => this.readinessSvc.history().length);
-  readonly acwrReliabilityPct = computed(() =>
-    Math.min(100, Math.round((this.daysLogged() / 21) * 100)),
+  // ── perf-viz inputs (2026-07-15) — map service signals to the premium
+  //    dashboard components; every series is real logged data, never fabricated.
+  /** Personal readiness baseline mean (audit C6) for the ring tick. */
+  readonly readinessBaseline = computed(
+    () => this.readiness()?.baseline?.mean ?? null,
   );
+  /** Chronological readiness scores (oldest → newest) for the ring sparkline. */
+  readonly readinessSeries = computed(() =>
+    [...this.readinessSvc.history()]
+      .filter((h) => Number.isFinite(h.score))
+      .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime())
+      .map((h) => h.score)
+      .slice(-14),
+  );
+  /** Latest-vs-previous readiness delta. */
+  readonly readinessDelta = computed(() => this.lastDelta(this.readinessSeries()));
 
+  /** ACWR series from the same readiness history rows (they carry acwr). */
+  readonly acwrSeries = computed(() =>
+    [...this.readinessSvc.history()]
+      .filter((h) => Number.isFinite(h.acwr))
+      .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime())
+      .map((h) => h.acwr)
+      .slice(-14),
+  );
+  readonly acwrDelta = computed(() => this.lastDelta(this.acwrSeries(), 2));
+
+  /** Sleep-hours history (last ~14 check-ins) for the sleep KPI sparkline. */
+  readonly sleepSeries = computed(() =>
+    this.wellnessSvc
+      .wellnessData()
+      .map((w) => w.sleepHours ?? w.sleep)
+      .filter((v): v is number => Number.isFinite(v))
+      .slice(-14),
+  );
+  readonly sleepDelta = computed(() => this.lastDelta(this.sleepSeries()));
+
+  /** Latest − previous of a series, rounded to `digits`. Null if < 2 points. */
+  private lastDelta(series: readonly number[], digits = 1): number | null {
+    if (series.length < 2) return null;
+    const d = series[series.length - 1] - series[series.length - 2];
+    const f = 10 ** digits;
+    return Math.round(d * f) / f;
+  }
+
+  /** Days of readiness history logged — feeds the ACWR "days to go" hint. */
+  readonly daysLogged = computed(() => this.readinessSvc.history().length);
   readonly acwrSufficient = this.acwrSvc.sufficientDataForACWR;
   readonly acwrRatio = this.acwrSvc.acwrRatio;
-  readonly acwrBand = computed<{ label: string; cls: string } | null>(() => {
-    if (!this.acwrSufficient()) return null;
-    const r = this.acwrRatio();
-    if (r == null) return null;
-    const v = r.toFixed(2);
-    if (r > 1.5) return { label: `${v} · danger`, cls: "danger" };
-    if (r > 1.3) return { label: `${v} · elevated`, cls: "caution" };
-    if (r < 0.8) return { label: `${v} · under`, cls: "caution" };
-    return { label: `${v} · sweet spot`, cls: "good" };
-  });
 
   // ── body check ──────────────────────────────────────────────────────────────
   readonly bodyGroups = ["Lower body", "Trunk", "Upper body"] as const;
