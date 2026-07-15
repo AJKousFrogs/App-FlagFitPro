@@ -29,10 +29,10 @@ describe("readiness formula unification: shared weights, S6 preserved", () => {
     expect(WELLNESS_REQUIRED_BLEND).toBe(0.6);
   });
 
-  it("calculateWellnessScore matches calculateWellnessIndex's proportions on a 1-10 input", () => {
-    // Same raw values fed to both: the DB-sourced index (1-5 bucketed) and the
-    // check-in-safe direct scorer (explicit scale=10, no bucket loss) should land
-    // within a few points of each other — same weighting, different precision.
+  it("calculateWellnessScore matches calculateWellnessIndex EXACTLY on a 1-10 input (C5)", () => {
+    // 2026-07-15 (C5): the index path normalizes linearly from raw 1-10 now —
+    // identical math to the direct scorer, so the old ±6 bucket-quantization
+    // tolerance collapses to rounding (±1).
     const raw = {
       sleep_quality: 8,
       soreness: 3,
@@ -46,7 +46,7 @@ describe("readiness formula unification: shared weights, S6 preserved", () => {
       { scale: 10 },
     );
     expect(Math.abs(indexResult.subscore - directResult)).toBeLessThanOrEqual(
-      6,
+      1,
     );
   });
 
