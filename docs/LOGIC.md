@@ -275,13 +275,18 @@ heuristic tier) · else/unknown age → adult (0.8/1.3/1.5). Age from the shared
 explicit `setActivePreset()` override wins until cleared. Competitive tier
 never changes safety thresholds.
 
-The backend risk classifier remains **population-blind** (one adult baseline).
-The frontend tightens per cohort as above. The drift guard enforces only the
-**safe direction** — the client may be STRICTER than the server, never laxer
-(a lax client would tell an athlete "safe" while the server sees risk = an
-injury vector). Making the backend cohort-aware is the migration target — it
-changes the canonical readiness number per cohort, so it ships as its own PR
-with the full before/after safety treatment.
+**The backend readiness score is COHORT-AWARE since 2026-07-14 (batch 4 —
+the migration this section used to point at):** `calc-readiness` resolves the
+athlete's cohort server-side (`utils/cohort.js` — same derivation rule +
+thresholds as the client, byte-equality drift-guarded in
+`acwr-config-drift.test.js`) and scores the workload component + safety
+trigger against the cohort's bands. Resolution failure → adult baseline,
+never a blocked calculation. **Display lanes without an athlete context**
+(load-management, smart-training-recommendations, the compute-acwr series)
+stay on the adult `classifyAcwrZone` default; the client tightens those per
+the safe-direction rule (stricter allowed, laxer never). The engine's own
+day-0 ACWR-danger override also remains adult (1.5) — parity-locked; a
+cohort-aware engine threshold is a future parity-suite change.
 
 ### 10b. QB throwing monitor (2026-07-14, audit §5)
 

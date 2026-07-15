@@ -123,6 +123,10 @@ is ever active; youth/RTP are orphaned pending v3 M0 wiring, see SOT §5a):
 Assignment is **derived** (`derivePresetId(ageYears, hasActiveRtp)`, audit
 §4.1 — no longer orphaned): RTP > youth > masters > adult; unknown age →
 adult (the server baseline). Manual override available, wins until cleared.
+**Server mirror (batch 4):** `utils/cohort.js` (`deriveCohortPresetId` +
+`COHORT_ACWR_THRESHOLDS`) — byte-equality with the client presets is
+CI-enforced (`acwr-config-drift.test.js`). `classifyAcwrZone(acwr,
+thresholds?)` accepts cohort bands; omitted → adult (display lanes).
 
 Safe-direction rule (LOGIC §10): the client may classify STRICTER than the
 server, never laxer.
@@ -138,19 +142,22 @@ The engine's `ACWR_UNDER / ACWR_ELEVATED / ACWR_DANGER` = the adult preset's
 deduction from 100:
 
 **Workload (ACWR-based)** — only when ACWR is known AND confidence ≥ medium
-(§2; low-confidence/`building_base` redistribute like a null ACWR). The
-undertraining boundary was aligned to **0.8** on 2026-07-14 (audit C1 — 0.7
-here vs 0.8 in the zones/trigger was drift). **Taper dampening** (audit §1.1,
-Wang 2020): within **168 h** of the next game the < 0.8 deduction and the
-low-side safety trigger are suppressed — a taper's volume cut IS the plan, not
-detraining; high-side deductions always stand.
+(§2; low-confidence/`building_base` redistribute like a null ACWR).
+**Cohort-aware since 2026-07-14 (batch 4):** boundaries come from the
+athlete's cohort bands (`utils/cohort.js`, drift-guarded against the client
+presets); the top tier sits at `dangerHigh + 0.3` (mirrors the adult 1.5→1.8
+gap). **Taper dampening** (audit §1.1, Wang 2020): within **168 h** of the
+next game the `< sweetSpotLow` deduction and the low-side safety trigger are
+suppressed — a taper's volume cut IS the plan; high-side deductions always
+stand. The safety-trigger hook fires at `> dangerHigh` (cohort) on the high
+side.
 
-| Condition | Deduction |
+| Condition (cohort bands; adult shown) | Deduction |
 |---|---|
-| ACWR > 1.8 | −40 |
-| ACWR > 1.5 | −30 |
-| ACWR > 1.3 | −15 |
-| ACWR < 0.8 (and > 168 h to next game) | −10 |
+| ACWR > dangerHigh + 0.3 (adult 1.8) | −40 |
+| ACWR > dangerHigh (adult 1.5; youth/masters 1.4; RTP 1.3) | −30 |
+| ACWR > sweetSpotHigh (adult 1.3; youth/masters 1.2; RTP 1.1) | −15 |
+| ACWR < sweetSpotLow (adult/youth/masters 0.8; RTP 0.7) and > 168 h to next game | −10 |
 
 **Wellness Index** — `calculateWellnessIndex` subscore (§4); fallback 60 when
 the subscore is non-finite.

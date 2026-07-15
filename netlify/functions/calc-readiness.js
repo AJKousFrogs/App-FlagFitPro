@@ -18,6 +18,7 @@ import {
   createLogger,
 } from "./utils/structured-logger.js";
 import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import { resolveCohort } from "./utils/cohort.js";
 import { calculateWellnessIndex } from "./utils/readiness-score.js";
 import { normalizeSeverity } from "./utils/periodization-input-helpers.js";
 
@@ -515,6 +516,12 @@ const handler = async (event, context) => {
       // penalty and (b) trip the acwr<0.8 safety override on day one — both false.
       const acwr = acwrResult.acwr;
       const hasAcwr = isFiniteNumber(acwr);
+      // Cohort-aware boundaries (2026-07-14, batch 4 — completes LOGIC §10's
+      // migration): youth/masters/RTP athletes are no longer scored against
+      // the adult bands. Tightening-only vs adult (safe direction); resolution
+      // failure → adult baseline, never a blocked calculation.
+      const cohort = await resolveCohort(supabaseAdmin, athleteId);
+      const bands = cohort.thresholds;
       // Graded confidence (audit C2): below 8 loaded days in the 28-day span the
       // ratio is noise for a 2-3×/week amateur — it INFORMS (displayed with its
       // confidence) but does not score readiness; its weight redistributes like
@@ -612,15 +619,18 @@ const handler = async (event, context) => {
       // suppressed. High-side deductions always stand (a pre-game spike is
       // still dangerous).
       const inTaperWindow = gameProximityHours <= 168;
+      // Deduction boundaries come from the athlete's cohort (adult
+      // 1.3/1.5/1.8/0.8; youth+masters 1.2/1.4/1.7; RTP 1.1/1.3/1.6/0.7).
+      // The top tier mirrors the adult dangerHigh→critical gap (+0.3).
       let workloadScore = 100;
       if (acwrUsable) {
-        if (acwr > 1.8) {
+        if (acwr > bands.dangerHigh + 0.3) {
           workloadScore -= 40;
-        } else if (acwr > 1.5) {
+        } else if (acwr > bands.dangerHigh) {
           workloadScore -= 30;
-        } else if (acwr > 1.3) {
+        } else if (acwr > bands.sweetSpotHigh) {
           workloadScore -= 15;
-        } else if (acwr < 0.8 && !inTaperWindow) {
+        } else if (acwr < bands.sweetSpotLow && !inTaperWindow) {
           workloadScore -= 10;
         }
       }
@@ -821,8 +831,8 @@ const handler = async (event, context) => {
       // Safety override: Check ACWR danger zone — only when ACWR is actually
       // known (a null ACWR must not fire a false override on a data-less day).
       if (
-        (hasAcwr && acwr > 1.5) ||
-        (acwrUsable && acwr < 0.8 && !inTaperWindow)
+        (hasAcwr && acwr > bands.dangerHigh) ||
+        (acwrUsable && acwr < bands.sweetSpotLow && !inTaperWindow)
       ) {
         requestLogger.info("readiness_acwr_danger_zone_detected", {
           athlete_id: athleteId,
@@ -862,6 +872,8 @@ const handler = async (event, context) => {
         // scored; building_base → no ratio at all, ramp guidance instead.
         acwrConfidence: acwrResult.confidence,
         acwrState: acwrResult.state,
+        /** The cohort whose bands scored this readiness (batch 4). */
+        cohort: cohort.presetId,
         acuteLoad: Math.round(acuteLoad * 100) / 100,
         chronicLoad: Math.round(chronicLoad * 100) / 100,
         dataMode, // 'full' or 'reduced'
