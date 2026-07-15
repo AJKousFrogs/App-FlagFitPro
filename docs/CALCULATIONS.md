@@ -232,11 +232,18 @@ optional — mood **0.50**, stress **0.50** (of the optional block).
 **Blend:** required **60%** / optional **40%** when any optional field is
 present (`WELLNESS_REQUIRED_BLEND = 0.6`).
 
-`calculateWellnessIndex` (readiness path): raw 1–10 inputs are bucketed to 1–5
-via `ceil(v/2)`, then normalized to 20–100 in 20-point steps —
-higher-is-better fields (sleep quality, energy, mood): `20 + (v−1)·20`;
-higher-is-worse fields (soreness, stress) inverted: `100 − (v−1)·20`.
-**Completeness** = available fields / 5 × 100 (drives the §3 data mode).
+`calculateWellnessIndex` (readiness path) — **linear since 2026-07-15 (audit
+C5)**: the subscore normalizes directly from the raw 1–10 values with the SAME
+mapping as the check-in scorer — higher-is-better: `(v/10)·100`;
+higher-is-worse (soreness, stress) inverted: `((10−v)/10)·100`. The old
+`ceil(v/2)` 1–5 bucketing (which made a 7→8 improvement invisible half the
+time) is retired from scoring and kept only for the reported display fields.
+Precondition re-verified before the change (as the code header demanded): the
+wellness UI sliders are hard-bound 1–10 and the endpoint defaults scale=10.
+Typical rows shift ≤ 6 subscore points (≤ ~2 readiness points at the 0.35
+weight); the formula-unification drift test now asserts index ≡ direct scorer
+within ±1. **Completeness** = available fields / 5 × 100 (drives the §3 data
+mode).
 
 `calculateWellnessScore` (check-in path): same weights/blend, but normalizes
 raw values straight to 0–100 on an **explicit** scale (default 10 — the safe

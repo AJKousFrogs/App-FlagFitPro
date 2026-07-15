@@ -9,19 +9,22 @@
 // WELLNESS_OPTIONAL_WEIGHTS / WELLNESS_REQUIRED_BLEND below) — the audit-flagged drift
 // is resolved at the level that mattered (relative importance of each input).
 //
-// The two functions still differ in HOW they turn a raw value into 0-100, and that
-// difference stays intentional, not drift:
-//   - calculateWellnessIndex assumes its DB-sourced inputs are already on a 1-10 scale
-//     (verified: the live Angular wellness UI only ever submits 1-10; a scale marker is
-//     not persisted) and buckets to 1-5 (`scaleTo1to5`) before scoring — UNCHANGED here,
-//     to avoid any risk to the live canonical Today number.
-//   - calculateWellnessScore requires an EXPLICIT scale (the "S6" fix: a bad 0-10 day
-//     must never be misread as a good 1-5 day) and normalizes directly to 0-100 (more
-//     precise — no 1-5 bucket-quantization loss). This is defense-in-depth: the live UI
-//     doesn't exercise the 1-5 path today, but the check-in endpoint's contract still
-//     accepts it, so it must stay scale-safe regardless of what the current UI sends.
-// Do not collapse this remaining difference without re-verifying the live Angular UI
-// still never submits scale:5 — that's the fact this design depends on.
+// 2026-07-15 (audit C5): the remaining normalization difference is COLLAPSED —
+// calculateWellnessIndex now normalizes LINEARLY from the raw 1-10 values (the
+// same v/10 mapping calculateWellnessScore uses), retiring the 1-5 bucket
+// quantization that made a 7→8 sleep improvement invisible half the time.
+// Precondition re-verified before the change, as the previous header demanded:
+//   - wellness.component.html sliders are hard-bound min=1 max=10 (the only
+//     writer UI), and
+//   - wellness-checkin.js defaults scale to 10 (S6 safe direction) — so the
+//     DB rows this index reads are 1-10, always.
+// The reported sleepQuality/soreness/… fields stay 1-5 buckets for display
+// compatibility; only the SUBSCORE math changed (max shift per field ±10 pts
+// at the extremes, typical rows move ≤6 subscore points ⇒ ≤2.1 readiness
+// points at the 0.35 wellness weight — documented in CALC §4).
+//   - calculateWellnessScore still requires an EXPLICIT scale (the "S6" fix)
+//     because the check-in endpoint's CONTRACT accepts scale:5 even though the
+//     live UI never sends it.
 
 const WELLNESS_REQUIRED_WEIGHTS = { sleep: 0.4, soreness: 0.3, energy: 0.3 };
 const WELLNESS_OPTIONAL_WEIGHTS = { mood: 0.5, stress: 0.5 };
@@ -43,38 +46,52 @@ function scaleTo1to5(value) {
  * Modeled on common athlete monitoring scales using 1-5 ratings
  */
 function calculateWellnessIndex(wellness) {
-  // Convert to 1-5 scale
+  // 1-5 buckets are kept ONLY for the reported display fields; scoring is
+  // linear from the raw 1-10 values (C5, 2026-07-15 — see header).
   const sleepQuality = scaleTo1to5(wellness.sleep_quality);
   const soreness = scaleTo1to5(wellness.soreness);
   const energy = scaleTo1to5(wellness.energy);
   const mood = scaleTo1to5(wellness.mood);
   const stress = scaleTo1to5(wellness.stress);
 
+  const rawOrNull = (v) =>
+    typeof v === "number" && !Number.isNaN(v) ? v : null;
+  const norm10 = (v) => (v / 10) * 100;
+  const norm10Inverted = (v) => ((10 - v) / 10) * 100;
+
   // Required fields. The phantom 'fatigue' is removed (D11): it had no column and
   // always equalled soreness, so soreness carried 65% of this subscore. ENERGY is
   // the real recovery/fatigue signal (energy_level) and is promoted to required.
   const requiredFields = [
     {
-      value: sleepQuality,
+      value: rawOrNull(wellness.sleep_quality),
       weight: WELLNESS_REQUIRED_WEIGHTS.sleep,
-      name: "sleepQuality",
+      norm: norm10,
     },
     {
-      value: soreness,
+      value: rawOrNull(wellness.soreness),
       weight: WELLNESS_REQUIRED_WEIGHTS.soreness,
-      name: "soreness",
+      norm: norm10Inverted,
     },
     {
-      value: energy,
+      value: rawOrNull(wellness.energy),
       weight: WELLNESS_REQUIRED_WEIGHTS.energy,
-      name: "energy",
+      norm: norm10,
     },
   ];
 
   // Optional fields (mood, stress)
   const optionalFields = [
-    { value: mood, weight: WELLNESS_OPTIONAL_WEIGHTS.mood, name: "mood" },
-    { value: stress, weight: WELLNESS_OPTIONAL_WEIGHTS.stress, name: "stress" },
+    {
+      value: rawOrNull(wellness.mood),
+      weight: WELLNESS_OPTIONAL_WEIGHTS.mood,
+      norm: norm10,
+    },
+    {
+      value: rawOrNull(wellness.stress),
+      weight: WELLNESS_OPTIONAL_WEIGHTS.stress,
+      norm: norm10Inverted,
+    },
   ];
 
   // Calculate completeness
@@ -84,22 +101,15 @@ function calculateWellnessIndex(wellness) {
   const availableFields = requiredCount + optionalCount;
   const completeness = (availableFields / totalFields) * 100;
 
-  // Calculate subscore from required fields (always available). Invert soreness
-  // (higher = worse); sleepQuality and energy are higher = better.
+  // Subscore from raw 1-10 values, linearly (soreness/stress inverted —
+  // higher is worse). Partial rows still score from whatever exists, with
+  // proportional reweighting, exactly as before.
   let requiredSubscore = 0;
   let requiredWeightSum = 0;
 
   requiredFields.forEach((field) => {
     if (field.value !== null) {
-      let normalizedValue;
-      if (field.name === "soreness") {
-        // Invert: 1 (best) → 100, 5 (worst) → 20
-        normalizedValue = 100 - (field.value - 1) * 20;
-      } else {
-        // Sleep quality: 1 (worst) → 20, 5 (best) → 100
-        normalizedValue = 20 + (field.value - 1) * 20;
-      }
-      requiredSubscore += normalizedValue * field.weight;
+      requiredSubscore += field.norm(field.value) * field.weight;
       requiredWeightSum += field.weight;
     }
   });
@@ -110,15 +120,7 @@ function calculateWellnessIndex(wellness) {
 
   optionalFields.forEach((field) => {
     if (field.value !== null) {
-      let normalizedValue;
-      if (field.name === "stress") {
-        // Invert stress: 1 (no stress) → 100, 5 (very stressed) → 20
-        normalizedValue = 100 - (field.value - 1) * 20;
-      } else {
-        // Mood and energy: 1 (worst) → 20, 5 (best) → 100
-        normalizedValue = 20 + (field.value - 1) * 20;
-      }
-      optionalSubscore += normalizedValue * field.weight;
+      optionalSubscore += field.norm(field.value) * field.weight;
       optionalWeightSum += field.weight;
     }
   });

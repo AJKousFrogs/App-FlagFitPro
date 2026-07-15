@@ -5,7 +5,7 @@
  * Tracks preset usage and allows for preset switching.
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, effect, inject, signal, computed } from "@angular/core";
 import { EvidencePreset } from "../config/evidence-config";
 import {
   getPresetById,
@@ -58,9 +58,19 @@ export class EvidenceConfigService {
   });
 
   constructor() {
-    // Fire-and-forget: RTP state refines the cohort when it loads; until then
-    // the derivation runs on age alone (adult default — the safe baseline).
-    void this.refreshRtpState();
+    // Auth-reactive (2026-07-15 audit fix): a constructor-only query missed
+    // logins that happen AFTER service construction — an RTP athlete stayed
+    // age-cohorted until a reload. The effect re-queries whenever the signed-in
+    // user changes; until it lands the derivation runs on age alone (adult
+    // default — the safe baseline).
+    effect(() => {
+      const userId = this.supabase.userId?.();
+      if (userId) {
+        void this.refreshRtpState();
+      } else {
+        this.hasActiveRtp.set(false);
+      }
+    });
   }
 
   /** Re-query the active return-to-play state (call after RTP changes). */
