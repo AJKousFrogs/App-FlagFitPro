@@ -23,4 +23,5 @@ export {
   WeightTrendComponent,
   type WeightPoint,
 } from "./weight-trend.component";
+export { ScatterComponent, type ScatterPoint } from "./scatter.component";
 export * from "./perf-viz.geometry";

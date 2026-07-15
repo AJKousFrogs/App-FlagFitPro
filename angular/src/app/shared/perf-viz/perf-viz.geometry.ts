@@ -141,6 +141,27 @@ export function bandY(
 }
 
 /**
+ * Linear map of `value` from a data domain to a pixel range, clamped to the
+ * range so an out-of-domain point never draws off-canvas. Safe on a zero-width
+ * domain (returns the range start).
+ */
+export function scaleLinear(
+  value: number,
+  domainMin: number,
+  domainMax: number,
+  rangeMin: number,
+  rangeMax: number,
+): number {
+  const span = domainMax - domainMin;
+  if (!(span !== 0) || !Number.isFinite(value)) return rangeMin;
+  const t = (value - domainMin) / span;
+  const v = rangeMin + t * (rangeMax - rangeMin);
+  const lo = Math.min(rangeMin, rangeMax);
+  const hi = Math.max(rangeMin, rangeMax);
+  return +Math.min(hi, Math.max(lo, v)).toFixed(2);
+}
+
+/**
  * Sequential ramp index for a heatmap cell: 0 → the "no data / rest" slot,
  * else 1..steps by relative magnitude vs the series max. Relative by design —
  * the app makes no absolute AU→risk claim.

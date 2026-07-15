@@ -114,3 +114,60 @@
     color: var(--text-faint);
   }
 }
+
+/* Squad summary (perf-viz) — readiness distribution + load×readiness scatter */
+.tm-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+.tm-dist-h {
+  font-size: 13.5px;
+  color: var(--text);
+  font-weight: var(--fw-semi);
+  margin-bottom: var(--s-3);
+}
+.tm-dist-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.pip b {
+  min-width: 22px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong);
+  font-size: 16px;
+}
+.pip::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.pip.good {
+  color: var(--good);
+}
+.pip.warn {
+  color: var(--warn);
+}
+.pip.danger {
+  color: var(--danger);
+}
+.pip.neutral {
+  color: var(--text-faint);
+}
+@media (max-width: 720px) {
+  .tm-summary {
+    grid-template-columns: 1fr;
+  }
+}

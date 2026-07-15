@@ -10,6 +10,7 @@ import {
   bars,
   bandY,
   rampIndex,
+  scaleLinear,
 } from "./perf-viz.geometry";
 
 // perf-viz geometry is the testable core shared by every chart component —
@@ -115,5 +116,24 @@ describe("bandY + rampIndex", () => {
     expect(rampIndex(500, 500, 5)).toBe(5);
     expect(rampIndex(250, 500, 5)).toBeGreaterThanOrEqual(1);
     expect(rampIndex(100, 0, 5)).toBe(0); // no max → rest slot
+  });
+});
+
+describe("scaleLinear — clamped linear map", () => {
+  it("maps domain to range and clamps out-of-domain", () => {
+    expect(scaleLinear(50, 0, 100, 0, 200)).toBe(100);
+    expect(scaleLinear(0, 0, 100, 0, 200)).toBe(0);
+    expect(scaleLinear(100, 0, 100, 0, 200)).toBe(200);
+    expect(scaleLinear(150, 0, 100, 0, 200)).toBe(200); // clamped
+    expect(scaleLinear(-10, 0, 100, 0, 200)).toBe(0); // clamped
+  });
+  it("inverted range (readiness: 0 at bottom) works and clamps", () => {
+    expect(scaleLinear(0, 0, 100, 280, 14)).toBe(280);
+    expect(scaleLinear(100, 0, 100, 280, 14)).toBe(14);
+    expect(scaleLinear(200, 0, 100, 280, 14)).toBe(14); // clamped to hi/lo
+  });
+  it("zero-width domain and NaN are safe", () => {
+    expect(scaleLinear(5, 3, 3, 0, 100)).toBe(0);
+    expect(scaleLinear(NaN, 0, 100, 0, 100)).toBe(0);
   });
 });

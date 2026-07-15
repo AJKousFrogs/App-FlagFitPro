@@ -34,6 +34,33 @@
       session.
     </p>
 
+    <!-- Squad summary (perf-viz): readiness distribution + load×readiness -->
+    <div class="tm-summary">
+      <div class="card tm-dist">
+        <div class="tm-dist-h">Squad readiness</div>
+        <div class="tm-dist-row">
+          <span class="pip good"
+            ><b class="mono">{{ readinessDist().ready }}</b> ready</span
+          >
+          <span class="pip warn"
+            ><b class="mono">{{ readinessDist().monitor }}</b> monitor</span
+          >
+          <span class="pip danger"
+            ><b class="mono">{{ readinessDist().deload }}</b> deload</span
+          >
+          @if (readinessDist().none) {
+            <span class="pip neutral"
+              ><b class="mono">{{ readinessDist().none }}</b> no check-in</span
+            >
+          }
+        </div>
+      </div>
+      <div class="card tm-scatter">
+        <div class="tm-dist-h">Load vs readiness — today</div>
+        <app-ff-scatter [points]="scatterPoints()" />
+      </div>
+    </div>
+
     <div class="tm-scroll" role="region" aria-label="Squad monitoring table">
       <table class="tm">
         <thead>
