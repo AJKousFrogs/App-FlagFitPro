@@ -7,6 +7,7 @@ import {
 import { KeyValuePipe } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { SparklineComponent } from "../shared/perf-viz";
 import {
   MonitoringReportService,
   MonitoringReport,
@@ -30,7 +31,7 @@ const GLOSSARY: Record<string, string> = {
 @Component({
   selector: "app-monitoring-report",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, KeyValuePipe],
+  imports: [LucideAngularModule, KeyValuePipe, SparklineComponent],
   templateUrl: "./monitoring-report.component.html",
   styleUrl: "./monitoring-report.component.scss",
 })
@@ -100,26 +101,11 @@ export class MonitoringReportComponent {
     return ((high - low) / 1.5) * 100;
   }
 
-  // Hooper sparkline points from the daily series (chart consumes payload only).
-  hooperPoints(): string {
-    const s = this.report()?.daily.series ?? [];
-    const vals = s
+  /** Daily Hooper-index series (chronological) for the premium sparkline. */
+  hooperSeries(): number[] {
+    return (this.report()?.daily.series ?? [])
       .map((p) => p.hooperIndex)
       .filter((v): v is number => v !== null && v !== undefined);
-    if (vals.length < 2) return "";
-    const max = Math.max(...vals, 20);
-    const min = Math.min(...vals, 0);
-    const span = max - min || 1;
-    return s
-      .map((p, i) => {
-        const x = (i / (s.length - 1)) * 300;
-        const y =
-          p.hooperIndex === null || p.hooperIndex === undefined
-            ? 40
-            : 40 - ((p.hooperIndex - min) / span) * 36;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
   }
 
   restrictionsText(): string {
