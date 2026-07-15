@@ -76,6 +76,18 @@
         [days]="loadDays()"
       />
     </div>
+    @if (loadTimeline().enough) {
+      <div class="card" style="margin-top: var(--s-3)">
+        <div class="section-h" style="margin-top: 0">
+          <h2 style="font-size: var(--fs-h3)">Acute vs chronic</h2>
+        </div>
+        <app-ff-load-timeline
+          [daily]="loadTimeline().daily"
+          [acute]="loadTimeline().acute"
+          [chronic]="loadTimeline().chronic"
+        />
+      </div>
+    }
   } @else {
     <div class="empty">
       Log training sessions and your day-by-day load appears here — spot when
