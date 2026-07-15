@@ -3,6 +3,8 @@ import {
   ErrorHandler,
   LOCALE_ID,
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideZonelessChangeDetection,
 } from "@angular/core";
 import {
@@ -76,12 +78,19 @@ import {
 } from "@angular/platform-browser";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import {
+  NavigationEnd,
+  Router,
   provideRouter,
   withComponentInputBinding,
   withPreloading,
   withViewTransitions,
 } from "@angular/router";
-import { provideServiceWorker } from "@angular/service-worker";
+import {
+  SwUpdate,
+  type VersionReadyEvent,
+  provideServiceWorker,
+} from "@angular/service-worker";
+import { filter, take } from "rxjs";
 import {
   provideHttpClient,
   withFetch,
@@ -221,6 +230,37 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker("custom-sw.js", {
       enabled: environment.production,
       registrationStrategy: "registerWhenStable:30000", // Register after app is stable or 30s
+    }),
+    // STALE-BUNDLE GUARD (2026-07-15 production bug): a real player ran a
+    // month-old cached bundle — NGSW stages new versions in the background but
+    // the RUNNING app keeps the old one until a true cold start, and nothing
+    // ever prompted one. Two mechanisms:
+    //  1. VERSION_READY → reload at the next route change (a natural boundary
+    //     — never yanks a form out from under the athlete mid-entry).
+    //  2. Long-lived tabs (the actual failure mode: a phone tab suspended for
+    //     weeks) → re-check for updates whenever the tab becomes visible.
+    provideAppInitializer(() => {
+      const swUpdate = inject(SwUpdate);
+      const router = inject(Router);
+      if (!swUpdate.isEnabled) return;
+      swUpdate.versionUpdates
+        .pipe(
+          filter((e): e is VersionReadyEvent => e.type === "VERSION_READY"),
+          take(1),
+        )
+        .subscribe(() => {
+          router.events
+            .pipe(
+              filter((e) => e instanceof NavigationEnd),
+              take(1),
+            )
+            .subscribe(() => document.location.reload());
+        });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          void swUpdate.checkForUpdate();
+        }
+      });
     }),
     { provide: LOGGER, useClass: ConsoleLoggerAdapter },
   ],
