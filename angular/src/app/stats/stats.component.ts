@@ -14,7 +14,12 @@ import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 import { AcwrTrendComponent } from "../shared/acwr-trend.component";
 import { LoadCalendarComponent } from "../shared/load-calendar.component";
 import { LoadDay } from "../shared/utils/load-calendar.util";
-import { LoadTimelineComponent } from "../shared/perf-viz";
+import {
+  LoadTimelineComponent,
+  WeightTrendComponent,
+  type WeightPoint,
+} from "../shared/perf-viz";
+import { BodyMeasurementService } from "../core/services/body-measurement.service";
 
 import { ReadinessService } from "../core/services/readiness.service";
 import { AcwrService } from "../core/services/acwr.service";
@@ -52,6 +57,7 @@ const clamp = (v: number, lo: number, hi: number) =>
     AcwrTrendComponent,
     LoadCalendarComponent,
     LoadTimelineComponent,
+    WeightTrendComponent,
     RouterLink,
     LucideAngularModule,
   ],
@@ -62,6 +68,7 @@ export class StatsComponent {
   private readonly readinessSvc = inject(ReadinessService);
   private readonly acwrSvc = inject(AcwrService);
   private readonly api = inject(ApiService);
+  private readonly bodySvc = inject(BodyMeasurementService);
 
   readonly history = this.readinessSvc.history;
 
@@ -96,6 +103,27 @@ export class StatsComponent {
     });
     return { daily, acute, chronic, enough: daily.length > 1 };
   });
+
+  // ── body mass (weight fluctuation) ────────────────────────────────────────
+  readonly weightLoading = this.bodySvc.loading;
+  readonly weightSaving = this.bodySvc.saving;
+  readonly weightError = this.bodySvc.error;
+  readonly latestWeightKg = this.bodySvc.latestWeightKg;
+  readonly weightInput = signal<number | null>(null);
+  readonly weightPoints = computed<WeightPoint[]>(() =>
+    this.bodySvc
+      .weightHistory()
+      .map((m) => ({ date: m.timestamp.slice(0, 10), kg: m.weight as number })),
+  );
+  onWeightInput(v: number): void {
+    this.weightInput.set(Number.isFinite(v) ? v : null);
+  }
+  async logWeight(): Promise<void> {
+    const v = this.weightInput();
+    if (v == null || !Number.isFinite(v)) return;
+    const ok = await this.bodySvc.logWeight(v);
+    if (ok) this.weightInput.set(null);
+  }
   readonly daysLogged = signal(0);
   /** True until the 28-day history fetch settles — drives the readiness chart
    * skeleton. Without it the chart falls to its "building up" empty state on
@@ -132,6 +160,9 @@ export class StatsComponent {
       },
       error: () => this.loadLoading.set(false),
     });
+
+    // Own body-mass history for the weight-fluctuation card.
+    void this.bodySvc.loadHistory();
   }
 
   /** ACWR sparkline — shared y-scale y = 110 − acwr·50 (1.5→35, 1.3→45, 0.8→70). */

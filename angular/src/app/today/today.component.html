@@ -316,10 +316,10 @@
       <a routerLink="/stats" class="kpi-link">
         <app-ff-kpi-card
           label="Body mass"
-          [value]="null"
-          emptyHint="add in Stats"
-          chip="track"
-          chipTone="neutral"
+          [value]="bodyMassKg()"
+          unit="kg"
+          emptyHint="log in Stats"
+          [series]="bodyMassSeries()"
         />
       </a>
     </div>

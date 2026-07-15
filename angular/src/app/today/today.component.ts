@@ -23,6 +23,7 @@ import {
   KpiCardComponent,
   ReadinessRingComponent,
 } from "../shared/perf-viz";
+import { BodyMeasurementService } from "../core/services/body-measurement.service";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
 const QUOTES: readonly [string, string][] = [
@@ -144,13 +145,26 @@ export class TodayComponent {
   private readonly wellnessSvc = inject(WellnessService);
   private readonly injurySvc = inject(InjuryService);
   private readonly logger = inject(LoggerService);
+  private readonly bodySvc = inject(BodyMeasurementService);
 
   constructor() {
     // Readiness is server-canonical; recompute from the latest check-in each visit.
     this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
     // 28-day history drives the check-in coverage grid + the readiness sparkline.
     this.readinessSvc.getHistory("", 28).subscribe({ error: () => undefined });
+    // Latest body mass for the tracking-tile KPI (logged on Stats).
+    void this.bodySvc.loadHistory();
   }
+
+  /** Latest logged body mass (kg) for the tracking-tile KPI. */
+  readonly bodyMassKg = this.bodySvc.latestWeightKg;
+  /** Body-mass sparkline series (recent logs). */
+  readonly bodyMassSeries = computed(() =>
+    this.bodySvc
+      .weightHistory()
+      .map((m) => m.weight as number)
+      .slice(-14),
+  );
 
   // ── identity / header ──────────────────────────────────────────────────────
   readonly firstName = this.identity.firstName;

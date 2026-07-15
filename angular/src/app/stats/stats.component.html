@@ -95,6 +95,65 @@
     </div>
   }
 
+  <!-- Body mass (weight fluctuation) -->
+  <div class="section-h"><h2>Body mass</h2></div>
+  <div class="card">
+    @if (weightPoints().length > 1) {
+      <app-ff-weight-trend [points]="weightPoints()" />
+    } @else if (latestWeightKg() !== null) {
+      <p class="note" style="margin: 0 0 var(--s-3)">
+        Latest <strong>{{ latestWeightKg() }} kg</strong>. Log a few more to see
+        the trend — weight is a lever for speed and joint load, tracked for
+        performance, not appearance.
+      </p>
+    } @else {
+      <p class="note" style="margin: 0 0 var(--s-3)">
+        Log your weight to track fluctuation over time and unlock your fueling
+        targets on Today.
+      </p>
+    }
+    <div style="margin-top: var(--s-3)">
+      <label
+        for="weigh"
+        style="
+          display: block;
+          margin-bottom: var(--s-2);
+          font-size: var(--fs-sm);
+          color: var(--text-muted);
+          font-weight: var(--fw-semi);
+        "
+        >Log weight</label
+      >
+      <div style="display: flex; gap: var(--s-2); max-width: 260px">
+        <input
+          id="weigh"
+          class="input"
+          type="number"
+          inputmode="decimal"
+          min="30"
+          max="300"
+          step="0.1"
+          placeholder="kg"
+          [value]="weightInput() ?? ''"
+          (input)="onWeightInput($any($event.target).valueAsNumber)"
+        />
+        <button
+          class="btn"
+          type="button"
+          [disabled]="weightSaving() || weightInput() == null"
+          (click)="logWeight()"
+        >
+          {{ weightSaving() ? "Saving…" : "Log" }}
+        </button>
+      </div>
+      @if (weightError(); as e) {
+        <p class="note" style="color: var(--danger); margin: var(--s-2) 0 0">
+          {{ e }}
+        </p>
+      }
+    </div>
+  </div>
+
   <!-- Readiness history -->
   <div class="section-h"><h2>Readiness history</h2></div>
   @if (loading()) {
