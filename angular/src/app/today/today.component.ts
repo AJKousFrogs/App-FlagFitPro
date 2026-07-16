@@ -19,11 +19,9 @@ import { WellnessService } from "../core/services/wellness.service";
 import { InjuryService, InjurySeverity } from "../core/services/injury.service";
 import { LoggerService } from "../core/services/logger.service";
 import { resolveUnloggedPractice } from "./unlogged-practice";
-import {
-  KpiCardComponent,
-  ReadinessRingComponent,
-} from "../shared/perf-viz";
+import { KpiCardComponent, ReadinessRingComponent } from "../shared/perf-viz";
 import { WhyPanelComponent } from "../shared/why-panel.component";
+import { ConceptTipComponent } from "../shared/concept-tip.component";
 import { BodyMeasurementService } from "../core/services/body-measurement.service";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
@@ -132,6 +130,7 @@ interface Supplement {
     KpiCardComponent,
     ReadinessRingComponent,
     WhyPanelComponent,
+    ConceptTipComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> food glyphs
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -438,7 +437,9 @@ export class TodayComponent {
       .slice(-14),
   );
   /** Latest-vs-previous readiness delta. */
-  readonly readinessDelta = computed(() => this.lastDelta(this.readinessSeries()));
+  readonly readinessDelta = computed(() =>
+    this.lastDelta(this.readinessSeries()),
+  );
 
   /** ACWR series from the same readiness history rows (they carry acwr). */
   readonly acwrSeries = computed(() =>
