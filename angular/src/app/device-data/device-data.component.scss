@@ -85,7 +85,7 @@
   background: var(--surface-2);
   border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-md);
-  padding: var(--s-1) calc(var(--s-1) + 7px);
+  padding: var(--s-1) calc(var(--s-1) + var(--sp-7));
   color: var(--text-strong);
   font-family: var(--font-body);
   font-size: var(--fs-body);
@@ -238,7 +238,7 @@
   align-items: center;
   gap: var(--s-2);
   text-align: center;
-  padding: calc(var(--s-3) + 10px) var(--s-4);
+  padding: calc(var(--s-3) + var(--sp-10)) var(--s-4);
   color: var(--text-muted);
 }
 .empty lucide-icon {

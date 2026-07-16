@@ -100,15 +100,22 @@
   --fs-34: 34px;
 
   /* off-grid spacing (non-standard grid values used in components) */
+  --sp-3: 3px;
+  --sp-5: 5px;
   --sp-6: 6px;
   --sp-7: 7px;
   --sp-9: 9px;
   --sp-10: 10px;
   --sp-11: 11px;
+  --sp-12: 12px;
+  --sp-13: 13px;
   --sp-14: 14px;
+  --sp-15: 15px;
+  --sp-16: 16px;
   --sp-18: 18px;
   --sp-20: 20px;
   --sp-22: 22px;
+  --sp-26: 26px;
   --sp-28: 28px;
 
   /* missing line heights */
@@ -150,11 +157,22 @@
   --size-10: 10px;
   --size-12: 12px;
   --size-14: 14px;
+  --size-18: 18px;
   --size-22: 22px;
+  --size-24: 24px;
   --size-26: 26px;
   --size-34: 34px;
   --size-38: 38px;
+  --size-42: 42px;
+  --size-46: 46px;
   --size-52: 52px;
+
+  /* optical adjustments (fine-tuning for visual alignment) */
+  --adj-1: 1px;
+  --adj-2: 2px;
+  --adj-2-neg: -2px;
+  --adj-4: -4px;
+  --adj-15: -15px;
 
   /* layout/width tokens (content containers and breakpoints) */
   --width-xs: 150px;
@@ -166,6 +184,14 @@
   --width-3xl: 1160px;
   --width-4xl: 1200px;
 
+  /* flex-basis and constraint tokens */
+  --flex-92: 92px;
+  --flex-160: 160px;
+  --flex-460: 460px;
+
+  /* height constraint tokens */
+  --h-220: 220px;
+
   /* transition/duration tokens */
   --t-150: 150ms;
   --t-200: 200ms;
@@ -175,7 +201,9 @@
 
   /* radii */
   --r-xs: 2px;
+  --r-xs-lg: 6px;
   --r-sm: 8px;
+  --r-sm-lg: 10px;
   --r-md: 12px;
   --r-lg: 16px;
   --r-xl: 22px;

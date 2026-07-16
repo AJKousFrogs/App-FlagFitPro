@@ -72,8 +72,8 @@
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-6px);
-    padding: var(--sp-5px) var(--sp-3);
+    gap: var(--sp-6);
+    padding: var(--sp-5) var(--sp-3);
     border-radius: var(--r-pill);
     font-size: var(--fs-12);
     font-weight: var(--fw-semi);
@@ -188,7 +188,7 @@
   .layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
     align-items: start;
   }
   .col-main {
@@ -220,7 +220,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sp-2);
-    padding: var(--sp-6px) var(--sp-3);
+    padding: var(--sp-6) var(--sp-3);
     border-radius: var(--r-pill);
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
@@ -238,7 +238,7 @@
     font-weight: var(--fw-semi);
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-5px);
+    gap: var(--sp-5);
   }
   .hero h2 {
     font-size: var(--fs-28);
@@ -256,11 +256,11 @@
   .stat-chip {
     display: flex;
     align-items: baseline;
-    gap: var(--sp-7px);
+    gap: var(--sp-7);
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-md);
-    padding: var(--sp-10px) var(--sp-14px);
+    padding: var(--sp-10) var(--sp-14);
   }
   .stat-chip .v {
     font-family:
@@ -278,7 +278,7 @@
   }
   .session-progress {
     display: grid;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
   }
   .session-progress .row {
     display: flex;
@@ -483,7 +483,7 @@
   .chip-btn {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
     font-size: var(--fs-12);
     font-weight: var(--fw-semi);
     color: var(--text-2);
@@ -647,7 +647,7 @@
     flex: 1;
     min-width: 180px;
     display: grid;
-    gap: var(--sp-5px);
+    gap: var(--sp-5);
   }
   .donebar .prog .row {
     display: flex;

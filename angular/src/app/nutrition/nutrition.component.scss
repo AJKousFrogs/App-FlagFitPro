@@ -56,7 +56,7 @@
 .card-head .meta {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: var(--fs-micro);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -137,7 +137,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--s-1);
-  padding: var(--sp-6) 0 4px;
+  padding: var(--sp-6) 0 var(--adj-2);
   border-radius: var(--r-md);
 }
 .wcol.is-today {
@@ -152,8 +152,8 @@
 }
 .wbar {
   width: 60%;
-  min-height: 3px;
-  border-radius: var(--r-xs) 4px 2px 2px;
+  min-height: var(--sp-3);
+  border-radius: var(--r-xs) var(--adj-2) 2px 2px;
   transition: none;
 }
 .bucket-game {
@@ -173,20 +173,20 @@
   font-variant-numeric: tabular-nums;
 }
 .wd {
-  font-size: 10.5px;
+  font-size: var(--fs-micro);
   color: var(--text-faint);
 }
 
 .legend {
   display: flex;
   gap: var(--s-3);
-  margin-top: 12px;
+  margin-top: var(--sp-12);
 }
 .legend .lg {
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--text-muted);
 }
 .legend .dot {
@@ -196,7 +196,7 @@
 }
 .note {
   margin: var(--sp-10) 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   color: var(--text-muted);
   line-height: var(--lh-text);
 }
@@ -221,14 +221,14 @@
 .ideas li lucide-icon {
   color: var(--accent);
   flex: none;
-  margin-top: 1px;
+  margin-top: var(--adj-1);
 }
 
 .edu-line {
   display: flex;
   gap: var(--s-2);
   align-items: flex-start;
-  margin: 0 0 14px;
+  margin: 0 0 var(--sp-14);
   font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: var(--lh-body);
@@ -236,7 +236,7 @@
 .edu-line lucide-icon {
   color: var(--info);
   flex: none;
-  margin-top: 1px;
+  margin-top: var(--adj-1);
 }
 
 /* ---- shared: buttons, empty states ---- */
@@ -245,7 +245,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--s-1);
-  padding: var(--sp-10) 16px;
+  padding: var(--sp-10) var(--s-4);
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semi);
@@ -269,7 +269,7 @@
   align-items: center;
   gap: var(--s-2);
   text-align: center;
-  padding: var(--sp-22) 16px;
+  padding: var(--sp-22) var(--s-4);
   color: var(--text-muted);
 }
 .empty lucide-icon {
@@ -282,10 +282,10 @@
   line-height: var(--lh-body);
 }
 .empty.inline {
-  padding: var(--sp-14) 8px;
+  padding: var(--sp-14) var(--s-2);
 }
 .skeleton {
-  padding: var(--sp-28) 16px;
+  padding: var(--sp-28) var(--s-4);
   text-align: center;
   color: var(--text-faint);
   font-size: var(--fs-sm);

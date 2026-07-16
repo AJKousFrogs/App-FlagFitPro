@@ -48,7 +48,7 @@
 }
 .mr-cap {
   color: var(--text-faint);
-  font-size: 11px;
+  font-size: var(--fs-11);
 }
 .mr-empty,
 .mr-prompt,
@@ -134,7 +134,7 @@
   gap: var(--sp-6);
 }
 .mr-kpi-cap {
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--text-faint);
 }
 
@@ -163,12 +163,12 @@
   font-size: var(--fs-14);
 }
 .mr-items b {
-  margin-left: 4px;
+  margin-left: var(--s-1);
 }
 .mr-prompt-card {
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  padding: 12px;
+  border: var(--bw-thin) dashed var(--border);
+  border-radius: var(--r-sm-lg);
+  padding: var(--sp-12);
   display: flex;
   gap: var(--s-2);
   align-items: center;
@@ -178,7 +178,7 @@
 .mr-spark {
   width: 100%;
   margin-top: var(--s-2);
-  --spk-h: 40px;
+  --spk-h: var(--size-52);
 }
 
 .mr-acwr-head {
@@ -188,7 +188,7 @@
   flex-wrap: wrap;
 }
 .mr-acwr-val {
-  font-size: 24px;
+  font-size: var(--fs-26);
   font-weight: var(--fw-semi);
 }
 .mr-band {
@@ -197,7 +197,7 @@
   border-radius: var(--r-pill);
   background: var(--surface-2);
   border: var(--bw-thin) solid var(--border-soft);
-  margin: var(--sp-10) 0 4px;
+  margin: var(--sp-10) 0 var(--adj-2);
 }
 .mr-band-sweet {
   position: absolute;
@@ -209,7 +209,7 @@
 }
 .mr-band-mark {
   position: absolute;
-  top: -4px;
+  top: var(--adj-4);
   transform: translateX(-50%);
   color: var(--text-strong);
 }
@@ -220,7 +220,7 @@
   margin-top: var(--s-2);
 }
 .mr-table td {
-  padding: var(--sp-6) 4px;
+  padding: var(--sp-6) var(--s-1);
   border-bottom: var(--bw-thin) solid var(--border-soft);
   font-size: var(--fs-14);
 }
@@ -231,7 +231,7 @@
   align-items: center;
   border-radius: var(--r-pill);
   padding: var(--s-0-5) var(--s-2);
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   border: var(--bw-thin) solid var(--border);
   background: var(--surface-2);
 }
@@ -258,7 +258,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
-  margin: 8px 0;
+  margin: var(--s-2) 0;
 }
 .mr-thresh-row {
   display: flex;
@@ -273,7 +273,7 @@
 
 /* bloodwork marker reference-range bar (RAW mode only — GDPR-gated) */
 .mr-table--markers td.mr-range-cell {
-  width: 150px;
+  width: var(--width-xs);
   padding-right: var(--s-3);
 }
 @media (max-width: var(--width-lg)) {

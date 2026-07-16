@@ -56,7 +56,7 @@
 
 /* consent gate */
 .consent {
-  padding: 16px;
+  padding: var(--s-4);
 }
 .consent h2 {
   margin: 0 0 var(--s-3);
@@ -82,7 +82,7 @@
 .promises lucide-icon {
   color: var(--accent);
   flex: none;
-  margin-top: 1px;
+  margin-top: var(--adj-1);
 }
 .consent-note {
   font-size: var(--fs-12);
@@ -214,15 +214,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-12);
 }
 .set-row span {
   font-size: var(--fs-sm);
   color: var(--text-strong);
 }
 .sw {
-  width: 42px;
-  height: 24px;
+  width: var(--size-42);
+  height: var(--size-24);
   border-radius: var(--r-pill);
   border: var(--bw-thin) solid var(--border-soft);
   background: var(--surface-2);
@@ -233,10 +233,10 @@
 .sw::after {
   content: "";
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
+  top: var(--adj-2);
+  left: var(--adj-2);
+  width: var(--size-18);
+  height: var(--size-18);
   border-radius: 50%;
   background: var(--text-faint);
   transition: none;
@@ -246,11 +246,11 @@
   border-color: transparent;
 }
 .sw.on::after {
-  left: 20px;
+  left: var(--sp-20);
   background: var(--on-accent);
 }
 .hint {
-  margin: var(--sp-6) 0 14px;
+  margin: var(--sp-6) 0 var(--sp-14);
   font-size: var(--fs-12);
   color: var(--text-faint);
   line-height: var(--lh-body);
@@ -273,14 +273,14 @@
   background: var(--surface-2);
   border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-md);
-  padding: var(--sp-9) 11px;
+  padding: var(--sp-9) var(--sp-11);
   color: var(--text-strong);
   font-family: var(--font-body);
   font-size: var(--fs-14);
 }
 .danger {
-  margin-top: 16px;
-  padding: 12px;
+  margin-top: var(--s-4);
+  padding: var(--sp-12);
   border: var(--bw-thin) solid color-mix(in srgb, var(--danger) 35%, transparent);
   border-radius: var(--r-md);
 }
@@ -290,14 +290,14 @@
 }
 .danger-row {
   display: flex;
-  gap: 8px;
+  gap: var(--s-2);
 }
 .danger-row input {
   flex: 1;
   background: var(--surface-2);
   border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-md);
-  padding: var(--sp-9) 11px;
+  padding: var(--sp-9) var(--sp-11);
   color: var(--text-strong);
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
@@ -309,7 +309,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--sp-6);
-  padding: var(--sp-10) 18px;
+  padding: var(--sp-10) var(--sp-18);
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semi);

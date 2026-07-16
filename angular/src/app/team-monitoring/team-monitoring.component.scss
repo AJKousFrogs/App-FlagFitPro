@@ -74,7 +74,7 @@
     font-size: var(--fs-xs);
 
     lucide-icon {
-      vertical-align: -2px;
+      vertical-align: var(--adj-2-neg);
       margin-right: var(--s-1);
     }
   }
@@ -91,7 +91,7 @@
 // Flag pills — colour AND text token (never colour alone).
 .flag {
   display: inline-block;
-  min-width: 46px;
+  min-width: var(--size-46);
   padding: var(--bw-md) var(--s-2);
   border-radius: var(--r-pill);
   font-size: var(--fs-xs);

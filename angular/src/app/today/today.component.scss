@@ -66,8 +66,8 @@
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-6px);
-    padding: var(--sp-5px) var(--sp-3);
+    gap: var(--sp-6);
+    padding: var(--sp-5) var(--sp-3);
     border-radius: var(--r-pill);
     font-size: var(--fs-12);
     font-weight: var(--fw-semi);
@@ -124,7 +124,7 @@
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
-    padding: var(--sp-5px) var(--sp-3);
+    padding: var(--sp-5) var(--sp-3);
     cursor: pointer;
     text-decoration: none;
   }
@@ -158,7 +158,7 @@
     border-radius: var(--r-lg);
     overflow: hidden;
     margin-bottom: var(--sp-6);
-    min-height: 220px;
+    min-height: var(--h-220);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -196,7 +196,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--sp-10px);
+    gap: var(--sp-10);
     color: var(--text-3);
     font-size: var(--fs-14);
     max-width: 60ch;
@@ -212,7 +212,7 @@
   }
   .quote button {
     color: var(--text-3);
-    padding: 2px;
+    padding: var(--s-0-5);
     background: none;
     border: 0;
     cursor: pointer;
@@ -231,7 +231,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sp-2);
-    padding: var(--sp-7px) var(--sp-13px);
+    padding: var(--sp-7) var(--sp-13);
     border-radius: var(--r-pill);
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
@@ -249,11 +249,11 @@
     font-weight: var(--fw-semi);
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-5px);
+    gap: var(--sp-5);
     font-size: var(--fs-14);
   }
   .icon-btn {
-    width: var(--sp-38px);
+    width: var(--sp-38);
     height: var(--size-38);
     border-radius: var(--r-pill);
     display: grid;
@@ -263,7 +263,7 @@
     color: var(--text-2);
   }
   .avatar {
-    width: var(--sp-38px);
+    width: var(--sp-38);
     height: var(--size-38);
     border-radius: var(--r-pill);
     background: linear-gradient(135deg, var(--brand-600), var(--avatar-grad-2));
@@ -282,7 +282,7 @@
   .team-id {
     display: flex;
     align-items: center;
-    gap: var(--sp-10px);
+    gap: var(--sp-10);
     font-size: var(--fs-12);
     color: var(--text-3);
     padding: var(--sp-5) var(--sp-6) var(--sp-4);
@@ -290,7 +290,7 @@
   }
   .team-id .crest {
     flex: 0 0 auto;
-    width: var(--sp-26px);
+    width: var(--sp-26);
     height: var(--size-26);
     border-radius: 50%;
     background: rgba(11, 14, 18, 0.55);
@@ -346,26 +346,26 @@
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-md);
-    padding: var(--sp-9px) var(--sp-13px);
+    padding: var(--sp-9) var(--sp-13);
     font-size: var(--fs-13);
     color: var(--text-2);
   }
   .timeline {
     position: relative;
-    padding: var(--sp-34px) 0 var(--sp-6);
+    padding: var(--sp-34) 0 var(--sp-6);
   }
   .tl-track {
     position: relative;
-    height: var(--sp-14px);
+    height: var(--sp-14);
     background: var(--surface-3);
-    border-radius: var(--sp-7px);
+    border-radius: var(--sp-7);
     overflow: visible;
   }
   .phase {
     position: absolute;
     top: 0;
     height: 100%;
-    border-radius: var(--sp-3px);
+    border-radius: var(--sp-3);
   }
   .phase--build {
     background: rgba(44, 224, 113, 0.45);
@@ -377,7 +377,7 @@
     background: var(--ink-700);
   }
   .phase.is-now {
-    outline: 1px solid rgba(255, 255, 255, 0.4);
+    outline: var(--bw-thin) solid rgba(255, 255, 255, 0.4);
   }
   .tl-legend {
     display: flex;
@@ -388,14 +388,14 @@
   .lg {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-7px);
+    gap: var(--sp-7);
     font-size: var(--fs-12);
     color: var(--text-3);
   }
   .lg i {
-    width: var(--sp-10px);
-    height: var(--sp-10px);
-    border-radius: var(--sp-3px);
+    width: var(--sp-10);
+    height: var(--sp-10);
+    border-radius: var(--sp-3);
     flex: 0 0 auto;
   }
   .lg i.sw--build {
@@ -412,28 +412,28 @@
     font-weight: var(--fw-semi);
   }
   .lg .now-pill {
-    font-size: var(--fs-9px);
+    font-size: var(--fs-9);
     font-weight: var(--fw-bold);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     background: var(--accent-soft);
     color: var(--brand-300);
     border-radius: var(--r-pill);
-    padding: var(--sp-2px) var(--sp-7px);
+    padding: var(--s-0-5) var(--sp-7);
   }
   .today-marker {
     position: absolute;
-    top: 18px;
-    bottom: 20px;
-    width: 2px;
+    top: var(--sp-18);
+    bottom: var(--sp-20);
+    width: var(--bw-thin);
     background: var(--text);
-    border-radius: 1px;
+    border-radius: var(--s-px);
     z-index: var(--z-3);
   }
   .today-marker::before {
     content: "Today";
     position: absolute;
-    top: -15px;
+    top: var(--adj-15);
     left: 0;
     font-size: var(--fs-10);
     letter-spacing: 0.08em;
@@ -454,7 +454,7 @@
   }
   .tl-event-lbl {
     position: absolute;
-    top: 12px;
+    top: var(--sp-12);
     transform: translateX(-50%);
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
@@ -470,7 +470,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: var(--sp-16px);
+    height: var(--sp-16);
   }
   .tl-month {
     position: absolute;
@@ -479,9 +479,9 @@
     text-transform: uppercase;
     color: var(--text-3);
     border-left: var(--bw-thin) solid var(--line-strong);
-    padding-left: var(--sp-5px);
-    height: var(--sp-16px);
-    line-height: var(--sp-16px);
+    padding-left: var(--sp-5);
+    height: var(--sp-16);
+    line-height: var(--sp-16);
   }
   .plan-foot {
     font-size: var(--fs-12);
@@ -504,14 +504,14 @@
   }
   .why {
     display: flex;
-    gap: var(--sp-9px);
+    gap: var(--sp-9);
     font-size: var(--fs-13);
     color: var(--text-3);
   }
   .why .ic {
     color: var(--brand-500);
     flex: 0 0 auto;
-    margin-top: var(--sp-2px);
+    margin-top: var(--s-0-5);
   }
   .stat-row {
     display: flex;
@@ -521,11 +521,11 @@
   .stat-chip {
     display: flex;
     align-items: baseline;
-    gap: var(--sp-7px);
+    gap: var(--sp-7);
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-md);
-    padding: var(--sp-9px) var(--sp-13px);
+    padding: var(--sp-9) var(--sp-13);
   }
   .stat-chip .v {
     font-family:
@@ -543,7 +543,7 @@
   }
   .cond-line {
     display: flex;
-    gap: var(--sp-9px);
+    gap: var(--sp-9);
     align-items: flex-start;
     font-size: var(--fs-13);
     color: var(--text-2);
@@ -555,7 +555,7 @@
   .cond-line .ic {
     color: var(--warn);
     flex: 0 0 auto;
-    margin-top: 1px;
+    margin-top: var(--adj-1);
   }
   .cond-line[data-suit="good"],
   .cond-line[data-suit="excellent"] {
@@ -576,9 +576,9 @@
   /* Phase 5b — cooler-hour time-shift suggestion */
   .time-shift {
     display: flex;
-    gap: var(--sp-9px);
+    gap: var(--sp-9);
     align-items: flex-start;
-    margin-top: 8px;
+    margin-top: var(--s-2);
     font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--accent-soft);
@@ -589,18 +589,18 @@
   .time-shift .ic {
     color: var(--brand-300);
     flex: 0 0 auto;
-    margin-top: 1px;
+    margin-top: var(--adj-1);
   }
   .why-panel-slot {
-    margin-top: 12px;
+    margin-top: var(--sp-12);
   }
   /* log-your-practice nudge (ACWR accuracy) */
   .log-practice-nudge {
     display: flex;
     align-items: center;
-    gap: var(--sp-10px);
+    gap: var(--sp-10);
     margin-bottom: var(--sp-4);
-    padding: 12px 15px;
+    padding: var(--sp-12) var(--sp-15);
     font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--warn-soft);
@@ -626,9 +626,9 @@
   .cover-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: var(--sp-5px);
+    gap: var(--sp-5);
     margin: var(--sp-2) 0;
-    max-width: 460px;
+    max-width: var(--flex-460);
   }
   .cover-lbl {
     font-size: var(--fs-10);
@@ -638,7 +638,7 @@
   }
   .cell {
     aspect-ratio: 1;
-    border-radius: 6px;
+    border-radius: var(--r-xs-lg);
     background: var(--surface-3);
   }
   .cell--done {
@@ -656,12 +656,12 @@
   }
   .cell--today {
     outline: 2px solid var(--text);
-    outline-offset: 2px;
+    outline-offset: var(--adj-2);
   }
   .cover-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-6px) 14px;
+    gap: var(--sp-6) 14px;
     font-size: var(--fs-xs);
     color: var(--text-3);
     margin-bottom: var(--sp-3);
@@ -669,12 +669,12 @@
   .cover-legend span {
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
   }
   .csw {
-    width: var(--sp-10px);
-    height: var(--sp-10px);
-    border-radius: var(--sp-3px);
+    width: var(--sp-10);
+    height: var(--sp-10);
+    border-radius: var(--sp-3);
     flex: 0 0 auto;
   }
   .csw--done {
@@ -691,7 +691,7 @@
   }
   .csw--today {
     outline: 2px solid var(--text);
-    outline-offset: 1px;
+    outline-offset: var(--adj-1);
     width: var(--sp-2);
     height: var(--sp-2);
   }
@@ -704,7 +704,7 @@
   }
   .acwr-ready {
     display: grid;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
     font-size: var(--fs-12);
     color: var(--text-3);
   }
@@ -725,7 +725,7 @@
     border-radius: var(--r-lg);
     padding: var(--sp-4) var(--sp-5);
     display: grid;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
     align-content: start;
     text-decoration: none;
     color: inherit;
@@ -747,7 +747,7 @@
     font-size: var(--fs-26);
     display: flex;
     align-items: center;
-    gap: var(--sp-10px);
+    gap: var(--sp-10);
     color: var(--text);
   }
   .tile .note {
@@ -774,10 +774,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--sp-10px);
+    gap: var(--sp-10);
     text-decoration: none;
     color: inherit;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 var(--bw-thin) 0 rgba(255, 255, 255, 0.04);
   }
   .ring-card.empty:hover {
     border-color: var(--line-strong);
@@ -845,10 +845,10 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
   }
   .bc-lbl {
-    flex: 0 0 92px;
+    flex: 0 0 var(--flex-92);
     font-size: var(--fs-10);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -915,13 +915,13 @@
   .nutri-chip {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 8px 12px;
+    gap: var(--bw-thin);
+    padding: var(--s-2) var(--sp-12);
     border-radius: var(--r-md);
     border: var(--bw-thin) solid var(--border);
     background: var(--surface-2);
     min-width: 0;
-    flex: 1 1 160px;
+    flex: 1 1 var(--flex-160);
   }
   .nutri-chip .nc-label {
     font-size: var(--fs-12);
@@ -952,7 +952,7 @@
   }
   .electro {
     display: flex;
-    gap: var(--sp-9px);
+    gap: var(--sp-9);
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
@@ -961,7 +961,7 @@
   }
   .electro .ic {
     flex: 0 0 auto;
-    margin-top: 1px;
+    margin-top: var(--adj-1);
   }
   .electro--warn {
     background: var(--warn-soft);
@@ -1008,7 +1008,7 @@
   }
   .hydro-msg {
     display: flex;
-    gap: var(--sp-9px);
+    gap: var(--sp-9);
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
@@ -1017,7 +1017,7 @@
   }
   .hydro-msg .ic {
     flex: 0 0 auto;
-    margin-top: 1px;
+    margin-top: var(--adj-1);
   }
   .hydro-msg.is-warn {
     background: var(--warn-soft);
@@ -1043,7 +1043,7 @@
   .food-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-6px);
+    gap: var(--sp-6);
   }
   .food-chip {
     font-size: var(--fs-12);
@@ -1051,7 +1051,7 @@
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
-    padding: 5px 11px;
+    padding: var(--sp-5) var(--sp-11);
   }
   .fuel-actions {
     display: flex;
@@ -1078,7 +1078,7 @@
     border-bottom: 0;
   }
   .supp-check {
-    flex: 0 0 22px;
+    flex: 0 0 var(--size-22);
     width: var(--size-22);
     height: var(--size-22);
     border-radius: 50%;
@@ -1098,7 +1098,7 @@
     flex: 1;
     min-width: 0;
     display: grid;
-    gap: 2px;
+    gap: var(--s-0-5);
   }
   .supp-name {
     font-weight: var(--fw-semi);
@@ -1115,7 +1115,7 @@
     font-weight: var(--fw-bold);
     letter-spacing: 0.06em;
     border-radius: var(--r-pill);
-    padding: 3px 9px;
+    padding: var(--sp-3) var(--sp-9);
   }
   .grade--a {
     background: var(--accent-soft);
