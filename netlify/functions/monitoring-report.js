@@ -318,6 +318,11 @@ async function buildBloodworkRaw(athleteId, t) {
       name: m.marker_name,
       value: round(m.value, 2),
       unit: m.unit,
+      // Reference bounds power the client's range visual. Only ever present in
+      // this RAW mode (already gated to the clinical lens + the athlete's
+      // health-sharing consent) — GDPR special-category data stays gated.
+      referenceLow: round(m.reference_low, 2),
+      referenceHigh: round(m.reference_high, 2),
       flag: markerFlag(m.marker_name, m.value, t),
     })),
     promptRequired: false,

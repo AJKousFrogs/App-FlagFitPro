@@ -24,4 +24,8 @@ export {
   type WeightPoint,
 } from "./weight-trend.component";
 export { ScatterComponent, type ScatterPoint } from "./scatter.component";
+export {
+  MarkerRangeComponent,
+  type MarkerFlagTone,
+} from "./marker-range.component";
 export * from "./perf-viz.geometry";
