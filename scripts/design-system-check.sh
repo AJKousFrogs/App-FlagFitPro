@@ -44,10 +44,6 @@ if [ -d "$CSS_ROOT" ]; then
   echo ""
 fi
 
-# Paths (relative to angular/ directory)
-TOKENS="src/scss/tokens/design-system-tokens.scss"
-OVERRIDES_DIR="src/assets/styles/overrides"
-
 # Change to angular directory
 cd "$(dirname "$0")/../angular"
 
@@ -61,7 +57,11 @@ echo ""
 # ============================================================
 echo "📋 Decision 1: Checking for hex colors outside tokens..."
 
-# Exclude: tokens (canonical), color-guards (matches inline style strings), color-contrast (docs/comments)
+# Exclude: tokens (canonical — _tokens.scss + _screen-palettes.scss, the
+# post-reorg names; the old design-system-tokens.scss this used to allowlist
+# doesn't exist anymore, which silently made every one of its 64 lines a
+# false-positive "violation"), color-guards (matches inline style strings),
+# color-contrast (docs/comments)
 HEX=$(grep -RIn \
   --include="*.scss" \
   --include="*.css" \
@@ -69,7 +69,8 @@ HEX=$(grep -RIn \
   --exclude-dir=.angular \
   --exclude-dir=dist \
   -E "#[0-9a-fA-F]{3,8}\b" src \
-  | grep -v "design-system-tokens.scss" \
+  | grep -v "scss/tokens/_tokens.scss" \
+  | grep -v "scss/tokens/_screen-palettes.scss" \
   | grep -v "// allowed:" \
   | grep -v "/\* allowed:" \
   | grep -v "_color-guards.scss" \
@@ -218,7 +219,8 @@ FONT_FAMILY=$(grep -RIn \
   --exclude-dir=.angular \
   --exclude-dir=dist \
   -E "font-family:\s*['\"]?(Poppins|Arial|Helvetica|sans-serif)" src \
-  | grep -v "design-system-tokens.scss" \
+  | grep -v "scss/tokens/_tokens.scss" \
+  | grep -v "scss/tokens/_screen-palettes.scss" \
   | grep -v "var(--font" \
   | grep -v "assets/fonts" \
   || true)

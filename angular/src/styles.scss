@@ -57,14 +57,14 @@
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important; /* exception: WCAG 2.3.3 global motion reset must win over any component's own duration */
       /* Zero delays too — staggered entrances use animation-delay with a
          `backwards` fill, so a surviving delay would leave content invisible
          for up to ~250ms. Reduced motion must mean instantly visible. */
-      animation-delay: 0ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+      animation-delay: 0ms !important; /* exception: see above */
+      animation-iteration-count: 1 !important; /* exception: see above */
+      transition-duration: 0.01ms !important; /* exception: see above */
+      scroll-behavior: auto !important; /* exception: see above */
     }
   }
 }
