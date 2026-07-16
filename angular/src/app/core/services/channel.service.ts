@@ -980,34 +980,46 @@ export class ChannelService {
       {
         onInsert: (event) => {
           // Add new message to state
-          if (!isChatMessage(event.new)) {
-            this.logger.warn("Invalid chat message from realtime insert", event.new);
+          const newMessage = event.new;
+          if (!isChatMessage(newMessage)) {
+            this.logger.warn(
+              "channel_realtime_insert_invalid_payload",
+              toLogContext(newMessage),
+            );
             return;
           }
-          this._messages.update((messages) => [...messages, event.new]);
+          this._messages.update((messages) => [...messages, newMessage]);
           callback(event);
         },
         onUpdate: (event) => {
           // Update message in state
-          if (!isChatMessage(event.new)) {
-            this.logger.warn("Invalid chat message from realtime update", event.new);
+          const updatedMessage = event.new;
+          if (!isChatMessage(updatedMessage)) {
+            this.logger.warn(
+              "channel_realtime_update_invalid_payload",
+              toLogContext(updatedMessage),
+            );
             return;
           }
           this._messages.update((messages) =>
             messages.map((m) =>
-              m.id === event.new.id ? event.new : m,
+              m.id === updatedMessage.id ? updatedMessage : m,
             ),
           );
           callback(event);
         },
         onDelete: (event) => {
           // Remove message from state
-          if (!isChatMessage(event.old)) {
-            this.logger.warn("Invalid chat message from realtime delete", event.old);
+          const deletedMessage = event.old;
+          if (!isChatMessage(deletedMessage)) {
+            this.logger.warn(
+              "channel_realtime_delete_invalid_payload",
+              toLogContext(deletedMessage),
+            );
             return;
           }
           this._messages.update((messages) =>
-            messages.filter((m) => m.id !== event.old.id),
+            messages.filter((m) => m.id !== deletedMessage.id),
           );
           callback(event);
         },

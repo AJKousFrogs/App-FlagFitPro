@@ -4,6 +4,7 @@ import {
   computed,
   inject,
 } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -38,7 +39,7 @@ interface FuelDay {
 @Component({
   selector: "app-nutrition",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LucideAngularModule, ConceptTipComponent],
+  imports: [RouterLink, LucideAngularModule, DecimalPipe, ConceptTipComponent],
   templateUrl: "./nutrition.component.html",
   styleUrl: "./nutrition.component.scss",
 })

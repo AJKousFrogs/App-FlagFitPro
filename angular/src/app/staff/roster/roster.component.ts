@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
@@ -111,7 +112,7 @@ const FOCUS_CLS: Record<string, string> = {
 
 @Component({
   selector: "app-roster",
-  imports: [RouterLink, LucideAngularModule],
+  imports: [DecimalPipe, RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./roster.component.html",
   styles: [

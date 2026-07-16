@@ -6,9 +6,7 @@ import {
   effect,
   inject,
   signal,
-  DestroyRef,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LucideAngularModule } from "lucide-angular";
 import { TopbarComponent } from "../shared/topbar.component";
 
@@ -225,7 +223,6 @@ export class SupplementsComponent {
   private readonly schedule = inject(ScheduleService);
   private readonly supabase = inject(SupabaseService);
   private readonly eventGames = inject(EventGamesService);
-  private readonly destroyRef = inject(DestroyRef);
 
   // --- V2.1 caffeine timing (game-day only) ---
   readonly nextEvent = this.schedule.nextEvent;
@@ -288,13 +285,10 @@ export class SupplementsComponent {
     const url =
       `/api/supplements/caffeine-timing?weightKg=${weightKg}` +
       `&gameStartHour=${gameStartHour}&bedtimeHour=${ASSUMED_BEDTIME_HOUR}`;
-    this.api
-      .get<CaffeineGuard>(url)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => target.set(res?.data ?? null),
-        error: (e) => this.logger.error("caffeine_timing_failed", e),
-      });
+    this.api.get<CaffeineGuard>(url).subscribe({
+      next: (res) => target.set(res?.data ?? null),
+      error: (e) => this.logger.error("caffeine_timing_failed", e),
+    });
   }
 
   readonly creatine = signal(true);
@@ -337,7 +331,6 @@ export class SupplementsComponent {
         dosage: dosage || null,
         active: true,
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.added.update((a) => [...a, name]);
@@ -390,41 +383,37 @@ export class SupplementsComponent {
     // Batch-testing / contamination-risk for the athlete's stack (anti-doping).
     this.api
       .get<SupplementSafety>("/api/supplements/safety")
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => this.safety.set(res?.data ?? null),
         error: (e) => this.logger.error("supplement_safety_failed", e),
       });
 
-    this.api
-      .get<{ logs?: SuppLog[] }>("/api/supplements/recent")
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          const logs = res?.data?.logs ?? [];
-          const days = new Set(
-            logs
-              .filter((l) => l.taken && /creatine/i.test(l.supplement_name ?? ""))
-              .map((l) => l.date),
-          );
-          this.creatineDays.set(days.size);
+    this.api.get<{ logs?: SuppLog[] }>("/api/supplements/recent").subscribe({
+      next: (res) => {
+        const logs = res?.data?.logs ?? [];
+        const days = new Set(
+          logs
+            .filter((l) => l.taken && /creatine/i.test(l.supplement_name ?? ""))
+            .map((l) => l.date),
+        );
+        this.creatineDays.set(days.size);
 
-          // Reflect today's ACTUAL logged state instead of fabricated ON/ON/OFF —
-          // re-toggling otherwise overwrites the real daily log with literals.
-          const todayKey = new Date().toISOString().slice(0, 10);
-          const takenToday = (re: RegExp): boolean =>
-            logs.some(
-              (l) =>
-                l.date === todayKey &&
-                !!l.taken &&
-                re.test(l.supplement_name ?? ""),
-            );
-          this.creatine.set(takenToday(/creatine/i));
-          this.caffeine.set(takenToday(/caffeine/i));
-          this.beta.set(takenToday(/beta/i));
-        },
-        error: (e) => this.logger.error("supplements_recent_failed", e),
-      });
+        // Reflect today's ACTUAL logged state instead of fabricated ON/ON/OFF —
+        // re-toggling otherwise overwrites the real daily log with literals.
+        const todayKey = new Date().toISOString().slice(0, 10);
+        const takenToday = (re: RegExp): boolean =>
+          logs.some(
+            (l) =>
+              l.date === todayKey &&
+              !!l.taken &&
+              re.test(l.supplement_name ?? ""),
+          );
+        this.creatine.set(takenToday(/creatine/i));
+        this.caffeine.set(takenToday(/caffeine/i));
+        this.beta.set(takenToday(/beta/i));
+      },
+      error: (e) => this.logger.error("supplements_recent_failed", e),
+    });
 
     // Behaviour insights: lapse detection ("stock ran empty?") + the usage
     // stats the coaching cards render from. The server also drops the deduped
@@ -434,7 +423,6 @@ export class SupplementsComponent {
         insights?: SuppInsight[];
         nudges?: SuppNudge[];
       }>("/api/supplements/insights")
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.insights.set(res?.data?.insights ?? []);

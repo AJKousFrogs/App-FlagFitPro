@@ -1,7 +1,6 @@
-import { Injectable, computed, effect, inject, signal, DestroyRef } from "@angular/core";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, defer, from, of } from "rxjs";
 import { catchError, map, switchMap, take, tap } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "./logger.service";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { SupabaseService } from "./supabase.service";
@@ -119,7 +118,6 @@ export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private api = inject(ApiService);
-  private destroyRef = inject(DestroyRef);
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
 
@@ -376,7 +374,6 @@ export class WellnessService {
                 mood: data.mood,
                 date: checkinDate,
               })
-              .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 error: (e) =>
                   this.logger.warn("wellness_coach_alert_failed", e),
@@ -384,10 +381,7 @@ export class WellnessService {
           }
 
           this.getWellnessData("30d")
-            .pipe(
-              take(1),
-              takeUntilDestroyed(this.destroyRef),
-            )
+            .pipe(take(1))
             .subscribe({
               error: (err) =>
                 this.logger.warn("wellness_refresh_after_checkin_failed", err),

@@ -4,12 +4,10 @@ import {
   computed,
   inject,
   signal,
-  DestroyRef,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { firstValueFrom } from "rxjs";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AvatarComponent } from "../shared/avatar.component";
 
 import { ApiService } from "../core/services/api.service";
@@ -89,7 +87,6 @@ export class SettingsComponent {
   private readonly privacy = inject(PrivacySettingsService);
   private readonly periodization = inject(PeriodizationService);
   private readonly recovery = inject(RecoveryService);
-  private readonly destroyRef = inject(DestroyRef);
 
   // Recovery equipment (Prefs tab) — reuses athlete_training_config.available_equipment.
   readonly recoveryEquipment = RECOVERY_EQUIPMENT;
@@ -384,9 +381,11 @@ export class SettingsComponent {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
+        // readAsDataURL yields a string; anything else means we'd upload the
+        // literal text "null" as the avatar.
         const result = reader.result;
-        if (!result || typeof result !== 'string') {
-          reject(new Error("FileReader.result is not a string"));
+        if (typeof result !== "string") {
+          reject(new Error("FileReader returned a non-string result"));
           return;
         }
         resolve(result);
@@ -514,7 +513,6 @@ export class SettingsComponent {
           team: cfg(this.coachMessages()),
         },
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (e) => {
           this.logger.error("notif_prefs_save_failed", e);
@@ -540,7 +538,6 @@ export class SettingsComponent {
           healthSharingDefault: this.shareHealth(),
         },
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (e) => {
           this.logger.error("privacy_save_failed", e);

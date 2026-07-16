@@ -4,10 +4,9 @@ import {
   computed,
   inject,
   signal,
-  DestroyRef,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { DecimalPipe } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { SparklineComponent } from "../shared/perf-viz";
 import {
@@ -35,14 +34,13 @@ function todayIso(): string {
 @Component({
   selector: "app-device-data",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, LucideAngularModule, SparklineComponent],
+  imports: [FormsModule, DecimalPipe, LucideAngularModule, SparklineComponent],
   templateUrl: "./device-data.component.html",
   styleUrl: "./device-data.component.scss",
 })
 export class DeviceDataComponent {
   private readonly externalLoad = inject(ExternalLoadService);
   private readonly wearables = inject(WearableService);
-  private readonly destroyRef = inject(DestroyRef);
 
   readonly history = signal<ExternalLoadMetric[]>([]);
   readonly devices = signal<DeviceStatus[]>([]);
@@ -84,21 +82,15 @@ export class DeviceDataComponent {
 
   constructor() {
     this.refresh();
-    this.wearables
-      .status()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((d) => this.devices.set(d));
+    this.wearables.status().subscribe((d) => this.devices.set(d));
   }
 
   private refresh(): void {
     this.loading.set(true);
-    this.externalLoad
-      .list()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((rows) => {
-        this.history.set(rows);
-        this.loading.set(false);
-      });
+    this.externalLoad.list().subscribe((rows) => {
+      this.history.set(rows);
+      this.loading.set(false);
+    });
   }
 
   save(): void {
@@ -117,7 +109,6 @@ export class DeviceDataComponent {
         playerLoad: this.playerLoad(),
         notes: this.notes() || null,
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((row) => {
         this.saving.set(false);
         if (row) {
