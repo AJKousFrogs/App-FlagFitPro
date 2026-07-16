@@ -7,6 +7,8 @@
  * 1. Deprecated token usage
  * 2. Hardcoded values that should use tokens
  * 3. Forbidden patterns (pill shapes, !important, etc.)
+ * 4. Undefined custom properties — var(--x) where --x is defined nowhere
+ *    (error). Also scans .ts for component `styles: []` blocks.
  *
  * Usage:
  *   node scripts/lint-design-tokens.js [--fix] [--ci] [path]
@@ -457,6 +459,88 @@ function lintFile(filePath, content) {
   return results;
 }
 
+// ===========================================
+// UNDEFINED CUSTOM PROPERTIES
+// ===========================================
+
+/**
+ * `var(--x)` where `--x` is defined nowhere.
+ *
+ * This is invisible without a check: an unresolvable custom property makes the
+ * WHOLE declaration invalid at computed-value time, so the browser drops it and
+ * the property silently falls back to its initial value (0 / auto / inherit).
+ * No console error, no build failure. A token migration left ~70 of these in
+ * today/training — `.bar { height: var(--sp-2) }` meant the progress bars had
+ * no height at all — and stylelint, tsc, ng build and this linter all passed.
+ *
+ * `var(--x, fallback)` is deliberately fine: the fallback keeps it valid.
+ *
+ * Scans .ts as well as .scss/.css, because component `styles: []` blocks are
+ * where two of the original offenders lived (chat, roster) — a scss-only glob
+ * cannot see them.
+ */
+const TOKEN_FILE_GLOB = "**/*.{scss,css,ts}";
+
+/**
+ * Blank out comments so `var(--token)` in a doc block isn't read as a
+ * reference. Newlines are preserved so reported line numbers stay accurate.
+ * The `[^:]` guard keeps `https://…` from being treated as a line comment.
+ */
+function stripComments(text) {
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(
+      /(^|[^:])(\/\/[^\n]*)/g,
+      (_, pre, comment) => pre + blank(comment),
+    );
+}
+
+async function findUndefinedTokens(targetPath) {
+  const files = await glob(path.join(targetPath, TOKEN_FILE_GLOB), {
+    ignore: CONFIG.ignorePatterns,
+  });
+
+  const defined = new Set();
+  const sources = new Map();
+  for (const file of files) {
+    const code = stripComments(fs.readFileSync(file, "utf8"));
+    sources.set(file, code);
+    for (const m of code.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)) {
+      defined.add(m[1]);
+    }
+    // Angular assigns custom properties at runtime: [style.--sz.px]="size()"
+    for (const m of code.matchAll(/\[style\.(--[a-zA-Z0-9-]+)/g)) {
+      defined.add(m[1]);
+    }
+  }
+
+  const byFile = new Map();
+  for (const [file, code] of sources) {
+    for (const m of code.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)\s*(,)?/g)) {
+      // a fallback keeps the declaration valid; a defined token resolves
+      if (m[2] || defined.has(m[1])) {
+        continue;
+      }
+      const line = code.slice(0, m.index).split("\n").length;
+      if (!byFile.has(file)) {
+        byFile.set(file, []);
+      }
+      byFile.get(file).push({
+        line,
+        column: 1,
+        token: m[1],
+        rule: "undefined custom property",
+        message:
+          `"${m[1]}" is never defined — the whole declaration is invalid and ` +
+          `silently falls back to its initial value. Define the token or give ` +
+          `it a fallback: var(${m[1]}, <value>).`,
+      });
+    }
+  }
+  return byFile;
+}
+
 async function lintDirectory(targetPath) {
   const pattern = path.join(targetPath, "**/*.{scss,css}");
   const files = await glob(pattern, {
@@ -494,6 +578,19 @@ async function lintDirectory(targetPath) {
         err.message,
       );
     }
+  }
+
+  // Undefined custom properties — a project-wide, two-pass rule (every
+  // definition must be known before any reference can be judged), and it spans
+  // .ts inline styles too, so it can't ride the per-file loop above.
+  const undefinedByFile = await findUndefinedTokens(targetPath);
+  for (const [file, issues] of undefinedByFile) {
+    if (!allResults.files[file]) {
+      allResults.files[file] = { errors: [], warnings: [], deprecations: [] };
+      allResults.filesWithIssues++;
+    }
+    allResults.files[file].errors.push(...issues);
+    allResults.totalErrors += issues.length;
   }
 
   return allResults;
