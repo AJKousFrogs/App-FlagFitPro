@@ -284,7 +284,11 @@
       <a routerLink="/wellness" class="kpi-link">
         <app-ff-kpi-card
           label="Readiness"
-          [value]="readinessScore() !== null ? (readinessScore() | number: '1.0-0') : null"
+          [value]="
+            readinessScore() !== null
+              ? (readinessScore() | number: '1.0-0')
+              : null
+          "
           unit="/ 100"
           emptyHint="not logged"
           [delta]="readinessDelta()"
@@ -307,9 +311,13 @@
       <a routerLink="/acwr" class="kpi-link">
         <app-ff-kpi-card
           label="Load · ACWR"
-          [value]="acwrSufficient() && acwrRatio() != null ? (acwrRatio() | number: '1.2-2') : null"
+          [value]="
+            acwrSufficient() && acwrRatio() != null
+              ? (acwrRatio() | number: '1.2-2')
+              : null
+          "
           unit="ratio"
-          [emptyHint]="(21 - daysLogged()) + 'd to go'"
+          [emptyHint]="21 - daysLogged() + 'd to go'"
           [delta]="acwrDelta()"
           [deltaDigits]="2"
           [series]="acwrSeries()"
@@ -483,12 +491,8 @@
               <a class="btn btn--primary" routerLink="/wellness"
                 >Log nutrition</a
               >
-              <a
-                class="btn btn--ghost"
-                href="https://www.laprimafit.si"
-                target="_blank"
-                rel="noopener"
-                >Meal plan ↗</a
+              <a class="btn btn--ghost" routerLink="/nutrition"
+                >This week's fuel</a
               >
             </div>
           </div>
