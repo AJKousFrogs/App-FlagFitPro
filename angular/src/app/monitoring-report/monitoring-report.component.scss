@@ -204,8 +204,8 @@
   top: 0;
   bottom: 0;
   background: color-mix(in srgb, var(--good) 26%, transparent);
-  border-left: 1px dashed var(--good);
-  border-right: 1px dashed var(--good);
+  border-left: var(--bw-thin) dashed var(--good);
+  border-right: var(--bw-thin) dashed var(--good);
 }
 .mr-band-mark {
   position: absolute;
