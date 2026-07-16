@@ -94,18 +94,25 @@
   --fs-18: 18px;
   --fs-20: 20px;
   --fs-22: 22px;
+  --fs-24: 24px;
   --fs-26: 26px;
   --fs-28: 28px;
   --fs-30: 30px;
   --fs-34: 34px;
 
-  /* off-grid spacing (non-standard grid values used in components)
-     Note: Values like 16px/20px/22px that overlap the standard grid use the
-     grid tokens instead (e.g., use --s-4 for 16px, not --sp-16). */
+  /* off-grid spacing: --sp-N is N pixels, for values the 8pt grid doesn't have.
+     Prefer the grid token in new code where one exists (--s-4 for 16px, not
+     --sp-16). --sp-4 and --sp-8 land ON the grid and exist only because ~45
+     call sites in today/training already reference them; they alias the grid
+     token rather than restating the value, so there is one source per value. */
+  --sp-1: 1px;
+  --sp-2: 2px;
   --sp-3: 3px;
+  --sp-4: var(--s-1); /* 4px — on-grid alias; prefer --s-1 in new code */
   --sp-5: 5px;
   --sp-6: 6px;
   --sp-7: 7px;
+  --sp-8: var(--s-2); /* 8px — on-grid alias; prefer --s-2 in new code */
   --sp-9: 9px;
   --sp-10: 10px;
   --sp-11: 11px;
@@ -118,6 +125,7 @@
   --sp-22: 22px;
   --sp-26: 26px;
   --sp-28: 28px;
+  --sp-34: 34px;
   --sp-96: 96px; /* used for padding-bottom on card containers (8pt * 1.5) */
 
   /* missing line heights */
