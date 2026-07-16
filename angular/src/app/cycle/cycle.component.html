@@ -1,0 +1,239 @@
+<main class="cy">
+  <header class="cy-head">
+    <div class="eyebrow"><lucide-icon name="moon" [size]="15" /> Cycle</div>
+    <h1>Your cycle</h1>
+    <p class="sub">
+      Private to you. <b>No coach, physio or staff can ever see this</b> — there
+      is no staff view. It's off until you turn it on, and you can delete
+      everything at any time.
+    </p>
+  </header>
+
+  @if (isYouth()) {
+    <section class="card">
+      <div class="cy-empty">
+        <lucide-icon name="lock" [size]="20" />
+        <p>
+          Cycle tracking isn't available under 18 yet — it's coming in a later
+          release with the right guardian-consent and legal review in place.
+        </p>
+      </div>
+    </section>
+  } @else if (loading()) {
+    <div class="card skel">Loading…</div>
+  } @else if (!enabled()) {
+    <!-- CONSENT / ENABLE GATE -->
+    <section class="card consent">
+      <h2>Turn on cycle tracking</h2>
+      <ul class="promises">
+        <li>
+          <lucide-icon name="lock" [size]="15" /> Only you can see it. No staff
+          surface exists in the app.
+        </li>
+        <li>
+          <lucide-icon name="activity" [size]="15" /> It never changes your
+          training plan on its own. What adapts your plan is your daily check-in
+          — same as for everyone.
+        </li>
+        <li>
+          <lucide-icon name="info" [size]="15" /> Phase estimates are worked out
+          on your device from your own logs, and shown as estimates — not
+          medical fact.
+        </li>
+        <li>
+          <lucide-icon name="trash-2" [size]="15" /> Withdraw any time — that
+          erases every cycle record immediately.
+        </li>
+      </ul>
+      <p class="consent-note">
+        This is special-category health data. By turning it on you give explicit
+        consent (GDPR Art. 9) for FlagFit to store your cycle logs to power this
+        private, athlete-only view. Consent version {{ consentVersion }}.
+      </p>
+      <button
+        class="btn btn--primary"
+        type="button"
+        [disabled]="busy()"
+        (click)="enable()"
+      >
+        {{ busy() ? "Enabling…" : "I understand — turn it on" }}
+      </button>
+    </section>
+  } @else {
+    <!-- PHASE ADVISORY (inform-only) -->
+    <section class="card advisory" [class.tentative]="estimate().tentative">
+      @if (estimate().phase; as phase) {
+        <div class="adv-head">
+          <span class="phase phase--{{ phase }}">{{ phase }}</span>
+          <span class="conf">{{ estimate().confidence }} confidence</span>
+          @if (estimate().tentative) {
+            <span class="tent">estimate</span>
+          }
+        </div>
+        <div class="adv-meta">
+          @if (estimate().cycleDay) {
+            <span>Day {{ estimate().cycleDay }}</span>
+          }
+          @if (estimate().nextPeriodDate) {
+            <span>· next period ~{{ estimate().nextPeriodDate }}</span>
+          }
+        </div>
+      }
+      <p class="adv-msg">{{ estimate().message }}</p>
+    </section>
+
+    <!-- LOG TODAY -->
+    <section class="card">
+      <div class="card-head"><h2>Log today</h2></div>
+      <div class="card-body">
+        <span class="lbl">Flow</span>
+        <div class="chips">
+          @for (f of flows; track f) {
+            <button
+              type="button"
+              class="chip"
+              [class.on]="todayFlow() === f"
+              (click)="pickFlow(f)"
+            >
+              {{ f }}
+            </button>
+          }
+        </div>
+        <span class="lbl">Symptoms</span>
+        <div class="chips">
+          @for (s of symptomOptions; track s.id) {
+            <button
+              type="button"
+              class="chip"
+              [class.on]="todaySymptoms().has(s.id)"
+              (click)="toggleSymptom(s.id)"
+            >
+              {{ s.label }}
+            </button>
+          }
+        </div>
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="busy()"
+          (click)="saveToday()"
+        >
+          {{ busy() ? "Saving…" : "Save today" }}
+        </button>
+      </div>
+    </section>
+
+    <!-- RECENT LOGS -->
+    @if (recentLogs().length) {
+      <section class="card">
+        <div class="card-head"><h2>Recent</h2></div>
+        <div class="card-body">
+          <ul class="logs">
+            @for (l of recentLogs(); track l.date) {
+              <li class="log">
+                <span class="log-date">{{ l.date }}</span>
+                @if (l.flow) {
+                  <span class="log-flow">{{ l.flow }}</span>
+                }
+                @if (l.symptoms.length) {
+                  <span class="log-sym"
+                    >{{ l.symptoms.length }} symptom{{
+                      l.symptoms.length > 1 ? "s" : ""
+                    }}</span
+                  >
+                }
+                <button
+                  class="log-del"
+                  type="button"
+                  aria-label="Delete this day"
+                  (click)="deleteLog(l.date)"
+                >
+                  <lucide-icon name="trash-2" [size]="14" />
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+    }
+
+    <!-- SETTINGS -->
+    <section class="card">
+      <div class="card-head"><h2>Settings</h2></div>
+      <div class="card-body">
+        <div class="set-row">
+          <span>On hormonal contraception</span>
+          <button
+            class="sw"
+            type="button"
+            role="switch"
+            aria-label="On hormonal contraception"
+            [attr.aria-checked]="profile()?.hormonalContraception"
+            [class.on]="profile()?.hormonalContraception"
+            (click)="toggleContraception()"
+          ></button>
+        </div>
+        <p class="hint">
+          If on, no natural phase is estimated — the app won't guess a cycle
+          that isn't running.
+        </p>
+
+        <div class="set-grid">
+          <label class="fld">
+            <span>Typical cycle length (days)</span>
+            <input
+              #cyc
+              type="number"
+              min="21"
+              max="45"
+              [value]="profile()?.typicalCycleLength ?? ''"
+              (change)="setTypical('cycle', cyc.valueAsNumber)"
+            />
+          </label>
+          <label class="fld">
+            <span>Typical period length (days)</span>
+            <input
+              #per
+              type="number"
+              min="1"
+              max="10"
+              [value]="profile()?.typicalPeriodLength ?? ''"
+              (change)="setTypical('period', per.valueAsNumber)"
+            />
+          </label>
+        </div>
+
+        <p class="hint">
+          Your full data (including cycle) is downloadable from
+          <a routerLink="/settings">Settings → Account → Export my data</a>.
+        </p>
+
+        <div class="danger">
+          <b>Delete everything</b>
+          <p class="hint">
+            Permanently erases all your cycle logs and turns the module off.
+            This can't be undone. Type <b>DELETE</b> to confirm.
+          </p>
+          <div class="danger-row">
+            <input
+              type="text"
+              placeholder="DELETE"
+              [value]="wipeConfirm()"
+              (input)="wipeConfirm.set($any($event.target).value)"
+            />
+            <button
+              class="btn btn--danger"
+              type="button"
+              [disabled]="
+                wipeConfirm().trim().toUpperCase() !== 'DELETE' || busy()
+              "
+              (click)="wipe()"
+            >
+              Erase
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+</main>

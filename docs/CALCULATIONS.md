@@ -11,11 +11,11 @@ pass. Where a stale in-code *comment* disagrees with the code's constants and
 tests, the constants+tests win (one such case is flagged in §9). As of
 **2026-07-14**.
 
-> **Planned mechanization (v3 M0, see `docs/v3/V3-DESIGN.md` §2):** the
-> constants tables below are to be generated from a single safety-config module
-> via `npm run docs:regen`, with a CI freshness test. Until then this file is
-> hand-synced — treat every number here as a claim to verify against the named
-> source file.
+> **Planned mechanization (deferred v3 M0 follow-up; see SOT §6 2026-07-16
+> engine-inspector entry):** the constants tables below are to be generated from
+> a single safety-config module via `npm run docs:regen`, with a CI freshness
+> test. Until then this file is hand-synced — treat every number here as a claim
+> to verify against the named source file.
 
 Canonical owners at a glance:
 
@@ -684,7 +684,7 @@ contradicts is a bug in this file. Known open items:
    the stricter NATA bands are implemented and the comment now matches.
 2. Youth/RTP presets orphaned — documented in §2, wiring planned (v3 M0).
 3. `docs:regen` generation of the constants tables + CI freshness test
-   (v3 M0, `docs/v3/V3-DESIGN.md` §2.2).
+   (deferred v3 M0 follow-up; see SOT §6 2026-07-16 engine-inspector entry).
 
 See `LOGIC.md` for the decision rules each number serves, and
 `SOURCE_OF_TRUTH.md` for schema/endpoints/status.

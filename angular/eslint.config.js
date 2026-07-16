@@ -75,6 +75,31 @@ export default defineConfig([
     },
   },
   {
+    // Cycle data is SPECIAL-CATEGORY and owner-only (V3-DESIGN §4.5). Nothing
+    // outside the cycle module may import it — this keeps cycle fields out of
+    // telemetry, logs, other screens, and any staff surface by construction.
+    files: ["**/*.ts"],
+    ignores: ["**/cycle/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "**/cycle/cycle.logic",
+                "**/cycle/cycle.service",
+                "**/cycle/cycle.component",
+              ],
+              message:
+                "Cycle data is owner-only (special-category, V3-DESIGN §4.5). Do not import the cycle module outside cycle/.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ["**/*.spec.ts"],
     rules: {
       // Spec files use mock harnesses and third-party test doubles where `any`

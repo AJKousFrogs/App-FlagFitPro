@@ -1607,6 +1607,19 @@
   status = 200
   force = true
 
+# Cycle module API (v3 M3 — special-category, owner-only)
+[[redirects]]
+  from = "/api/cycle/*"
+  to = "/.netlify/functions/cycle"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/cycle"
+  to = "/.netlify/functions/cycle"
+  status = 200
+  force = true
+
 
 
 # Payments API
