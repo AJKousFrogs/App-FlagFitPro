@@ -272,6 +272,14 @@ export const featureRoutes: Routes = [
         title: "Sleep debt · FlagFit",
       },
       {
+        path: "nutrition",
+        loadComponent: () =>
+          import("../../nutrition/nutrition.component").then(
+            (m) => m.NutritionComponent,
+          ),
+        title: "Fuel plan · FlagFit",
+      },
+      {
         path: "roster",
         loadComponent: () =>
           import("../../roster/roster.component").then(

@@ -1,0 +1,157 @@
+<main class="nut">
+  <header class="nut-head">
+    <div class="eyebrow">
+      <lucide-icon name="utensils" [size]="15" /> Fuel plan
+    </div>
+    <h1>Eat for what you're doing</h1>
+    <p class="sub">
+      Your targets come straight from your training plan — more on the hard
+      days, less on the easy ones. Food first, no calorie-counting.
+    </p>
+  </header>
+
+  @if (loading()) {
+    <div class="card skeleton">Loading your fuel plan…</div>
+  } @else if (!rx()) {
+    <div class="card empty">
+      <lucide-icon name="calendar" [size]="20" />
+      <p>
+        Log your season and a check-in first — then we'll build a fuel plan that
+        matches your training. Nothing here is guessed.
+      </p>
+      <a class="btn btn--primary" routerLink="/wellness">Check in</a>
+    </div>
+  } @else {
+    <!-- TODAY -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Today</h2>
+        @if (todayBucketLabel()) {
+          <span class="pill pill--{{ weekFuel()[0].bucket }}">{{
+            todayBucketLabel()
+          }}</span>
+        }
+      </div>
+      @if (nutrition(); as n) {
+        <div class="card-body">
+          <p class="rationale">{{ n.rationale }}</p>
+          <div class="macros">
+            <div class="macro">
+              <span class="v">{{ n.carbsG | number: "1.0-0" }}<i>g</i></span>
+              <span class="k">Carbs</span>
+            </div>
+            <div class="macro">
+              <span class="v">{{ n.proteinG | number: "1.0-0" }}<i>g</i></span>
+              <span class="k">Protein</span>
+            </div>
+            <div class="macro">
+              <span class="v"
+                >{{ n.hydrationL | number: "1.0-1" }}<i>L</i></span
+              >
+              <span class="k">Fluid</span>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="card-body">
+          <div class="empty inline">
+            <lucide-icon name="user" [size]="18" />
+            <p>
+              Add your weight in Profile and we can size your carbs, protein and
+              fluid for you. Until then we won't show a made-up number.
+            </p>
+            <a class="btn btn--ghost" routerLink="/profile">Add weight</a>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- THE WEEK -->
+    <section class="card">
+      <div class="card-head">
+        <h2>This week's fuel</h2>
+        <span class="meta">carbs per day</span>
+      </div>
+      <div class="card-body">
+        @if (weekHasFuel()) {
+          <div
+            class="week"
+            role="img"
+            aria-label="Carbohydrate target per day across the week"
+          >
+            @for (d of weekFuel(); track d.key) {
+              <div class="wcol" [class.is-today]="d.isToday">
+                <div class="wbar-wrap">
+                  @if (d.carbsG !== null) {
+                    <div
+                      class="wbar bucket-{{ d.bucket }}"
+                      [style.height.%]="d.carbsPct"
+                      [attr.title]="d.intentLabel + ' — ' + d.rationale"
+                    ></div>
+                  }
+                </div>
+                <span class="wg">{{
+                  d.carbsG !== null ? (d.carbsG | number: "1.0-0") : "—"
+                }}</span>
+                <span class="wd">{{ d.weekday }}</span>
+              </div>
+            }
+          </div>
+          <div class="legend">
+            <span class="lg"><i class="dot bucket-game"></i> Game</span>
+            <span class="lg"><i class="dot bucket-load"></i> Training</span>
+            <span class="lg"><i class="dot bucket-steady"></i> Steady</span>
+          </div>
+          <p class="note">
+            Higher bars are your bigger training and game days — that's when to
+            put more rice, pasta or potato on the plate. Lower bars are recovery
+            days.
+          </p>
+        } @else {
+          <div class="empty inline">
+            <lucide-icon name="user" [size]="18" />
+            <p>Add your weight in Profile to see the week's targets.</p>
+            <a class="btn btn--ghost" routerLink="/profile">Add weight</a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- FOOD IDEAS -->
+    @if (ideas().length) {
+      <section class="card">
+        <div class="card-head"><h2>How to hit it today</h2></div>
+        <div class="card-body">
+          <ul class="ideas">
+            @for (idea of ideas(); track idea) {
+              <li>
+                <lucide-icon name="apple" [size]="16" />
+                <span>{{ idea }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+    }
+
+    <!-- EDUCATION / PARTNER -->
+    <section class="card edu">
+      <div class="card-head"><h2>The idea in one line</h2></div>
+      <div class="card-body">
+        <p class="edu-line">
+          <lucide-icon name="info" [size]="16" />
+          Carbs are the fuel for sprints and games; protein rebuilds you after.
+          Match the carbs to the day and keep protein steady, and you'll recover
+          faster and feel sharper on the field.
+        </p>
+        <a
+          class="btn btn--ghost"
+          href="https://www.laprimafit.si"
+          target="_blank"
+          rel="noopener"
+          >Nutrition help from La Prima Fit</a
+        >
+      </div>
+    </section>
+  }
+</main>
