@@ -33,6 +33,7 @@ function baseReport(
     },
     identity: { name: "Mock A", sex: "male", position: "Rusher" },
     physioBlock: null,
+    injuries: null,
     daily: {
       latest: null,
       series: [],

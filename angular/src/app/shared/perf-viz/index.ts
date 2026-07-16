@@ -28,4 +28,8 @@ export {
   MarkerRangeComponent,
   type MarkerFlagTone,
 } from "./marker-range.component";
+export {
+  InjuryTimelineComponent,
+  type InjuryTimelineItem,
+} from "./injury-timeline.component";
 export * from "./perf-viz.geometry";

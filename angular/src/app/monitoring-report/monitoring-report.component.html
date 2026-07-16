@@ -62,6 +62,16 @@
       </section>
     }
 
+    <!-- INJURY / RTP HISTORY (clinical lens only — server-gated) -->
+    @if (r.injuries; as inj) {
+      @if (inj.items.length) {
+        <section class="mr-panel">
+          <h2 class="mr-h2">Injury &amp; return-to-play history</h2>
+          <app-ff-injury-timeline [items]="inj.items" />
+        </section>
+      }
+    }
+
     <!-- 3 · ANSWER-FIRST KPI ROW -->
     <section class="mr-kpis">
       <div class="mr-kpi">
