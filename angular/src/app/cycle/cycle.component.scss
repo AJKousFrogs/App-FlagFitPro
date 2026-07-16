@@ -276,12 +276,12 @@
   padding: 9px 11px;
   color: var(--text-strong);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--fs-14);
 }
 .danger {
   margin-top: 16px;
   padding: 12px;
-  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border: var(--bw-thin) solid color-mix(in srgb, var(--danger) 35%, transparent);
   border-radius: var(--r-md);
 }
 .danger > b {
@@ -313,7 +313,7 @@
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semi);
-  border: 1px solid transparent;
+  border: var(--bw-thin) solid transparent;
   cursor: pointer;
 }
 .btn--primary {

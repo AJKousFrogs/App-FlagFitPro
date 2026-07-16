@@ -18,7 +18,7 @@
   td {
     padding: var(--s-2) var(--s-3);
     text-align: center;
-    border-bottom: 1px solid var(--border-soft);
+    border-bottom: var(--bw-thin) solid var(--border-soft);
   }
 
   thead .grp th {
@@ -41,7 +41,7 @@
   .sticky {
     position: sticky;
     left: 0;
-    z-index: 1;
+    z-index: var(--z-1);
     text-align: left;
     background: var(--surface);
     border-right: var(--bw-thin) solid var(--border);

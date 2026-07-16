@@ -161,7 +161,7 @@
     height: 100%;
     background: linear-gradient(90deg, var(--brand-600), var(--brand-300));
     border-radius: var(--r-pill);
-    transition: width 0.35s ease;
+    transition: width var(--t-350) ease;
   }
 
   /* app bar */
@@ -183,7 +183,7 @@
   .tab {
     padding: var(--sp-2) var(--sp-3);
     border-radius: var(--r-pill);
-    font-weight: 500;
+    font-weight: var(--fw-med);
     color: var(--text-2);
     font-size: var(--fs-14);
     background: none;
@@ -335,7 +335,7 @@
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
     overflow: hidden;
-    transition: border-color 0.2s;
+    transition: border-color var(--t-200);
   }
   .block.is-open {
     border-color: var(--line-strong);
@@ -357,8 +357,8 @@
   }
   .block-num {
     flex: 0 0 34px;
-    width: 34px;
-    height: 34px;
+    width: var(--size-34);
+    height: var(--size-34);
     border-radius: 50%;
     display: grid;
     place-items: center;
@@ -385,17 +385,17 @@
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
     font-weight: var(--fw-semi);
-    font-size: 17px;
+    font-size: var(--fs-17);
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
   }
   .tag-next {
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     color: var(--brand-300);
     background: var(--accent-soft);
     padding: 3px 8px;
@@ -423,18 +423,18 @@
   .caret {
     flex: 0 0 auto;
     color: var(--text-3);
-    transition: transform 0.25s;
+    transition: transform var(--t-250);
   }
   .block.is-open .caret {
     transform: rotate(180deg);
   }
   .block-body {
-    border-top: 1px solid var(--line);
+    border-top: var(--bw-thin) solid var(--line);
   }
 
   /* exercise rows */
   .ex {
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--bw-thin) solid var(--line);
   }
   .ex:last-child {
     border-bottom: 0;
@@ -447,16 +447,16 @@
   }
   .check {
     flex: 0 0 26px;
-    width: 26px;
-    height: 26px;
+    width: var(--size-26);
+    height: var(--size-26);
     border-radius: 50%;
-    border: 2px solid var(--ink-600);
+    border: var(--bw-md) solid var(--ink-600);
     display: grid;
     place-items: center;
     color: transparent;
     background: none;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all var(--t-150);
   }
   .check:hover {
     border-color: var(--brand-500);
@@ -479,7 +479,7 @@
   }
   .ex-name {
     font-weight: var(--fw-semi);
-    font-size: 15px;
+    font-size: var(--fs-15);
     color: var(--text);
   }
   .ex.is-done .ex-name {
@@ -516,7 +516,7 @@
   }
   .ex-caret {
     color: var(--text-3);
-    transition: transform 0.2s;
+    transition: transform var(--t-200);
     padding: 4px;
     background: none;
     border: 0;
@@ -574,7 +574,7 @@
   .cond-now .big {
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
-    font-size: 34px;
+    font-size: var(--fs-34);
     font-weight: var(--fw-semi);
     letter-spacing: -0.02em;
   }
@@ -584,7 +584,7 @@
   }
   .cond-now .wx-ic {
     color: var(--warn);
-    font-size: 30px;
+    font-size: var(--fs-30);
   }
   .cond-foot {
     font-size: var(--fs-12);
@@ -600,7 +600,7 @@
     align-items: center;
     gap: var(--sp-3);
     padding: 10px 0;
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--bw-thin) solid var(--line);
     font-size: var(--fs-14);
   }
   .week-row:last-child {
@@ -623,10 +623,10 @@
   }
   .load-pill {
     font-size: var(--fs-xs);
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     padding: 3px 9px;
     border-radius: var(--r-pill);
-    min-width: 52px;
+    min-width: var(--size-52);
     text-align: center;
   }
   .load-pill--easy {
@@ -650,7 +650,7 @@
   .donebar {
     margin-top: var(--sp-5);
     background: var(--surface-2);
-    border: 1px solid var(--line-strong);
+    border: var(--bw-thin) solid var(--line-strong);
     border-radius: var(--r-lg);
   }
   .donebar-inner {
@@ -706,7 +706,7 @@
     color: var(--brand-300);
   }
   .stepper .val {
-    min-width: 34px;
+    min-width: var(--size-34);
     text-align: center;
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
@@ -762,7 +762,7 @@
   .modal {
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: var(--z-60);
     display: grid;
     place-items: center;
     background: rgba(5, 7, 9, 0.7);
@@ -771,7 +771,7 @@
   .modal-box {
     width: min(720px, 100%);
     background: var(--surface);
-    border: 1px solid var(--line-strong);
+    border: var(--bw-thin) solid var(--line-strong);
     border-radius: var(--r-lg);
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -814,7 +814,7 @@
   .rec-headline {
     margin: 0 0 var(--sp-3);
     font-size: 0.9rem;
-    line-height: 1.45;
+    line-height: var(--lh-text);
   }
   .rec-list {
     display: flex;
@@ -836,7 +836,7 @@
   }
   .rec-tier {
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     letter-spacing: 0.04em;
     padding: 2px 6px;
     border-radius: 999px;
@@ -856,7 +856,7 @@
   .rec-effect {
     margin: var(--sp-2) 0 0;
     font-size: 0.82rem;
-    line-height: 1.4;
+    line-height: var(--lh-snug-alt-2);
   }
   .rec-timing {
     margin: var(--sp-2) 0 0;

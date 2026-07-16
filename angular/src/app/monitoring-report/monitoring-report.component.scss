@@ -44,7 +44,7 @@
 .mr-muted,
 .mr-cap {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .mr-cap {
   color: var(--text-faint);
@@ -103,7 +103,7 @@
   width: 100%;
   margin: var(--s-1) 0 0;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .mr-kpis {
@@ -160,7 +160,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-3);
-  font-size: 14px;
+  font-size: var(--fs-14);
 }
 .mr-items b {
   margin-left: 4px;
@@ -193,10 +193,10 @@
 }
 .mr-band {
   position: relative;
-  height: 22px;
+  height: var(--size-22);
   border-radius: var(--r-pill);
   background: var(--surface-2);
-  border: 1px solid var(--border-soft);
+  border: var(--bw-thin) solid var(--border-soft);
   margin: 10px 0 4px;
 }
 .mr-band-sweet {
@@ -221,8 +221,8 @@
 }
 .mr-table td {
   padding: 6px 4px;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: 14px;
+  border-bottom: var(--bw-thin) solid var(--border-soft);
+  font-size: var(--fs-14);
 }
 
 .mr-chip {
@@ -252,7 +252,7 @@
 
 .mr-foot {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .mr-thresh {
   display: flex;

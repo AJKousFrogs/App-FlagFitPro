@@ -110,7 +110,7 @@
   padding: var(--s-2) calc(var(--s-2) + var(--s-3));
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-semi);
   border: var(--bw-thin) solid transparent;
   cursor: pointer;
 }
@@ -127,7 +127,7 @@
   align-items: center;
   gap: var(--s-1);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-semi);
   color: var(--good);
 }
 .hint {

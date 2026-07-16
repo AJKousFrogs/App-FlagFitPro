@@ -32,7 +32,7 @@
   margin: 0;
   max-width: 56ch;
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  line-height: var(--lh-body);
   color: var(--text-muted);
 }
 
@@ -168,7 +168,7 @@
 .wg {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: var(--fw-semi);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -190,8 +190,8 @@
   color: var(--text-muted);
 }
 .legend .dot {
-  width: 9px;
-  height: 9px;
+  width: var(--size-9);
+  height: var(--size-9);
   border-radius: 2px;
 }
 .note {
@@ -231,7 +231,7 @@
   margin: 0 0 14px;
   font-size: var(--fs-sm);
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: var(--lh-body);
 }
 .edu-line lucide-icon {
   color: var(--info);
@@ -248,10 +248,10 @@
   padding: 10px 16px;
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-semi);
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: var(--bw-thin) solid transparent;
 }
 .btn--primary {
   background: var(--accent);
@@ -279,7 +279,7 @@
   margin: 0;
   max-width: 44ch;
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  line-height: var(--lh-body);
 }
 .empty.inline {
   padding: 14px 8px;
