@@ -134,6 +134,14 @@ export const featureRoutes: Routes = [
         title: "Events · FlagFit",
       },
       {
+        path: "engine-inspector",
+        loadComponent: () =>
+          import("../../staff/engine-inspector/engine-inspector.component").then(
+            (m) => m.EngineInspectorComponent,
+          ),
+        title: "Engine inspector · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(

@@ -76,6 +76,7 @@ import {
   CloudSun,
   BatteryLow,
   Repeat,
+  SlidersHorizontal,
 } from "lucide-angular";
 import {
   provideClientHydration,
@@ -188,6 +189,7 @@ export const appConfig: ApplicationConfig = {
         CloudSun,
         BatteryLow,
         Repeat,
+        SlidersHorizontal,
       }),
     ),
 
