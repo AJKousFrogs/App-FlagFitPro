@@ -288,6 +288,14 @@ export const featureRoutes: Routes = [
         title: "Fuel plan · FlagFit",
       },
       {
+        path: "device-data",
+        loadComponent: () =>
+          import("../../device-data/device-data.component").then(
+            (m) => m.DeviceDataComponent,
+          ),
+        title: "Device data · FlagFit",
+      },
+      {
         path: "roster",
         loadComponent: () =>
           import("../../roster/roster.component").then(
