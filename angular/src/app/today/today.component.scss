@@ -25,6 +25,8 @@
   --r-md: 14px;
   --r-sm: 10px;
   --r-pill: 999px;
+  /* ...and a looser heading line-height than the global 1.15 */
+  --lh-tight: 1.2;
 
   color: var(--text);
   padding: var(--sp-5) var(--sp-6) var(--sp-8);

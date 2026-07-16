@@ -130,7 +130,10 @@
 
   /* missing line heights */
   --lh-tight-display: 1.1;
-  --lh-tight: 1.2;
+  /* 1.15 is the global heading line-height (_system.scss h1,h2,h3) and must
+     stay put: Today/Training want 1.2, but they scope that override to .td/.tr
+     rather than dragging every other screen with them. */
+  --lh-tight: 1.15;
   --lh-text: 1.45;
   --lh-snug-alt: 1.35;
   --lh-snug-alt-2: 1.4;
