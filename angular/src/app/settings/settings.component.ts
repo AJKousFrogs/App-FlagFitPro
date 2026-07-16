@@ -4,10 +4,12 @@ import {
   computed,
   inject,
   signal,
+  DestroyRef,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { firstValueFrom } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AvatarComponent } from "../shared/avatar.component";
 
 import { ApiService } from "../core/services/api.service";
@@ -87,6 +89,7 @@ export class SettingsComponent {
   private readonly privacy = inject(PrivacySettingsService);
   private readonly periodization = inject(PeriodizationService);
   private readonly recovery = inject(RecoveryService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Recovery equipment (Prefs tab) — reuses athlete_training_config.available_equipment.
   readonly recoveryEquipment = RECOVERY_EQUIPMENT;
@@ -504,6 +507,7 @@ export class SettingsComponent {
           team: cfg(this.coachMessages()),
         },
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (e) => {
           this.logger.error("notif_prefs_save_failed", e);
@@ -529,6 +533,7 @@ export class SettingsComponent {
           healthSharingDefault: this.shareHealth(),
         },
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (e) => {
           this.logger.error("privacy_save_failed", e);

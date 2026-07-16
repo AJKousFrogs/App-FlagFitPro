@@ -844,7 +844,12 @@ const doc = new Document({
   ],
 });
 
+const outputPath = process.env.OUTPUT_PATH || '/Users/aljosaursakous/Desktop/Flag football HTML - APP/FlagFit-Pro-Business-Development-Plan.docx';
+
 Packer.toBuffer(doc).then(buffer => {
-  writeFileSync('/Users/aljosaursakous/Desktop/Flag football HTML - APP/FlagFit-Pro-Business-Development-Plan.docx', buffer);
+  writeFileSync(outputPath, buffer);
   console.log('Document created successfully!');
+}).catch(error => {
+  console.error('Failed to generate document:', error);
+  process.exit(1);
 });

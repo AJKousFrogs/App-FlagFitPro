@@ -27,7 +27,7 @@
   --r-pill: 999px;
 
   color: var(--text);
-  padding: var(--sp-5) var(--sp-6) var(--sp-8);
+  padding: var(--sp-5) var(--sp-6) var(--s-8);
   max-width: var(--width-3xl);
   margin: 0 auto;
 
@@ -253,7 +253,7 @@
     font-size: var(--fs-14);
   }
   .icon-btn {
-    width: var(--sp-38);
+    width: var(--size-38);
     height: var(--size-38);
     border-radius: var(--r-pill);
     display: grid;
@@ -263,7 +263,7 @@
     color: var(--text-2);
   }
   .avatar {
-    width: var(--sp-38);
+    width: var(--size-38);
     height: var(--size-38);
     border-radius: var(--r-pill);
     background: linear-gradient(135deg, var(--brand-600), var(--avatar-grad-2));

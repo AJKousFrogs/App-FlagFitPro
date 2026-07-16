@@ -31,7 +31,7 @@
   color: var(--text);
   max-width: var(--width-4xl);
   margin: 0 auto;
-  padding: 0 var(--sp-5) var(--sp-8);
+  padding: 0 var(--sp-5) var(--s-8);
 
   h1,
   h2,
@@ -785,7 +785,7 @@
     }
   }
   @media (max-width: 560px) {
-    padding: 0 var(--sp-4) var(--sp-8);
+    padding: 0 var(--sp-4) var(--s-8);
     .donebar-cta {
       flex: 1 1 100%;
     }
