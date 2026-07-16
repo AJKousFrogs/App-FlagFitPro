@@ -46,7 +46,13 @@ const CONFIG = {
     "**/verify-db-objects.js",
   ],
   coachContextIndicators: [
-    /coach/i,
+    // Word-boundaried: a bare /coach/i also matches "coachOverride" (an
+    // unrelated engine field name in periodization-prescription.js) and would
+    // match "coaching" anywhere. \b fails between camelCase letters too (no
+    // boundary between "h" and "O" in "coachOverride"), so this still won't
+    // catch "canCoachViewWellness" — team-monitoring.js's real coach-context
+    // signal is the explicit allowedExceptions entry below, not this list.
+    /\bcoach\b/i,
     /team.*dashboard/i,
     /squad/i,
     /player.*analytics/i,
@@ -123,8 +129,41 @@ const CONFIG = {
       file: "calc-readiness.js",
       reason: "Player-only: user calculates own readiness score",
     },
+    {
+      file: "team-monitoring.js",
+      requiresReview: true,
+      reason:
+        "Genuinely coach-context, but already double-gated in application " +
+        "code: buildRow() calls canCoachViewWellness/canCoachViewPerformance " +
+        "(the same can_view_player_performance RPC v_training_sessions_consent " +
+        "itself calls) and nulls every ungated column before the response is " +
+        "built (see 2026-07-09 RLS audit in " +
+        "supabase/migrations/20260709154006_*.sql). The nominal consent view " +
+        "can't be used here instead: it's `security_invoker = true` and keys " +
+        "off auth.uid(), which is NULL for the supabaseAdmin service-role " +
+        "client this file uses throughout — so switching to the view would " +
+        "silently return no_consent for every row, not add safety. Kept as a " +
+        "reviewed warning (not silenced) so a future edit that drops the " +
+        "canPerf/canWellness gate still surfaces here.",
+    },
   ],
 };
+
+/**
+ * Blank out comments so a word like "coach" inside a comment (documenting
+ * that an endpoint is NOT for coaches, or an unrelated field name like
+ * `coachOverride`) isn't read as evidence the file needs a coach-context
+ * consent gate. Newlines are preserved so reported line numbers stay exact.
+ */
+function stripComments(text) {
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  return text
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(
+      /(^|[^:])(\/\/[^\n]*)/g,
+      (_, pre, comment) => pre + blank(comment),
+    );
+}
 
 class ConsentViolationChecker {
   constructor(options = {}) {
@@ -173,7 +212,10 @@ class ConsentViolationChecker {
   async scanFile(filePath) {
     this.scannedFiles++;
     try {
-      const content = fs.readFileSync(filePath, "utf-8");
+      const rawContent = fs.readFileSync(filePath, "utf-8");
+      // Comments blanked, not stripped, so `.split("\n")` line numbers in
+      // detectDirectTableAccess still line up with the source file.
+      const content = stripComments(rawContent);
       const fileName = path.basename(filePath);
       const exception = CONFIG.allowedExceptions.find((e) =>
         fileName.includes(e.file),
