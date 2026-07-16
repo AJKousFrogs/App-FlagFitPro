@@ -7,7 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { DatePipe, DecimalPipe, UpperCasePipe } from "@angular/common";
+import { DatePipe, UpperCasePipe } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -125,7 +125,6 @@ interface Supplement {
     RouterLink,
     LucideAngularModule,
     DatePipe,
-    DecimalPipe,
     UpperCasePipe,
     KpiCardComponent,
     ReadinessRingComponent,
