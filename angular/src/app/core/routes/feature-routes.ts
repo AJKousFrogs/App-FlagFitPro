@@ -296,6 +296,14 @@ export const featureRoutes: Routes = [
         title: "Device data · FlagFit",
       },
       {
+        path: "fuelling-check",
+        loadComponent: () =>
+          import("../../fuelling-check/fuelling-check.component").then(
+            (m) => m.FuellingCheckComponent,
+          ),
+        title: "Fuelling check · FlagFit",
+      },
+      {
         path: "roster",
         loadComponent: () =>
           import("../../roster/roster.component").then(
