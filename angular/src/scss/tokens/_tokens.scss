@@ -84,7 +84,7 @@
 
   /* missing font sizes (micro and custom) */
   --fs-micro: 10.5px;
-  --fs-10: 11.5px;
+  --fs-11: 11.5px;
   --fs-12: 12px;
   --fs-13: 12.5px;
   --fs-17: 17px;
@@ -94,7 +94,14 @@
 
   /* missing spacing (non-grid) */
   --sp-6: 6px;
+  --sp-7: 7px;
+  --sp-9: 9px;
+  --sp-10: 10px;
   --sp-14: 14px;
+
+  /* missing font size tokens (sub-semantic) */
+  --fs-10: 10px;
+  --fs-18: 18px;
 
   /* missing line heights */
   --lh-tight-display: 1.1;
