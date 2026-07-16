@@ -4,10 +4,10 @@
 .dd {
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 16px 96px;
+  padding: var(--s-4) var(--s-4) calc(var(--s-8) * 1.5);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--s-3);
 }
 .dd-head .eyebrow {
   display: inline-flex;
@@ -20,8 +20,8 @@
   color: var(--accent);
 }
 .dd-head h1 {
-  margin: 6px 0 4px;
-  font-size: 26px;
+  margin: var(--s-1) 0 var(--s-1);
+  font-size: var(--fs-h1);
   line-height: 1.1;
   color: var(--text-strong);
   text-wrap: balance;
@@ -29,7 +29,7 @@
 .dd-head .sub {
   margin: 0;
   max-width: 58ch;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text-muted);
 }
@@ -43,12 +43,12 @@
 .card-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 16px 0;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4) 0;
 }
 .card-head h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--fs-h3);
   color: var(--text-strong);
 }
 .card-head .meta {
@@ -60,18 +60,18 @@
   color: var(--text-faint);
 }
 .card-body {
-  padding: 12px 16px 16px;
+  padding: var(--s-3) var(--s-4) var(--s-4);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: var(--s-2);
 }
 .fld {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--s-1);
 }
 .fld--wide {
   grid-column: 1 / -1;
@@ -85,10 +85,10 @@
   background: var(--surface-2);
   border: 1px solid var(--border-soft);
   border-radius: var(--r-md);
-  padding: 9px 11px;
+  padding: var(--s-1) calc(var(--s-1) + 7px);
   color: var(--text-strong);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--fs-body);
 }
 .fld input:focus-visible {
   outline: none;
@@ -98,8 +98,8 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 14px;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
   flex-wrap: wrap;
 }
 .btn {
@@ -107,9 +107,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--s-1);
-  padding: 10px 18px;
+  padding: var(--s-2) calc(var(--s-2) + 10px);
   border-radius: var(--r-pill);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   border: 1px solid transparent;
   cursor: pointer;
@@ -125,13 +125,13 @@
 .ok {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--s-1);
   font-size: 12.5px;
   font-weight: 600;
   color: var(--good);
 }
 .hint {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
 }
 
@@ -142,7 +142,7 @@
   display: block;
   font-size: 11px;
   color: var(--text-faint);
-  margin-bottom: 4px;
+  margin-bottom: var(--s-1);
 }
 
 .sessions {
@@ -151,20 +151,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--s-2);
 }
 .ses {
   border: 1px solid var(--border-soft);
   border-radius: var(--r-md);
-  padding: 10px 12px;
+  padding: var(--s-2) var(--s-3);
 }
 .ses-top {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: var(--s-2);
 }
 .ses-top b {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-strong);
 }
 .ses-top .src {
@@ -174,41 +174,41 @@
 .ses-metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--s-3);
   margin-top: 6px;
 }
 .ses-metrics span {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-strong);
   font-variant-numeric: tabular-nums;
 }
 .ses-metrics i {
   font-style: normal;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  margin-left: 3px;
+  margin-left: var(--s-1);
 }
 .ses-note {
-  margin: 6px 0 0;
+  margin: var(--s-1) 0 0;
   font-size: 12.5px;
   color: var(--text-muted);
 }
 
 .devices {
   list-style: none;
-  margin: 10px 0 0;
+  margin: var(--s-2) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--s-2);
 }
 .dev {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: var(--text-strong);
   padding: 8px 0;
   border-bottom: 1px solid var(--border-soft);
@@ -218,7 +218,7 @@
 }
 .dev-state {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -236,9 +236,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: var(--s-2);
   text-align: center;
-  padding: 22px 16px;
+  padding: calc(var(--s-3) + 10px) var(--s-4);
   color: var(--text-muted);
 }
 .empty lucide-icon {
@@ -247,7 +247,7 @@
 .empty p {
   margin: 0;
   max-width: 40ch;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
 }
 
 @media (max-width: 480px) {
