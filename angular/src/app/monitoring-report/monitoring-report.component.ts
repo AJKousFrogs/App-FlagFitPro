@@ -7,7 +7,10 @@ import {
 import { KeyValuePipe } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { SparklineComponent } from "../shared/perf-viz";
+import {
+  SparklineComponent,
+  MarkerRangeComponent,
+} from "../shared/perf-viz";
 import {
   MonitoringReportService,
   MonitoringReport,
@@ -31,7 +34,12 @@ const GLOSSARY: Record<string, string> = {
 @Component({
   selector: "app-monitoring-report",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, KeyValuePipe, SparklineComponent],
+  imports: [
+    LucideAngularModule,
+    KeyValuePipe,
+    SparklineComponent,
+    MarkerRangeComponent,
+  ],
   templateUrl: "./monitoring-report.component.html",
   styleUrl: "./monitoring-report.component.scss",
 })

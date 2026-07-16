@@ -73,6 +73,9 @@ export interface MonitoringReport {
           name: string;
           value: number | null;
           unit: string | null;
+          /** Reference bounds (RAW mode only — GDPR-gated, clinical lens). */
+          referenceLow?: number | null;
+          referenceHigh?: number | null;
           flag: string;
         }[];
         promptRequired: boolean;

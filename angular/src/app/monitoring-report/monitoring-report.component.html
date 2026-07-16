@@ -266,11 +266,21 @@
                 · {{ $any(r.bloodwork).daysSinceDraw }}d ago
               }
             </div>
-            <table class="mr-table">
+            <table class="mr-table mr-table--markers">
               @for (m of $any(r.bloodwork).markers; track m.name) {
                 <tr>
                   <td>{{ m.name }}</td>
                   <td class="mono">{{ m.value ?? "—" }} {{ m.unit }}</td>
+                  <td class="mr-range-cell">
+                    @if (m.referenceLow != null && m.referenceHigh != null) {
+                      <app-ff-marker-range
+                        [value]="m.value"
+                        [low]="m.referenceLow"
+                        [high]="m.referenceHigh"
+                        [flag]="m.flag"
+                      />
+                    }
+                  </td>
                   <td>
                     <span class="mr-chip tone-{{ flagTone(m.flag) }}">
                       <lucide-icon [name]="flagShape(m.flag)" /> {{ m.flag }}
