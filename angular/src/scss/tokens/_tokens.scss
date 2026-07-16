@@ -99,7 +99,9 @@
   --fs-30: 30px;
   --fs-34: 34px;
 
-  /* off-grid spacing (non-standard grid values used in components) */
+  /* off-grid spacing (non-standard grid values used in components)
+     Note: Values like 16px/20px/22px that overlap the standard grid use the
+     grid tokens instead (e.g., use --s-4 for 16px, not --sp-16). */
   --sp-3: 3px;
   --sp-5: 5px;
   --sp-6: 6px;
@@ -111,7 +113,6 @@
   --sp-13: 13px;
   --sp-14: 14px;
   --sp-15: 15px;
-  --sp-16: 16px;
   --sp-18: 18px;
   --sp-20: 20px;
   --sp-22: 22px;
@@ -319,12 +320,19 @@
 /* ============================================================================
    DESIGN SYSTEM DOCUMENTATION & EXCEPTIONS
 
-   Component-scoped token overrides:
+   SHARED COMPONENT DESIGN PATTERNS:
+   Both training.component.scss and today.component.scss define identical radius
+   overrides (--r-lg:20px, --r-md:14px, --r-sm:10px, --r-pill:999px). These are
+   intentional duplicates for component-scoped styling due to Angular's view
+   encapsulation isolation. If refactoring for DRY principle, would require
+   shared SCSS import or CSS custom property inheritance setup.
+
+   COMPONENT-SCOPED TOKEN OVERRIDES:
    - training.component.scss: Uses intentionally larger radii (--r-lg:20px, --r-md:14px, --r-sm:10px)
      vs. global system (16px, 12px, 8px) to match distinct visual scale for training UI
    - today.component.scss: Same radius overrides as training for visual consistency
 
-   Non-tokenized values (documented exceptions):
+   NON-TOKENIZED VALUES (documented exceptions):
    - Structural layouts: min-height: 220px (hero band), height: 96px (chart column)
      Rationale: One-off measurement dimensions that don't recur, not part of design system
    - Custom component properties: --spk-h: 40px (sparkline height in monitoring-report)
@@ -334,18 +342,23 @@
    - Negative offsets: top: -4px (visual adjustment via calc(var(--s-1) * -1))
      Rationale: Fine-tuning for optical alignment, not design-system scale
 
-   Future token family candidates (if scaling beyond current domains):
+   TOKEN CONSOLIDATION HISTORY:
+   - Removed --sp-16 (16px): Redundant with --s-4 (grid spacing). Off-grid values
+     that match the standard grid should use grid tokens instead.
+   - Off-grid spacing (--sp-*) now explicitly documented to NOT include values that
+     overlap with the primary grid (4/8/12/16/24/32/48/64px).
+
+   FUTURE CONSOLIDATION CANDIDATES:
    - Component-specific sizing (checkbox, radio, toggle track dimensions)
    - Transition timing customization beyond existing --t-* family
    - Shadow variants beyond --e-1/e-2/e-3 (inset, colored, gradient shadows)
 
-   Architecture notes:
-   - Off-grid spacing (--sp-6 through --sp-28) exists to cover component values that
-     don't map to the 4/8/12/16/24/32/48/64px grid. These are considered "outside"
-     the primary design scale and should be preferred sparingly.
+   ARCHITECTURE NOTES:
+   - Off-grid spacing (--sp-6 through --sp-28, excluding grid overlaps) covers
+     component values that don't map to the primary 4/8/12/16/24/32/48/64px grid.
+     These are considered "outside" the primary design scale and should be preferred sparingly.
    - Layout tokens (--width-xs through --width-4xl) cover content-container maxima
      and grid-track minima. Use these for container constraints, not component sizing.
    - Opacity scale (--op-04 through --op-94) covers state overlays, disabled states,
-     and transparency effects. No semantic opacity variants (use raw opacity values
-     are mapped to nearest --op-* token).
+     and transparency effects. Map to nearest --op-* token rather than raw values.
    ========================================================================== */

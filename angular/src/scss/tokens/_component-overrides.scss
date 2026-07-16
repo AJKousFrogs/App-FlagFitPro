@@ -1,0 +1,17 @@
+/* ============================================================================
+   Component-Scoped Design Overrides
+
+   These are intentional visual divergences from the global design system,
+   applied to specific UI surfaces that have distinct design requirements.
+   Shared by multiple components to avoid duplication.
+========================================================================== */
+
+/* Today & Training surfaces use larger radii than global system
+   (16px, 12px, 8px globally vs. 20px, 14px, 10px here) to create
+   visual distinctness and match their specific interface scale. */
+@mixin component-radius-overrides {
+  --r-lg: 20px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --r-pill: 999px;
+}

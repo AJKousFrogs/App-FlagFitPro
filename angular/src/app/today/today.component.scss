@@ -470,7 +470,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: var(--sp-16);
+    height: var(--s-4);
   }
   .tl-month {
     position: absolute;
@@ -480,8 +480,8 @@
     color: var(--text-3);
     border-left: var(--bw-thin) solid var(--line-strong);
     padding-left: var(--sp-5);
-    height: var(--sp-16);
-    line-height: var(--sp-16);
+    height: var(--s-4);
+    line-height: var(--s-4);
   }
   .plan-foot {
     font-size: var(--fs-12);
