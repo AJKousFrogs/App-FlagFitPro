@@ -191,6 +191,9 @@
               </div>
             }
             <a class="btn btn--primary" routerLink="/training">Start session</a>
+            <div class="why-panel-slot">
+              <app-why-panel [rx]="p" [includeBase]="false" />
+            </div>
           } @else {
             <p class="muted" style="margin: 0 0 var(--sp-3)">
               No plan yet — log a check-in and we'll calculate your readiness

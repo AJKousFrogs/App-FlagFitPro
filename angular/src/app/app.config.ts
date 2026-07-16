@@ -71,6 +71,11 @@ import {
   Clock,
   Plane,
   Bed,
+  ChevronUp,
+  Target,
+  CloudSun,
+  BatteryLow,
+  Repeat,
 } from "lucide-angular";
 import {
   provideClientHydration,
@@ -178,6 +183,11 @@ export const appConfig: ApplicationConfig = {
         Clock,
         Plane,
         Bed,
+        ChevronUp,
+        Target,
+        CloudSun,
+        BatteryLow,
+        Repeat,
       }),
     ),
 
