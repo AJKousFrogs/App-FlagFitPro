@@ -1,0 +1,358 @@
+:host {
+  display: block;
+}
+.cy {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cy-head .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.cy-head h1 {
+  margin: 6px 0 4px;
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--text-strong);
+}
+.cy-head .sub {
+  margin: 0;
+  max-width: 58ch;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-lg);
+}
+.card-head {
+  padding: 13px 16px 0;
+}
+.card-head h2 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-strong);
+}
+.card-body {
+  padding: 12px 16px 16px;
+}
+.skel {
+  padding: 26px 16px;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+/* consent gate */
+.consent {
+  padding: 16px;
+}
+.consent h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--text-strong);
+}
+.promises {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.promises li {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.promises lucide-icon {
+  color: var(--accent);
+  flex: none;
+  margin-top: 1px;
+}
+.consent-note {
+  font-size: 12px;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+/* advisory */
+.advisory {
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+}
+.advisory.tentative {
+  border-left-style: dashed;
+  border-left-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.adv-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.phase {
+  font-weight: 700;
+  text-transform: capitalize;
+  color: var(--text-strong);
+  font-size: 15px;
+}
+.conf,
+.tent {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.tent {
+  color: var(--accent);
+}
+.adv-meta {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.adv-msg {
+  margin: 10px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* chips */
+.lbl {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin: 4px 0 6px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.chip {
+  padding: 7px 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.chip.on {
+  background: var(--accent);
+  color: #08090b;
+  border-color: transparent;
+}
+
+/* logs */
+.logs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.log {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+}
+.log:last-child {
+  border-bottom: none;
+}
+.log-date {
+  font-family: var(--font-mono);
+  color: var(--text-strong);
+}
+.log-flow {
+  text-transform: capitalize;
+  color: var(--danger);
+  font-size: 12px;
+}
+.log-sym {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+.log-del {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  line-height: 0;
+}
+.log-del:hover {
+  color: var(--danger);
+}
+
+/* settings */
+.set-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.set-row span {
+  font-size: 13.5px;
+  color: var(--text-strong);
+}
+.sw {
+  width: 42px;
+  height: 24px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-2);
+  position: relative;
+  cursor: pointer;
+  flex: none;
+}
+.sw::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: none;
+}
+.sw.on {
+  background: var(--accent);
+  border-color: transparent;
+}
+.sw.on::after {
+  left: 20px;
+  background: #08090b;
+}
+.hint {
+  margin: 6px 0 14px;
+  font-size: 12px;
+  color: var(--text-faint);
+  line-height: 1.5;
+}
+.set-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.fld {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fld span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.fld input {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  padding: 9px 11px;
+  color: var(--text-strong);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.danger {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-radius: var(--r-md);
+}
+.danger > b {
+  color: var(--danger);
+  font-size: 13.5px;
+}
+.danger-row {
+  display: flex;
+  gap: 8px;
+}
+.danger-row input {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  padding: 9px 11px;
+  color: var(--text-strong);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* buttons + empties */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn--primary {
+  background: var(--accent);
+  color: #08090b;
+}
+.btn--primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn--danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn--danger:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.cy-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 22px 16px;
+  color: var(--text-muted);
+}
+.cy-empty lucide-icon {
+  color: var(--text-faint);
+}
+.cy-empty p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .set-grid {
+    grid-template-columns: 1fr;
+  }
+}

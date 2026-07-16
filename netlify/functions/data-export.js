@@ -69,6 +69,20 @@ const USER_DATA_TABLES = [
     exportName: "recovery_sessions",
   },
   {
+    // Special-category (GDPR Art. 9). This is the ONLY place outside the cycle
+    // module that reads cycle data — the privacy export path (V3-DESIGN §4.5).
+    table: "cycle_tracking_profiles",
+    userIdColumn: "user_id",
+    description: "Cycle module settings and consent record",
+    exportName: "cycle_profile",
+  },
+  {
+    table: "cycle_logs",
+    userIdColumn: "user_id",
+    description: "Menstrual cycle daily logs (special-category health data)",
+    exportName: "cycle_logs",
+  },
+  {
     table: "training_sessions",
     userIdColumn: "user_id",
     description: "Training session records",

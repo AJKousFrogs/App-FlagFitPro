@@ -304,6 +304,12 @@ export const featureRoutes: Routes = [
         title: "Fuelling check · FlagFit",
       },
       {
+        path: "cycle",
+        loadComponent: () =>
+          import("../../cycle/cycle.component").then((m) => m.CycleComponent),
+        title: "Cycle · FlagFit",
+      },
+      {
         path: "roster",
         loadComponent: () =>
           import("../../roster/roster.component").then(
