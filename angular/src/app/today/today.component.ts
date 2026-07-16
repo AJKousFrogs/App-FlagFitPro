@@ -5,9 +5,11 @@ import {
   computed,
   inject,
   signal,
+  DestroyRef,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { DatePipe, UpperCasePipe } from "@angular/common";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LucideAngularModule } from "lucide-angular";
 
 import { PeriodizationService } from "../core/services/periodization.service";
@@ -146,12 +148,19 @@ export class TodayComponent {
   private readonly injurySvc = inject(InjuryService);
   private readonly logger = inject(LoggerService);
   private readonly bodySvc = inject(BodyMeasurementService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     // Readiness is server-canonical; recompute from the latest check-in each visit.
-    this.readinessSvc.calculateToday().subscribe({ error: () => undefined });
+    this.readinessSvc
+      .calculateToday()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ error: () => undefined });
     // 28-day history drives the check-in coverage grid + the readiness sparkline.
-    this.readinessSvc.getHistory("", 28).subscribe({ error: () => undefined });
+    this.readinessSvc
+      .getHistory("", 28)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ error: () => undefined });
     // Latest body mass for the tracking-tile KPI (logged on Stats).
     void this.bodySvc.loadHistory();
   }
