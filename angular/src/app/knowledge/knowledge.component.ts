@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
@@ -102,6 +102,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 export class KnowledgeComponent {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly loaded = signal(false);
   readonly busy = signal(false);
@@ -124,7 +125,15 @@ export class KnowledgeComponent {
   });
 
   constructor() {
-    this.browse();
+    // A concept tooltip deep-links here with ?q=<concept>; run that search so the
+    // reader lands on the relevant entries. Otherwise show the full browse list.
+    const q = this.route.snapshot.queryParamMap.get("q")?.trim();
+    if (q) {
+      this.query.set(q);
+      this.search();
+    } else {
+      this.browse();
+    }
   }
 
   private browse(): void {

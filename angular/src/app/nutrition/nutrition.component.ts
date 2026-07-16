@@ -9,6 +9,7 @@ import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { PeriodizationService } from "../core/services/periodization.service";
 import { ScheduleService } from "../core/services/schedule.service";
+import { ConceptTipComponent } from "../shared/concept-tip.component";
 import { fuelBucket, fuelBucketLabel, fuelIdeas } from "./nutrition.util";
 import type { FuelBucket } from "./nutrition.util";
 
@@ -38,7 +39,7 @@ interface FuelDay {
 @Component({
   selector: "app-nutrition",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LucideAngularModule, DecimalPipe],
+  imports: [RouterLink, LucideAngularModule, DecimalPipe, ConceptTipComponent],
   templateUrl: "./nutrition.component.html",
   styleUrl: "./nutrition.component.scss",
 })
