@@ -116,7 +116,7 @@
 }
 .btn--primary {
   background: var(--accent);
-  color: #08090b;
+  color: var(--on-accent);
 }
 .btn--primary:disabled {
   opacity: 0.5;

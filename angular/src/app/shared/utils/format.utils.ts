@@ -3,29 +3,6 @@
  */
 
 /**
- * Capitalize first letter of string
- * @example
- * capitalize('hello') // 'Hello'
- */
-export function capitalize(str: string): string {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
-/**
- * Capitalize first letter of each word
- * @example
- * titleCase('hello world') // 'Hello World'
- */
-export function titleCase(str: string): string {
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map((word) => capitalize(word))
-    .join(" ");
-}
-
-/**
  * Convert string to camelCase
  * @example
  * camelCase('hello world') // 'helloWorld'
@@ -34,18 +11,6 @@ export function camelCase(str: string): string {
   return str
     .toLowerCase()
     .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
-}
-
-/**
- * Convert string to kebab-case
- * @example
- * kebabCase('helloWorld') // 'hello-world'
- */
-export function kebabCase(str: string): string {
-  return str
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
-    .toLowerCase();
 }
 
 /**
@@ -71,30 +36,6 @@ export function truncate(str: string, length: number, suffix = "..."): string {
 }
 
 /**
- * Truncate to word boundary
- * @example
- * truncateWords('Hello world foo bar', 2) // 'Hello world...'
- */
-export function truncateWords(
-  str: string,
-  count: number,
-  suffix = "...",
-): string {
-  const words = str.split(" ");
-  if (words.length <= count) return str;
-  return words.slice(0, count).join(" ") + suffix;
-}
-
-/**
- * Remove HTML tags from string
- * @example
- * stripHtml('<p>Hello</p>') // 'Hello'
- */
-export function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "");
-}
-
-/**
  * Format number with thousands separator
  * @example
  * formatNumber(1234567) // '1,234,567'
@@ -104,108 +45,6 @@ export function formatNumber(num: number, decimals = 0): string {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
-}
-
-/**
- * Format currency
- * @example
- * formatCurrency(1234.56) // '$1,234.56'
- */
-export function formatCurrency(
-  amount: number,
-  currency = "USD",
-  locale = "en-US",
-): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(amount);
-}
-
-/**
- * Format percentage
- * @example
- * formatPercent(0.1234) // '12.34%'
- */
-export function formatPercent(value: number, decimals = 2): string {
-  return `${(value * 100).toFixed(decimals)}%`;
-}
-
-/**
- * Format average value
- * @example
- * formatAverage(12.345) // '12.3'
- */
-export function formatAverage(value: number, decimals = 1): string {
-  return value.toFixed(decimals);
-}
-
-/**
- * Format stat value with appropriate formatting
- * @example
- * formatStat(1234) // '1,234'
- * formatStat(0.756) // '75.6%'
- */
-export function formatStat(
-  value: number,
-  type: "number" | "percent" | "average" = "number",
-): string {
-  if (type === "percent") {
-    return formatPercent(value);
-  }
-  if (type === "average") {
-    return formatAverage(value);
-  }
-  return formatNumber(value);
-}
-
-/**
- * Format file size
- * @example
- * formatFileSize(1536) // '1.5 KB'
- */
-export function formatFileSize(bytes: number): string {
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let size = bytes;
-  let unitIndex = 0;
-
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex++;
-  }
-
-  return `${size.toFixed(1)} ${units[unitIndex]}`;
-}
-
-/**
- * Format phone number (US)
- * @example
- * formatPhone('5551234567') // '(555) 123-4567'
- */
-export function formatPhone(phone: string): string {
-  const cleaned = phone.replace(/\D/g, "");
-  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`;
-  }
-
-  return phone;
-}
-
-/**
- * Pluralize word based on count
- * @example
- * pluralize('item', 1) // 'item'
- * pluralize('item', 2) // 'items'
- */
-export function pluralize(
-  word: string,
-  count: number,
-  plural?: string,
-): string {
-  if (count === 1) return word;
-  return plural || `${word}s`;
 }
 
 /**
@@ -243,33 +82,6 @@ export function padStart(str: string, length: number, char = " "): string {
  */
 export function padEnd(str: string, length: number, char = " "): string {
   return str.padEnd(length, char);
-}
-
-/**
- * Remove extra whitespace
- * @example
- * trimWhitespace('  hello   world  ') // 'hello world'
- */
-export function trimWhitespace(str: string): string {
-  return str.replace(/\s+/g, " ").trim();
-}
-
-/**
- * Escape HTML special characters
- */
-export function escapeHtml(str: string): string {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-/**
- * Unescape HTML entities
- */
-export function unescapeHtml(str: string): string {
-  const div = document.createElement("div");
-  div.innerHTML = str;
-  return div.textContent || "";
 }
 
 /**
@@ -320,17 +132,4 @@ export function normalizePlayerName(
   }
 
   return fallback;
-}
-
-/**
- * Format seconds as MM:SS for display
- * @example
- * formatTimeMMSS(90) // '1:30'
- * formatTimeMMSS(null) // '--'
- */
-export function formatTimeMMSS(seconds: number | null | undefined): string {
-  if (seconds === null || seconds === undefined) return "--";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
 }

@@ -161,7 +161,7 @@
 }
 .chip.on {
   background: var(--accent);
-  color: #08090b;
+  color: var(--on-accent);
   border-color: transparent;
 }
 
@@ -247,7 +247,7 @@
 }
 .sw.on::after {
   left: 20px;
-  background: #08090b;
+  background: var(--on-accent);
 }
 .hint {
   margin: 6px 0 14px;
@@ -318,7 +318,7 @@
 }
 .btn--primary {
   background: var(--accent);
-  color: #08090b;
+  color: var(--on-accent);
 }
 .btn--primary:disabled {
   opacity: 0.5;
@@ -326,7 +326,7 @@
 }
 .btn--danger {
   background: var(--danger);
-  color: #fff;
+  color: var(--c-white);
 }
 .btn--danger:disabled {
   opacity: 0.4;
