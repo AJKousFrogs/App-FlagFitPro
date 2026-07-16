@@ -23,6 +23,7 @@ import {
   KpiCardComponent,
   ReadinessRingComponent,
 } from "../shared/perf-viz";
+import { WhyPanelComponent } from "../shared/why-panel.component";
 import { BodyMeasurementService } from "../core/services/body-measurement.service";
 
 /** Motivational quotes — daily-seeded, refreshable. Presentational. */
@@ -130,6 +131,7 @@ interface Supplement {
     UpperCasePipe,
     KpiCardComponent,
     ReadinessRingComponent,
+    WhyPanelComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // <iconify-icon> food glyphs
   changeDetection: ChangeDetectionStrategy.OnPush,
