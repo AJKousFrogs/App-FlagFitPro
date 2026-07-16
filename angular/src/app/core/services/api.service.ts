@@ -54,6 +54,16 @@ export class ApiService {
     Observable<ApiResponse<unknown>>
   >();
 
+  /**
+   * In-flight mutation (POST/PUT/PATCH/DELETE) deduplication.
+   * Prevents double-submit when user rapidly clicks Save twice.
+   * Maps a cache key (method + url + serialized body) to a shared observable.
+   */
+  private readonly inflightMutations = new Map<
+    string,
+    Observable<ApiResponse<unknown>>
+  >();
+
   constructor() {
     this.logger.info(`[ApiService] Initialized with baseUrl: ${this.baseUrl}`);
   }
@@ -260,10 +270,24 @@ export class ApiService {
 
     this.logger.info(`[ApiService] POST ${url}`);
 
-    return this.http.post<ApiResponse<T>>(url, data).pipe(
+    const cacheKey = `POST:${url}:${JSON.stringify(data ?? {})}`;
+    const existing = this.inflightMutations.get(cacheKey);
+    if (existing) {
+      return existing as Observable<ApiResponse<T>>;
+    }
+
+    const request$ = this.http.post<ApiResponse<T>>(url, data).pipe(
       map((response) => this.validateResponse(response, options)),
       catchError(this.handleError),
+      share(),
+      finalize(() => this.inflightMutations.delete(cacheKey)),
     );
+
+    this.inflightMutations.set(
+      cacheKey,
+      request$ as Observable<ApiResponse<unknown>>,
+    );
+    return request$;
   }
 
   put<T = unknown>(
@@ -274,10 +298,24 @@ export class ApiService {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http.put<ApiResponse<T>>(url, data).pipe(
+    const cacheKey = `PUT:${url}:${JSON.stringify(data ?? {})}`;
+    const existing = this.inflightMutations.get(cacheKey);
+    if (existing) {
+      return existing as Observable<ApiResponse<T>>;
+    }
+
+    const request$ = this.http.put<ApiResponse<T>>(url, data).pipe(
       map((response) => this.validateResponse(response, options)),
       catchError(this.handleError),
+      share(),
+      finalize(() => this.inflightMutations.delete(cacheKey)),
     );
+
+    this.inflightMutations.set(
+      cacheKey,
+      request$ as Observable<ApiResponse<unknown>>,
+    );
+    return request$;
   }
 
   patch<T = unknown>(
@@ -288,10 +326,24 @@ export class ApiService {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http.patch<ApiResponse<T>>(url, data).pipe(
+    const cacheKey = `PATCH:${url}:${JSON.stringify(data ?? {})}`;
+    const existing = this.inflightMutations.get(cacheKey);
+    if (existing) {
+      return existing as Observable<ApiResponse<T>>;
+    }
+
+    const request$ = this.http.patch<ApiResponse<T>>(url, data).pipe(
       map((response) => this.validateResponse(response, options)),
       catchError(this.handleError),
+      share(),
+      finalize(() => this.inflightMutations.delete(cacheKey)),
     );
+
+    this.inflightMutations.set(
+      cacheKey,
+      request$ as Observable<ApiResponse<unknown>>,
+    );
+    return request$;
   }
 
   delete<T = unknown>(
@@ -301,7 +353,13 @@ export class ApiService {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http
+    const cacheKey = `DELETE:${url}:${JSON.stringify(options?.body ?? {})}`;
+    const existing = this.inflightMutations.get(cacheKey);
+    if (existing) {
+      return existing as Observable<ApiResponse<T>>;
+    }
+
+    const request$ = this.http
       .delete<ApiResponse<T>>(url, {
         body: options?.body,
         headers: options?.headers,
@@ -310,7 +368,15 @@ export class ApiService {
       .pipe(
         map((response) => this.validateResponse(response, options)),
         catchError(this.handleError),
+        share(),
+        finalize(() => this.inflightMutations.delete(cacheKey)),
       );
+
+    this.inflightMutations.set(
+      cacheKey,
+      request$ as Observable<ApiResponse<unknown>>,
+    );
+    return request$;
   }
 
   head(endpoint: string, requestOptions?: ApiHeadOptions): Observable<unknown> {

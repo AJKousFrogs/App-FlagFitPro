@@ -383,7 +383,14 @@ export class SettingsComponent {
   private readAsDataUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
+      reader.onload = () => {
+        const result = reader.result;
+        if (!result || typeof result !== 'string') {
+          reject(new Error("FileReader.result is not a string"));
+          return;
+        }
+        resolve(result);
+      };
       reader.onerror = () => reject(reader.error ?? new Error("read failed"));
       reader.readAsDataURL(file);
     });
