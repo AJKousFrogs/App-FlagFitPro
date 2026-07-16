@@ -31,6 +31,28 @@
   --sp-5: 20px;
   --sp-6: 24px;
   --sp-8: 32px;
+  /* micro spacing for hardcoded values */
+  --sp-2px: 2px;
+  --sp-3px: 3px;
+  --sp-5px: 5px;
+  --sp-6px: 6px;
+  --sp-7px: 7px;
+  --sp-9px: 9px;
+  --sp-10px: 10px;
+  --sp-13px: 13px;
+  --sp-14px: 14px;
+  --sp-16px: 16px;
+  --sp-18px: 18px;
+  --sp-34px: 34px;
+  --sp-38px: 38px;
+  --fs-10: 10px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-18: 18px;
+  --fs-24: 24px;
+  --fs-26: 26px;
+  --lh-tight: 1.2;
 
   color: var(--text);
   padding: var(--sp-5) var(--sp-6) var(--sp-8);
@@ -45,12 +67,12 @@
   h3 {
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-tight);
   }
   strong {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .muted {
     color: var(--text-3);
@@ -66,17 +88,17 @@
   /* primitives */
   .card {
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
   }
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
+    gap: var(--sp-6px);
+    padding: var(--sp-5px) var(--sp-3);
     border-radius: var(--r-pill);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semi);
   }
   .pill--warn {
     background: var(--warn-soft);
@@ -89,24 +111,24 @@
   .pill--ghost {
     background: var(--surface-2);
     color: var(--text-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
   }
   .eyebrow {
-    font-size: 12px;
+    font-size: var(--fs-12);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-3);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .btn {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: var(--sp-2);
     border-radius: var(--r-md);
-    padding: 12px 18px;
-    font-weight: 600;
-    font-size: 14px;
+    padding: var(--sp-3) var(--sp-5);
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-14);
     cursor: pointer;
     border: 0;
     text-decoration: none;
@@ -120,17 +142,17 @@
   }
   .btn--ghost {
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     color: var(--text-2);
   }
   .mini-btn {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semi);
     color: var(--text-2);
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
-    padding: 5px 12px;
+    padding: var(--sp-5px) var(--sp-3);
     cursor: pointer;
     text-decoration: none;
   }
@@ -138,7 +160,7 @@
     color: var(--brand-300);
   }
   .bar {
-    height: 8px;
+    height: var(--sp-2);
     border-radius: var(--r-pill);
     background: var(--surface-3);
     overflow: hidden;
@@ -160,7 +182,7 @@
   /* hero band */
   .heroband {
     position: relative;
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
     overflow: hidden;
     margin-bottom: var(--sp-6);
@@ -194,7 +216,7 @@
     padding: var(--sp-6) var(--sp-6) var(--sp-4);
   }
   .pagehead h1 {
-    font-size: 26px;
+    font-size: var(--fs-26);
     letter-spacing: -0.01em;
   }
   .quote {
@@ -202,9 +224,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 10px;
+    gap: var(--sp-10px);
     color: var(--text-3);
-    font-size: 14px;
+    font-size: var(--fs-14);
     max-width: 60ch;
   }
   .quote em {
@@ -213,7 +235,7 @@
   }
   .quote .who {
     white-space: nowrap;
-    font-size: 12px;
+    font-size: var(--fs-12);
     margin-left: 0.4em;
   }
   .quote button {
@@ -222,7 +244,7 @@
     background: none;
     border: 0;
     cursor: pointer;
-    font-size: 13px;
+    font-size: var(--fs-13);
   }
   .quote button:hover {
     color: var(--brand-300);
@@ -236,47 +258,47 @@
   .geo-chip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 13px;
+    gap: var(--sp-2);
+    padding: var(--sp-7px) var(--sp-13px);
     border-radius: var(--r-pill);
     background: var(--surface-2);
-    border: 1px solid var(--line);
-    font-size: 13px;
+    border: var(--bw-thin) solid var(--line);
+    font-size: var(--fs-13);
     color: var(--text-2);
   }
   .geo-dot {
-    width: 8px;
-    height: 8px;
+    width: var(--sp-2);
+    height: var(--sp-2);
     border-radius: 50%;
     background: var(--accent);
   }
   .geo-temp {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 14px;
+    gap: var(--sp-5px);
+    font-size: var(--fs-14);
   }
   .icon-btn {
-    width: 38px;
+    width: var(--sp-38px);
     height: 38px;
     border-radius: var(--r-pill);
     display: grid;
     place-items: center;
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     color: var(--text-2);
   }
   .avatar {
-    width: 38px;
+    width: var(--sp-38px);
     height: 38px;
     border-radius: var(--r-pill);
     background: linear-gradient(135deg, var(--brand-600), var(--avatar-grad-2));
     display: grid;
     place-items: center;
-    font-weight: 600;
-    font-size: 13px;
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-13);
     color: var(--white);
     overflow: hidden;
   }
@@ -288,15 +310,15 @@
   .team-id {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 12px;
+    gap: var(--sp-10px);
+    font-size: var(--fs-12);
     color: var(--text-3);
     padding: var(--sp-5) var(--sp-6) var(--sp-4);
     background: linear-gradient(180deg, transparent, rgba(11, 14, 18, 0.78));
   }
   .team-id .crest {
     flex: 0 0 auto;
-    width: 26px;
+    width: var(--sp-26px);
     height: 26px;
     border-radius: 50%;
     background: rgba(11, 14, 18, 0.55);
@@ -317,13 +339,13 @@
     padding: var(--sp-5) var(--sp-5) 0;
   }
   .card-head h3 {
-    font-size: 13px;
+    font-size: var(--fs-13);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-3);
   }
   .card-head .meta {
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-3);
   }
   .card-head .spacer {
@@ -348,30 +370,30 @@
   .event-chip {
     display: inline-flex;
     align-items: baseline;
-    gap: 8px;
+    gap: var(--sp-2);
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-md);
-    padding: 9px 13px;
-    font-size: 13px;
+    padding: var(--sp-9px) var(--sp-13px);
+    font-size: var(--fs-13);
     color: var(--text-2);
   }
   .timeline {
     position: relative;
-    padding: 34px 0 24px;
+    padding: var(--sp-34px) 0 var(--sp-6);
   }
   .tl-track {
     position: relative;
-    height: 14px;
+    height: var(--sp-14px);
     background: var(--surface-3);
-    border-radius: 7px;
+    border-radius: var(--sp-7px);
     overflow: visible;
   }
   .phase {
     position: absolute;
     top: 0;
     height: 100%;
-    border-radius: 3px;
+    border-radius: var(--sp-3px);
   }
   .phase--build {
     background: rgba(44, 224, 113, 0.45);
@@ -388,20 +410,20 @@
   .tl-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 18px;
+    gap: var(--sp-2) 18px;
     margin-top: var(--sp-3);
   }
   .lg {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    font-size: 12px;
+    gap: var(--sp-7px);
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
   .lg i {
-    width: 10px;
-    height: 10px;
-    border-radius: 3px;
+    width: var(--sp-10px);
+    height: var(--sp-10px);
+    border-radius: var(--sp-3px);
     flex: 0 0 auto;
   }
   .lg i.sw--build {
@@ -415,17 +437,17 @@
   }
   .lg.is-now {
     color: var(--text);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .lg .now-pill {
-    font-size: 9px;
+    font-size: var(--fs-9px);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     background: var(--accent-soft);
     color: var(--brand-300);
     border-radius: var(--r-pill);
-    padding: 2px 7px;
+    padding: var(--sp-2px) var(--sp-7px);
   }
   .today-marker {
     position: absolute;
@@ -441,7 +463,7 @@
     position: absolute;
     top: -15px;
     left: 0;
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 700;
@@ -450,8 +472,8 @@
   .event-dot {
     position: absolute;
     top: 50%;
-    width: 12px;
-    height: 12px;
+    width: var(--sp-3);
+    height: var(--sp-3);
     border-radius: 50%;
     background: var(--brand-500);
     border: 2px solid var(--ink-950);
@@ -462,8 +484,8 @@
     position: absolute;
     top: 12px;
     transform: translateX(-50%);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
     color: var(--brand-300);
     white-space: nowrap;
     z-index: 2;
@@ -476,21 +498,21 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 16px;
+    height: var(--sp-16px);
   }
   .tl-month {
     position: absolute;
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-3);
     border-left: 1px solid var(--line-strong);
-    padding-left: 5px;
-    height: 16px;
-    line-height: 16px;
+    padding-left: var(--sp-5px);
+    height: var(--sp-16px);
+    line-height: var(--sp-16px);
   }
   .plan-foot {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
     margin-top: var(--sp-3);
   }
@@ -506,18 +528,18 @@
     gap: var(--sp-3);
   }
   .session-card h2 {
-    font-size: 24px;
+    font-size: var(--fs-24);
   }
   .why {
     display: flex;
-    gap: 9px;
-    font-size: 13px;
+    gap: var(--sp-9px);
+    font-size: var(--fs-13);
     color: var(--text-3);
   }
   .why .ic {
     color: var(--brand-500);
     flex: 0 0 auto;
-    margin-top: 2px;
+    margin-top: var(--sp-2px);
   }
   .stat-row {
     display: flex;
@@ -527,31 +549,31 @@
   .stat-chip {
     display: flex;
     align-items: baseline;
-    gap: 7px;
+    gap: var(--sp-7px);
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-md);
-    padding: 9px 13px;
+    padding: var(--sp-9px) var(--sp-13px);
   }
   .stat-chip .v {
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-18);
     color: var(--text);
   }
   .stat-chip .k {
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-3);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .cond-line {
     display: flex;
-    gap: 9px;
+    gap: var(--sp-9px);
     align-items: flex-start;
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--warn-soft);
     border: 1px solid rgba(245, 183, 59, 0.22);
@@ -582,10 +604,10 @@
   /* Phase 5b — cooler-hour time-shift suggestion */
   .time-shift {
     display: flex;
-    gap: 9px;
+    gap: var(--sp-9px);
     align-items: flex-start;
     margin-top: 8px;
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--accent-soft);
     border: 1px solid rgba(44, 224, 113, 0.22);
@@ -604,10 +626,10 @@
   .log-practice-nudge {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--sp-10px);
     margin-bottom: var(--sp-4);
     padding: 12px 15px;
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--warn-soft);
     border: 1px solid rgba(245, 183, 59, 0.22);
@@ -621,7 +643,7 @@
   .log-practice-nudge .cta {
     margin-left: auto;
     flex: 0 0 auto;
-    font-weight: 600;
+    font-weight: var(--fw-semi);
     color: var(--brand-300);
     white-space: nowrap;
   }
@@ -632,12 +654,12 @@
   .cover-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: var(--sp-5px);
     margin: var(--sp-2) 0;
     max-width: 460px;
   }
   .cover-lbl {
-    font-size: 10px;
+    font-size: var(--fs-10);
     text-align: center;
     color: var(--text-3);
     letter-spacing: 0.06em;
@@ -667,20 +689,20 @@
   .cover-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 14px;
-    font-size: 11px;
+    gap: var(--sp-6px) 14px;
+    font-size: var(--fs-xs);
     color: var(--text-3);
     margin-bottom: var(--sp-3);
   }
   .cover-legend span {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--sp-6px);
   }
   .csw {
-    width: 10px;
-    height: 10px;
-    border-radius: 3px;
+    width: var(--sp-10px);
+    height: var(--sp-10px);
+    border-radius: var(--sp-3px);
     flex: 0 0 auto;
   }
   .csw--done {
@@ -698,20 +720,20 @@
   .csw--today {
     outline: 2px solid var(--text);
     outline-offset: 1px;
-    width: 8px;
-    height: 8px;
+    width: var(--sp-2);
+    height: var(--sp-2);
   }
   .cover-meta {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
     margin-bottom: var(--sp-3);
   }
   .acwr-ready {
     display: grid;
-    gap: 6px;
-    font-size: 12px;
+    gap: var(--sp-6px);
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
   .acwr-ready .row {
@@ -727,11 +749,11 @@
   }
   .tile {
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
     padding: var(--sp-4) var(--sp-5);
     display: grid;
-    gap: 6px;
+    gap: var(--sp-6px);
     align-content: start;
     text-decoration: none;
     color: inherit;
@@ -740,24 +762,24 @@
     border-color: var(--line-strong);
   }
   .tile .k {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-3);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .tile .v {
     font-family:
       var(--font-family-display, "Space Grotesk"), system-ui, sans-serif;
-    font-weight: 600;
-    font-size: 26px;
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-26);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--sp-10px);
     color: var(--text);
   }
   .tile .note {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
   .spark {
@@ -773,14 +795,14 @@
   }
   .ring-card {
     background: linear-gradient(180deg, var(--surface-2, var(--surface)), var(--surface));
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
     padding: var(--sp-4);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--sp-10px);
     text-decoration: none;
     color: inherit;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -790,7 +812,7 @@
   }
   .ring-link {
     font-family: var(--font-mono, "JetBrains Mono"), monospace;
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--text-3);
     text-decoration: none;
     text-align: center;
@@ -837,11 +859,11 @@
     gap: var(--sp-3);
   }
   .bodycheck .lbl {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-14);
   }
   .bodycheck .sub {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
   .bc-head .spacer {
@@ -851,21 +873,21 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    gap: var(--sp-6px);
   }
   .bc-lbl {
     flex: 0 0 92px;
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-3);
     font-weight: 700;
   }
   .flag-chip {
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-2);
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
     padding: 6px 13px;
     cursor: pointer;
@@ -878,7 +900,7 @@
     background: var(--accent-soft);
     border-color: rgba(44, 224, 113, 0.4);
     color: var(--brand-300);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .sev-chip.is-on[data-sev="moderate"] {
     background: var(--warn-soft);
@@ -891,7 +913,7 @@
     color: var(--danger);
   }
   .flag-msg {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--brand-300);
   }
   .flag-msg.is-warn {
@@ -930,12 +952,12 @@
     flex: 1 1 160px;
   }
   .nutri-chip .nc-label {
-    font-size: 12px;
+    font-size: var(--fs-12);
     font-weight: 700;
     letter-spacing: 0.02em;
   }
   .nutri-chip .nc-sub {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--text-3);
     line-height: 1.35;
   }
@@ -958,9 +980,9 @@
   }
   .electro {
     display: flex;
-    gap: 9px;
+    gap: var(--sp-9px);
     align-items: flex-start;
-    font-size: 13px;
+    font-size: var(--fs-13);
     border-radius: var(--r-md);
     padding: 10px 13px;
     color: var(--text-2);
@@ -989,17 +1011,17 @@
     gap: var(--sp-2);
   }
   .sec-lbl {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-3);
-    font-weight: 600;
+    font-weight: var(--fw-semi);
   }
   .hydro-top {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    font-size: 13px;
+    font-size: var(--fs-13);
     color: var(--text-3);
   }
   .hydro-top strong {
@@ -1014,9 +1036,9 @@
   }
   .hydro-msg {
     display: flex;
-    gap: 9px;
+    gap: var(--sp-9px);
     align-items: flex-start;
-    font-size: 13px;
+    font-size: var(--fs-13);
     border-radius: var(--r-md);
     padding: 10px 13px;
     color: var(--text-2);
@@ -1049,13 +1071,13 @@
   .food-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--sp-6px);
   }
   .food-chip {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-2);
     background: var(--surface-2);
-    border: 1px solid var(--line);
+    border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
     padding: 5px 11px;
   }
@@ -1107,17 +1129,17 @@
     gap: 2px;
   }
   .supp-name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: var(--fw-semi);
+    font-size: var(--fs-14);
     color: var(--text);
   }
   .supp-note {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
   .grade {
     flex: 0 0 auto;
-    font-size: 10px;
+    font-size: var(--fs-10);
     font-weight: 700;
     letter-spacing: 0.06em;
     border-radius: var(--r-pill);
@@ -1136,14 +1158,14 @@
     color: var(--text-3);
   }
   .supp-link {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semi);
     white-space: nowrap;
     color: var(--brand-300);
     text-decoration: none;
   }
   .supp-foot {
-    font-size: 12px;
+    font-size: var(--fs-12);
     color: var(--text-3);
   }
 
