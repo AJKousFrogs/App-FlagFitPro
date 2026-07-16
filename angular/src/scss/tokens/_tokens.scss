@@ -74,10 +74,24 @@
   --s-6: 32px;
   --s-7: 48px;
   --s-8: 64px;
+  /* micro spacing (sub-grid for fine details) */
+  --s-px: 1px;
+  --s-0-5: 2px;
 
   /* border widths */
   --bw-thin: 1px;
   --bw-md: 2px;
+
+  /* missing font sizes (micro and custom) */
+  --fs-micro: 10.5px;
+  --fs-10: 11.5px;
+  --fs-12: 12px;
+  --fs-13: 12.5px;
+  --fs-22: 22px;
+
+  /* missing line heights */
+  --lh-tight-display: 1.1;
+  --lh-text: 1.45;
 
   /* radii */
   --r-sm: 8px;

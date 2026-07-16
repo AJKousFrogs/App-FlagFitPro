@@ -22,7 +22,7 @@
 .dd-head h1 {
   margin: var(--s-1) 0 var(--s-1);
   font-size: var(--fs-h1);
-  line-height: 1.1;
+  line-height: var(--lh-tight-display);
   color: var(--text-strong);
   text-wrap: balance;
 }
@@ -30,13 +30,13 @@
   margin: 0;
   max-width: 58ch;
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  line-height: var(--lh-body);
   color: var(--text-muted);
 }
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border-soft);
+  border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-lg);
   overflow: hidden;
 }
@@ -54,7 +54,7 @@
 .card-head .meta {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: var(--fs-micro);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -83,7 +83,7 @@
 }
 .fld input {
   background: var(--surface-2);
-  border: 1px solid var(--border-soft);
+  border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-md);
   padding: var(--s-1) calc(var(--s-1) + 7px);
   color: var(--text-strong);
@@ -107,11 +107,11 @@
   align-items: center;
   justify-content: center;
   gap: var(--s-1);
-  padding: var(--s-2) calc(var(--s-2) + 10px);
+  padding: var(--s-2) calc(var(--s-2) + var(--s-3));
   border-radius: var(--r-pill);
   font-size: var(--fs-sm);
   font-weight: 600;
-  border: 1px solid transparent;
+  border: var(--bw-thin) solid transparent;
   cursor: pointer;
 }
 .btn--primary {
@@ -154,7 +154,7 @@
   gap: var(--s-2);
 }
 .ses {
-  border: 1px solid var(--border-soft);
+  border: var(--bw-thin) solid var(--border-soft);
   border-radius: var(--r-md);
   padding: var(--s-2) var(--s-3);
 }
@@ -210,8 +210,8 @@
   align-items: center;
   font-size: var(--fs-sm);
   color: var(--text-strong);
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-soft);
+  padding: var(--s-2) 0;
+  border-bottom: var(--bw-thin) solid var(--border-soft);
 }
 .dev:last-child {
   border-bottom: none;
@@ -230,7 +230,7 @@
 .muted.small {
   margin: 0;
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  line-height: var(--lh-body);
 }
 .empty {
   display: flex;
