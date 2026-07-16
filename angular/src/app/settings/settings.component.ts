@@ -415,6 +415,42 @@ export class SettingsComponent {
     }
   }
 
+  readonly exporting = signal(false);
+
+  /**
+   * GDPR right-to-access / portability (Articles 15 & 20). The backend
+   * `data-export.js` already assembles every athlete-owned row; this just asks
+   * for it and hands the athlete a JSON file. Self-scoped server-side.
+   */
+  async exportData(): Promise<void> {
+    if (this.exporting()) return;
+    this.exporting.set(true);
+    this.accountMsg.set(null);
+    try {
+      const res = await firstValueFrom(
+        this.api.post("/api/data-export/generate", {}),
+      );
+      const payload = extractApiPayload<unknown>(res);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `flagfit-data-export-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      this.accountMsg.set("Your data has been downloaded as a JSON file.");
+    } catch (err) {
+      this.logger.error("data_export_failed", err);
+      this.accountMsg.set("Couldn't export your data — please try again.");
+    } finally {
+      this.exporting.set(false);
+    }
+  }
+
   async confirmDeletion(): Promise<void> {
     if (this.accountBusy()) return;
     this.accountBusy.set(true);
