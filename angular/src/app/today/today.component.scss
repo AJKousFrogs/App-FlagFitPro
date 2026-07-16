@@ -20,41 +20,15 @@
   --danger: var(--red-400);
   --danger-soft: rgba(240, 86, 77, 0.14);
 
+  /* intentional design-scope overrides: today uses larger radii than global system */
   --r-lg: 20px;
   --r-md: 14px;
   --r-sm: 10px;
   --r-pill: 999px;
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-8: 32px;
-  /* micro spacing for hardcoded values */
-  --sp-2px: 2px;
-  --sp-3px: 3px;
-  --sp-5px: 5px;
-  --sp-6px: 6px;
-  --sp-7px: 7px;
-  --sp-9px: 9px;
-  --sp-10px: 10px;
-  --sp-13px: 13px;
-  --sp-14px: 14px;
-  --sp-16px: 16px;
-  --sp-18px: 18px;
-  --sp-34px: 34px;
-  --sp-38px: 38px;
-  --fs-10: 10px;
-  --fs-13: 13px;
-  --fs-14: 14px;
-  --fs-18: 18px;
-  --fs-24: 24px;
-  --fs-26: 26px;
 
   color: var(--text);
   padding: var(--sp-5) var(--sp-6) var(--sp-8);
-  max-width: 1160px;
+  max-width: var(--width-3xl);
   margin: 0 auto;
 
   svg {
@@ -787,7 +761,7 @@
   /* perf-viz tracking tiles (2026-07-15) — readiness ring + 4 KPI cards */
   .kpi-grid {
     display: grid;
-    grid-template-columns: minmax(150px, 0.9fr) repeat(4, 1fr);
+    grid-template-columns: minmax(var(--width-xs), 0.9fr) repeat(4, 1fr);
     gap: var(--sp-4);
     align-items: stretch;
   }

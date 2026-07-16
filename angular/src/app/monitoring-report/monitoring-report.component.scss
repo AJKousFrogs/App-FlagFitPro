@@ -7,11 +7,11 @@
   font-family: var(--font-report-ui);
   color: var(--text);
   background: var(--bg);
-  padding: var(--s-4, 16px);
+  padding: var(--s-4);
 }
 
 .mr {
-  max-width: 880px;
+  max-width: var(--width-2xl);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -108,7 +108,7 @@
 
 .mr-kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--width-xs), 1fr));
   gap: var(--s-3);
 }
 .mr-kpi {
@@ -146,7 +146,7 @@
 }
 .mr-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--width-sm), 1fr));
   gap: var(--sp-14);
 }
 .mr-cell-h {
@@ -276,7 +276,7 @@
   width: 150px;
   padding-right: var(--s-3);
 }
-@media (max-width: 640px) {
+@media (max-width: var(--width-lg)) {
   .mr-table--markers td.mr-range-cell {
     display: none;
   }

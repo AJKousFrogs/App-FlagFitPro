@@ -3,7 +3,7 @@
 }
 
 .nut {
-  max-width: 720px;
+  max-width: var(--width-xl);
   margin: 0 auto;
   padding: var(--s-4) var(--s-4) calc(var(--s-8) * 1.5);
   display: flex;

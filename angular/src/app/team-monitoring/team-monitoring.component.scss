@@ -166,7 +166,7 @@
 .pip.neutral {
   color: var(--text-faint);
 }
-@media (max-width: 720px) {
+@media (max-width: var(--width-xl)) {
   .tm-summary {
     grid-template-columns: 1fr;
   }

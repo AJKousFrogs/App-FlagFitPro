@@ -156,6 +156,16 @@
   --size-38: 38px;
   --size-52: 52px;
 
+  /* layout/width tokens (content containers and breakpoints) */
+  --width-xs: 150px;
+  --width-sm: 220px;
+  --width-md: 340px;
+  --width-lg: 640px;
+  --width-xl: 720px;
+  --width-2xl: 880px;
+  --width-3xl: 1160px;
+  --width-4xl: 1200px;
+
   /* transition/duration tokens */
   --t-150: 150ms;
   --t-200: 200ms;
@@ -277,3 +287,37 @@
   --accent: #00b863;
   --e-2: 0 4px 16px rgba(16, 20, 30, 0.1);
 }
+
+/* ============================================================================
+   DESIGN SYSTEM DOCUMENTATION & EXCEPTIONS
+
+   Component-scoped token overrides:
+   - training.component.scss: Uses intentionally larger radii (--r-lg:20px, --r-md:14px, --r-sm:10px)
+     vs. global system (16px, 12px, 8px) to match distinct visual scale for training UI
+   - today.component.scss: Same radius overrides as training for visual consistency
+
+   Non-tokenized values (documented exceptions):
+   - Structural layouts: min-height: 220px (hero band), height: 96px (chart column)
+     Rationale: One-off measurement dimensions that don't recur, not part of design system
+   - Custom component properties: --spk-h: 40px (sparkline height in monitoring-report)
+     Rationale: Internal implementation constant, specific to component structure
+   - Letter-spacing: 0.06em, 0.08em, 0.04em, etc. (em-based, not px)
+     Rationale: Relative units outside stylelint px-value enforcement scope
+   - Negative offsets: top: -4px (visual adjustment via calc(var(--s-1) * -1))
+     Rationale: Fine-tuning for optical alignment, not design-system scale
+
+   Future token family candidates (if scaling beyond current domains):
+   - Component-specific sizing (checkbox, radio, toggle track dimensions)
+   - Transition timing customization beyond existing --t-* family
+   - Shadow variants beyond --e-1/e-2/e-3 (inset, colored, gradient shadows)
+
+   Architecture notes:
+   - Off-grid spacing (--sp-6 through --sp-28) exists to cover component values that
+     don't map to the 4/8/12/16/24/32/48/64px grid. These are considered "outside"
+     the primary design scale and should be preferred sparingly.
+   - Layout tokens (--width-xs through --width-4xl) cover content-container maxima
+     and grid-track minima. Use these for container constraints, not component sizing.
+   - Opacity scale (--op-04 through --op-94) covers state overlays, disabled states,
+     and transparency effects. No semantic opacity variants (use raw opacity values
+     are mapped to nearest --op-* token).
+   ========================================================================== */
