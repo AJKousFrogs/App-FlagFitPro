@@ -179,6 +179,21 @@ export interface ChannelMembersResponse {
 }
 
 // ============================================================================
+// TYPE GUARDS
+// ============================================================================
+
+function isChatMessage(obj: unknown): obj is ChatMessage {
+  if (!obj || typeof obj !== "object") return false;
+  const msg = obj as Record<string, unknown>;
+  return (
+    typeof msg.id === "string" &&
+    typeof msg.sender_id === "string" &&
+    typeof msg.message === "string" &&
+    typeof msg.created_at === "string"
+  );
+}
+
+// ============================================================================
 // SERVICE
 // ============================================================================
 
@@ -965,25 +980,34 @@ export class ChannelService {
       {
         onInsert: (event) => {
           // Add new message to state
-          const newMessage = event.new as unknown as ChatMessage;
-          this._messages.update((messages) => [...messages, newMessage]);
+          if (!isChatMessage(event.new)) {
+            this.logger.warn("Invalid chat message from realtime insert", event.new);
+            return;
+          }
+          this._messages.update((messages) => [...messages, event.new]);
           callback(event);
         },
         onUpdate: (event) => {
           // Update message in state
-          const updatedMessage = event.new as unknown as ChatMessage;
+          if (!isChatMessage(event.new)) {
+            this.logger.warn("Invalid chat message from realtime update", event.new);
+            return;
+          }
           this._messages.update((messages) =>
             messages.map((m) =>
-              m.id === updatedMessage.id ? updatedMessage : m,
+              m.id === event.new.id ? event.new : m,
             ),
           );
           callback(event);
         },
         onDelete: (event) => {
           // Remove message from state
-          const deletedMessage = event.old as unknown as ChatMessage;
+          if (!isChatMessage(event.old)) {
+            this.logger.warn("Invalid chat message from realtime delete", event.old);
+            return;
+          }
           this._messages.update((messages) =>
-            messages.filter((m) => m.id !== deletedMessage.id),
+            messages.filter((m) => m.id !== event.old.id),
           );
           callback(event);
         },
