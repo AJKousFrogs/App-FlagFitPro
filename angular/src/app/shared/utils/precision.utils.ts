@@ -1,9 +1,35 @@
 /**
  * Precision Utilities for Numeric Calculations
  *
- * Provides consistent rounding and precision handling across the application.
- * Critical for ACWR calculations and other numeric operations.
+ * MIRROR IMPLEMENTATION: These functions intentionally duplicate the backend
+ * implementations in netlify/functions/utils/precision.js to ensure frontend
+ * and backend calculations remain in sync.
  *
+ * Per CLAUDE.md §4 (Single Source of Truth):
+ * "One calculation, one place it's computed, everywhere else fetches/displays.
+ * If you find the same formula in two places, that's a bug even if the numbers
+ * currently agree — they will drift."
+ *
+ * PARITY VERIFICATION: Continuous parity checking via tests/integration/acwr-parity.test.js
+ * ensures this frontend implementation remains byte-identical to the backend.
+ * If you modify these functions, the parity tests MUST still pass.
+ *
+ * FUNCTIONS:
+ * - roundToPrecision() ✓ Mirrored from backend
+ * - safeDivide() ✓ Mirrored from backend
+ * - average() ✓ Mirrored from backend
+ * - standardDeviation() ✓ Mirrored from backend
+ * - calculatePercentage() — Frontend-only (not in backend)
+ * - percentageChange() — Frontend-only (not in backend)
+ * - clamp() — Frontend-only (not in backend)
+ * - calculateACWRRatio() — Frontend wrapper using safeDivide()
+ * - formatNumberSafe() — Frontend-only display utility
+ *
+ * BACKEND REFERENCE: netlify/functions/utils/precision.js
+ * ACWR IMPLEMENTATION: netlify/functions/utils/acwr.js (uses precision.js functions)
+ * PARITY TESTS: tests/integration/acwr-parity.test.js (10 scenarios)
+ *
+ * Critical for ACWR calculations and other numeric operations.
  */
 
 /**

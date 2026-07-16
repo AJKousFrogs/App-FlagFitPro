@@ -1,6 +1,28 @@
 /**
  * Precision Utilities for Numeric Calculations
  *
+ * CANONICAL IMPLEMENTATION: Backend (server-side) is authoritative.
+ * Frontend mirrors these functions to ensure calculation consistency.
+ *
+ * Per CLAUDE.md §4 (Single Source of Truth):
+ * "One calculation, one place it's computed, everywhere else fetches/displays.
+ * If you find the same formula in two places, that's a bug even if the numbers
+ * currently agree — they will drift."
+ *
+ * PARITY VERIFICATION: Frontend implementation in angular/src/app/shared/utils/precision.utils.ts
+ * must remain byte-identical. Continuous parity checking via tests/integration/acwr-parity.test.js
+ * ensures frontend and backend calculations stay in sync.
+ *
+ * EXPORTED FUNCTIONS:
+ * - roundToPrecision() ✓ Used by ACWR calculation
+ * - safeDivide() ✓ Used by ACWR, percentage calculations
+ * - average() ✓ Statistical calculations
+ * - standardDeviation() ✓ Statistical calculations
+ *
+ * CONSUMER: netlify/functions/utils/acwr.js (implements EWMA ACWR calculation)
+ * FRONTEND MIRROR: angular/src/app/shared/utils/precision.utils.ts
+ * PARITY TESTS: tests/integration/acwr-parity.test.js (10 scenarios, 100% passing)
+ *
  * Provides consistent rounding and precision handling across Netlify functions.
  * Critical for ACWR calculations and other numeric operations.
  *

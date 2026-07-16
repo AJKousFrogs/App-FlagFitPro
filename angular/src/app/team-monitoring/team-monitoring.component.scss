@@ -3,7 +3,7 @@
 // without losing who's who.
 .tm-scroll {
   overflow-x: auto;
-  border: 1px solid var(--border);
+  border: var(--bw-thin) solid var(--border);
   border-radius: var(--r-lg);
   -webkit-overflow-scrolling: touch;
 }
@@ -27,7 +27,7 @@
     font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    border-bottom: 1px solid var(--border);
+    border-bottom: var(--bw-thin) solid var(--border);
   }
   thead .sub th {
     background: var(--surface);
@@ -44,7 +44,7 @@
     z-index: 1;
     text-align: left;
     background: var(--surface);
-    border-right: 1px solid var(--border);
+    border-right: var(--bw-thin) solid var(--border);
 
     small {
       margin-left: var(--s-1);
@@ -83,7 +83,7 @@
   tfoot td {
     background: var(--surface-2);
     font-weight: var(--fw-bold);
-    border-top: 2px solid var(--border);
+    border-top: var(--bw-md) solid var(--border);
     border-bottom: none;
   }
 }
@@ -92,11 +92,11 @@
 .flag {
   display: inline-block;
   min-width: 46px;
-  padding: 2px var(--s-2);
+  padding: var(--bw-md) var(--s-2);
   border-radius: var(--r-pill);
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  border: 1px solid transparent;
+  border: var(--bw-thin) solid transparent;
 
   &.good {
     color: var(--good);
@@ -123,7 +123,7 @@
   margin-bottom: var(--s-4);
 }
 .tm-dist-h {
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: var(--text);
   font-weight: var(--fw-semi);
   margin-bottom: var(--s-3);
@@ -136,23 +136,23 @@
 .pip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 .pip b {
-  min-width: 22px;
+  min-width: var(--r-xl);
   font-variant-numeric: tabular-nums;
   color: var(--text-strong);
-  font-size: 16px;
+  font-size: var(--fs-body);
 }
 .pip::before {
   content: "";
-  width: 9px;
-  height: 9px;
+  width: var(--s-1);
+  height: var(--s-1);
   border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 8px currentColor;
+  box-shadow: 0 0 var(--s-2) currentColor;
 }
 .pip.good {
   color: var(--good);
