@@ -99,12 +99,17 @@
   --fs-30: 30px;
   --fs-34: 34px;
 
-  /* missing spacing (non-grid) */
+  /* off-grid spacing (non-standard grid values used in components) */
   --sp-6: 6px;
   --sp-7: 7px;
   --sp-9: 9px;
   --sp-10: 10px;
+  --sp-11: 11px;
   --sp-14: 14px;
+  --sp-18: 18px;
+  --sp-20: 20px;
+  --sp-22: 22px;
+  --sp-28: 28px;
 
   /* missing line heights */
   --lh-tight-display: 1.1;
@@ -124,6 +129,7 @@
   --op-35: 0.35;
   --op-4: 0.4;
   --op-45: 0.45;
+  --op-5: 0.5;
   --op-55: 0.55;
   --op-6: 0.6;
   --op-68: 0.68;
@@ -158,6 +164,7 @@
   --t-350: 350ms;
 
   /* radii */
+  --r-xs: 2px;
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;

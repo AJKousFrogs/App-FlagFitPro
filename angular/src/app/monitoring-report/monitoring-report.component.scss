@@ -183,7 +183,7 @@
 
 .mr-acwr-head {
   display: flex;
-  gap: 10px;
+  gap: var(--sp-10);
   align-items: baseline;
   flex-wrap: wrap;
 }
@@ -197,7 +197,7 @@
   border-radius: var(--r-pill);
   background: var(--surface-2);
   border: var(--bw-thin) solid var(--border-soft);
-  margin: 10px 0 4px;
+  margin: var(--sp-10) 0 4px;
 }
 .mr-band-sweet {
   position: absolute;
@@ -220,7 +220,7 @@
   margin-top: var(--s-2);
 }
 .mr-table td {
-  padding: 6px 4px;
+  padding: var(--sp-6) 4px;
   border-bottom: var(--bw-thin) solid var(--border-soft);
   font-size: var(--fs-14);
 }
@@ -262,7 +262,7 @@
 }
 .mr-thresh-row {
   display: flex;
-  gap: 10px;
+  gap: var(--sp-10);
   flex-wrap: wrap;
   align-items: baseline;
 }

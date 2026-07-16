@@ -576,7 +576,7 @@
     background: var(--warn-soft);
     border: var(--bw-thin) solid rgba(245, 183, 59, 0.22);
     border-radius: var(--r-md);
-    padding: 10px 13px;
+    padding: var(--sp-10) 13px;
   }
   .cond-line .ic {
     color: var(--warn);
@@ -610,7 +610,7 @@
     background: var(--accent-soft);
     border: var(--bw-thin) solid rgba(44, 224, 113, 0.22);
     border-radius: var(--r-md);
-    padding: 10px 13px;
+    padding: var(--sp-10) 13px;
   }
   .time-shift .ic {
     color: var(--brand-300);
@@ -678,7 +678,7 @@
   }
   .cell--future {
     background: var(--surface-3);
-    opacity: 0.45;
+    opacity: var(--op-45);
   }
   .cell--today {
     outline: 2px solid var(--text);
@@ -887,7 +887,7 @@
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
-    padding: 6px 13px;
+    padding: var(--sp-6) 13px;
     cursor: pointer;
   }
   .flag-chip:hover {
@@ -982,7 +982,7 @@
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
-    padding: 10px 13px;
+    padding: var(--sp-10) 13px;
     color: var(--text-2);
   }
   .electro .ic {
@@ -1038,7 +1038,7 @@
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
-    padding: 10px 13px;
+    padding: var(--sp-10) 13px;
     color: var(--text-2);
   }
   .hydro-msg .ic {
@@ -1097,7 +1097,7 @@
     display: flex;
     align-items: center;
     gap: var(--sp-3);
-    padding: 10px 0;
+    padding: var(--sp-10) 0;
     border-bottom: var(--bw-thin) solid var(--line);
   }
   .supp-row:last-child {
