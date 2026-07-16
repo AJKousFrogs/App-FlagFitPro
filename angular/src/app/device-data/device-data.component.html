@@ -1,0 +1,212 @@
+<main class="dd">
+  <header class="dd-head">
+    <div class="eyebrow">
+      <lucide-icon name="activity" [size]="15" /> Device data
+    </div>
+    <h1>Log your objective load</h1>
+    <p class="sub">
+      Read the numbers off your watch or GPS and log them here — distance,
+      high-speed running, top speed. They feed the objective side of your
+      training load, alongside how the session felt.
+    </p>
+  </header>
+
+  <!-- LOG A SESSION -->
+  <section class="card">
+    <div class="card-head"><h2>Log a session</h2></div>
+    <div class="card-body">
+      <div class="grid">
+        <label class="fld">
+          <span>Date</span>
+          <input
+            type="date"
+            [ngModel]="sessionDate()"
+            (ngModelChange)="sessionDate.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>Device / source</span>
+          <input
+            type="text"
+            placeholder="e.g. Garmin, phone GPS"
+            [ngModel]="deviceName()"
+            (ngModelChange)="deviceName.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>Duration (min)</span>
+          <input
+            type="number"
+            min="0"
+            inputmode="numeric"
+            [ngModel]="durationMinutes()"
+            (ngModelChange)="durationMinutes.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>Total distance (m)</span>
+          <input
+            type="number"
+            min="0"
+            inputmode="numeric"
+            [ngModel]="totalDistanceM()"
+            (ngModelChange)="totalDistanceM.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>High-speed distance (m)</span>
+          <input
+            type="number"
+            min="0"
+            inputmode="numeric"
+            [ngModel]="highSpeedDistanceM()"
+            (ngModelChange)="highSpeedDistanceM.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>Top speed (km/h)</span>
+          <input
+            type="number"
+            min="0"
+            inputmode="decimal"
+            [ngModel]="maxVelocityKmh()"
+            (ngModelChange)="maxVelocityKmh.set($event)"
+          />
+        </label>
+        <label class="fld">
+          <span>Player load</span>
+          <input
+            type="number"
+            min="0"
+            inputmode="decimal"
+            [ngModel]="playerLoad()"
+            (ngModelChange)="playerLoad.set($event)"
+          />
+        </label>
+        <label class="fld fld--wide">
+          <span>Notes</span>
+          <input
+            type="text"
+            placeholder="optional"
+            [ngModel]="notes()"
+            (ngModelChange)="notes.set($event)"
+          />
+        </label>
+      </div>
+      <div class="actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="!canSave() || saving()"
+          (click)="save()"
+        >
+          {{ saving() ? "Saving…" : "Log session" }}
+        </button>
+        @if (saved()) {
+          <span class="ok"
+            ><lucide-icon name="check" [size]="15" /> Logged</span
+          >
+        }
+        @if (!canSave()) {
+          <span class="hint"
+            >Add at least one metric (distance, duration…).</span
+          >
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT SESSIONS -->
+  <section class="card">
+    <div class="card-head">
+      <h2>Recent sessions</h2>
+    </div>
+    <div class="card-body">
+      @if (loading()) {
+        <p class="muted">Loading…</p>
+      } @else if (history().length) {
+        @if (distanceSeries().length > 1) {
+          <div class="spark">
+            <span class="spark-lbl">Distance trend</span>
+            <app-ff-sparkline
+              [series]="distanceSeries()"
+              label="total distance per session"
+            />
+          </div>
+        }
+        <ul class="sessions">
+          @for (m of history(); track m.id) {
+            <li class="ses">
+              <div class="ses-top">
+                <b>{{ m.sessionDate }}</b>
+                @if (m.deviceName) {
+                  <span class="src">{{ m.deviceName }}</span>
+                }
+              </div>
+              <div class="ses-metrics">
+                @if (m.totalDistanceM != null) {
+                  <span
+                    >{{ m.totalDistanceM | number: "1.0-0" }} m<i>dist</i></span
+                  >
+                }
+                @if (m.highSpeedDistanceM != null) {
+                  <span
+                    >{{ m.highSpeedDistanceM | number: "1.0-0" }} m<i
+                      >HSR</i
+                    ></span
+                  >
+                }
+                @if (m.maxVelocityKmh != null) {
+                  <span
+                    >{{ m.maxVelocityKmh | number: "1.0-1" }}<i>km/h</i></span
+                  >
+                }
+                @if (m.durationMinutes != null) {
+                  <span>{{ m.durationMinutes }}<i>min</i></span>
+                }
+                @if (m.playerLoad != null) {
+                  <span>{{ m.playerLoad | number: "1.0-0" }}<i>load</i></span>
+                }
+              </div>
+              @if (m.notes) {
+                <p class="ses-note">{{ m.notes }}</p>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="empty">
+          <lucide-icon name="activity" [size]="20" />
+          <p>No device sessions logged yet. Log one above to start a trend.</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- SUPPORTED DEVICES (honest status) -->
+  @if (devices().length) {
+    <section class="card">
+      <div class="card-head">
+        <h2>Supported devices</h2>
+        <span class="meta">automated sync coming</span>
+      </div>
+      <div class="card-body">
+        <p class="muted small">
+          Direct sync with these brands is on the roadmap — it needs each
+          provider's approval, so it isn't live yet. Until then, log your
+          session numbers manually above.
+        </p>
+        <ul class="devices">
+          @for (d of devices(); track d.id) {
+            <li class="dev">
+              <span>{{ d.name }}</span>
+              <span class="dev-state">{{
+                d.connected ? "connected" : "sync coming"
+              }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+  }
+</main>
