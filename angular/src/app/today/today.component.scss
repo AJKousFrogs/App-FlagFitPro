@@ -382,7 +382,7 @@
   .tl-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-2) 18px;
+    gap: var(--sp-2) var(--sp-18);
     margin-top: var(--sp-3);
   }
   .lg {
@@ -550,7 +550,7 @@
     background: var(--warn-soft);
     border: var(--bw-thin) solid rgba(245, 183, 59, 0.22);
     border-radius: var(--r-md);
-    padding: var(--sp-10) 13px;
+    padding: var(--sp-10) var(--sp-13);
   }
   .cond-line .ic {
     color: var(--warn);
@@ -584,7 +584,7 @@
     background: var(--accent-soft);
     border: var(--bw-thin) solid rgba(44, 224, 113, 0.22);
     border-radius: var(--r-md);
-    padding: var(--sp-10) 13px;
+    padding: var(--sp-10) var(--sp-13);
   }
   .time-shift .ic {
     color: var(--brand-300);
@@ -861,7 +861,7 @@
     background: var(--surface-2);
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-pill);
-    padding: var(--sp-6) 13px;
+    padding: var(--sp-6) var(--sp-13);
     cursor: pointer;
   }
   .flag-chip:hover {
@@ -956,7 +956,7 @@
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
-    padding: var(--sp-10) 13px;
+    padding: var(--sp-10) var(--sp-13);
     color: var(--text-2);
   }
   .electro .ic {
@@ -1012,7 +1012,7 @@
     align-items: flex-start;
     font-size: var(--fs-13);
     border-radius: var(--r-md);
-    padding: var(--sp-10) 13px;
+    padding: var(--sp-10) var(--sp-13);
     color: var(--text-2);
   }
   .hydro-msg .ic {

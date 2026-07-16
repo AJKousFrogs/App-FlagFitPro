@@ -187,7 +187,7 @@
   /* layout */
   .layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) var(--width-md);
     gap: var(--sp-6);
     align-items: start;
   }
@@ -339,7 +339,7 @@
     color: inherit;
   }
   .block-num {
-    flex: 0 0 34px;
+    flex: 0 0 var(--size-34);
     width: var(--size-34);
     height: var(--size-34);
     border-radius: 50%;
