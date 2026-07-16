@@ -159,7 +159,7 @@ const FOCUS_CLS: Record<string, string> = {
       }
       .detail {
         font-size: var(--fs-sm);
-        color: var(--text-body);
+        color: var(--text);
       }
       .sub {
         font-size: var(--fs-xs);

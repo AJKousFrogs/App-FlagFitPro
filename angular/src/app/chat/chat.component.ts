@@ -175,7 +175,7 @@ interface Turn {
       }
       .fb-btn:hover {
         color: var(--text-strong);
-        border-color: var(--border-strong);
+        border-color: var(--border);
       }
       .fb-done {
         align-self: flex-start;
