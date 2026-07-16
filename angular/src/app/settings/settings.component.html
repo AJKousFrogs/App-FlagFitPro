@@ -301,6 +301,24 @@
         color: inherit;
         font: inherit;
       "
+      [attr.aria-disabled]="exporting()"
+      (click)="exportData()"
+    >
+      <span>{{ exporting() ? "Preparing…" : "Export my data (GDPR)" }}</span
+      ><lucide-icon name="chevron-right" class="faint" />
+    </button>
+    <button
+      type="button"
+      class="lrow"
+      style="
+        width: 100%;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        font: inherit;
+      "
       [attr.aria-disabled]="accountBusy()"
       (click)="confirmingDelete.set(!confirmingDelete())"
     >
