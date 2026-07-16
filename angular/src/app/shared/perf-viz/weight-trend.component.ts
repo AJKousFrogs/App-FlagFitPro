@@ -45,7 +45,13 @@ export interface WeightPoint {
             [attr.width]="w"
             [attr.height]="b.height"
           />
-          <line class="edge" x1="0" [attr.y1]="b.top" [attr.x2]="w" [attr.y2]="b.top" />
+          <line
+            class="edge"
+            x1="0"
+            [attr.y1]="b.top"
+            [attr.x2]="w"
+            [attr.y2]="b.top"
+          />
           <line
             class="edge"
             x1="0"
@@ -66,12 +72,7 @@ export interface WeightPoint {
           stroke-linecap="round"
           vector-effect="non-scaling-stroke"
         />
-        <circle
-          class="end"
-          [attr.cx]="end().x"
-          [attr.cy]="end().y"
-          r="4"
-        />
+        <circle class="end" [attr.cx]="end().x" [attr.cy]="end().y" r="4" />
         <text
           class="eval tnum"
           [attr.x]="end().x - 8"
@@ -122,7 +123,9 @@ export interface WeightPoint {
         fill: var(--accent);
         stroke: var(--surface);
         stroke-width: 2;
-        filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 55%, transparent));
+        filter: drop-shadow(
+          0 0 5px color-mix(in srgb, var(--accent) 55%, transparent)
+        );
         vector-effect: non-scaling-stroke;
       }
       .eval {

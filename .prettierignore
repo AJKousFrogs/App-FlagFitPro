@@ -63,5 +63,34 @@ angular/.angular/
 # Supabase types (auto-generated)
 supabase-types.ts
 
+# esbuild bundle of periodization-engine.ts for netlify functions (auto-generated,
+# npm run build:periodization-engine) -- hand-formatting a copy of the .ts source
+# risks silent drift from the file tests/unit/periodization-port-parity.test.js
+# exists specifically to keep byte-parity with
+netlify/functions/utils/periodization-engine.js
+
+# docs:regen output (npm run docs:regen). Both use literal `*` for wildcard
+# route/glob notation in markdown tables (e.g. `/api/admin/*`) -- Prettier's
+# markdown formatter misreads a lone trailing `*` as an unmatched emphasis
+# marker and "normalizes" it, silently turning some into `/api/admin/_`
+# (wrong character, not just re-styled) and others into `/api/admin/\*`
+# (escaped, at least visually equivalent but still not what the generator
+# emits). Regenerate via docs:regen, don't hand-format.
+docs/generated/DATA_MODEL.md
+docs/generated/ENDPOINTS.md
+
+# Not generated, but hits a related Prettier markdown defect: CommonMark
+# disallows intraword emphasis for `_` specifically so identifiers like
+# `head_coach` don't get misread as `_coach_`, but this file has real
+# `_emphasis_` right next to snake_case identifiers (`team_member_roles`,
+# `head_coach`, `sc_coach`) and Prettier's formatter got confused --
+# `head_coach/sc_coach/physio` became `head*coach/sc_coach/physio` (only the
+# FIRST underscore flipped) and `their _own_ report` became
+# `their \_own* report` (escaped-open + stray-close, breaks the emphasis
+# entirely). Caught 2026-07-17 diffing word-for-word against HEAD; reverted
+# and excluded rather than hand-fix, since the same ambiguous adjacency
+# recurs throughout this file as it grows.
+docs/SOURCE_OF_TRUTH.md
+
 # Reports
 consent-violations.json

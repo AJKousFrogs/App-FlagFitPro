@@ -85,7 +85,10 @@ describe("ringDash — clamped fraction", () => {
   });
   it("out-of-range and NaN are clamped, never NaN out", () => {
     expect(ringDash(63, 2).offset).toBeCloseTo(0, 1);
-    expect(ringDash(63, -1).offset).toBeCloseTo(ringDash(63, 0).circumference, 1);
+    expect(ringDash(63, -1).offset).toBeCloseTo(
+      ringDash(63, 0).circumference,
+      1,
+    );
     expect(Number.isFinite(ringDash(63, NaN).offset)).toBe(true);
   });
 });

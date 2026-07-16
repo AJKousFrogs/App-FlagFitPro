@@ -281,7 +281,8 @@
 .danger {
   margin-top: var(--s-4);
   padding: var(--sp-12);
-  border: var(--bw-thin) solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border: var(--bw-thin) solid
+    color-mix(in srgb, var(--danger) 35%, transparent);
   border-radius: var(--r-md);
 }
 .danger > b {

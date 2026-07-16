@@ -456,8 +456,7 @@ function shapeInjuryHistory(raw, role) {
       injuryDate: i.injury_date ?? i.created_at?.slice(0, 10) ?? null,
       status: i.recovery_status ?? null,
       currentPhase: i.current_phase ?? null,
-      rtpProgress:
-        typeof i.rtp_progress === "number" ? i.rtp_progress : null,
+      rtpProgress: typeof i.rtp_progress === "number" ? i.rtp_progress : null,
       expectedReturn: i.expected_return_date ?? null,
     })),
     rtp: raw.rtp.map((r) => ({

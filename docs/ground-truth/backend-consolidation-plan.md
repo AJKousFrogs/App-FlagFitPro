@@ -23,26 +23,28 @@ reimplement the plan in Angular.
 ## 1. Audit findings
 
 ### 1a. Calculations
-| Calculation | State | Action |
-|---|---|---|
-| Periodization / taper / framing | ✅ single source + generated port + parity test | none — this is the template |
-| Team-practice plan | ✅ new, backend-only realization, tested | none — UI must call it, not fork it |
-| **ACWR** | ✅ **already single-source** (verified 2026-07-12). The MATH lives once in `utils/acwr.js#computeAcwrAt` (EWMA, uncoupled 7/21). The five backend `calculateACWR` (`daily-training`, `training-plan`, `training-stats-enhanced`, `smart-training-recommendations`, `load-management`) are **thin adapters** that build a daily-load Map (via `computeSessionLoad`) and delegate to `computeAcwrAt` + `classifyAcwrZone`; each carries a comment documenting its migration off the old rolling-average ratio. Frontend `precision.utils.ts#calculateACWRRatio` is a trivial `safeDivide` display helper, not a second method. | none — the repeated function *name* is not duplicated math. (Grep over-flagged; corrected.) |
-| Readiness | ✅ single-source: `utils/readiness-score.js`, used by `calc-readiness.js` + `daily-protocol-decision.js`; other `readinessScore` refs are reads. | none |
-| Session load | ✅ single-source: `utils/acwr.js#computeSessionLoad`. | none |
+
+| Calculation                     | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Action                                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Periodization / taper / framing | ✅ single source + generated port + parity test                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | none — this is the template                                                                 |
+| Team-practice plan              | ✅ new, backend-only realization, tested                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | none — UI must call it, not fork it                                                         |
+| **ACWR**                        | ✅ **already single-source** (verified 2026-07-12). The MATH lives once in `utils/acwr.js#computeAcwrAt` (EWMA, uncoupled 7/21). The five backend `calculateACWR` (`daily-training`, `training-plan`, `training-stats-enhanced`, `smart-training-recommendations`, `load-management`) are **thin adapters** that build a daily-load Map (via `computeSessionLoad`) and delegate to `computeAcwrAt` + `classifyAcwrZone`; each carries a comment documenting its migration off the old rolling-average ratio. Frontend `precision.utils.ts#calculateACWRRatio` is a trivial `safeDivide` display helper, not a second method. | none — the repeated function _name_ is not duplicated math. (Grep over-flagged; corrected.) |
+| Readiness                       | ✅ single-source: `utils/readiness-score.js`, used by `calc-readiness.js` + `daily-protocol-decision.js`; other `readinessScore` refs are reads.                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | none                                                                                        |
+| Session load                    | ✅ single-source: `utils/acwr.js#computeSessionLoad`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | none                                                                                        |
 
 ### 1b. Exercise data stores
+
 `exercises` (840 rows) is the canonical tissue-load library. Parallel legacy tables
 are **all empty** and reached only by dead code:
 
-| Legacy table | live rows | Reached by |
-|---|---|---|
-| `isometrics_exercises` | 0 | `isometrics.js`, `exercises-core.js` (dead endpoints); stale comment in `daily-protocol.js` |
-| `plyometrics_exercises` | 0 | `plyometrics.js`, `exercises-core.js` (dead); stale comment in `daily-protocol.js` |
-| `exercisedb_exercises` | 0 | `exercisedb.js` (dead); `api-response-shapes.contract.test.js` |
-| `exercise_registry` | 0 | none (code) |
-| `ff_exercise_mappings` | 0 | `exercisedb.js` (dead) |
-| `movement_patterns` | 0 | `training-programs.js` |
+| Legacy table            | live rows | Reached by                                                                                  |
+| ----------------------- | --------- | ------------------------------------------------------------------------------------------- |
+| `isometrics_exercises`  | 0         | `isometrics.js`, `exercises-core.js` (dead endpoints); stale comment in `daily-protocol.js` |
+| `plyometrics_exercises` | 0         | `plyometrics.js`, `exercises-core.js` (dead); stale comment in `daily-protocol.js`          |
+| `exercisedb_exercises`  | 0         | `exercisedb.js` (dead); `api-response-shapes.contract.test.js`                              |
+| `exercise_registry`     | 0         | none (code)                                                                                 |
+| `ff_exercise_mappings`  | 0         | `exercisedb.js` (dead)                                                                      |
+| `movement_patterns`     | 0         | `training-programs.js`                                                                      |
 
 The dead endpoint tree: `exercises.js` aggregates `exercises-core.js` +
 `isometrics.js` + `plyometrics.js`; `exercisedb.js` is standalone. **The Angular app
@@ -52,6 +54,7 @@ calls none of `/api/exercises`, `/api/isometrics`, `/api/plyometrics`,
 X_exercises table" lines are **stale comments**, not code.
 
 ### 1c. Tables at a glance
+
 ~180 public tables, the large majority with 0 live rows (unshipped scaffolding).
 Only a subset is in scope now (§3); a full empty-table sweep is a later workstream
 and each drop is individually gated.
@@ -77,6 +80,7 @@ and each drop is individually gated.
 ## 3. Workstream A — exercise single source (executing)
 
 Order (each behavior-preserving; drops last, reversible from migration history):
+
 1. Fix the stale dual-source comments in `daily-protocol.js` (doc drift).
 2. Delete the dead endpoints: `exercises.js`, `exercises-core.js`, `isometrics.js`,
    `plyometrics.js`, `exercisedb.js`; remove their `netlify.toml` routes; remove the
@@ -98,6 +102,7 @@ Safety: tables verified empty immediately before drop; drop is a migration (recr
   documented decision that a site was deliberately different).
 
 ## 5. Status ledger
+
 - 2026-07-12: plan written.
 - 2026-07-12: **Workstream A DONE.** Deleted dead endpoints `exercises-core.js`,
   `isometrics.js`, `plyometrics.js`, `exercisedb.js` (the `exercises.js` dispatcher

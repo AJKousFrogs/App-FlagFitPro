@@ -56,7 +56,7 @@ const DAY = 86_400_000;
                   [style.width.%]="r.width"
                   [attr.title]="r.title"
                 >
-                  @if (r.rtpProgress !== null && r.tone !== 'good') {
+                  @if (r.rtpProgress !== null && r.tone !== "good") {
                     <span class="rtp" [style.width.%]="r.rtpProgress"></span>
                   }
                 </div>

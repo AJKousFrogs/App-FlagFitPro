@@ -1,9 +1,9 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-07-14**
+> **Last verified: 2026-07-16**
 
-**121 functions: 117 exercised, 4 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**122 functions: 118 exercised, 4 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -38,6 +38,7 @@
 | `coach-inbox` | GET, PATCH, POST | _(router submodule)_ | team_members, coach_inbox_items, users, ai_messages, teams |
 | `community` | GET, POST, DELETE | _(router submodule)_ | posts, team_members, blocked_users, post_likes, post_bookmarks, post_comments, comment_likes, trending_topics, community_polls, community_poll_options, community_poll_votes, decrement_likes_count(), increment_likes_count(), increment_comments_count(), decrement_comment_likes_count(), increment_comment_likes_count(), increment_poll_votes() |
 | `compute-acwr` | POST | _(router submodule)_ | training_sessions |
+| `cycle` | GET, PUT, POST, DELETE | /api/cycle/*<br>/api/cycle | cycle_tracking_profiles ⚠️, cycle_logs ⚠️, privacy_audit_log |
 | `daily-load` | GET | /api/daily-load | training_sessions |
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, exercises, team_members, coach_inbox_items, team_season_phases, daily_wellness_checkin, get_athlete_readiness() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games |
@@ -65,7 +66,7 @@
 | `knowledge-search` | GET, POST | _(router submodule)_ | knowledge_base_entries |
 | `load-management` | GET | _(router submodule)_ | team_members, training_sessions |
 | `micro-sessions` | GET, POST, PATCH | _(router submodule)_ | micro_sessions, micro_session_analytics |
-| `monitoring-report` | GET | /api/monitoring-report/*<br>/api/monitoring-report | monitoring_config, team_members, daily_wellness_checkin, session_load, bloodwork_panels, bloodwork_markers, wearable_health, physio_blocks, users, check_health_sharing() |
+| `monitoring-report` | GET | /api/monitoring-report/*<br>/api/monitoring-report | monitoring_config, team_members, daily_wellness_checkin, session_load, bloodwork_panels, bloodwork_markers, wearable_health, physio_blocks, athlete_injuries, return_to_play_protocols, users, check_health_sharing() |
 | `notifications` | OPTIONS | /api/notifications<br>/api/notifications/* | — |
 | `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates, users |
 | `parental-consent` | GET, POST, PUT | _(router submodule)_ | users, parental_consent, privacy_audit_log |

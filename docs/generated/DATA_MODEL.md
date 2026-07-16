@@ -2,7 +2,7 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-14
+> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-16
 
 **176 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
@@ -235,7 +235,7 @@ Touched by: `hydration`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_injuries`
-Touched by: `athlete-injuries`, `calc-readiness`, `coach-core`, `staff-physiotherapist`, `user-profile-core`
+Touched by: `athlete-injuries`, `calc-readiness`, `coach-core`, `monitoring-report`, `staff-physiotherapist`, `user-profile-core`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1814,7 +1814,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `privacy_audit_log`
-Touched by: `parental-consent`, `privacy-settings`
+Touched by: `cycle`, `parental-consent`, `privacy-settings`
 
 - `id` uuid · not null
 - `user_id` uuid
@@ -2127,7 +2127,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp without time zone
 
 ### `return_to_play_protocols`
-Touched by: `return-to-play`
+Touched by: `monitoring-report`, `return-to-play`
 
 - `id` uuid · not null
 - `user_id` uuid · not null

@@ -94,7 +94,9 @@ import { readinessZone, ringDash, type PerfZone } from "./perf-viz.geometry";
       .prog {
         color: var(--good);
         stroke: currentColor;
-        filter: drop-shadow(0 0 7px color-mix(in srgb, currentColor 55%, transparent));
+        filter: drop-shadow(
+          0 0 7px color-mix(in srgb, currentColor 55%, transparent)
+        );
         transition: stroke-dashoffset 1s var(--ease-out, ease);
       }
       .prog.caution {

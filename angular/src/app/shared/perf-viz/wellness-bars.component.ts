@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 export interface WellnessRow {
   label: string;
@@ -29,11 +25,7 @@ export interface WellnessRow {
       @for (r of rows(); track r.label) {
         <div class="row">
           <span class="lbl">{{ r.label }}</span>
-          <div
-            class="track"
-            role="img"
-            [attr.aria-label]="aria(r)"
-          >
+          <div class="track" role="img" [attr.aria-label]="aria(r)">
             <div
               class="fill"
               [class.warn]="r.invert"
@@ -86,7 +78,11 @@ export interface WellnessRow {
         bottom: 0;
         left: 0;
         border-radius: var(--r-pill);
-        background: linear-gradient(90deg, var(--accent-press, var(--good)), var(--good));
+        background: linear-gradient(
+          90deg,
+          var(--accent-press, var(--good)),
+          var(--good)
+        );
         transition: width 0.9s var(--ease-out, ease);
         max-width: 100%;
       }
@@ -157,5 +153,4 @@ export class WellnessBarsComponent {
       : "";
     return `${r.label} ${this.round(r.value)} of 100${base}.`;
   }
-
 }

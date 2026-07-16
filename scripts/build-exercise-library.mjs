@@ -290,7 +290,7 @@ if (process.argv.includes("--print-net-new")) {
       },
       null,
       2,
-    ),
+    ) + "\n", // prettier requires a trailing newline; JSON.stringify doesn't add one
   );
   console.log(JSON.stringify(stats(rows), null, 2));
 }

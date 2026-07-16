@@ -67,14 +67,19 @@
         @if (hasData()) {
           <div
             class="card"
-            style="display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--s-5);
+              flex-wrap: wrap;
+            "
           >
             <app-ff-readiness-ring
               [score]="readiness"
               [size]="104"
               [showLabel]="false"
             />
-            <div style="flex:1;min-width:140px">
+            <div style="flex: 1; min-width: 140px">
               <div class="inline">
                 <span>Readiness</span>
                 @if (readyBand(); as b) {
@@ -83,7 +88,7 @@
                   <span class="band neutral">—</span>
                 }
               </div>
-              <div class="inline" style="margin-top:var(--s-3)">
+              <div class="inline" style="margin-top: var(--s-3)">
                 <span>Load (ACWR)</span>
                 @if (acwrBand(); as b) {
                   <span class="band {{ b.cls }}">{{ b.label }}</span>
@@ -323,8 +328,8 @@
               </div>
             </div>
             @if (weightPoints().length > 1) {
-              <div style="margin-top:var(--s-4)">
-                <div class="lbl" style="margin-bottom:var(--s-2)">
+              <div style="margin-top: var(--s-4)">
+                <div class="lbl" style="margin-bottom: var(--s-2)">
                   Weight fluctuation
                 </div>
                 <app-ff-weight-trend [points]="weightPoints()" />

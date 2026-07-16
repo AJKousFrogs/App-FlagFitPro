@@ -381,12 +381,10 @@ export class SupplementsComponent {
     });
 
     // Batch-testing / contamination-risk for the athlete's stack (anti-doping).
-    this.api
-      .get<SupplementSafety>("/api/supplements/safety")
-      .subscribe({
-        next: (res) => this.safety.set(res?.data ?? null),
-        error: (e) => this.logger.error("supplement_safety_failed", e),
-      });
+    this.api.get<SupplementSafety>("/api/supplements/safety").subscribe({
+      next: (res) => this.safety.set(res?.data ?? null),
+      error: (e) => this.logger.error("supplement_safety_failed", e),
+    });
 
     this.api.get<{ logs?: SuppLog[] }>("/api/supplements/recent").subscribe({
       next: (res) => {

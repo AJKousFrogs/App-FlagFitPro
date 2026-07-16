@@ -52,11 +52,28 @@ import { acwrZone, bandY, linePath } from "./perf-viz.geometry";
           [attr.height]="y(danger()) - T"
         />
         @for (l of refLines(); track l.v) {
-          <line class="bl" [attr.x1]="L" [attr.x2]="W - R" [attr.y1]="l.y" [attr.y2]="l.y" />
-          <text class="blab" [attr.x]="W - R + 2" [attr.y]="l.y + 3">{{ l.v }}</text>
+          <line
+            class="bl"
+            [attr.x1]="L"
+            [attr.x2]="W - R"
+            [attr.y1]="l.y"
+            [attr.y2]="l.y"
+          />
+          <text class="blab" [attr.x]="W - R + 2" [attr.y]="l.y + 3">
+            {{ l.v }}
+          </text>
         }
-        <path [attr.d]="path()" class="ln" [attr.stroke]="'url(#' + lineId + ')'" />
-        <circle class="end {{ zone() }}" [attr.cx]="end().x" [attr.cy]="end().y" r="4" />
+        <path
+          [attr.d]="path()"
+          class="ln"
+          [attr.stroke]="'url(#' + lineId + ')'"
+        />
+        <circle
+          class="end {{ zone() }}"
+          [attr.cx]="end().x"
+          [attr.cy]="end().y"
+          r="4"
+        />
         <text
           class="val tnum {{ zone() }}"
           [attr.x]="end().x - 7"
@@ -175,7 +192,9 @@ export class AcwrBandComponent {
     const s = this.clean();
     const n = s.length;
     if (n < 2) return "";
-    return linePath(s.map((v, i) => ({ x: +this.xAt(i, n).toFixed(2), y: this.y(v) })));
+    return linePath(
+      s.map((v, i) => ({ x: +this.xAt(i, n).toFixed(2), y: this.y(v) })),
+    );
   });
   readonly end = computed(() => {
     const s = this.clean();

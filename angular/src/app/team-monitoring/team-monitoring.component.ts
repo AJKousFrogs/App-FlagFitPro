@@ -7,10 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import {
-  ScatterComponent,
-  type ScatterPoint,
-} from "../shared/perf-viz";
+import { ScatterComponent, type ScatterPoint } from "../shared/perf-viz";
 import { AvatarComponent } from "../shared/avatar.component";
 import { ApiService } from "../core/services/api.service";
 

@@ -16,15 +16,15 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 
 ### Metrics at a Glance
 
-| Category | Finding | Status | Impact |
-|----------|---------|--------|--------|
-| **CSS Errors** | 6 hardcoded hex colors | ✅ Fixed | Blocking → Resolved |
-| **CSS Warnings** | 685 design token violations | 📋 Planned | Code quality issue |
-| **Dead Code** | 16 unused utilities | ✅ Removed | 63% file reduction |
-| **Type Safety** | 0 type errors | ✅ Verified | 100% clean |
-| **Linting** | 0 lint errors | ✅ Verified | 100% clean |
-| **Test Coverage** | ACWR parity | ✅ Added | 10 tests passing |
-| **Worktree Branches** | 28 temporary branches | ✅ Cleaned | Repository hygiene |
+| Category              | Finding                     | Status      | Impact              |
+| --------------------- | --------------------------- | ----------- | ------------------- |
+| **CSS Errors**        | 6 hardcoded hex colors      | ✅ Fixed    | Blocking → Resolved |
+| **CSS Warnings**      | 685 design token violations | 📋 Planned  | Code quality issue  |
+| **Dead Code**         | 16 unused utilities         | ✅ Removed  | 63% file reduction  |
+| **Type Safety**       | 0 type errors               | ✅ Verified | 100% clean          |
+| **Linting**           | 0 lint errors               | ✅ Verified | 100% clean          |
+| **Test Coverage**     | ACWR parity                 | ✅ Added    | 10 tests passing    |
+| **Worktree Branches** | 28 temporary branches       | ✅ Cleaned  | Repository hygiene  |
 
 ---
 
@@ -37,6 +37,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Solution**: Replaced with design tokens
 
 **Changes**:
+
 - `cycle.component.scss`: 4 violations
   - Line 164: `color: #08090b` → `color: var(--on-accent)`
   - Line 250: `background: #08090b` → `background: var(--on-accent)`
@@ -56,6 +57,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Solution**: Removed all unused exports
 
 **Removed Functions** (0 imports in entire codebase):
+
 1. `capitalize()` — String capitalization
 2. `titleCase()` — Title case conversion
 3. `kebabCase()` — Kebab-case conversion
@@ -74,6 +76,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 16. `formatTimeMMSS()` — Time display (MM:SS)
 
 **Retained Functions** (8 active imports):
+
 - `camelCase()` (8 imports)
 - `snakeCase()` (3 imports)
 - `truncate()` (5 imports)
@@ -83,12 +86,14 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 - `padEnd()` (2 imports)
 - `normalizePlayerName()` (4 imports)
 
-**Verification**: 
+**Verification**:
+
 - Type checking passes ✓
 - Linting passes ✓
 - No import breakage ✓
 
-**Results**: 
+**Results**:
+
 - File size: 337 → 125 lines (63% reduction)
 - API clarity improved
 - Maintenance burden reduced
@@ -175,6 +180,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Status**: ✅ Documented & Tested | ⏳ Consolidation deferred
 
 **Finding**: Frontend `precision.utils.ts` and backend `precision.js` duplicate core functions
+
 - `roundToPrecision()` — Identical implementation ✓
 - `safeDivide()` — Identical implementation ✓
 - `average()` — Identical implementation ✓
@@ -183,6 +189,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Risk Level**: MEDIUM (parity verified with test harness)
 
 **Next Steps**:
+
 - Add CI check: Run acwr-parity.test.js on all pushes
 - Document mirror pattern in comments
 - Defer consolidation to Phase 3 (lower risk now that parity verified)
@@ -194,6 +201,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Status**: ✅ Split Explained | ⏳ Consolidation deferred
 
 **Finding**: Frontend (40+ functions) vs backend (8 functions) duplication
+
 - Frontend: UI/presentation-focused (formatting, timezone, ranges)
 - Backend: Data processing-focused (ISO conversion, week calculations)
 - Overlap is minimal; different purposes
@@ -201,6 +209,7 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 **Risk Level**: LOW (drift unlikely)
 
 **Next Steps**:
+
 - Document function purposes
 - Verify true duplicates (getTimeAgo, formatDateISO, getWeekStart)
 - Timeline: Q3 2026
@@ -219,19 +228,20 @@ Comprehensive codebase sweep identified **6 CSS violations**, **16 unused functi
 
 ### Component Breakdown
 
-| Component | Warnings | Est. Effort | Priority |
-|-----------|----------|-------------|----------|
-| `today.component.scss` | 224 | 4h | HIGH |
-| `training.component.scss` | 145 | 3h | HIGH |
-| `cycle.component.scss` | 90 | 2h | MEDIUM |
-| `monitoring-report.component.scss` | 77 | 1.5h | MEDIUM |
-| `nutrition.component.scss` | 71 | 1.5h | MEDIUM |
-| `device-data.component.scss` | 61 | 1h | LOW |
-| `team-monitoring.component.scss` | 17 | 0.5h | LOW |
+| Component                          | Warnings | Est. Effort | Priority |
+| ---------------------------------- | -------- | ----------- | -------- |
+| `today.component.scss`             | 224      | 4h          | HIGH     |
+| `training.component.scss`          | 145      | 3h          | HIGH     |
+| `cycle.component.scss`             | 90       | 2h          | MEDIUM   |
+| `monitoring-report.component.scss` | 77       | 1.5h        | MEDIUM   |
+| `nutrition.component.scss`         | 71       | 1.5h        | MEDIUM   |
+| `device-data.component.scss`       | 61       | 1h          | LOW      |
+| `team-monitoring.component.scss`   | 17       | 0.5h        | LOW      |
 
 ### Recommended Approach
 
 **Hybrid Strategy** (Quality + Speed):
+
 1. Start with smallest files (team-monitoring, device-data)
 2. Use auto-fix as template for larger files
 3. Manual review for responsive impact
@@ -253,17 +263,17 @@ See `CODE_QUALITY_REFACTOR_PLAN.md` §3 for sprint-by-sprint breakdown with esti
 
 ### Key Findings
 
-| Service | Imports | Component | Status |
-|---------|---------|-----------|--------|
-| `wearable.service` | 1 | device-data.component.ts | ✓ Active |
-| `video.service` (TrainingVideoService) | 2 | training.component.ts, gallery | ✓ Active |
-| `throwing.service` (QbThrowingService) | 1 | qb-arm-care-card.component.ts | ✓ Active |
-| `tracking.service` | 0 | ??? | ? Review |
-| `tip.service` | Test-only | (test files) | ? Review |
-| `travel.service` | 2 | ??? | ? Review |
-| `telemetry.service` | 2 | ??? | ? Review |
-| `measurement.service` | 2 | ??? | ? Review |
-| `ai.service` | 2 | ??? | ? Review |
+| Service                                | Imports   | Component                      | Status   |
+| -------------------------------------- | --------- | ------------------------------ | -------- |
+| `wearable.service`                     | 1         | device-data.component.ts       | ✓ Active |
+| `video.service` (TrainingVideoService) | 2         | training.component.ts, gallery | ✓ Active |
+| `throwing.service` (QbThrowingService) | 1         | qb-arm-care-card.component.ts  | ✓ Active |
+| `tracking.service`                     | 0         | ???                            | ? Review |
+| `tip.service`                          | Test-only | (test files)                   | ? Review |
+| `travel.service`                       | 2         | ???                            | ? Review |
+| `telemetry.service`                    | 2         | ???                            | ? Review |
+| `measurement.service`                  | 2         | ???                            | ? Review |
+| `ai.service`                           | 2         | ???                            | ? Review |
 
 ### Verification Result
 
@@ -286,6 +296,7 @@ All services with 1+ imports are actively used in component production code (ver
 - **Result**: Repository cleaner, faster branch listing
 
 **Remaining Active Branches**:
+
 - `main` (current)
 - `chore/audit-drift-cleanup`
 - `chore/single-source-bodyweight-fallback`
@@ -329,17 +340,18 @@ All services with 1+ imports are actively used in component production code (ver
 
 ## 🔄 Commit History
 
-| Commit | Message | Impact |
-|--------|---------|--------|
-| `6b47fad7` | Fix CSS violations + remove 16 unused utilities | Phase 1 fixes |
-| `2de7d4bf` | Add ACWR parity test harness (10 tests) | Phase 2 safety |
-| `aa03376c` | Document code quality refactor plan | Phase 2–4 roadmap |
+| Commit     | Message                                         | Impact            |
+| ---------- | ----------------------------------------------- | ----------------- |
+| `6b47fad7` | Fix CSS violations + remove 16 unused utilities | Phase 1 fixes     |
+| `2de7d4bf` | Add ACWR parity test harness (10 tests)         | Phase 2 safety    |
+| `aa03376c` | Document code quality refactor plan             | Phase 2–4 roadmap |
 
 ---
 
 ## ✅ Pre-Ship Verification
 
 All checks pass:
+
 ```bash
 ✓ npm run type-check          — 0 errors
 ✓ npm run typecheck:functions — 0 errors
@@ -354,21 +366,25 @@ All checks pass:
 ## 🎯 Next Steps
 
 ### Immediate (This Week)
+
 - ✅ Review Phase 1 fixes (CSS, dead code, ACWR tests)
 - ✅ Commit audit & refactor plan documentation
 - Review Phase 2 duplication findings
 
 ### Short-Term (Next 2 Weeks)
+
 - [ ] Assess Phase 3 effort (CSS token migration priority)
 - [ ] Start Phase 3 on smallest file (team-monitoring.scss, 17 warnings)
 - [ ] Finalize Phase 2 precision utilities documentation
 
 ### Medium-Term (Next Sprint)
+
 - [ ] Complete Phase 3 migration on 3–4 components
 - [ ] Begin Phase 4 low-usage services assessment
 - [ ] Add acwr-parity.test.js to CI pipeline
 
 ### Long-Term (Q3 2026)
+
 - [ ] Finish Phase 3 CSS token migration (100% complete)
 - [ ] Complete Phase 4 low-usage services deprecation
 - [ ] Evaluate monorepo consolidation for Phase 2

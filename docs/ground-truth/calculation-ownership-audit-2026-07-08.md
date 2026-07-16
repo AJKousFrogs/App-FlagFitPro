@@ -11,34 +11,34 @@ frontend displays, never recalculates. Grep-verified across `netlify/functions/`
 
 ## 1. Readiness score — ⚠️ TWO backend formulas (divergent weights)
 
-| | |
-|---|---|
-| Canonical source | `netlify/functions/calc-readiness.js` → `readiness_scores` (wellness subscore: sleep .4 / soreness .3 / energy .3; optional mood .5 / stress .5; 60/40 blend) |
-| Second source | `netlify/functions/wellness-checkin.js` `calculateReadiness()` (sleep .3 / energy .25 / stress .25 / soreness .2 + travel penalty) → `daily_wellness_checkin.calculated_readiness`; drives coach alerts (<40%) and achievements (≥90) |
-| Frontend | ✅ display-only (`readiness.service.ts`: 5 API calls, 0 math; `get_athlete_readiness` RPC is fetch-only) |
-| DB | `upsert_wellness_checkin` stores the passed value, no SQL math ✅ |
-| **Issue** | An athlete can see "wellness low (38%)" from the check-in formula while Today shows readiness 52 from the canonical one. Same-named number, two formulas, both user-facing. |
-| **Fix** | Make `wellness-checkin.js` call/share the `calc-readiness` scoring module; one formula, two consumers. |
+|                  |                                                                                                                                                                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Canonical source | `netlify/functions/calc-readiness.js` → `readiness_scores` (wellness subscore: sleep .4 / soreness .3 / energy .3; optional mood .5 / stress .5; 60/40 blend)                                                                         |
+| Second source    | `netlify/functions/wellness-checkin.js` `calculateReadiness()` (sleep .3 / energy .25 / stress .25 / soreness .2 + travel penalty) → `daily_wellness_checkin.calculated_readiness`; drives coach alerts (<40%) and achievements (≥90) |
+| Frontend         | ✅ display-only (`readiness.service.ts`: 5 API calls, 0 math; `get_athlete_readiness` RPC is fetch-only)                                                                                                                              |
+| DB               | `upsert_wellness_checkin` stores the passed value, no SQL math ✅                                                                                                                                                                     |
+| **Issue**        | An athlete can see "wellness low (38%)" from the check-in formula while Today shows readiness 52 from the canonical one. Same-named number, two formulas, both user-facing.                                                           |
+| **Fix**          | Make `wellness-checkin.js` call/share the `calc-readiness` scoring module; one formula, two consumers.                                                                                                                                |
 
 ## 2. ACWR / Training-load ratio — ⚠️ dual engine (guarded, consolidation scheduled)
 
-| | |
-|---|---|
-| Backend authority | `utils/acwr.js` (`ACWR_DEFAULTS` 7/21, λ 0.25/0.0909, floor 50; `ACWR_RISK_ZONES`) + `compute-acwr.js`; stored in `readiness_scores.acwr` |
-| Duplicate | `angular acwr.service.ts` — full independent EWMA engine incl. `calculatedLoad = rpe * duration` fallback (line ~1161) |
-| Guard | `tests/unit/acwr-config-drift.test.js` (CI): EWMA params unified; no preset laxer than backend; default preset == backend exactly |
+|                            |                                                                                                                                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backend authority          | `utils/acwr.js` (`ACWR_DEFAULTS` 7/21, λ 0.25/0.0909, floor 50; `ACWR_RISK_ZONES`) + `compute-acwr.js`; stored in `readiness_scores.acwr`                                                                                       |
+| Duplicate                  | `angular acwr.service.ts` — full independent EWMA engine incl. `calculatedLoad = rpe * duration` fallback (line ~1161)                                                                                                          |
+| Guard                      | `tests/unit/acwr-config-drift.test.js` (CI): EWMA params unified; no preset laxer than backend; default preset == backend exactly                                                                                               |
 | Threshold literals also at | `load-management.js` (0.8/1.3/1.5/1.8 hardcoded), DB `detect_acwr_trigger` (0.8/1.5 hardcoded, reads stored acwr — no recompute), periodization engine consts. All currently consistent; literals not imported from one module. |
-| **Fix** | Batch 2b: client consumes `readiness_scores.acwr` / `compute-acwr`, retire the client EWMA. `load-management.js` + future SQL should import/reference `ACWR_RISK_ZONES`. |
+| **Fix**                    | Batch 2b: client consumes `readiness_scores.acwr` / `compute-acwr`, retire the client EWMA. `load-management.js` + future SQL should import/reference `ACWR_RISK_ZONES`.                                                        |
 
 ## 3. Periodization / load-deload phase — ⚠️ client-owned engine; server port parity-proven, not yet consumed
 
-| | |
-|---|---|
-| Live computation | client `periodization-engine.ts` (pure, DI-free) via `periodization.service.ts` wrapper — Today/week prescriptions |
-| Server mirror | `netlify/functions/utils/periodization-engine.js` — GENERATED from the TS source (`npm run build:periodization-engine`), **28/28 golden-parity vs client** (`periodization-port-parity.test.js`, doubles as staleness guard) |
-| Second (by design) | `daily-protocol.js` taper/phase logic — COMPOSE contract: daily-protocol *realizes* the periodization intent; documented two-engine split |
-| Population thresholds | engine hardcodes adult ACWR consts (`ACWR_DANGER=1.5` etc. at 7 sites) — youth/RTP tighter zones exist only in FE evidence presets (drift test enforces "never laxer") |
-| **Fix** | Batch 3.2–3.3: population-aware thresholds as engine inputs → server endpoint assembles inputs → client consumes. §5a of SOURCE_OF_TRUTH rewritten at switch-over. |
+|                       |                                                                                                                                                                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Live computation      | client `periodization-engine.ts` (pure, DI-free) via `periodization.service.ts` wrapper — Today/week prescriptions                                                                                                           |
+| Server mirror         | `netlify/functions/utils/periodization-engine.js` — GENERATED from the TS source (`npm run build:periodization-engine`), **28/28 golden-parity vs client** (`periodization-port-parity.test.js`, doubles as staleness guard) |
+| Second (by design)    | `daily-protocol.js` taper/phase logic — COMPOSE contract: daily-protocol _realizes_ the periodization intent; documented two-engine split                                                                                    |
+| Population thresholds | engine hardcodes adult ACWR consts (`ACWR_DANGER=1.5` etc. at 7 sites) — youth/RTP tighter zones exist only in FE evidence presets (drift test enforces "never laxer")                                                       |
+| **Fix**               | Batch 3.2–3.3: population-aware thresholds as engine inputs → server endpoint assembles inputs → client consumes. §5a of SOURCE_OF_TRUTH rewritten at switch-over.                                                           |
 
 ## 4. RPE / session load (workload = duration × sRPE) — ✅ backend, ⚠️ no shared helper
 
@@ -61,7 +61,7 @@ frontend displays, never recalculates. Grep-verified across `netlify/functions/`
 
 - **Monitoring flags** (bloodwork/wearable/load): backend `monitoring-report.js`, thresholds from `monitoring_config`, head-coach sees derived signal only. ✅
 - **DB alerting**: `detect_acwr_trigger` reads stored ACWR, notifies staff, honors `safety_override_log`. Read-side ✅ (hardcoded 0.8/1.5 noted in #2).
-- **❌ `acwr-spike-detection.service.ts` (frontend)** computes spike detection AND writes "load caps" to **`load_caps` — a table that no longer exists** (dropped in `20260529090455_drop_ghost_load_acwr_caches_phase4.sql`; live count = 0). Every write/read fails at runtime. A *safety feature that silently does nothing*, and it's frontend-owned business logic besides. **Fix: delete the service (cap logic belongs in the backend engine; ACWR danger already alerts via `detect_acwr_trigger`), or rebuild server-side if the product wants auto-caps.**
+- **❌ `acwr-spike-detection.service.ts` (frontend)** computes spike detection AND writes "load caps" to **`load_caps` — a table that no longer exists** (dropped in `20260529090455_drop_ghost_load_acwr_caches_phase4.sql`; live count = 0). Every write/read fails at runtime. A _safety feature that silently does nothing_, and it's frontend-owned business logic besides. **Fix: delete the service (cap logic belongs in the backend engine; ACWR danger already alerts via `detect_acwr_trigger`), or rebuild server-side if the product wants auto-caps.**
 
 ## 9. Eccentric work (Nordic) dosing — ✅ single backend source
 

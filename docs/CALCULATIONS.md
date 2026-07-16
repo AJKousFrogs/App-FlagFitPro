@@ -1,13 +1,13 @@
 # FlagFit Pro — Calculations & Constants Reference
 
-**Purpose.** The *formulas, constants, and thresholds* of the app — the "what
+**Purpose.** The _formulas, constants, and thresholds_ of the app — the "what
 the numbers are," as opposed to the "what happens when." Its sibling
 `LOGIC.md` owns decision rules/control flow; `SOURCE_OF_TRUTH.md` owns
 schema/endpoints/status.
 
 **How to trust this file.** Written FROM the code (files named per section).
 When it disagrees with the code, the **code wins** — fix this file in the same
-pass. Where a stale in-code *comment* disagrees with the code's constants and
+pass. Where a stale in-code _comment_ disagrees with the code's constants and
 tests, the constants+tests win (one such case is flagged in §9). As of
 **2026-07-14**.
 
@@ -19,14 +19,14 @@ tests, the constants+tests win (one such case is flagged in §9). As of
 
 Canonical owners at a glance:
 
-| Family | Owner (single source) | Consumers |
-|---|---|---|
-| Session load (AU) | `netlify/functions/utils/acwr.js` `computeSessionLoad` | ACWR, readiness, daily-load calendar |
-| ACWR | `utils/acwr.js` `computeAcwrAt` + `ACWR_RISK_ZONES` | `compute-acwr.js`, `calc-readiness.js`, client `acwr.service` (display mirror) |
-| Readiness | `netlify/functions/calc-readiness.js` → `readiness_scores` | engine input, Today, staff lanes |
-| Wellness score | `netlify/functions/utils/readiness-score.js` | `calc-readiness.js`, `wellness-checkin.js` |
-| Prescription / guards | `angular/src/app/core/services/periodization-engine.ts` (generated server port `netlify/functions/utils/periodization-engine.js`, byte-identical — parity-tested) | Today, This Week, COMPOSE, server endpoint |
-| ACWR bands / population presets | `angular/src/app/core/config/evidence-presets.ts` (drift-guarded against server `ACWR_RISK_ZONES` by `tests/unit/acwr-config-drift.test.js`) | engine constants, client classification |
+| Family                          | Owner (single source)                                                                                                                                             | Consumers                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Session load (AU)               | `netlify/functions/utils/acwr.js` `computeSessionLoad`                                                                                                            | ACWR, readiness, daily-load calendar                                           |
+| ACWR                            | `utils/acwr.js` `computeAcwrAt` + `ACWR_RISK_ZONES`                                                                                                               | `compute-acwr.js`, `calc-readiness.js`, client `acwr.service` (display mirror) |
+| Readiness                       | `netlify/functions/calc-readiness.js` → `readiness_scores`                                                                                                        | engine input, Today, staff lanes                                               |
+| Wellness score                  | `netlify/functions/utils/readiness-score.js`                                                                                                                      | `calc-readiness.js`, `wellness-checkin.js`                                     |
+| Prescription / guards           | `angular/src/app/core/services/periodization-engine.ts` (generated server port `netlify/functions/utils/periodization-engine.js`, byte-identical — parity-tested) | Today, This Week, COMPOSE, server endpoint                                     |
+| ACWR bands / population presets | `angular/src/app/core/config/evidence-presets.ts` (drift-guarded against server `ACWR_RISK_ZONES` by `tests/unit/acwr-config-drift.test.js`)                      | engine constants, client classification                                        |
 
 ---
 
@@ -48,11 +48,11 @@ tournament week doesn't read falsely safe — `estimateGameLoads`,
 `calc-readiness.js`): per-game AU by game format, mirroring `GAME_FORMATS` in
 `core/config/position-volume.config.ts` (keep in sync):
 
-| Format | AU per game |
-|---|---|
-| `domestic_2x12_stop` | 300 |
-| `running_2x15` | 350 |
-| `ifaf_2x20` | 450 |
+| Format               | AU per game |
+| -------------------- | ----------- |
+| `domestic_2x12_stop` | 300         |
+| `running_2x15`       | 350         |
+| `ifaf_2x20`          | 450         |
 
 Fallback when format is missing: competition level `international` → 450,
 `national`/`club` → 300, unknown → **450** (heaviest — a game is never
@@ -102,23 +102,23 @@ inclusivity as implemented in `classifyAcwrZone`). The former per-zone injury
 association itself is analysis-dependent. `injuryRiskMultiplier` API fields
 now return null.
 
-| Zone | Range | Action |
-|---|---|---|
-| Detraining | < 0.8 | increase_load |
-| Safe | 0.8 – 1.3 (incl.) | maintain |
-| Caution | > 1.3 – 1.5 (incl.) | reduce_slightly |
-| Danger | > 1.5 – < 1.8 | reduce_significantly |
-| Critical | ≥ 1.8 | rest |
+| Zone       | Range               | Action               |
+| ---------- | ------------------- | -------------------- |
+| Detraining | < 0.8               | increase_load        |
+| Safe       | 0.8 – 1.3 (incl.)   | maintain             |
+| Caution    | > 1.3 – 1.5 (incl.) | reduce_slightly      |
+| Danger     | > 1.5 – < 1.8       | reduce_significantly |
+| Critical   | ≥ 1.8               | rest                 |
 
 **Population presets** (`evidence-presets.ts` — currently only the adult preset
 is ever active; youth/RTP are orphaned pending v3 M0 wiring, see SOT §5a):
 
-| Preset | sweetSpotLow | sweetSpotHigh | dangerHigh |
-|---|---|---|---|
-| `adult_flag_competitive_v1` (default/unknown age) | 0.8 | 1.3 | 1.5 |
-| `youth_flag_v1` (age < 18) | 0.8 | 1.2 | 1.4 |
-| `masters_flag_v1` (age ≥ 35, heuristic tier — 2026-07-14) | 0.8 | 1.2 | 1.4 |
-| `return_to_play_v1` (active RTP protocol) | 0.7 | 1.1 | 1.3 |
+| Preset                                                    | sweetSpotLow | sweetSpotHigh | dangerHigh |
+| --------------------------------------------------------- | ------------ | ------------- | ---------- |
+| `adult_flag_competitive_v1` (default/unknown age)         | 0.8          | 1.3           | 1.5        |
+| `youth_flag_v1` (age < 18)                                | 0.8          | 1.2           | 1.4        |
+| `masters_flag_v1` (age ≥ 35, heuristic tier — 2026-07-14) | 0.8          | 1.2           | 1.4        |
+| `return_to_play_v1` (active RTP protocol)                 | 0.7          | 1.1           | 1.3        |
 
 Assignment is **derived** (`derivePresetId(ageYears, hasActiveRtp)`, audit
 §4.1 — no longer orphaned): RTP > youth > masters > adult; unknown age →
@@ -152,32 +152,32 @@ suppressed — a taper's volume cut IS the plan; high-side deductions always
 stand. The safety-trigger hook fires at `> dangerHigh` (cohort) on the high
 side.
 
-| Condition (cohort bands; adult shown) | Deduction |
-|---|---|
-| ACWR > dangerHigh + 0.3 (adult 1.8) | −40 |
-| ACWR > dangerHigh (adult 1.5; youth/masters 1.4; RTP 1.3) | −30 |
-| ACWR > sweetSpotHigh (adult 1.3; youth/masters 1.2; RTP 1.1) | −15 |
-| ACWR < sweetSpotLow (adult/youth/masters 0.8; RTP 0.7) and > 168 h to next game | −10 |
+| Condition (cohort bands; adult shown)                                           | Deduction |
+| ------------------------------------------------------------------------------- | --------- |
+| ACWR > dangerHigh + 0.3 (adult 1.8)                                             | −40       |
+| ACWR > dangerHigh (adult 1.5; youth/masters 1.4; RTP 1.3)                       | −30       |
+| ACWR > sweetSpotHigh (adult 1.3; youth/masters 1.2; RTP 1.1)                    | −15       |
+| ACWR < sweetSpotLow (adult/youth/masters 0.8; RTP 0.7) and > 168 h to next game | −10       |
 
 **Wellness Index** — `calculateWellnessIndex` subscore (§4); fallback 60 when
 the subscore is non-finite.
 
 **Sleep** (deductions stack, quality on the 1–10 wellness scale):
 
-| Condition | Deduction |
-|---|---|
-| sleep_quality ≤ 4 | −25 |
-| sleep_quality ≤ 6 (and > 4) | −15 |
-| sleep_hours < 6 | −10 |
-| sleep_hours < 7 (and ≥ 6) | −5 |
+| Condition                   | Deduction |
+| --------------------------- | --------- |
+| sleep_quality ≤ 4           | −25       |
+| sleep_quality ≤ 6 (and > 4) | −15       |
+| sleep_hours < 6             | −10       |
+| sleep_hours < 7 (and ≥ 6)   | −5        |
 
 **Game proximity** (next fixture):
 
 | Hours to kickoff | Deduction |
-|---|---|
-| ≤ 24 | −25 |
-| ≤ 48 | −15 |
-| ≤ 72 | −5 |
+| ---------------- | --------- |
+| ≤ 24             | −25       |
+| ≤ 48             | −15       |
+| ≤ 72             | −5        |
 
 **Weights** (re-weighted 2026-07-14, audit §1.1 — the ACWR causal evidence
 weakened while wellness/sleep monitoring evidence held): workload **0.25**
@@ -185,6 +185,7 @@ weakened while wellness/sleep monitoring evidence held): workload **0.25**
 **0.15**. Mirrored in `evidence-presets.ts`.
 
 Weight redistribution — no fabricated components:
+
 - **ACWR unknown** → workload weight 0, redistributed proportionally across the
   other three (a data-less athlete is never flattered by a phantom 100×0.35).
 - **Reduced data mode** (§4 completeness < 60%) → sleep weight ×1.5, the other
@@ -193,9 +194,9 @@ Weight redistribution — no fabricated components:
 
 **Penalties** (subtract from the weighted composite, then clamp 0–100, round):
 
-- *Travel* (`travelReadinessPenalty`, same-day seated hours): 0 < h < 3 → −2 ·
+- _Travel_ (`travelReadinessPenalty`, same-day seated hours): 0 < h < 3 → −2 ·
   3 ≤ h < 6 → −4 · h ≥ 6 → −8. Only ever lowers.
-- *Active injury* (statuses active/recovering/rehab; self-reports past their
+- _Active injury_ (statuses active/recovering/rehab; self-reports past their
   `expected_return_date` are skipped; grade normalized via the canonical
   `normalizeSeverity`): severe/Grade 3 → **−20 and the level is capped at
   "moderate"** (an injured athlete is never told "High — push"); moderate/
@@ -215,11 +216,11 @@ day-0 demotion keeps the ABSOLUTE 55 floor** (`READINESS_LOW`) — a deep
 absolute collapse always demotes the day; personalization adds relative
 sensitivity, never removes the net.
 
-| Score (personal cuts; priors shown) | Level | Suggestion |
-|---|---|---|
-| > high (prior 75; not injury-capped) | high | push |
-| low – high (priors 55–75) | moderate | maintain |
-| < low (prior 55) | low | deload |
+| Score (personal cuts; priors shown)  | Level    | Suggestion |
+| ------------------------------------ | -------- | ---------- |
+| > high (prior 75; not injury-capped) | high     | push       |
+| low – high (priors 55–75)            | moderate | maintain   |
+| < low (prior 55)                     | low      | deload     |
 
 **Safety override hook:** fires on ACWR > 1.5 (any known ACWR — never
 under-fires on the high side), or on ACWR < 0.8 when confidence ≥ medium AND
@@ -280,18 +281,18 @@ session including the ~25-min warm-up and the injury-prevention (DOP) block**
 (coach directive), matching the realization layer's rest-inclusive block
 estimates (§5.1):
 
-| Intent | RPE | Minutes | Sprint reps | Strength sets |
-|---|---|---|---|---|
-| rest | 2 | 15 (daily mobility) | 0 | 0 |
-| recovery | 3 | 30 | 0 | 0 |
-| mobility | 4 | 45 | 0 | 0 |
-| technical | 5 | 60 | 0 | 0 |
-| sprint | 8 | **90** | 10 | 0 |
-| strength | 7 | **90** | 0 | 18 |
-| mixed | 6 | **90** | 6 | 8 |
-| taper-prime | 4 | 25 | 4 | 0 |
-| competition | — | 60 | 0 | 0 |
-| travel | — | 0 | 0 | 0 |
+| Intent      | RPE | Minutes             | Sprint reps | Strength sets |
+| ----------- | --- | ------------------- | ----------- | ------------- |
+| rest        | 2   | 15 (daily mobility) | 0           | 0             |
+| recovery    | 3   | 30                  | 0           | 0             |
+| mobility    | 4   | 45                  | 0           | 0             |
+| technical   | 5   | 60                  | 0           | 0             |
+| sprint      | 8   | **90**              | 10          | 0             |
+| strength    | 7   | **90**              | 0           | 18            |
+| mixed       | 6   | **90**              | 6           | 8             |
+| taper-prime | 4   | 25                  | 4           | 0             |
+| competition | —   | 60                  | 0           | 0             |
+| travel      | —   | 0                   | 0           | 0             |
 
 `BUILD_TARGET_OVERRIDES` (build blocks — lighter intents run heavier):
 mobility → RPE 6 / 75 min; technical → RPE 6 / **90** min (a build technical
@@ -303,13 +304,13 @@ and `baseTargets` for in-season/peak/post; the generic accumulation path uses
 **Practice-day phase modifiers** (`PRACTICE_PHASE_MODIFIERS` — practice is the
 session; the phase modifies it as data, not branches):
 
-| Phase key | Intent | RPE | Minutes | Recovery emphasis | Nutrition bucket |
-|---|---|---|---|---|---|
-| accumulation | mixed | 7 | 90 | low | mixed |
-| transition | mixed | 7 | 90 | low | mixed |
-| taper | mixed | 7 | 60 | medium | mixed |
-| taper_final (≤2 days out) | mixed | 7 | 45 | medium | taper-prime |
-| recovery (post-tournament) | recovery | 3 | 30 | high | recovery |
+| Phase key                  | Intent   | RPE | Minutes | Recovery emphasis | Nutrition bucket |
+| -------------------------- | -------- | --- | ------- | ----------------- | ---------------- |
+| accumulation               | mixed    | 7   | 90      | low               | mixed            |
+| transition                 | mixed    | 7   | 90      | low               | mixed            |
+| taper                      | mixed    | 7   | 60      | medium            | mixed            |
+| taper_final (≤2 days out)  | mixed    | 7   | 45      | medium            | taper-prime      |
+| recovery (post-tournament) | recovery | 3   | 30      | high              | recovery         |
 
 Phases absent from the table (competition, travel) are the ones practice
 yields to.
@@ -333,16 +334,16 @@ rest**, so 17 working strength sets displayed as "~10 min".
   `duration|hold || reps × 4 s` and rest = the row's persisted `rest_seconds`,
   else a per-block default:
 
-| Block | Default rest (s) |
-|---|---|
-| isometrics | 45 |
-| plyometrics | 90 |
-| strength | 90 |
-| conditioning | 60 |
-| skill_drills | 30 |
-| main_session | 60 |
-| rehab_progression | 45 |
-| (unknown set-based) | 60 |
+| Block               | Default rest (s) |
+| ------------------- | ---------------- |
+| isometrics          | 45               |
+| plyometrics         | 90               |
+| strength            | 90               |
+| conditioning        | 60               |
+| skill_drills        | 30               |
+| main_session        | 60               |
+| rehab_progression   | 45               |
+| (unknown set-based) | 60               |
 
 Conditioning work bouts floor at **60 s** (`max(60, exercises.default_duration_seconds)`
 — a gasser is not a 30-second item).
@@ -364,6 +365,7 @@ Applied to the strength block's hip (base 10, max 15) and general (base 8,
 max 12) exercises; the Nordic keeps its dedicated evidence protocol.
 
 ### 5.3 QB throwing monitor (2026-07-14, audit §5 — replaces the retired
+
 interception-rate `QB_THROW_ADAPTATION`)
 
 `QB_THROW_MONITOR`: weekly-volume spike flag at > **1.4×** week-over-week;
@@ -497,13 +499,13 @@ implemented** — previously scale fired a band late (30.0) and relocate was
 dead code (32.2 == stop). The former stale in-code comment now matches the
 constants.
 
-| Band (WBGT path) | Threshold | Action |
-|---|---|---|
-| Storm (WMO 95–99) | — | STOP → recovery (beats everything; coach override still warns) |
-| Stop | WBGT ≥ **32.2** | STOP → recovery |
-| Relocate | WBGT ≥ **30.0** | move indoors (mobility/skills) — no intense outdoor work |
-| Scale | WBGT ≥ **27.8** | volume cut (strain-scaled, below), same intent |
-| Caution | WBGT ≥ **25.7** | advisory only (hydration/breaks), session unchanged |
+| Band (WBGT path)  | Threshold       | Action                                                         |
+| ----------------- | --------------- | -------------------------------------------------------------- |
+| Storm (WMO 95–99) | —               | STOP → recovery (beats everything; coach override still warns) |
+| Stop              | WBGT ≥ **32.2** | STOP → recovery                                                |
+| Relocate          | WBGT ≥ **30.0** | move indoors (mobility/skills) — no intense outdoor work       |
+| Scale             | WBGT ≥ **27.8** | volume cut (strain-scaled, below), same intent                 |
+| Caution           | WBGT ≥ **25.7** | advisory only (hydration/breaks), session unchanged            |
 
 Legacy apparent-temp path (no humidity): caution **28** / scale **32** /
 relocate **35** / stop **38** °C. Cold: caution ≤ **4** °C (warm-up advisory),
@@ -565,11 +567,11 @@ Applies when active restrictions include `restrictsSprint`; `competition` and
 `travel` days are exempt (organiser-owned). Sprint reps go to **0** in every
 branch.
 
-| Severity | Result |
-|---|---|
-| severe | intent → recovery; RPE **3**; **30** min; **0** sets |
+| Severity | Result                                                                       |
+| -------- | ---------------------------------------------------------------------------- |
+| severe   | intent → recovery; RPE **3**; **30** min; **0** sets                         |
 | moderate | intent → recovery; RPE **3**; minutes capped at **40**; sets capped at **3** |
-| minor | day keeps its shape; sprint intent → mobility; RPE capped at **6** |
+| minor    | day keeps its shape; sprint intent → mobility; RPE capped at **6**           |
 
 Minor tightness on a day with no sprint/high-intensity work changes nothing.
 Recorded in `injuryAdjustment` (regions, severity, summary) — the self-report →
@@ -577,7 +579,7 @@ recalc trust contract (LOGIC §8).
 
 Readiness-side injury penalties (−20 severe + level cap, −10 moderate,
 −5 minor) live in §3 — same `normalizeSeverity`, different surface: the
-*number* reflects the injury, the *prescription* works around it.
+_number_ reflects the injury, the _prescription_ works around it.
 
 **Throwing restrictions** (`restrictsThrowing`: shoulder/elbow/wrist/core)
 don't change load targets here — they redirect the position emphasis into
@@ -594,13 +596,13 @@ back to the embedded default on any read/validation failure.
 `EMBEDDED_TAPER_RULES` — version **v1-2026-07-13** (keep in lock-step with the
 seeded `taper_rules.version`; Bosquet 2007, Mujika & Padilla 2003):
 
-| Level | volumeFloorPct | intensityRetention | taperDays |
-|---|---|---|---|
-| local | 0.70 | 0.90 | 3 |
-| regional | 0.60 | 0.95 | 5 |
-| national | 0.55 | 0.95 | 7 |
-| international | 0.50 | 1.00 | 10 |
-| world | 0.50 | 1.00 | 12 |
+| Level         | volumeFloorPct | intensityRetention | taperDays |
+| ------------- | -------------- | ------------------ | --------- |
+| local         | 0.70           | 0.90               | 3         |
+| regional      | 0.60           | 0.95               | 5         |
+| national      | 0.55           | 0.95               | 7         |
+| international | 0.50           | 1.00               | 10        |
+| world         | 0.50           | 1.00               | 12        |
 
 Level mapping (`taperLevelFor`): club → local · continental → international ·
 world/olympic → world · unknown/null → **national**.
@@ -637,15 +639,15 @@ sessions are short (≤ 60–75 min), so even sprint days sit in the
 light–moderate band; elevated carbs are reserved for genuine glycogen demand
 (pre-game top-up, game days).
 
-| Intent bucket | Carbs g/kg/day |
-|---|---|
-| rest | 3.0 |
-| recovery / mobility / travel | 3.5 |
-| technical | 4.0 |
-| sprint / strength | 4.5 |
-| mixed | 5.0 |
-| taper-prime (top-up, ≤24 h out) | 6.0 |
-| competition | 7.0 |
+| Intent bucket                   | Carbs g/kg/day |
+| ------------------------------- | -------------- |
+| rest                            | 3.0            |
+| recovery / mobility / travel    | 3.5            |
+| technical                       | 4.0            |
+| sprint / strength               | 4.5            |
+| mixed                           | 5.0            |
+| taper-prime (top-up, ≤24 h out) | 6.0            |
+| competition                     | 7.0            |
 
 Label mapping: `taper` → sprint bucket; `transition` → mixed bucket.
 

@@ -18,11 +18,11 @@ withdrawable with immediate erasure.
 
 ## 2. Data
 
-| Data | Category | Where |
-|---|---|---|
-| Cycle logs (flow, symptoms, date) | **Special-category (Art. 9)** | `cycle_logs` |
-| Module settings + consent record | Special-category-adjacent | `cycle_tracking_profiles` |
-| Estimated phase | **Never stored** — computed on the client, on read | — |
+| Data                              | Category                                           | Where                     |
+| --------------------------------- | -------------------------------------------------- | ------------------------- |
+| Cycle logs (flow, symptoms, date) | **Special-category (Art. 9)**                      | `cycle_logs`              |
+| Module settings + consent record  | Special-category-adjacent                          | `cycle_tracking_profiles` |
+| Estimated phase                   | **Never stored** — computed on the client, on read | —                         |
 
 ## 3. Privacy design (safety by construction)
 

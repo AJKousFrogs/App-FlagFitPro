@@ -22,14 +22,14 @@ NFL/NCAA in-season weeks are **periodized micro-cycles**, not "practice = scrimm
 The transferable principles (consensus/coaching-science, not RCT — labelled HEURISTIC
 in content):
 
-| Pro principle | What it means | Flag adaptation |
-|---|---|---|
-| **Install → situational → walkthrough** taper across the week | Volume & complexity descend toward game day (Wed heavy install, Thu 3rd-down/red-zone situational, Fri walkthrough) | Our `framing` "own" → "sharp" → "sharp/taper_final" already encodes this descent |
-| **Position-group periods** (indy) before team period | Skills are isolated and corrected in position groups first; team period integrates them | The 20-min WR / DB / routes-vs-coverage blocks ARE indy → integration |
-| **Individual load ≠ team load** | Linemen, skill, QBs get different volumes/CNS exposure | We already carry `positionEmphasis`; practice blocks are position-tagged |
-| **Speed is trained fresh, separately** | Sprint work on legs that aren't pre-fatigued | Sprint sessions stay their own session type; not buried at the end of a scrimmage |
-| **CNS/tissue management** | High-CNS (max sprint, cutting, jumping/landing) is dosed, not accumulated blindly | `isHighCnsSessionType` + tissue-load engine already guard this |
-| **Scrimmage is a peaking tool, not a base-builder** | Full-speed team reps are dialled UP near competition, DOWN in the build phase | The drill:scrimmage ratio is a function of `framing` (§3) |
+| Pro principle                                                 | What it means                                                                                                       | Flag adaptation                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Install → situational → walkthrough** taper across the week | Volume & complexity descend toward game day (Wed heavy install, Thu 3rd-down/red-zone situational, Fri walkthrough) | Our `framing` "own" → "sharp" → "sharp/taper_final" already encodes this descent  |
+| **Position-group periods** (indy) before team period          | Skills are isolated and corrected in position groups first; team period integrates them                             | The 20-min WR / DB / routes-vs-coverage blocks ARE indy → integration             |
+| **Individual load ≠ team load**                               | Linemen, skill, QBs get different volumes/CNS exposure                                                              | We already carry `positionEmphasis`; practice blocks are position-tagged          |
+| **Speed is trained fresh, separately**                        | Sprint work on legs that aren't pre-fatigued                                                                        | Sprint sessions stay their own session type; not buried at the end of a scrimmage |
+| **CNS/tissue management**                                     | High-CNS (max sprint, cutting, jumping/landing) is dosed, not accumulated blindly                                   | `isHighCnsSessionType` + tissue-load engine already guard this                    |
+| **Scrimmage is a peaking tool, not a base-builder**           | Full-speed team reps are dialled UP near competition, DOWN in the build phase                                       | The drill:scrimmage ratio is a function of `framing` (§3)                         |
 
 **Flag-specific cadence** (the real constraint this team runs on):
 
@@ -75,16 +75,16 @@ post    Specialty:  QB+Center snap timing · Blitzer 3-step accel/decel · whole
 The generator scales this by `framing` (all data-driven — a new phase is a new row,
 never a new branch, mirroring `PRACTICE_PHASE_MODIFIERS`):
 
-| framing (phase) | minutes | Warm-up | Indy skill (WR/DB) | Integration (routes/cover) | Team / 5v5 | Emphasis |
-|---|---|---|---|---|---|---|
-| `own` — accumulation/transition, far from a peak | ~90 | 20 (developmental, playful) | 40 | 20 | 20 (install, capped 5v5) | **Build skills.** Scrimmage is the smallest block. |
-| `sharp` — taper, 3–7 days out | ~60 | 15 (crisp activation) | 20 | 15 (situational 7-on-7) | 25 (full-speed 5v5 install, situational) | **Sharpen.** Scrimmage grows, isolated drilling shrinks. |
-| `sharp` — taper_final, ≤48 h | ~45 | 12 (light activation) | 10 (walkthrough tempo) | 10 (mental reps) | 13 (walkthrough / script, NO max-CNS) | **Peak & protect.** Walkthrough, glycogen top-up. |
-| `recovery` — post-tournament practice day | ~30 | 12 (mobility-led) | light technique only | — | — | **Recover.** No scrimmage, no max sprint. |
+| framing (phase)                                  | minutes | Warm-up                     | Indy skill (WR/DB)     | Integration (routes/cover) | Team / 5v5                               | Emphasis                                                 |
+| ------------------------------------------------ | ------- | --------------------------- | ---------------------- | -------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| `own` — accumulation/transition, far from a peak | ~90     | 20 (developmental, playful) | 40                     | 20                         | 20 (install, capped 5v5)                 | **Build skills.** Scrimmage is the smallest block.       |
+| `sharp` — taper, 3–7 days out                    | ~60     | 15 (crisp activation)       | 20                     | 15 (situational 7-on-7)    | 25 (full-speed 5v5 install, situational) | **Sharpen.** Scrimmage grows, isolated drilling shrinks. |
+| `sharp` — taper_final, ≤48 h                     | ~45     | 12 (light activation)       | 10 (walkthrough tempo) | 10 (mental reps)           | 13 (walkthrough / script, NO max-CNS)    | **Peak & protect.** Walkthrough, glycogen top-up.        |
+| `recovery` — post-tournament practice day        | ~30     | 12 (mobility-led)           | light technique only   | —                          | —                                        | **Recover.** No scrimmage, no max sprint.                |
 
 Key rule the app enforces that most teams violate: **the hour of mindless 5v5 only
 appears — capped and purposeful — as competition nears.** In the build phase the team
-block is the *smallest* slice, and it's install/situational, not free scrimmage.
+block is the _smallest_ slice, and it's install/situational, not free scrimmage.
 
 **Season flavour of the warm-up** (the "fun, yet depends on the season"): off-season
 / accumulation warm-ups lean into competitive games and variety (reactive tag,

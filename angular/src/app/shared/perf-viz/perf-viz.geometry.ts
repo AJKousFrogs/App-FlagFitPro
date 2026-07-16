@@ -73,9 +73,7 @@ export function areaPolygon(pts: readonly Pt[], baselineY: number): string {
 
 /** An `M…L…` path (for stroked lines that need a real path element). */
 export function linePath(pts: readonly Pt[]): string {
-  return pts
-    .map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`)
-    .join(" ");
+  return pts.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join(" ");
 }
 
 /**

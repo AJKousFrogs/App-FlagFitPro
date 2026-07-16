@@ -75,17 +75,58 @@ interface PlottedDot {
           [attr.width]="attnBox().w"
           [attr.height]="attnBox().h"
         />
-        <text class="attn-lab" [attr.x]="W - R - 4" [attr.y]="yFor(0) - 6" text-anchor="end">
+        <text
+          class="attn-lab"
+          [attr.x]="W - R - 4"
+          [attr.y]="yFor(0) - 6"
+          text-anchor="end"
+        >
           high load · low readiness
         </text>
         <!-- axes -->
-        <line class="ax-l" [attr.x1]="L" [attr.y1]="T" [attr.x2]="L" [attr.y2]="yFor(0)" />
-        <line class="ax-l" [attr.x1]="L" [attr.y1]="yFor(0)" [attr.x2]="W - R" [attr.y2]="yFor(0)" />
+        <line
+          class="ax-l"
+          [attr.x1]="L"
+          [attr.y1]="T"
+          [attr.x2]="L"
+          [attr.y2]="yFor(0)"
+        />
+        <line
+          class="ax-l"
+          [attr.x1]="L"
+          [attr.y1]="yFor(0)"
+          [attr.x2]="W - R"
+          [attr.y2]="yFor(0)"
+        />
         @for (t of yTicks; track t) {
-          <text class="ax" [attr.x]="L - 6" [attr.y]="yFor(t) + 3" text-anchor="end">{{ t }}</text>
+          <text
+            class="ax"
+            [attr.x]="L - 6"
+            [attr.y]="yFor(t) + 3"
+            text-anchor="end"
+          >
+            {{ t }}
+          </text>
         }
-        <text class="ax-t" [attr.x]="L - 22" [attr.y]="(T + yFor(0)) / 2" [attr.transform]="'rotate(-90 ' + (L - 22) + ' ' + ((T + yFor(0)) / 2) + ')'" text-anchor="middle">readiness</text>
-        <text class="ax-t" [attr.x]="(L + W - R) / 2" [attr.y]="H - 4" text-anchor="middle">session load (AU)</text>
+        <text
+          class="ax-t"
+          [attr.x]="L - 22"
+          [attr.y]="(T + yFor(0)) / 2"
+          [attr.transform]="
+            'rotate(-90 ' + (L - 22) + ' ' + (T + yFor(0)) / 2 + ')'
+          "
+          text-anchor="middle"
+        >
+          readiness
+        </text>
+        <text
+          class="ax-t"
+          [attr.x]="(L + W - R) / 2"
+          [attr.y]="H - 4"
+          text-anchor="middle"
+        >
+          session load (AU)
+        </text>
         <!-- dots -->
         @for (d of dots(); track d.label) {
           <circle
@@ -96,10 +137,14 @@ interface PlottedDot {
             r="5"
             [attr.aria-label]="d.label + ': readiness ' + d.y + ', load ' + d.x"
           >
-            <title>{{ d.label }} — readiness {{ d.y }}, load {{ d.x }} AU</title>
+            <title>
+              {{ d.label }} — readiness {{ d.y }}, load {{ d.x }} AU
+            </title>
           </circle>
           @if (d.attn) {
-            <text class="dot-lab" [attr.x]="d.cx + 8" [attr.y]="d.cy + 3">{{ d.label }}</text>
+            <text class="dot-lab" [attr.x]="d.cx + 8" [attr.y]="d.cy + 3">
+              {{ d.label }}
+            </text>
           }
         }
       </svg>
@@ -175,7 +220,9 @@ interface PlottedDot {
       .dot.attn {
         stroke: var(--danger);
         stroke-width: 2;
-        filter: drop-shadow(0 0 5px color-mix(in srgb, var(--danger) 60%, transparent));
+        filter: drop-shadow(
+          0 0 5px color-mix(in srgb, var(--danger) 60%, transparent)
+        );
       }
       .dot:hover {
         r: 7;

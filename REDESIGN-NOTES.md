@@ -2,8 +2,8 @@
 
 Log of UI-polish observations that were deliberately **not** acted on because
 they are (or might be) logic, or fall outside the current pass's scope.
-Rule of thumb from the polish protocol: *if unsure whether something is UI or
-logic → it's logic → don't touch → log it here.*
+Rule of thumb from the polish protocol: _if unsure whether something is UI or
+logic → it's logic → don't touch → log it here._
 
 ## Pass B — data-viz modernization (2026-07-10)
 

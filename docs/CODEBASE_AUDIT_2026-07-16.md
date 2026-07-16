@@ -14,14 +14,14 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 **Severity**: Critical (blocking CI/design system enforcement)
 **Files affected**: 3 components
 
-| File | Line | Violation | Fix |
-|------|------|-----------|-----|
-| `cycle.component.scss` | 164 | `color: #08090b` | `color: var(--on-accent)` |
-| `cycle.component.scss` | 250 | `background: #08090b` | `background: var(--on-accent)` |
-| `cycle.component.scss` | 321 | `color: #08090b` | `color: var(--on-accent)` |
-| `cycle.component.scss` | 329 | `color: #fff` | `color: var(--c-white)` |
-| `device-data.component.scss` | 119 | `color: #08090b` | `color: var(--on-accent)` |
-| `nutrition.component.scss` | 258 | `color: #08090b` | `color: var(--on-accent)` |
+| File                         | Line | Violation             | Fix                            |
+| ---------------------------- | ---- | --------------------- | ------------------------------ |
+| `cycle.component.scss`       | 164  | `color: #08090b`      | `color: var(--on-accent)`      |
+| `cycle.component.scss`       | 250  | `background: #08090b` | `background: var(--on-accent)` |
+| `cycle.component.scss`       | 321  | `color: #08090b`      | `color: var(--on-accent)`      |
+| `cycle.component.scss`       | 329  | `color: #fff`         | `color: var(--c-white)`        |
+| `device-data.component.scss` | 119  | `color: #08090b`      | `color: var(--on-accent)`      |
+| `nutrition.component.scss`   | 258  | `color: #08090b`      | `color: var(--on-accent)`      |
 
 **Status**: ✅ All 6 errors fixed (0 errors remaining)
 
@@ -31,19 +31,20 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 **Severity**: Warning (design system consistency)
 **Files affected**: 7 components
 
-| Component | Warning Count |
-|-----------|---------------|
-| `today.component.scss` | 224 |
-| `training.component.scss` | 145 |
-| `cycle.component.scss` | 90 |
-| `monitoring-report.component.scss` | 77 |
-| `nutrition.component.scss` | 71 |
-| `device-data.component.scss` | 61 |
-| `team-monitoring.component.scss` | 17 |
+| Component                          | Warning Count |
+| ---------------------------------- | ------------- |
+| `today.component.scss`             | 224           |
+| `training.component.scss`          | 145           |
+| `cycle.component.scss`             | 90            |
+| `monitoring-report.component.scss` | 77            |
+| `nutrition.component.scss`         | 71            |
+| `device-data.component.scss`       | 61            |
+| `team-monitoring.component.scss`   | 17            |
 
 **Root Cause**: Hardcoded padding, margins, font-sizes, and colors in component styles.
 
 **Recommendation**: Phase-based migration:
+
 - Phase 1 (now): Fixed critical 6 hex colors
 - Phase 2 (next sprint): Batch replace property value hardcodes with design tokens
 - Phase 3: Audit design-system-tokens.scss for completeness
@@ -59,6 +60,7 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 **File**: `angular/src/app/shared/utils/format.utils.ts`
 
 **Removed functions** (0 usage across entire codebase):
+
 1. `capitalize()` — 0 imports
 2. `titleCase()` — 0 imports
 3. `kebabCase()` — 0 imports
@@ -77,6 +79,7 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 16. `formatTimeMMSS()` — 0 imports
 
 **Retained functions** (actively used):
+
 - `camelCase()` — 8 imports
 - `snakeCase()` — 3 imports
 - `truncate()` — 5 imports
@@ -93,17 +96,17 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 **Issue**: 9 services with only 1–2 imports (mostly test-only usage).
 **Severity**: Medium (candidates for removal or consolidation)
 
-| Service | Imports | Status |
-|---------|---------|--------|
-| `wearable.service` | 1 (test only) | Review |
-| `video.service` | 1 (test only) | Review |
-| `tracking.service` | 1 (test only) | Review |
-| `tip.service` | 1 (test only) | Review |
-| `throwing.service` | 1 (test only) | Review |
-| `travel.service` | 2 | Review |
-| `telemetry.service` | 2 | Review |
-| `measurement.service` | 2 | Review |
-| `ai.service` | 2 | Review |
+| Service               | Imports       | Status |
+| --------------------- | ------------- | ------ |
+| `wearable.service`    | 1 (test only) | Review |
+| `video.service`       | 1 (test only) | Review |
+| `tracking.service`    | 1 (test only) | Review |
+| `tip.service`         | 1 (test only) | Review |
+| `throwing.service`    | 1 (test only) | Review |
+| `travel.service`      | 2             | Review |
+| `telemetry.service`   | 2             | Review |
+| `measurement.service` | 2             | Review |
+| `ai.service`          | 2             | Review |
 
 **Recommendation**: Audit each service to determine if actively used in production or safe to remove.
 
@@ -117,16 +120,19 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 **Severity**: HIGH (per CLAUDE.md §4: Single Source of Truth for calculations)
 
 **Files**:
+
 - Frontend: `angular/src/app/shared/utils/precision.utils.ts` (243 lines)
 - Backend: `netlify/functions/utils/precision.js` (99 lines)
 
 **Shared functions** (duplicated):
+
 - `roundToPrecision()` ✓ — identical implementation
 - `safeDivide()` ✓ — identical implementation
 - `average()` ✓ — identical implementation
 - `standardDeviation()` ✓ — identical implementation
 
 **Frontend-only functions** (not mirrored):
+
 - `calculatePercentage()`
 - `percentageChange()`
 - `clamp()`
@@ -134,16 +140,19 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 - `formatNumberSafe()`
 
 **Backend ACWR Implementation** (authoritative):
+
 - Location: `netlify/functions/utils/acwr.js` (242 lines)
 - Method: Exponentially Weighted Moving Average (EWMA)
 - Status: Highly documented, includes confidence levels and safeguards
 
 **Frontend ACWR Service** (mirrors backend):
+
 - Location: `angular/src/app/core/services/acwr.service.ts` (1328 lines)
 - Status: Large service, mirrors EWMA algorithm
 - Risk: If frontend/backend diverge, readiness calculations become unreliable
 
 **Recommendation**:
+
 1. ✓ Verified that core precision functions are identical
 2. Add parity test harness that compares frontend ACWR vs backend ACWR on sample data
 3. Consider extracting shared precision utilities to a shared library (only if safe to do so)
@@ -163,6 +172,7 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 ### 4.1 TypeScript Type Checking
 
 **Status**: ✅ All 4 type-check configs pass cleanly
+
 - `tsconfig.app.json` ✓
 - `tsconfig.spec.json` ✓
 - `tsconfig.server.json` ✓
@@ -171,6 +181,7 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 ### 4.2 ESLint Compliance
 
 **Status**: ✅ All files pass linting
+
 - Angular app: ✓ (0 errors, 0 warnings)
 - Netlify functions: ✓ (0 errors, max-warnings=0 enforced)
 - Tooling scripts: ✓
@@ -182,6 +193,7 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 ### 5.1 Active Feature Branches
 
 **Count**: 6 feature/fix branches (beyond main)
+
 - `chore/audit-drift-cleanup`
 - `chore/single-source-bodyweight-fallback`
 - `feat/engine-mesocycle-sprint-floor`
@@ -201,21 +213,22 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 
 ## 6. Code Quality Metrics
 
-| Metric | Status |
-|--------|--------|
-| Type safety | ✅ 100% (0 errors) |
-| Linting | ✅ 0 errors, 0 warnings |
-| CSS errors | ✅ 0 (was 6) |
-| CSS warnings | ⚠️ 685 (design tokens) |
-| Dead code | ✅ 16 unused functions removed |
+| Metric           | Status                                 |
+| ---------------- | -------------------------------------- |
+| Type safety      | ✅ 100% (0 errors)                     |
+| Linting          | ✅ 0 errors, 0 warnings                |
+| CSS errors       | ✅ 0 (was 6)                           |
+| CSS warnings     | ⚠️ 685 (design tokens)                 |
+| Dead code        | ✅ 16 unused functions removed         |
 | Code duplication | ⚠️ Precision/date utilities duplicated |
-| Unused services | ⚠️ 9 low-usage services identified |
+| Unused services  | ⚠️ 9 low-usage services identified     |
 
 ---
 
 ## 7. Actions Taken
 
 ### ✅ Completed
+
 1. Fixed 6 CSS hex color violations → 0 errors remaining
 2. Removed 16 unused format utility functions → 63% file size reduction
 3. Verified type safety (all checks pass)
@@ -224,11 +237,13 @@ Comprehensive sweep of the entire FlagFit codebase (Angular + Netlify Functions)
 ### 📋 Recommended (Next Sprint)
 
 **High Priority**:
+
 - [ ] Add ACWR parity test harness (frontend vs backend calculation verification)
 - [ ] Phase 2 design token migration for 685 CSS warnings
 - [ ] Audit 9 low-usage services for deprecation/removal
 
 **Medium Priority**:
+
 - [ ] Consolidate date utilities (frontend/backend)
 - [ ] Clean up temporary worktree branches
 - [ ] Document calculation duplication pattern in precision.utils.ts

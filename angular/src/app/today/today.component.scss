@@ -759,7 +759,11 @@
     align-items: stretch;
   }
   .ring-card {
-    background: linear-gradient(180deg, var(--surface-2, var(--surface)), var(--surface));
+    background: linear-gradient(
+      180deg,
+      var(--surface-2, var(--surface)),
+      var(--surface)
+    );
     border: var(--bw-thin) solid var(--line);
     border-radius: var(--r-lg);
     padding: var(--sp-4);

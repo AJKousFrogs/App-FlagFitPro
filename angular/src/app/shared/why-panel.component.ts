@@ -103,7 +103,10 @@ interface WhyEntry {
       }
       .wp-toggle:focus-visible {
         outline: none;
-        box-shadow: var(--focus, 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent));
+        box-shadow: var(
+          --focus,
+          0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent)
+        );
       }
       .wp-list {
         list-style: none;

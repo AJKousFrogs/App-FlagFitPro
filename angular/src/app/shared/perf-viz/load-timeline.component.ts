@@ -30,8 +30,19 @@ import { bars, linePath, type Bar } from "./perf-viz.geometry";
           </linearGradient>
         </defs>
         @for (g of gridLines(); track g.v) {
-          <line class="gl" [attr.x1]="L" [attr.x2]="W - R" [attr.y1]="g.y" [attr.y2]="g.y" />
-          <text class="ax" [attr.x]="L - 6" [attr.y]="g.y + 3" text-anchor="end">
+          <line
+            class="gl"
+            [attr.x1]="L"
+            [attr.x2]="W - R"
+            [attr.y1]="g.y"
+            [attr.y2]="g.y"
+          />
+          <text
+            class="ax"
+            [attr.x]="L - 6"
+            [attr.y]="g.y + 3"
+            text-anchor="end"
+          >
             {{ g.v }}
           </text>
         }
@@ -124,7 +135,11 @@ import { bars, linePath, type Bar } from "./perf-viz.geometry";
         display: inline-block;
       }
       .sw.bar {
-        background: linear-gradient(90deg, var(--accent-soft, #0b4a30), var(--accent));
+        background: linear-gradient(
+          90deg,
+          var(--accent-soft, #0b4a30),
+          var(--accent)
+        );
       }
       .sw.acute {
         background: var(--accent-2);
@@ -200,7 +215,12 @@ export class LoadTimelineComponent {
   readonly xTicks = computed(() => {
     const n = this.daily().length;
     if (n < 2) return [];
-    const idxs = [0, Math.floor((n - 1) / 3), Math.floor((2 * (n - 1)) / 3), n - 1];
+    const idxs = [
+      0,
+      Math.floor((n - 1) / 3),
+      Math.floor((2 * (n - 1)) / 3),
+      n - 1,
+    ];
     return idxs.map((i) => ({
       i,
       x: +this.xAt(i, n).toFixed(2),

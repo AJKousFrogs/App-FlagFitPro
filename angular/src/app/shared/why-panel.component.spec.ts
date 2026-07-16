@@ -59,12 +59,16 @@ describe("WhyPanelComponent", () => {
   });
 
   it("includes the base plan sentence only when includeBase is true", () => {
-    expect(mount({ reasoning: "Strength focus." }, true).componentInstance
-      .entries()
-      .some((e) => e.title === "Today's plan")).toBe(true);
-    expect(mount({ reasoning: "Strength focus." }, false).componentInstance
-      .entries()
-      .some((e) => e.title === "Today's plan")).toBe(false);
+    expect(
+      mount({ reasoning: "Strength focus." }, true)
+        .componentInstance.entries()
+        .some((e) => e.title === "Today's plan"),
+    ).toBe(true);
+    expect(
+      mount({ reasoning: "Strength focus." }, false)
+        .componentInstance.entries()
+        .some((e) => e.title === "Today's plan"),
+    ).toBe(false);
   });
 
   it("surfaces one entry per fired guard, never a fabricated one", () => {

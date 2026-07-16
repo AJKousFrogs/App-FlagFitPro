@@ -1,6 +1,6 @@
 # FlagFit Pro — Logic & Decision Rules Reference
 
-**Purpose.** The *decision rules, control flow, precedence, and workflows* of the
+**Purpose.** The _decision rules, control flow, precedence, and workflows_ of the
 app — the "what happens when," as opposed to the "what the numbers are." Its
 sibling `CALCULATIONS.md` owns the formulas/constants; this file owns the
 **if-this-then-that**. `SOURCE_OF_TRUTH.md` owns schema/endpoints/status.
@@ -94,6 +94,7 @@ This Week (`weekAhead()`), the COMPOSE intent, and the `/api/periodization-
 prescription` server all read ONE computation — drift is structurally impossible.
 
 Passes, in order:
+
 1. **`planWeekIntents`** — places sessions **around the athlete's REAL practice
    days** (anchors), phase-shaped. NOT a hardcoded weekday template: a player with
    Mon/Wed/Thu practices and one with Tue/Fri/Sun get different placements. Free
@@ -212,6 +213,7 @@ else                                                 → accumulation
    tightens symmetrically (heat down, cold up), decaying to 0 by day 14.
 
 ### 6. Time-shift logic (Phase 5b)
+
 Attached in `prescribeFor` for an outdoor field session (skipped on injury/rest):
 if the **training-hour** WBGT is hot (≥ 30) and a **≥ 1.5° cooler, comfortable
 (< 30)** hour exists later the **same day** (≤ 6 h wait, before a 21:00 cap),
@@ -229,7 +231,7 @@ suggest the **earliest** such hour. No hourly data / already-fine / no cooler ho
 - **Injury/physio:** runs last and wins over training. Sprint under a sprint-
   restriction → mobility; throwing restriction pulls arm-protect guidance even
   when running is fine. Severity caps RPE/volume (see CALCULATIONS §10).
-- **Arrival cap:** ≥ 3 h of travel arriving *today* caps the session to activation
+- **Arrival cap:** ≥ 3 h of travel arriving _today_ caps the session to activation
   only — no new fatigue on top of the trip. Runs after weather (a storm stop is
   more restrictive) but before injury.
 
@@ -332,7 +334,7 @@ the week planner computed the day differently. Now:
 
 ---
 
-*Maintenance:* when you change a decision rule, guard order, or workflow in code,
+_Maintenance:_ when you change a decision rule, guard order, or workflow in code,
 update its section here in the same commit. A rule in this file the code
 contradicts is a bug in this file. See `CALCULATIONS.md` for the numbers each rule
 uses, and `SOURCE_OF_TRUTH.md` for schema/endpoints/status.

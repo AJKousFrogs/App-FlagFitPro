@@ -2,7 +2,7 @@
 
 FlagFit Pro: Angular + Netlify Functions + Supabase, load-management for athletes.
 **`docs/SOURCE_OF_TRUTH.md` is the domain ground truth** (schema, endpoints, feature
-status, spec laws) — read it, don't duplicate it here. This file is *process* rules:
+status, spec laws) — read it, don't duplicate it here. This file is _process_ rules:
 how to work in this repo, not what's true about it.
 
 ## 1. Green before done
@@ -10,8 +10,8 @@ how to work in this repo, not what's true about it.
 A task isn't finished when the code looks right — it's finished when CI says so.
 
 - Run the relevant test suite(s) locally before pushing (backend `npx vitest run
-  tests/`, Angular `npx vitest run` in `angular/`, `npm run lint:tooling`, `tsc
-  --noEmit`). Don't push on faith.
+tests/`, Angular `npx vitest run` in `angular/`, `npm run lint:tooling`, `tsc
+--noEmit`). Don't push on faith.
 - After every push to `main`, poll `gh run list --branch main` until CI/E2E/Mobile
   Responsive Testing complete. **Confirm success before reporting the work as done.**
   A push that hasn't been checked is not a finished task.
@@ -55,9 +55,10 @@ or deliberately kept separate. Explain the reasoning as you go; don't stop mid-t
 to request approval on calls like these.
 
 This does **not** relax the safety discipline that makes the speed safe:
+
 - Safety/injury-relevant calculations (readiness, ACWR, periodization, anything
   that changes what an athlete is told to do) still get the full treatment before
-  being unified or changed: understand *why* they currently differ before merging
+  being unified or changed: understand _why_ they currently differ before merging
   them, add a test/parity harness that proves the change is safe, verify against
   real before/after numbers, not just "the code looks equivalent."
 - Destructive/irreversible actions (force-push, `git reset --hard`, dropping
@@ -65,7 +66,7 @@ This does **not** relax the safety discipline that makes the speed safe:
   this authority — the bar there is "would reverting this be a new investigation,"
   not "did I ask permission."
 - When a call is genuinely a product/business decision (not an engineering one) —
-  which formula is *correct* for a sports-science tradeoff, what a feature should
+  which formula is _correct_ for a sports-science tradeoff, what a feature should
   do, pricing, legal — that's still not mine to make silently. Flag it, propose a
   default, and proceed with the default if there's no response, rather than
   blocking.

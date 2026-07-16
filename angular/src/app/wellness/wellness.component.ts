@@ -12,10 +12,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
 import { TopbarComponent } from "../shared/topbar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
-import {
-  WellnessBarsComponent,
-  type WellnessRow,
-} from "../shared/perf-viz";
+import { WellnessBarsComponent, type WellnessRow } from "../shared/perf-viz";
 
 /** Shape of a row from GET /api/supplements/recent. */
 interface SuppLog {

@@ -17,10 +17,10 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 
 **Status**: ✅ DONE (Commit: 6b47fad7)
 
-| Issue | Resolution | Impact |
-|-------|-----------|--------|
+| Issue                  | Resolution                                                     | Impact         |
+| ---------------------- | -------------------------------------------------------------- | -------------- |
 | 6 hardcoded hex colors | Replaced with design tokens (var(--on-accent), var(--c-white)) | 6 errors → 0 ✓ |
-| 3 component SCSS files | cycle, device-data, nutrition | All updated |
+| 3 component SCSS files | cycle, device-data, nutrition                                  | All updated    |
 
 **Test Coverage**: CSS lint passes (0 errors, 685 warnings remain for Phase 2)
 
@@ -28,11 +28,11 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 
 **Status**: ✅ DONE (Commit: 6b47fad7)
 
-| Item | Count | Resolution |
-|------|-------|-----------|
-| Unused format utilities | 16 | Removed: capitalize, titleCase, kebabCase, truncateWords, stripHtml, formatCurrency, formatPercent, formatAverage, formatStat, formatFileSize, formatPhone, pluralize, trimWhitespace, escapeHtml, unescapeHtml, formatTimeMMSS |
-| File size reduction | 337 → 125 lines | 63% reduction |
-| Retained functions | 8 | camelCase, snakeCase, truncate, formatNumber, getInitials, padStart, padEnd, normalizePlayerName |
+| Item                    | Count           | Resolution                                                                                                                                                                                                                      |
+| ----------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unused format utilities | 16              | Removed: capitalize, titleCase, kebabCase, truncateWords, stripHtml, formatCurrency, formatPercent, formatAverage, formatStat, formatFileSize, formatPhone, pluralize, trimWhitespace, escapeHtml, unescapeHtml, formatTimeMMSS |
+| File size reduction     | 337 → 125 lines | 63% reduction                                                                                                                                                                                                                   |
+| Retained functions      | 8               | camelCase, snakeCase, truncate, formatNumber, getInitials, padStart, padEnd, normalizePlayerName                                                                                                                                |
 
 **Test Coverage**: Type checking + linting pass (0 errors)
 
@@ -42,17 +42,17 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 
 **Deliverable**: `tests/integration/acwr-parity.test.js` (10 tests, 100% passing)
 
-| Test Scenario | Coverage | Status |
-|---------------|----------|--------|
-| Steady training (2×/week) | Medium confidence, ACWR ~1.3 | ✅ |
-| Return from layoff | building_base state, acwr=null | ✅ |
-| Load spike | Danger zone ACWR ~1.8 | ✅ |
-| Minimal data | Low confidence flags | ✅ |
-| Zero load edge case | Safety handling | ✅ |
-| Precision validation | 3 decimal places | ✅ |
-| Configuration overrides | Custom parameters | ✅ |
-| EWMA algorithm | Exponential weighting | ✅ |
-| Safety guardrails | Division by zero, building_base | ✅ |
+| Test Scenario             | Coverage                        | Status |
+| ------------------------- | ------------------------------- | ------ |
+| Steady training (2×/week) | Medium confidence, ACWR ~1.3    | ✅     |
+| Return from layoff        | building_base state, acwr=null  | ✅     |
+| Load spike                | Danger zone ACWR ~1.8           | ✅     |
+| Minimal data              | Low confidence flags            | ✅     |
+| Zero load edge case       | Safety handling                 | ✅     |
+| Precision validation      | 3 decimal places                | ✅     |
+| Configuration overrides   | Custom parameters               | ✅     |
+| EWMA algorithm            | Exponential weighting           | ✅     |
+| Safety guardrails         | Division by zero, building_base | ✅     |
 
 **Purpose**: Continuous verification that frontend (Angular service) and backend (netlify/functions/utils/acwr.js) ACWR calculations remain in sync per CLAUDE.md §4.
 
@@ -65,16 +65,19 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 **Severity**: HIGH (Safety-critical per CLAUDE.md §4)
 
 **Affected Files**:
+
 - Frontend: `angular/src/app/shared/utils/precision.utils.ts` (243 lines)
 - Backend: `netlify/functions/utils/precision.js` (99 lines)
 
 **Duplicated Functions** (Identical implementations):
+
 - `roundToPrecision()` ✓
 - `safeDivide()` ✓
 - `average()` ✓
 - `standardDeviation()` ✓
 
 **Frontend-only** (Not in backend):
+
 - `calculatePercentage()`
 - `percentageChange()`
 - `clamp()`
@@ -106,10 +109,12 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 **Severity**: MEDIUM (Non-critical, different purposes)
 
 **Affected Files**:
+
 - Frontend: `angular/src/app/shared/utils/date.utils.ts` (40+ functions)
 - Backend: `netlify/functions/utils/date-utils.js` (8 functions)
 
 **Overlap**:
+
 - `getTimeAgo()` vs `timeAgo()`
 - `getIsoDateString()` vs `formatDateISO()`
 - `getWeekStart()` vs `getStartOfWeek()`
@@ -117,6 +122,7 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 - `parseIsoDateString()` vs `safeParseDate()`
 
 **Differences**:
+
 - Frontend: UI-focused (formatting, timezone handling, date ranges, age calculations)
 - Backend: Data processing (ISO string conversion, week calculations, day-of-year)
 
@@ -152,6 +158,7 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 **Severity**: MEDIUM (Code quality, not safety)
 
 **Files & Warning Counts**:
+
 - `today.component.scss`: 224 warnings
 - `training.component.scss`: 145 warnings
 - `cycle.component.scss`: 90 warnings
@@ -163,6 +170,7 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 ### 3.2 Root Causes
 
 **Hardcoded Values Instead of Tokens**:
+
 - Padding/margin values (px units)
 - Font sizes
 - Colors (beyond the hex violations already fixed)
@@ -175,14 +183,17 @@ This document tracks the code quality improvements across the FlagFit codebase, 
 ### 3.3 Approach
 
 **Option A: Batch Auto-Fix** (Lower Quality)
+
 ```bash
 npx stylelint angular/src/**/*.scss --fix
 ```
+
 - Risk: May introduce incorrect token mappings
 - Benefit: Fast
 - Recommendation: ❌ Not recommended without review
 
 **Option B: Component-by-Component Refactor** (Higher Quality)
+
 1. Extract hardcoded values from largest files first (today, training)
 2. Create mapping of hardcoded → token
 3. Manual replacement with review
@@ -190,6 +201,7 @@ npx stylelint angular/src/**/*.scss --fix
 5. Iterate through all 7 components
 
 **Option C: Hybrid Approach** (Recommended)
+
 1. Run stylelint --fix on smaller files (team-monitoring.scss)
 2. Verify output quality
 3. Use auto-fix as template for larger files
@@ -199,15 +211,15 @@ npx stylelint angular/src/**/*.scss --fix
 
 **Sprint Timeline**: 2-3 sprints (parallel with other work)
 
-| Phase | File(s) | Warnings | Est. Effort | Priority |
-|-------|---------|----------|-------------|----------|
-| Sprint 1 | team-monitoring.scss | 17 | 30min | LOW |
-| Sprint 1 | device-data.scss | 61 | 1h | LOW |
-| Sprint 2 | nutrition.scss | 71 | 1.5h | MEDIUM |
-| Sprint 2 | monitoring-report.scss | 77 | 1.5h | MEDIUM |
-| Sprint 3 | cycle.scss | 90 | 2h | MEDIUM |
-| Sprint 3 | training.scss | 145 | 3h | HIGH |
-| Sprint 4 | today.scss | 224 | 4h | HIGH |
+| Phase    | File(s)                | Warnings | Est. Effort | Priority |
+| -------- | ---------------------- | -------- | ----------- | -------- |
+| Sprint 1 | team-monitoring.scss   | 17       | 30min       | LOW      |
+| Sprint 1 | device-data.scss       | 61       | 1h          | LOW      |
+| Sprint 2 | nutrition.scss         | 71       | 1.5h        | MEDIUM   |
+| Sprint 2 | monitoring-report.scss | 77       | 1.5h        | MEDIUM   |
+| Sprint 3 | cycle.scss             | 90       | 2h          | MEDIUM   |
+| Sprint 3 | training.scss          | 145      | 3h          | HIGH     |
+| Sprint 4 | today.scss             | 224      | 4h          | HIGH     |
 
 ### 3.5 Success Criteria
 
@@ -225,17 +237,17 @@ npx stylelint angular/src/**/*.scss --fix
 
 **Status**: Verified active usage for key services; no immediate removal candidates
 
-| Service | Imports | Status | Action |
-|---------|---------|--------|--------|
-| `wearable.service` | 1 (device-data.component.ts) | Active | ✓ Keep |
-| `video.service` | 2 (training, gallery) | Active | ✓ Keep |
-| `tracking.service` | 0 | ??? | Review |
-| `tip.service` | Test-only | Inactive | ? Consider removal |
-| `throwing.service` | 1 (qb-arm-care-card.component.ts) | Active | ✓ Keep |
-| `travel.service` | 2 | Review | Review |
-| `telemetry.service` | 2 | Review | Review |
-| `measurement.service` | 2 | Review | Review |
-| `ai.service` | 2 | Review | Review |
+| Service               | Imports                           | Status   | Action             |
+| --------------------- | --------------------------------- | -------- | ------------------ |
+| `wearable.service`    | 1 (device-data.component.ts)      | Active   | ✓ Keep             |
+| `video.service`       | 2 (training, gallery)             | Active   | ✓ Keep             |
+| `tracking.service`    | 0                                 | ???      | Review             |
+| `tip.service`         | Test-only                         | Inactive | ? Consider removal |
+| `throwing.service`    | 1 (qb-arm-care-card.component.ts) | Active   | ✓ Keep             |
+| `travel.service`      | 2                                 | Review   | Review             |
+| `telemetry.service`   | 2                                 | Review   | Review             |
+| `measurement.service` | 2                                 | Review   | Review             |
+| `ai.service`          | 2                                 | Review   | Review             |
 
 ### 4.2 Recommendations
 
@@ -270,6 +282,7 @@ Phase 4: Low-Usage Services
 ## 🧪 Testing Strategy
 
 **Continuous Verification**:
+
 - Run `npm run type-check` before all commits
 - Run `npm run lint` before all commits
 - Run `npm run lint:css` before CSS changes
@@ -277,6 +290,7 @@ Phase 4: Low-Usage Services
 - Mobile Responsive Testing in CI for layout changes
 
 **Regression Testing**:
+
 - Visual regression snapshots for responsive breakpoints
 - Component integration tests for ACWR service changes
 - E2E smoke tests for device-data and training components
