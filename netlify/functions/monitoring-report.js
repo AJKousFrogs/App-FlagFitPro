@@ -399,7 +399,77 @@ async function buildPhysioBlock(athleteId) {
   return data?.[0] ?? null;
 }
 
+/**
+ * Injury + RTP history for the timeline (last 18 months). CLINICAL data
+ * (region / grade / diagnosis / dates) — the shaper gates it to the full
+ * clinical lens only. Non-fatal on error → null (no fabricated history).
+ */
+async function buildInjuryHistory(athleteId) {
+  const since = new Date(Date.now() - 548 * 86400000)
+    .toISOString()
+    .slice(0, 10);
+  const [inj, rtp] = await Promise.all([
+    supabaseAdmin
+      .from("athlete_injuries")
+      .select(
+        "id,injury_type,injury_location,injury_grade,injury_date,recovery_status,current_phase,rtp_progress,expected_return_date,created_at",
+      )
+      .eq("user_id", athleteId)
+      .or(`injury_date.gte.${since},created_at.gte.${since}`)
+      .order("injury_date", { ascending: true, nullsFirst: false })
+      .limit(40),
+    supabaseAdmin
+      .from("return_to_play_protocols")
+      .select(
+        "id,status,current_phase,phase_description,start_date,estimated_completion_date",
+      )
+      .eq("user_id", athleteId)
+      .gte("start_date", since)
+      .order("start_date", { ascending: true })
+      .limit(20),
+  ]);
+  const items = inj.data ?? [];
+  const rtpRows = rtp.data ?? [];
+  if (items.length === 0 && rtpRows.length === 0) {
+    return null;
+  }
+  return { items, rtp: rtpRows };
+}
+
 // ── role shaping (the gate) ─────────────────────────────────────────────────
+/**
+ * Injury/RTP history is clinical detail — the full clinical lens (physio/self)
+ * only. head_coach / sc_coach get their operational physioBlock view (current
+ * restrictions), not the clinical timeline.
+ */
+function shapeInjuryHistory(raw, role) {
+  if (!raw || (role !== "physio" && role !== "self")) {
+    return null;
+  }
+  return {
+    mode: "clinical",
+    items: raw.items.map((i) => ({
+      id: i.id,
+      type: i.injury_type ?? null,
+      region: i.injury_location ?? null,
+      grade: i.injury_grade ?? null,
+      injuryDate: i.injury_date ?? i.created_at?.slice(0, 10) ?? null,
+      status: i.recovery_status ?? null,
+      currentPhase: i.current_phase ?? null,
+      rtpProgress:
+        typeof i.rtp_progress === "number" ? i.rtp_progress : null,
+      expectedReturn: i.expected_return_date ?? null,
+    })),
+    rtp: raw.rtp.map((r) => ({
+      id: r.id,
+      status: r.status ?? null,
+      currentPhase: r.current_phase ?? null,
+      phaseDescription: r.phase_description ?? null,
+      startDate: r.start_date ?? null,
+      estimatedCompletion: r.estimated_completion_date ?? null,
+    })),
+  };
+}
 function shapePhysioBlock(raw, role) {
   if (!raw) {
     return null;
@@ -508,14 +578,21 @@ const handler = async (event, context) => {
         const sex = profile?.gender ?? null;
 
         const t = await resolveThresholds(teamId, sex);
-        const [daily, weekly, bloodworkRaw, wearableRaw, physioBlockRaw] =
-          await Promise.all([
-            buildDaily(athleteId, t),
-            buildWeekly(athleteId, t),
-            buildBloodworkRaw(athleteId, t),
-            buildWearableRaw(athleteId),
-            buildPhysioBlock(athleteId),
-          ]);
+        const [
+          daily,
+          weekly,
+          bloodworkRaw,
+          wearableRaw,
+          physioBlockRaw,
+          injuryHistoryRaw,
+        ] = await Promise.all([
+          buildDaily(athleteId, t),
+          buildWeekly(athleteId, t),
+          buildBloodworkRaw(athleteId, t),
+          buildWearableRaw(athleteId),
+          buildPhysioBlock(athleteId),
+          buildInjuryHistory(athleteId),
+        ]);
         const medicalSignal = medicalSignalFrom(physioBlockRaw, bloodworkRaw);
         // Raw bloodwork gate: the athlete always sees their own; a staff viewer
         // needs the athlete's health-sharing consent (2026-07-09).
@@ -540,6 +617,7 @@ const handler = async (event, context) => {
               }
             : null,
           physioBlock: shapePhysioBlock(physioBlockRaw, role),
+          injuries: shapeInjuryHistory(injuryHistoryRaw, role),
           daily,
           weekly,
           bloodwork: shapeBloodwork(

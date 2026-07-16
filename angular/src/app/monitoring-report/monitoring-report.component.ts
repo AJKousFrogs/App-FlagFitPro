@@ -10,6 +10,7 @@ import { LucideAngularModule } from "lucide-angular";
 import {
   SparklineComponent,
   MarkerRangeComponent,
+  InjuryTimelineComponent,
 } from "../shared/perf-viz";
 import {
   MonitoringReportService,
@@ -39,6 +40,7 @@ const GLOSSARY: Record<string, string> = {
     KeyValuePipe,
     SparklineComponent,
     MarkerRangeComponent,
+    InjuryTimelineComponent,
   ],
   templateUrl: "./monitoring-report.component.html",
   styleUrl: "./monitoring-report.component.scss",

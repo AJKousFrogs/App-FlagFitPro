@@ -28,6 +28,30 @@ export interface MonitoringReport {
     blockType?: string | null;
     clinicalNote?: string | null;
   } | null;
+  /** Injury + RTP history for the timeline — clinical lens only (physio/self);
+   *  null for coaches on the operational lens. Special-category health data. */
+  injuries: {
+    mode: "clinical";
+    items: {
+      id: string;
+      type: string | null;
+      region: string | null;
+      grade: string | null;
+      injuryDate: string | null;
+      status: string | null;
+      currentPhase: string | null;
+      rtpProgress: number | null;
+      expectedReturn: string | null;
+    }[];
+    rtp: {
+      id: string;
+      status: string | null;
+      currentPhase: number | null;
+      phaseDescription: string | null;
+      startDate: string | null;
+      estimatedCompletion: string | null;
+    }[];
+  } | null;
   daily: {
     latest: {
       date: string;
