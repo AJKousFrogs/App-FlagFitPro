@@ -5,6 +5,11 @@ import { PeriodizationService } from "./periodization.service";
 import { SupabaseService } from "./supabase.service";
 import { TOURNAMENT_DAY } from "../config/position-volume.config";
 import {
+  NUTRITION,
+  POST_DAY_RECOVERY,
+  TOURNAMENT_GAP_FUEL,
+} from "../constants/nutrition.constants";
+import {
   EventGame,
   GameGap,
   GapClass,
@@ -126,7 +131,7 @@ function gapPlanFor(
     case "turnaround":
       return {
         fuelLabel: "Fluids + optional half gel",
-        fuelDetail: `Sip fluids, ~12g fast carbs if needed (half a gel). Stay warm — no full cooldown.${fluidNote}`,
+        fuelDetail: `Sip fluids, ~${TOURNAMENT_GAP_FUEL.TURNAROUND_FAST_CARB_G}g fast carbs if needed (half a gel). Stay warm — no full cooldown.${fluidNote}`,
         warmupLabel: "Stay warm",
         warmupDetail:
           "3–4 accelerations to stay primed — no re-warm-up needed for this gap.",
@@ -136,7 +141,7 @@ function gapPlanFor(
     case "short":
       return {
         fuelLabel: "Fast carbs + fluids",
-        fuelDetail: `${Math.round(0.4 * bodyweightKg)}g fast carbs (gel, sports drink, or a ripe banana) + 400–600ml fluid. Off your feet where you can.${fluidNote}`,
+        fuelDetail: `${Math.round(TOURNAMENT_GAP_FUEL.SHORT_CARB_G_PER_KG * bodyweightKg)}g fast carbs (gel, sports drink, or a ripe banana) + 400–600ml fluid. Off your feet where you can.${fluidNote}`,
         warmupLabel: "Re-prime warm-up",
         warmupDetail: "8–10 min: short activation + 2–3 accelerations.",
         warmupLeadMin: 15,
@@ -145,7 +150,7 @@ function gapPlanFor(
     case "medium":
       return {
         fuelLabel: "Light solid carbs + fluids",
-        fuelDetail: `~${Math.round(1 * bodyweightKg)}g carbs (light solid food) + fluids, finished at least 60 min before the next kickoff.${fluidNote}`,
+        fuelDetail: `~${Math.round(TOURNAMENT_GAP_FUEL.MEDIUM_CARB_G_PER_KG * bodyweightKg)}g carbs (light solid food) + fluids, finished at least 60 min before the next kickoff.${fluidNote}`,
         warmupLabel: "Re-warm-up",
         warmupDetail: "10–12 min: activation + mobility + 2–3 accelerations.",
         warmupLeadMin: 20,
@@ -155,7 +160,7 @@ function gapPlanFor(
     default:
       return {
         fuelLabel: "Real meal",
-        fuelDetail: `${Math.round(1.25 * bodyweightKg)}g carbs + ${Math.round(0.3 * bodyweightKg)}g protein, low fat/fiber, finished ≥75 min before the next kickoff. Optional carb top-up ~45 min out if needed.${fluidNote}`,
+        fuelDetail: `${Math.round(TOURNAMENT_GAP_FUEL.LONG_CARB_G_PER_KG * bodyweightKg)}g carbs + ${Math.round(NUTRITION.PROTEIN_G_PER_KG * bodyweightKg)}g protein, low fat/fiber, finished ≥75 min before the next kickoff. Optional carb top-up ~45 min out if needed.${fluidNote}`,
         warmupLabel: "Near-full warm-up",
         warmupDetail:
           "12–15 min RAMP warm-up — the body has fully cooled after this long a gap.",
@@ -278,7 +283,7 @@ export function buildTournamentDayPlan(
     kind: "recovery",
     time: fromMinutes(lastEnd + 15),
     label: "Recovery block",
-    detail: `${Math.round(1.2 * bodyweightKg)}g carbs + ${Math.round(0.3 * bodyweightKg)}g protein within 60 min, rehydrate, 10 min cooldown + mobility.`,
+    detail: `${Math.round(POST_DAY_RECOVERY.CARB_G_PER_KG * bodyweightKg)}g carbs + ${Math.round(NUTRITION.PROTEIN_G_PER_KG * bodyweightKg)}g protein within 60 min, rehydrate, 10 min cooldown + mobility.`,
   });
 
   return { games: sorted, gaps, blocks, heatAdjusted: hotDay };

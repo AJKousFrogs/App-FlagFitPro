@@ -15,7 +15,12 @@
 // Rapid glycogen resynthesis when the next effort is <8 h away needs aggressive,
 // high-GI carbohydrate; protein aids resynthesis + repair; fluid replaces the
 // deficit with sodium. Rates are the ACSM/IOC consensus.
-const REFUEL = Object.freeze({
+// Exported so the client mirror can be parity-tested against it — the two live
+// in separate runtimes and can't share an import (same constraint, and same
+// remedy, as PAIN_TRIGGER_THRESHOLD; see tests/unit/refuel-protein-parity.test.js).
+// This object is the CANONICAL source for any refuel constant the client also
+// needs; the client must mirror, never restate a bare literal.
+export const REFUEL = Object.freeze({
   CARB_G_PER_KG_PER_H: 1.0, // 1.0–1.2 g/kg/h high-GI when recovery <8 h (Burke 2017)
   CARB_WINDOW_CAP_H: 4, // the aggressive window; beyond this, normal meals resume
   PROTEIN_G_PER_KG: 0.3, // ~0.3 g/kg (≈20–40 g) co-ingested
