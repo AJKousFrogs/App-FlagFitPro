@@ -1529,6 +1529,22 @@
   status = 200
   force = true
 
+# team.js dispatches /season-archive internally (imports season-archive.js's
+# handler) and API_ENDPOINTS.season.archive in the frontend points here, but
+# these two entries were missing -- the path fell through to the SPA catch-all
+# instead of ever reaching the dispatcher.
+[[redirects]]
+  from = "/api/season-archive/*"
+  to = "/.netlify/functions/team"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/season-archive"
+  to = "/.netlify/functions/team"
+  status = 200
+  force = true
+
 # Account Pause API - Player account pause/resume
 [[redirects]]
   from = "/api/account/pause"
