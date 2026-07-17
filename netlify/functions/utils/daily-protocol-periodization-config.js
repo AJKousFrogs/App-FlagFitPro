@@ -37,14 +37,17 @@ const EVIDENCE_BASED_PROTOCOLS = {
   },
 
   // Nordic Curl Protocol (Practitioner's Guide to Hamstrings)
-  // "2-3x weekly reduces injury risk by 50-70%"
+  // "2-3x weekly ~halves the hamstring-injury rate" (risk ratio 0.49, "up to
+  //  51%") — van Dyk 2019 meta-analysis, 8459 athletes, BJSM,
+  //  doi:10.1136/bjsports-2018-100045. (Was "50-70%" — overstated the pooled
+  //  figure; corrected 2026-07-18.)
   // "Progress from 1x5 to 3x12 over 6-8 weeks"
   nordicCurls: {
     frequencyPerWeek: { min: 2, max: 3 },
     beginner: { sets: 1, reps: 5 },
     intermediate: { sets: 2, reps: 8 },
     advanced: { sets: 3, reps: 12 },
-    injuryRiskReduction: 0.6, // 50-70%
+    injuryRiskReduction: 0.5, // ~51% (van Dyk 2019 meta-analysis; reference only, not consumed)
     eccentricHQRatioTarget: 0.8,
   },
 
@@ -86,8 +89,15 @@ const EVIDENCE_BASED_PROTOCOLS = {
     },
   },
 
-  // ACWR Safe Zones (Practitioner's Guide to Preseason + Gabbett 2016)
-  // "ACWR 0.8-1.3 is optimal; >1.5 increases injury risk 2-4x"
+  // ACWR advisory bands (Gabbett 2016 sweet-spot framing). NOTE: the specific
+  // "injury risk 2-4x" multiplier was REMOVED from the app's canonical ACWR
+  // module (utils/acwr.js ACWR_RISK_ZONES) as false precision — the only
+  // cluster-RCT of ACWR-guided load management found no effect (Dalen-Lorentsen
+  // 2021, BJSM, doi:10.1136/bjsports-2020-103003) and whether ACWR associates
+  // with injury at all is method-dependent (Impellizzeri 2020). Treat these as
+  // ADVISORY load-management bands, not risk facts. (These numbers are reference
+  // only — not consumed; acwr.js owns the live zones. Comment corrected
+  // 2026-07-18 to stop contradicting that walk-back.)
   acwr: {
     optimal: { min: 0.8, max: 1.3 },
     elevated: { min: 1.3, max: 1.5 },

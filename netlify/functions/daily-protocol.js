@@ -1600,8 +1600,13 @@ async function generateProtocol(
 
     // ============================================================================
     // 6. STRENGTH BLOCK (15 min)
-    // Evidence: Nordic curls 2-3x/week reduce hamstring injury by 50-70%
-    // Source: VALD Practitioner's Guide to Hamstrings
+    // Evidence: including the Nordic hamstring exercise in an injury-prevention
+    // programme ~halves the hamstring-injury rate (risk ratio 0.49, "up to 51%")
+    // — systematic review + meta-analysis, 8459 athletes (van Dyk 2019, BJSM,
+    // doi:10.1136/bjsports-2018-100045). The former "50–70%" claim overstated
+    // this pooled figure; corrected 2026-07-18 to match the meta-analysis, in
+    // line with the app's evidence-honesty standard (cf. the ACWR-multiplier
+    // walk-back in acwr.js). Source also: VALD Practitioner's Guide to Hamstrings.
     // ============================================================================
 
     const strengthExercises = !gymPlan.strength
@@ -1622,7 +1627,7 @@ async function generateProtocol(
       const selectedStrength = [];
 
       // MANDATORY: Include Nordic Curls on designated days (2-3x per week)
-      // Evidence: Reduces hamstring injury risk by 50-70%
+      // Evidence: ~halves hamstring-injury rate (van Dyk 2019 meta-analysis)
       if (includeNordics) {
         const nordicExercise = strengthExercises.find(
           (ex) =>
@@ -1646,7 +1651,7 @@ async function generateProtocol(
             prescribed_reps: nordicProtocol.reps,
             rest_seconds: 90,
             load_contribution_au: nordicExercise.load_contribution_au || 25,
-            ai_note: `🏋️ MANDATORY: Nordic Curls - Evidence shows 50-70% reduction in hamstring injuries when performed 2-3x/week. Focus on slow, controlled eccentric lowering.`,
+            ai_note: `🏋️ MANDATORY: Nordic Curls — the strongest hamstring-injury prevention we have: doing them 2–3×/week roughly halves the hamstring-injury rate (meta-analysis of 8,459 athletes). Focus on slow, controlled eccentric lowering.`,
           });
         }
       }
@@ -1730,8 +1735,10 @@ async function generateProtocol(
 
     // ============================================================================
     // 7. CONDITIONING BLOCK (15 min)
-    // Evidence: ACWR 0.8-1.3 optimal, >1.5 = 2-4x injury risk
-    // SAFETY: No 80%+ sprinting on day 1 - progressive build required
+    // Evidence: ACWR 0.8-1.3 is the Gabbett-2016 advisory sweet spot (bands, not
+    // risk facts — the "2-4x risk" multiplier was walked back in acwr.js as false
+    // precision; Dalen-Lorentsen 2021 cluster-RCT found no effect of ACWR-guided
+    // load management). SAFETY: No 80%+ sprinting on day 1 - progressive build.
     // Source: VALD Practitioner's Guide to Preseason, Gabbett 2016
     // ============================================================================
 
