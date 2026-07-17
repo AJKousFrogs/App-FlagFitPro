@@ -144,6 +144,15 @@ export class EvidenceConfigService {
   }
 
   /**
+   * Get Injury-Prevention evidence from active preset (optional section —
+   * undefined for presets that don't define it, e.g. youth/RTP/masters until
+   * they add one). Evidence-only: no numeric protocol values live here.
+   */
+  getInjuryPreventionEvidence() {
+    return this.activePreset().injuryPrevention ?? null;
+  }
+
+  /**
    * Log preset change (for analytics/calibration)
    */
   private logPresetChange(presetId: string): void {

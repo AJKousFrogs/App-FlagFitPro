@@ -200,6 +200,36 @@ export interface PhaseEvidenceConfig {
 }
 
 /**
+ * Injury-prevention / strength evidence (2026-07-18). EVIDENCE-ONLY: this
+ * section surfaces the citations + modifiable-risk-factor framing behind the
+ * engine's prevention work (Nordic hamstring, Copenhagen adduction, FIFA-11+
+ * NMT, sprint-exposure floor). It deliberately does NOT restate the numeric
+ * protocol values (Nordic sets/reps, sprint-floor days, Add:Abd ratio) — those
+ * are owned by the engine + daily-protocol-periodization-config.js and must
+ * stay single-sourced (§4). Optional, like `phases` — consumers read it by
+ * explicit property, so presets without it are unaffected.
+ */
+export interface InjuryPreventionEvidenceConfig {
+  version: string;
+  population: PopulationAssumptions;
+  citations: ResearchCitation[];
+
+  /** The modifiable risk factors the app's prevention work targets. */
+  modifiableRiskFactors: {
+    factor: string; // e.g., "Biceps femoris fascicle length"
+    intervention: string; // e.g., "Eccentric knee-flexor (Nordic) loading"
+    evidence: string; // one-line evidence summary
+    citationIds: string[]; // keys into RESEARCH_CITATIONS
+  }[];
+
+  scienceNotes: {
+    hamstring: string;
+    loadExposure: string;
+    coachOverride: string;
+  };
+}
+
+/**
  * Complete evidence configuration preset
  */
 export interface EvidencePreset {
@@ -213,6 +243,7 @@ export interface EvidencePreset {
   readiness: ReadinessEvidenceConfig;
   tapering: TaperingEvidenceConfig;
   phases?: PhaseEvidenceConfig; // Optional phase definitions
+  injuryPrevention?: InjuryPreventionEvidenceConfig; // Optional (2026-07-18)
 
   // Metadata
   createdAt: string; // ISO date string

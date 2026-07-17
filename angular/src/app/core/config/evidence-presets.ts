@@ -79,6 +79,40 @@ export const RESEARCH_CITATIONS: Record<string, ResearchCitation> = {
     doi: "10.1249/01.MSS.0000074448.73931.11",
     notes: "Intensity maintenance during taper (80-90% of normal)",
   },
+  // Injury-prevention / sprint-hamstring evidence (added 2026-07-18 after a
+  // PubMed audit — these are the modern hamstring-injury-prevention mechanism
+  // the engine's Nordic + sprint-exposure work already implements but the
+  // formal evidence layer did not surface). Verified via PubMed.
+  vanDyk2019: {
+    authors: "van Dyk, N., Behan, F. P., & Whiteley, R.",
+    year: 2019,
+    title:
+      "Including the Nordic hamstring exercise in injury prevention programmes halves the rate of hamstring injuries: a systematic review and meta-analysis of 8459 athletes",
+    journal: "British Journal of Sports Medicine",
+    doi: "10.1136/bjsports-2018-100045",
+    notes:
+      "Nordic hamstring exercise ~halves hamstring-injury rate (risk ratio 0.49, 'up to 51%'). The evidence basis for the engine's mandatory-Nordic prescription.",
+  },
+  bourne2018: {
+    authors: "Bourne, M. N., Timmins, R. G., Opar, D. A., et al.",
+    year: 2018,
+    title:
+      "An Evidence-Based Framework for Strengthening Exercises to Prevent Hamstring Injury",
+    journal: "Sports Medicine",
+    doi: "10.1007/s40279-017-0796-x",
+    notes:
+      "The MECHANISM: eccentric knee-flexor benefit is mediated by increased biceps femoris long-head fascicle length + eccentric strength — the modifiable in-season hamstring risk factor (cf. Sim/Timmins 2023, fascicle length AUC 0.86).",
+  },
+  colby2018: {
+    authors: "Colby, M. J., Dawson, B., Peeling, P., et al.",
+    year: 2018,
+    title:
+      "Improvement of Prediction of Noncontact Injury in Elite Australian Footballers With Repeated Exposure to Established High-Risk Workload Scenarios",
+    journal: "International Journal of Sports Physiology and Performance",
+    doi: "10.1123/ijspp.2017-0696",
+    notes:
+      "Minimal exposure to high-velocity efforts carried the GREATEST injury risk ('being underloaded may be a mediator for noncontact injury'). The evidence basis for the engine's sprint-exposure floor — regular max-velocity running is protective.",
+  },
 };
 
 /**
@@ -233,10 +267,57 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
     },
   },
 
+  // Evidence-only (2026-07-18): surfaces the citations + modifiable-risk-factor
+  // framing behind the engine's prevention work. NO numeric protocol values here
+  // (Nordic sets/reps, sprint-floor days, Add:Abd ratio) — those stay
+  // single-sourced in the engine + daily-protocol-periodization-config.js (§4).
+  injuryPrevention: {
+    version: "1.0",
+    population: {
+      ageRange: "18-35 years",
+      sportType: "5v5 flag football",
+      competitionLevel: "competitive",
+      trainingFrequency: "3-6 sessions/week",
+    },
+    citations: [
+      RESEARCH_CITATIONS["vanDyk2019"],
+      RESEARCH_CITATIONS["bourne2018"],
+      RESEARCH_CITATIONS["colby2018"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
+    modifiableRiskFactors: [
+      {
+        factor:
+          "Biceps femoris fascicle length + eccentric knee-flexor strength",
+        intervention:
+          "Mandatory Nordic hamstring loading (progressive; the engine owns the dose)",
+        evidence:
+          "Nordic programmes ~halve the hamstring-injury rate (van Dyk 2019, 8459 athletes); the effect is mediated by increased fascicle length + eccentric strength, the strongest modifiable in-season risk factor (Bourne 2018).",
+        citationIds: ["vanDyk2019", "bourne2018"],
+      },
+      {
+        factor: "Regular near-max-velocity (high-speed running) exposure",
+        intervention:
+          "Sprint-exposure floor — plan a speed session when the athlete has gone too long without one (the engine owns the threshold)",
+        evidence:
+          "Underloading — minimal exposure to high-velocity efforts — carried the GREATEST non-contact injury risk (Colby 2018). Regular max-velocity running is protective ('speed vaccine'); a hard high-speed-running SPIKE ceiling is deliberately NOT imposed because GPS spike metrics are inconclusive for predicting injury (Kupperman 2020).",
+        citationIds: ["colby2018"],
+      },
+    ],
+    scienceNotes: {
+      hamstring:
+        "Hamstring strain is the dominant sprint-type injury in cutting/repeated-sprint sports. The protective mechanism is eccentric strength + biceps femoris fascicle-length adaptation (Bourne 2018) — the Nordic prescription targets exactly this. The app does not screen fascicle length (needs ultrasound); the progressive Nordic dose is the practical proxy.",
+      loadExposure:
+        "Both ends of the high-velocity exposure curve carry risk, but the evidence is asymmetric: underloading is the stronger signal (Colby 2018), so the engine enforces an exposure FLOOR (not a spike ceiling). This is consistent with the app's honest-ACWR stance — GPS spike metrics are method-dependent and inconclusive (Kupperman 2020).",
+      coachOverride:
+        "These are population-level prevention principles. A coach or physio managing a specific athlete's return-to-play or known architecture may individualise volume and progression.",
+    },
+  },
+
   createdAt: "2026-01-01T00:00:00Z",
-  updatedAt: "2026-01-01T00:00:00Z",
+  updatedAt: "2026-07-18T00:00:00Z",
   changelog: [
     "v1.0 (2026-01-01): Initial release with evidence-based ACWR, readiness, and tapering configurations",
+    "v1.0 (2026-07-18): Added injuryPrevention evidence section (Nordic/fascicle-length + sprint-exposure evidence — van Dyk 2019, Bourne 2018, Colby 2018) after a PubMed evidence audit. Evidence-only; no calculation change.",
   ],
 };
 
