@@ -1651,7 +1651,7 @@ async function generateProtocol(
             prescribed_reps: nordicProtocol.reps,
             rest_seconds: 90,
             load_contribution_au: nordicExercise.load_contribution_au || 25,
-            ai_note: `🏋️ MANDATORY: Nordic Curls — the strongest hamstring-injury prevention we have: doing them 2–3×/week roughly halves the hamstring-injury rate (meta-analysis of 8,459 athletes). Focus on slow, controlled eccentric lowering.`,
+            ai_note: `🏋️ MANDATORY: Nordic Curls — the strongest hamstring-injury prevention we have. Done 2–3×/week they roughly halve the hamstring-injury rate (meta-analysis of 8,459 athletes). WHY they work: the slow eccentric lowering lengthens your hamstring muscle fibres — longer, stronger fibres are what resist the strain of a full-speed sprint. That fibre-length adaptation is the biggest thing you can change about your own injury risk, so the slow controlled lower IS the exercise — never let it drop.`,
           });
         }
       }
