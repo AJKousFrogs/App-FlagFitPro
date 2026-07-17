@@ -97,7 +97,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--s-2);
     border-radius: var(--r-md);
     padding: var(--sp-3) var(--sp-5);
     font-weight: var(--fw-semi);
@@ -136,7 +136,7 @@
     cursor: pointer;
   }
   .bar {
-    height: var(--sp-2);
+    height: var(--s-2);
     border-radius: var(--r-pill);
     background: var(--surface-3);
     overflow: hidden;
@@ -230,8 +230,8 @@
     color: var(--text-2);
   }
   .geo-dot {
-    width: var(--sp-2);
-    height: var(--sp-2);
+    width: var(--s-2);
+    height: var(--s-2);
     border-radius: 50%;
     background: var(--accent);
   }
@@ -520,7 +520,7 @@
   .ex-cue {
     margin-top: var(--sp-2);
     display: flex;
-    gap: var(--sp-2);
+    gap: var(--s-2);
     align-items: flex-start;
     font-size: var(--fs-13);
     color: var(--text-3);
