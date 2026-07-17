@@ -2,7 +2,7 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-16
+> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-17
 
 **176 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
