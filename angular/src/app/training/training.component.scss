@@ -441,7 +441,9 @@
     color: transparent;
     background: none;
     cursor: pointer;
-    transition: all var(--t-150);
+    transition:
+      background-color var(--t-150),
+      border-color var(--t-150);
   }
   .check:hover {
     border-color: var(--brand-500);
