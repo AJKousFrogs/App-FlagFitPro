@@ -86,7 +86,6 @@ node scripts):
 | --------------------------------- | ---------------------------------------------------------------- |
 | `docs-regen.mjs`                  | Regenerates `docs/generated/` — run via `npm run docs:regen`     |
 | `audit-error-shape-contracts.js`  | CI gate: classifies all handlers as standardized or legacy       |
-| `build-css.js`                    | CSS processing for the build                                     |
 | `inject-env-into-html-angular.js` | Environment injection into Angular build output (Netlify deploy) |
 | `fix-jws-vulnerability.js`        | JWS security fix (runs on `postinstall`)                         |
 
