@@ -119,8 +119,30 @@ interface GapPlan {
   warmupDurationMin: number;
 }
 
+/**
+ * Total between-games carbohydrate (g) for a `medium`/`long` gap, derived from
+ * the shared evidence rate rather than a flat per-meal literal: 1.0 g/kg/h ×
+ * the window (capped at 4 h), dosed across the window. Mirrors the server's
+ * `betweenGamesRefuel` exactly (`carbsG = kg × CARB_G_PER_KG_PER_H × clamp(gap,
+ * 0, cap)`). See nutrition.constants.ts header for the citations and why this
+ * is a rate, not a single number.
+ */
+function refuelCarbsG(gapMinutes: number, bodyweightKg: number): number {
+  const gapHours = gapMinutes / 60;
+  const windowH = Math.min(gapHours, NUTRITION.REFUEL_CARB_WINDOW_CAP_H);
+  return Math.round(
+    bodyweightKg * NUTRITION.REFUEL_CARB_G_PER_KG_PER_H * windowH,
+  );
+}
+
+/** Per-hour carbohydrate figure for the "dose it across the window" copy. */
+function refuelCarbsPerHourG(bodyweightKg: number): number {
+  return Math.round(bodyweightKg * NUTRITION.REFUEL_CARB_G_PER_KG_PER_H);
+}
+
 function gapPlanFor(
   gapClass: GapClass,
+  gapMinutes: number,
   bodyweightKg: number,
   hotDay: boolean,
 ): GapPlan {
@@ -150,7 +172,9 @@ function gapPlanFor(
     case "medium":
       return {
         fuelLabel: "Light solid carbs + fluids",
-        fuelDetail: `~${Math.round(TOURNAMENT_GAP_FUEL.MEDIUM_CARB_G_PER_KG * bodyweightKg)}g carbs (light solid food) + fluids, finished at least 60 min before the next kickoff.${fluidNote}`,
+        // Rate-derived: ~1.0 g/kg/h across the window, dosed frequently (the
+        // meta-analysis shows frequency matters), not one flat number.
+        fuelDetail: `~${refuelCarbsG(gapMinutes, bodyweightKg)}g carbs total (~${refuelCarbsPerHourG(bodyweightKg)}g/h — light solid food + fluids, spread across the gap, last portion ≥60 min before the next kickoff).${fluidNote}`,
         warmupLabel: "Re-warm-up",
         warmupDetail: "10–12 min: activation + mobility + 2–3 accelerations.",
         warmupLeadMin: 20,
@@ -159,8 +183,10 @@ function gapPlanFor(
     case "long":
     default:
       return {
-        fuelLabel: "Real meal",
-        fuelDetail: `${Math.round(TOURNAMENT_GAP_FUEL.LONG_CARB_G_PER_KG * bodyweightKg)}g carbs + ${Math.round(NUTRITION.PROTEIN_G_PER_KG * bodyweightKg)}g protein, low fat/fiber, finished ≥75 min before the next kickoff. Optional carb top-up ~45 min out if needed.${fluidNote}`,
+        fuelLabel: "Real meal + steady carbs",
+        // Rate-derived and capped at the 4 h aggressive window (see server
+        // parity). Front-load; the last portion finishes before the warm-up.
+        fuelDetail: `~${refuelCarbsG(gapMinutes, bodyweightKg)}g carbs total (~${refuelCarbsPerHourG(bodyweightKg)}g/h over the first ~${Math.min(Math.round(gapMinutes / 60), NUTRITION.REFUEL_CARB_WINDOW_CAP_H)}h) + ${Math.round(NUTRITION.PROTEIN_G_PER_KG * bodyweightKg)}g protein, low fat/fiber, last portion ≥75 min before the next kickoff. Optional carb top-up ~45 min out.${fluidNote}`,
         warmupLabel: "Near-full warm-up",
         warmupDetail:
           "12–15 min RAMP warm-up — the body has fully cooled after this long a gap.",
@@ -248,7 +274,12 @@ export function buildTournamentDayPlan(
     if (!isLast) {
       const gap = gaps[i];
       const gapEnd = kickoff + game.expectedDurationMinutes;
-      const plan = gapPlanFor(gap.gapClass, bodyweightKg, hotDay);
+      const plan = gapPlanFor(
+        gap.gapClass,
+        gap.gapMinutes,
+        bodyweightKg,
+        hotDay,
+      );
       blocks.push({
         kind: "fuel",
         time: fromMinutes(gapEnd + 5),

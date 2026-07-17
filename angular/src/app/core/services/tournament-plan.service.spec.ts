@@ -182,7 +182,33 @@ describe("buildTournamentDayPlan — Capital Bowl day 1", () => {
 
   it("scales fueling grams to bodyweight (short-gap fuel after game 1)", () => {
     const fuelBlocks = plan.blocks.filter((b) => b.kind === "fuel");
-    expect(fuelBlocks[0].detail).toMatch(/32g fast carbs/); // 0.4 * 80kg
+    expect(fuelBlocks[0].detail).toMatch(/32g fast carbs/); // 0.4 * 80kg, GI-limited (unchanged)
+  });
+
+  it("derives the medium-gap carb total from the evidence rate, not a flat literal (2026-07-17 recalc)", () => {
+    // Game 2 (12:30, 40-min duration → ends 13:10) → game 3 (15:30): effective
+    // gap = 15:30 − 13:10 = 140 min → "medium". Rate-derived carbs =
+    // 1.0 g/kg/h × (140/60) h × 80 kg = 187 g (was a flat 1×80 = 80 g).
+    const fuelBlocks = plan.blocks.filter((b) => b.kind === "fuel");
+    const afterG2 = fuelBlocks.find((b) => b.gameNumber === 2);
+    expect(afterG2?.detail).toMatch(/187g carbs total/);
+    // and it states the per-hour rate the evidence hangs on (dose frequently)
+    expect(afterG2?.detail).toMatch(/80g\/h/); // 1.0 × 80kg
+  });
+
+  it("caps the aggressive carb window at 4h for a very long gap", () => {
+    // Two games 6h apart (kickoff gap 360 → effective 320 min > 4h). Carbs must
+    // cap at rate × 4h × kg, never scale unbounded.
+    const longDay = buildTournamentDayPlan(
+      [
+        game({ id: "a", gameNumber: 1, kickoffTime: "09:00:00" }),
+        game({ id: "b", gameNumber: 2, kickoffTime: "15:00:00" }),
+      ],
+      80,
+      null,
+    );
+    const fuel = longDay.blocks.find((b) => b.kind === "fuel");
+    expect(fuel?.detail).toMatch(/320g carbs total/); // 1.0 × 4h × 80kg, capped
   });
 
   it("adds a heat modifier note when the day is hot (apparent ≥ 28°C)", () => {
