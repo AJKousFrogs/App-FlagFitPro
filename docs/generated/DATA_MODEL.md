@@ -2,9 +2,9 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-14** · doc regenerated: 2026-07-17
+> **Schema snapshot (live): 2026-07-17** · doc regenerated: 2026-07-17
 
-**176 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+**178 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
 ## Tables
 
@@ -678,6 +678,31 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
 
+### `cycle_logs`
+Touched by: `cycle`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `log_date` date · not null
+- `flow` text
+- `symptoms` ARRAY · not null
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
+### `cycle_tracking_profiles`
+Touched by: `cycle`
+
+- `user_id` uuid · not null
+- `enabled` boolean · not null
+- `hormonal_contraception` boolean · not null
+- `adaptation_level` text · not null
+- `typical_cycle_length` integer
+- `typical_period_length` integer
+- `consent_version` text
+- `consent_granted_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `daily_protocols`
 Touched by: `ai-chat`, `coach-alerts`, `coach-core`, `daily-protocol`
 
@@ -949,6 +974,13 @@ Touched by: `daily-protocol`, `exercise-progression`
 - `equipment_required` ARRAY
 - `active` boolean
 - `is_high_intensity` boolean
+- `tissue_targets` ARRAY
+- `contraction_type` text
+- `joint_emphasis` text
+- `loading_rate_band` text
+- `peak_load_bw` numeric
+- `evidence_tier` text
+- `rehab_stage` smallint
 
 ### `external_load_metrics`
 Touched by: `external-load`

@@ -1,5 +1,5 @@
 {
-  "generatedOn": "2026-07-14",
+  "generatedOn": "2026-07-17",
   "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-13 after Workstream A dropped the 5 legacy exercise tables (isometrics_exercises, plyometrics_exercises, exercisedb_exercises, exercise_registry, ff_exercise_mappings) — content consolidated into the canonical `exercises` table. Table-level set now matches live (176 base tables + 7 views). Patched 2026-07-14: protocol_exercises gained exercise_name/rest_seconds and a nullable exercise_id (migration 20260714120000, applied live via Supabase MCP).",
   "tables": {
     "account_deletion_requests": [
@@ -2560,6 +2560,95 @@
         "nullable": true
       }
     ],
+    "cycle_logs": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "log_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "flow",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "symptoms",
+        "type": "ARRAY",
+        "nullable": false
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "cycle_tracking_profiles": [
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "enabled",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "hormonal_contraception",
+        "type": "boolean",
+        "nullable": false
+      },
+      {
+        "col": "adaptation_level",
+        "type": "text",
+        "nullable": false
+      },
+      {
+        "col": "typical_cycle_length",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "typical_period_length",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "consent_version",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "consent_granted_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "daily_protocols": [
       {
         "col": "id",
@@ -3683,6 +3772,41 @@
       {
         "col": "is_high_intensity",
         "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "tissue_targets",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "contraction_type",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "joint_emphasis",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "loading_rate_band",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "peak_load_bw",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "evidence_tier",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "rehab_stage",
+        "type": "smallint",
         "nullable": true
       }
     ],

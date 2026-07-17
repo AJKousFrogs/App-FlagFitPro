@@ -38,7 +38,7 @@
 | `coach-inbox` | GET, PATCH, POST | _(router submodule)_ | team_members, coach_inbox_items, users, ai_messages, teams |
 | `community` | GET, POST, DELETE | _(router submodule)_ | posts, team_members, blocked_users, post_likes, post_bookmarks, post_comments, comment_likes, trending_topics, community_polls, community_poll_options, community_poll_votes, decrement_likes_count(), increment_likes_count(), increment_comments_count(), decrement_comment_likes_count(), increment_comment_likes_count(), increment_poll_votes() |
 | `compute-acwr` | POST | _(router submodule)_ | training_sessions |
-| `cycle` | GET, PUT, POST, DELETE | /api/cycle/*<br>/api/cycle | cycle_tracking_profiles ⚠️, cycle_logs ⚠️, privacy_audit_log |
+| `cycle` | GET, PUT, POST, DELETE | /api/cycle/*<br>/api/cycle | cycle_tracking_profiles, cycle_logs, privacy_audit_log |
 | `daily-load` | GET | /api/daily-load | training_sessions |
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, exercises, team_members, coach_inbox_items, team_season_phases, daily_wellness_checkin, get_athlete_readiness() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games |
@@ -101,7 +101,7 @@
 | `staff-physiotherapist` | GET | _(router submodule)_ | team_members, athlete_injuries, ownership_transitions, notifications |
 | `staff-psychology` | GET | _(router submodule)_ | team_members, mental_performance_logs, psychological_assessments, mental_wellness_reports |
 | `supplements` | GET, POST | /api/supplements<br>/api/supplements/* | supplement_logs, user_supplements, notifications |
-| `team` | OPTIONS | /api/team-calendar/*<br>/api/team-calendar<br>/api/team-invite<br>/api/attendance/*<br>/api/attendance<br>/api/season/*<br>/api/season<br>/api/team-templates/*<br>/api/team-templates | — |
+| `team` | OPTIONS | /api/team-calendar/*<br>/api/team-calendar<br>/api/team-invite<br>/api/attendance/*<br>/api/attendance<br>/api/season/*<br>/api/season<br>/api/season-archive/*<br>/api/season-archive<br>/api/team-templates/*<br>/api/team-templates | — |
 | `team-calendar` | GET, POST | _(router submodule)_ | attendance_records, games, practice_plans, team_events |
 | `team-invite` | POST | _(router submodule)_ | teams, team_members, team_invitations, users |
 | `team-join` | GET, POST | /api/team-join<br>/api/team-join/* | teams, team_members, users |

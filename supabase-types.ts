@@ -2180,6 +2180,75 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_logs: {
+        Row: {
+          created_at: string
+          flow: string | null
+          id: string
+          log_date: string
+          symptoms: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flow?: string | null
+          id?: string
+          log_date: string
+          symptoms?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flow?: string | null
+          id?: string
+          log_date?: string
+          symptoms?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cycle_tracking_profiles: {
+        Row: {
+          adaptation_level: string
+          consent_granted_at: string | null
+          consent_version: string | null
+          created_at: string
+          enabled: boolean
+          hormonal_contraception: boolean
+          typical_cycle_length: number | null
+          typical_period_length: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adaptation_level?: string
+          consent_granted_at?: string | null
+          consent_version?: string | null
+          created_at?: string
+          enabled?: boolean
+          hormonal_contraception?: boolean
+          typical_cycle_length?: number | null
+          typical_period_length?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adaptation_level?: string
+          consent_granted_at?: string | null
+          consent_version?: string | null
+          created_at?: string
+          enabled?: boolean
+          hormonal_contraception?: boolean
+          typical_cycle_length?: number | null
+          typical_period_length?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_protocols: {
         Row: {
           actual_duration_minutes: number | null
@@ -3029,6 +3098,7 @@ export type Database = {
           category: string | null
           coaching_cues: string[] | null
           compensation_text: string | null
+          contraction_type: string | null
           created_at: string | null
           default_duration_seconds: number | null
           default_hold_seconds: number | null
@@ -3038,22 +3108,28 @@ export type Database = {
           difficulty_level: string | null
           equipment_needed: string[] | null
           equipment_required: string[] | null
+          evidence_tier: string | null
           feel_text: string | null
           how_text: string | null
           id: string
           image_url: string | null
           instructions: string[] | null
           is_high_intensity: boolean | null
+          joint_emphasis: string | null
           load_contribution_au: number | null
+          loading_rate_band: string | null
           metrics_tracked: string[] | null
           movement_pattern: string | null
           muscle_groups: string[] | null
           name: string
+          peak_load_bw: number | null
           position_specific: string[] | null
+          rehab_stage: number | null
           slug: string | null
           subcategory: string | null
           target_muscles: string[] | null
           thumbnail_url: string | null
+          tissue_targets: string[] | null
           updated_at: string | null
           video_duration_seconds: number | null
           video_id: string | null
@@ -3065,6 +3141,7 @@ export type Database = {
           category?: string | null
           coaching_cues?: string[] | null
           compensation_text?: string | null
+          contraction_type?: string | null
           created_at?: string | null
           default_duration_seconds?: number | null
           default_hold_seconds?: number | null
@@ -3074,22 +3151,28 @@ export type Database = {
           difficulty_level?: string | null
           equipment_needed?: string[] | null
           equipment_required?: string[] | null
+          evidence_tier?: string | null
           feel_text?: string | null
           how_text?: string | null
           id?: string
           image_url?: string | null
           instructions?: string[] | null
           is_high_intensity?: boolean | null
+          joint_emphasis?: string | null
           load_contribution_au?: number | null
+          loading_rate_band?: string | null
           metrics_tracked?: string[] | null
           movement_pattern?: string | null
           muscle_groups?: string[] | null
           name: string
+          peak_load_bw?: number | null
           position_specific?: string[] | null
+          rehab_stage?: number | null
           slug?: string | null
           subcategory?: string | null
           target_muscles?: string[] | null
           thumbnail_url?: string | null
+          tissue_targets?: string[] | null
           updated_at?: string | null
           video_duration_seconds?: number | null
           video_id?: string | null
@@ -3101,6 +3184,7 @@ export type Database = {
           category?: string | null
           coaching_cues?: string[] | null
           compensation_text?: string | null
+          contraction_type?: string | null
           created_at?: string | null
           default_duration_seconds?: number | null
           default_hold_seconds?: number | null
@@ -3110,22 +3194,28 @@ export type Database = {
           difficulty_level?: string | null
           equipment_needed?: string[] | null
           equipment_required?: string[] | null
+          evidence_tier?: string | null
           feel_text?: string | null
           how_text?: string | null
           id?: string
           image_url?: string | null
           instructions?: string[] | null
           is_high_intensity?: boolean | null
+          joint_emphasis?: string | null
           load_contribution_au?: number | null
+          loading_rate_band?: string | null
           metrics_tracked?: string[] | null
           movement_pattern?: string | null
           muscle_groups?: string[] | null
           name?: string
+          peak_load_bw?: number | null
           position_specific?: string[] | null
+          rehab_stage?: number | null
           slug?: string | null
           subcategory?: string | null
           target_muscles?: string[] | null
           thumbnail_url?: string | null
+          tissue_targets?: string[] | null
           updated_at?: string | null
           video_duration_seconds?: number | null
           video_id?: string | null
