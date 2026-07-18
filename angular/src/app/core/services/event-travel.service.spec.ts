@@ -181,6 +181,26 @@ describe("EventTravelService — failed load stays FAIL-OPEN (pre-existing)", ()
   });
 });
 
+describe("EventTravelService — a failed RELOAD must not drop the cap", () => {
+  beforeEach(() => TestBed.resetTestingModule());
+
+  it("keeps the last good legs when a refetch fails", async () => {
+    const { service, get } = setup({
+      legs: [leg({ departAt: at(-5 * HOUR), arriveAt: at(-1 * HOUR) })],
+    });
+    service.legs();
+    await settle();
+    expect(service.arrivalDayTravelHours()).toBe(4);
+
+    get.mockReturnValue(of({ success: false, error: "offline" }) as never);
+    service.load();
+    await settle();
+
+    // Still landed 4h ago — the arrival-day cap must survive a flaky refetch.
+    expect(service.arrivalDayTravelHours()).toBe(4);
+  });
+});
+
 describe("EventTravelService — mutations", () => {
   beforeEach(() => TestBed.resetTestingModule());
 

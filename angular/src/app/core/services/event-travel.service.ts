@@ -4,6 +4,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { lastGoodByKey } from "./resource-last-good";
 
 export type TravelMode = "bus" | "car" | "plane" | "train" | "other";
 
@@ -76,9 +77,16 @@ export class EventTravelService {
     },
   });
 
-  /** `[]` until loaded / on failure — see the SAFETY NOTE above. */
-  readonly legs = computed<EventTravelLeg[]>(() =>
-    this.travelResource.hasValue() ? this.travelResource.value() : [],
+  /**
+   * `[]` before anything loads, on logout, and when the first load for a user
+   * fails — see the SAFETY NOTE above. A failed RELOAD keeps the last good
+   * legs (resource-last-good.ts), so a flaky refetch can't silently drop the
+   * arrival-day cap for someone who just flew.
+   */
+  readonly legs = lastGoodByKey(
+    this.travelResource,
+    () => this.supabase.userId(),
+    [] as EventTravelLeg[],
   );
   readonly loading = this.travelResource.isLoading;
 

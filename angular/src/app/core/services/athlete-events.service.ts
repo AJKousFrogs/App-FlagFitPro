@@ -5,6 +5,7 @@ import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { ScheduleService } from "./schedule.service";
 import { SupabaseService } from "./supabase.service";
+import { lastGoodByKey } from "./resource-last-good";
 import {
   AthleteEvent,
   AthleteEventInput,
@@ -50,9 +51,15 @@ export class AthleteEventsService {
     },
   });
 
-  /** Athlete-entered events, soonest first. `[]` until loaded / on failure. */
-  readonly events = computed<AthleteEvent[]>(() =>
-    this.eventsResource.hasValue() ? this.eventsResource.value() : [],
+  /**
+   * Athlete-entered events, soonest first. `[]` until loaded and on a first
+   * failed load; a failed RELOAD keeps the last good list
+   * (resource-last-good.ts).
+   */
+  readonly events = lastGoodByKey(
+    this.eventsResource,
+    () => this.supabase.userId(),
+    [] as AthleteEvent[],
   );
   readonly loading = this.eventsResource.isLoading;
 

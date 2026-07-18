@@ -4,6 +4,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { lastGoodByKey } from "./resource-last-good";
 import {
   deriveRestrictions,
   type NormalizedInjury,
@@ -65,13 +66,23 @@ export class InjuryService {
   });
 
   /**
-   * Currently-flagged injuries. `[]` until loaded, on logout, and on a failed
-   * load — the pre-resource service also left this empty on failure, so the
-   * engine's injury guard fails OPEN exactly as before. Changing that is a
-   * safety call, not a refactor.
+   * Currently-flagged injuries.
+   *
+   * `[]` before anything has loaded, on logout, and when the FIRST load for a
+   * user fails — the pre-resource service behaved the same, so the engine's
+   * injury guard still fails OPEN in those states. Changing that is a safety
+   * call, not a refactor.
+   *
+   * But a failed RELOAD keeps the last good list (see resource-last-good.ts).
+   * `resource()` discards its value on a failed reload, which would have meant
+   * a flaky refetch silently clearing an athlete's restrictions and handing
+   * them a full session. The pre-resource service only ever assigned on
+   * success, so this restores its actual behaviour rather than the shape of it.
    */
-  readonly active = computed<ActiveInjury[]>(() =>
-    this.injuriesResource.hasValue() ? this.injuriesResource.value() : [],
+  readonly active = lastGoodByKey(
+    this.injuriesResource,
+    () => this.supabase.userId(),
+    [] as ActiveInjury[],
   );
   readonly loading = this.injuriesResource.isLoading;
 

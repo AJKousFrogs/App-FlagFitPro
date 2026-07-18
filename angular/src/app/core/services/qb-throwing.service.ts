@@ -5,6 +5,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { lastGoodByKey } from "./resource-last-good";
 import {
   QbThrowingData,
   QbThrowingSessionInput,
@@ -78,8 +79,10 @@ export class QbThrowingService {
    * into every consumer the moment a request fails, instead of degrading to
    * null. Locked by the "surfaces a failed load" spec.
    */
-  readonly data = computed(() =>
-    this.throwingResource.hasValue() ? this.throwingResource.value() : null,
+  readonly data = lastGoodByKey(
+    this.throwingResource,
+    () => this.supabase.userId(),
+    null as QbThrowingData | null,
   );
   readonly loading = this.throwingResource.isLoading;
 

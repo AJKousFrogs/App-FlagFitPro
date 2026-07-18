@@ -334,3 +334,45 @@ Audited clean 2026-07-18 (0 violations, 183 files) and enforced from then on by
 The checker **self-tests against planted positives and negatives before it
 reports** — a "clean" result from a silently-broken detector is worse than no
 check, because it buys false confidence.
+
+### A failed RELOAD discards the value — use `lastGoodByKey` where that matters
+
+`resource()` throws away its previously-loaded value when a **reload** fails:
+`hasValue()` goes false, `value()` throws, `status()` is `"error"` — even
+though good data was there a moment ago. Verified empirically 2026-07-18.
+
+So the plain read means "one flaky refetch and the data is gone":
+
+```ts
+// fine for a screen where an empty state is honest
+readonly data = computed(() =>
+  this.res.hasValue() ? this.res.value() : [],
+);
+
+// required where losing the data changes what an athlete is told to do
+readonly data = lastGoodByKey(this.res, () => this.supabase.userId(), []);
+```
+
+`lastGoodByKey` (`resource-last-good.ts`) keeps the last SUCCESSFULLY-loaded
+value across a failed reload, and **drops it the moment the key changes** so a
+second athlete can never inherit the first one's data.
+
+Use it when an empty value is not merely a blank screen but a changed
+decision. The two that forced it into existence:
+
+- `injury.service` — restrictions vanish ⇒ the injury guard stops firing ⇒ an
+  injured athlete gets a full session.
+- `event-travel.service` — arrival hours vanish ⇒ no arrival-day cap after a
+  long flight.
+
+`event-games` deliberately does NOT use it: its pre-resource version cleared on
+error too, and an empty game-day timeline is honest rather than dangerous.
+
+> Two things this cost, both worth remembering. First, the naive
+> `hasValue() ? value() : []` shipped in three migrations before anyone asked
+> what a failed _reload_ does — the answer was assumed, not checked. Second,
+> the first implementation used `linkedSignal`'s `previous`, passed a
+> hand-driven probe, and failed its own spec: signals are lazy, so a
+> resolved→error transition nobody observed never captured the good value. It
+> uses an `effect` now. A probe you drive by hand reads every intermediate
+> state; real consumers don't.

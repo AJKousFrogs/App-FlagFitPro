@@ -174,6 +174,27 @@ describe("InjuryService — failed load stays FAIL-OPEN (pre-existing)", () => {
   });
 });
 
+describe("InjuryService — a failed RELOAD must not clear the guard", () => {
+  beforeEach(() => TestBed.resetTestingModule());
+
+  it("keeps the last good injuries when a refetch fails", async () => {
+    const { service, get } = setup();
+    service.active();
+    await settle();
+    expect(service.restrictions()?.restrictsSprint).toBe(true);
+
+    // Network blips on the refetch.
+    get.mockReturnValue(of({ success: false, error: "offline" }) as never);
+    service.load();
+    await settle();
+
+    // The athlete is still injured. Silently clearing this would hand them a
+    // full session — see resource-last-good.ts.
+    expect(service.active()).toHaveLength(1);
+    expect(service.restrictions()?.restrictsSprint).toBe(true);
+  });
+});
+
 describe("InjuryService — report()", () => {
   beforeEach(() => TestBed.resetTestingModule());
 
