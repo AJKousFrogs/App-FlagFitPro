@@ -85,6 +85,19 @@ genuinely needs the fresh value before continuing, say so explicitly rather
 than assuming (see `schedule.service.ts#refresh`, which sets
 `resource.value` directly to avoid exactly that race).
 
+**Reload, or publish the response?** Decide by what the response actually
+contains:
+
+- **Partial** (the mutation returns one row) → `.reload()`. You don't have the
+  new list, only a piece of it. `event-games#create/update/remove`.
+- **Authoritative** (the mutation returns the whole new state) →
+  `resource.value.set(response)`. A refetch would re-request rows you were
+  just handed. `event-games#bulkSet`, `schedule#refresh`.
+
+Getting this backwards isn't a correctness bug, just a wasted round trip — but
+on a game-day screen over hotel wifi that round trip is the difference between
+instant and not.
+
 **3. Merge the two error sources into one signal.**
 
 A component wants one `error()`, not two. Fresh mutation errors win over stale
@@ -100,11 +113,20 @@ readonly error = computed<string | null>(() => {
 });
 ```
 
-**4. Gate optional lanes with `params: () => undefined`.**
+**4. `params: () => undefined` means idle. Use it for both "not applicable"
+and "nothing selected yet".**
 
 A resource whose `params` returns `undefined` stays **idle** — the loader never
-runs. That's how a lane that only applies to some athletes (QB throwing,
-cycle, position-specific work) costs nothing for everyone else:
+runs. Two distinct uses, same mechanism:
+
+- **Opt-in lane** — only applies to some athletes (QB throwing, cycle,
+  position-specific work), so it costs nothing for everyone else.
+- **No key chosen yet** — the resource is keyed on something the user picks,
+  and nothing is picked. `event-games.service.ts` keys on a
+  `competition_event` id; before one is selected, `undefined` keeps it quiet
+  instead of firing a request for `undefined`.
+
+The opt-in form:
 
 ```ts
 private readonly enabled = signal(false);
@@ -124,19 +146,38 @@ null param). Both appear in this codebase and they mean different things.
 
 ### Migration status
 
-Migrated: `schedule.service.ts`, `qb-throwing.service.ts`.
+Migrated: `schedule.service.ts`, `qb-throwing.service.ts`,
+`event-games.service.ts`.
 
 Still hand-rolling the triad (migrate opportunistically, one PR each, tests
-first): `acwr`, `athlete-events`, `body-measurement`, `channel`, `event-games`,
-`event-travel`, `injury`, `privacy-settings`, `protocol`, `readiness`.
+first): `acwr`, `athlete-events`, `body-measurement`, `channel`,
+`event-travel`, `injury`, `privacy-settings`, `readiness`.
 
-Two carry extra risk and should not be casual:
+### Not everything should migrate
 
+Three cases found so far where `resource()` is the wrong answer. Check for
+these before starting:
+
+- **`protocol.service.ts` — do not migrate as-is.** It's a command
+  (POST-to-generate), not a query, and more importantly its consumer's
+  `protocolTriggered` latch is **load-bearing**: ticking an exercise on the
+  Training screen is component-local state keyed by _positional_ block/exercise
+  index. If the protocol re-realized mid-session those indices would point at
+  different exercises, corrupting an athlete's progress mid-workout. A reactive
+  resource keyed on the prescription would do exactly that. Migrating it means
+  first deciding what should happen when intent changes mid-session — a product
+  question, not a refactor.
 - **`injury.service.ts`** — `periodization.service.ts` writes into its state
   (`this.injury.active.set([])` on logout), which a resource-derived computed
   can't accept. That coupling has to move in the same change, and the service
   feeds the engine's injury guard.
 - **`body-measurement.service.ts`** — bodyweight feeds per-kg nutrition dosing.
+
+The general shape of the trap: a manual `loaded`/`triggered` boolean latch in a
+consumer is **usually** redundant (the pilot's was — `resource()` already
+refuses to refetch for an unchanged key) but **sometimes** it is the only thing
+protecting local state from a refetch. Read what the latch guards before
+deleting it.
 
 ### Testing
 
