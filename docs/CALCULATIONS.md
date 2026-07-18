@@ -9,7 +9,8 @@ schema/endpoints/status.
 When it disagrees with the code, the **code wins** — fix this file in the same
 pass. Where a stale in-code _comment_ disagrees with the code's constants and
 tests, the constants+tests win (one such case is flagged in §9). As of
-**2026-07-14**.
+**2026-07-18** (§12.1 between-games refuel added — that constant family was
+load-bearing but had no entry here; §12 daily targets unchanged).
 
 > **Planned mechanization (deferred v3 M0 follow-up; see SOT §6 2026-07-16
 > engine-inspector entry):** the constants tables below are to be generated from
@@ -19,14 +20,15 @@ tests, the constants+tests win (one such case is flagged in §9). As of
 
 Canonical owners at a glance:
 
-| Family                          | Owner (single source)                                                                                                                                             | Consumers                                                                      |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Session load (AU)               | `netlify/functions/utils/acwr.js` `computeSessionLoad`                                                                                                            | ACWR, readiness, daily-load calendar                                           |
-| ACWR                            | `utils/acwr.js` `computeAcwrAt` + `ACWR_RISK_ZONES`                                                                                                               | `compute-acwr.js`, `calc-readiness.js`, client `acwr.service` (display mirror) |
-| Readiness                       | `netlify/functions/calc-readiness.js` → `readiness_scores`                                                                                                        | engine input, Today, staff lanes                                               |
-| Wellness score                  | `netlify/functions/utils/readiness-score.js`                                                                                                                      | `calc-readiness.js`, `wellness-checkin.js`                                     |
-| Prescription / guards           | `angular/src/app/core/services/periodization-engine.ts` (generated server port `netlify/functions/utils/periodization-engine.js`, byte-identical — parity-tested) | Today, This Week, COMPOSE, server endpoint                                     |
-| ACWR bands / population presets | `angular/src/app/core/config/evidence-presets.ts` (drift-guarded against server `ACWR_RISK_ZONES` by `tests/unit/acwr-config-drift.test.js`)                      | engine constants, client classification                                        |
+| Family                          | Owner (single source)                                                                                                                                                    | Consumers                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| Session load (AU)               | `netlify/functions/utils/acwr.js` `computeSessionLoad`                                                                                                                   | ACWR, readiness, daily-load calendar                                           |
+| ACWR                            | `utils/acwr.js` `computeAcwrAt` + `ACWR_RISK_ZONES`                                                                                                                      | `compute-acwr.js`, `calc-readiness.js`, client `acwr.service` (display mirror) |
+| Readiness                       | `netlify/functions/calc-readiness.js` → `readiness_scores`                                                                                                               | engine input, Today, staff lanes                                               |
+| Wellness score                  | `netlify/functions/utils/readiness-score.js`                                                                                                                             | `calc-readiness.js`, `wellness-checkin.js`                                     |
+| Prescription / guards           | `angular/src/app/core/services/periodization-engine.ts` (generated server port `netlify/functions/utils/periodization-engine.js`, byte-identical — parity-tested)        | Today, This Week, COMPOSE, server endpoint                                     |
+| ACWR bands / population presets | `angular/src/app/core/config/evidence-presets.ts` (drift-guarded against server `ACWR_RISK_ZONES` by `tests/unit/acwr-config-drift.test.js`)                             | engine constants, client classification                                        |
+| Between-games refuel            | `netlify/functions/utils/nutrition-protocols.js` `REFUEL` (client mirror `core/constants/nutrition.constants.ts`, guarded by `tests/unit/refuel-protein-parity.test.js`) | `/api/nutrition/refuel`, `tournament-plan.service.ts`, game-day timeline       |
 
 ---
 
@@ -659,6 +661,49 @@ Label mapping: `taper` → sprint bucket; `transition` → mixed bucket.
   engine, not in the UI.
 - **No bodyweight → no targets** (`nutritionFor` returns null; audit C7) —
   per-kg dosing is never computed from a fabricated default.
+
+### 12.1 Between-games refuel (tournament gap fuelling, 2026-07-18)
+
+Distinct from §12: those are whole-DAY targets, these govern the gap BETWEEN
+games on a multi-game day. Canonical owner is the server
+(`netlify/functions/utils/nutrition-protocols.js` → exported `REFUEL`); the
+client mirrors it in `angular/src/app/core/constants/nutrition.constants.ts`
+because the two runtimes can't share an import. The mirror is guarded by
+`tests/unit/refuel-protein-parity.test.js`, which also fails if either side
+regresses to a bare per-kg literal.
+
+| Constant              | Value   | Meaning                                        |
+| --------------------- | ------- | ---------------------------------------------- |
+| `CARB_G_PER_KG_PER_H` | **1.0** | carb **rate** while the aggressive window runs |
+| `CARB_WINDOW_CAP_H`   | **4**   | window cap; beyond it normal meals resume      |
+| `PROTEIN_G_PER_KG`    | **0.3** | co-ingested, for repair/MPS — **not** glycogen |
+| `FLUID_ML_PER_H`      | **600** | absent a measured sweat loss (500–750 range)   |
+| `SODIUM_MG_PER_L`     | **600** | 300–700 mg/L, to drive retention               |
+
+Gap doses (client, `tournament-plan.service.ts`):
+
+- **medium / long gap**: `1.0 g/kg/h × min(gap_hours, 4) × kg` — the same rate
+  model the server uses. This replaced three flat per-occasion literals
+  (`1`/`1.25`/`1.2 × kg`) on 2026-07-18; the correction only ever **raises**
+  the figure (80 kg athlete, 3 h gap: 100 g → 240 g), which is the right
+  direction for an app whose RED-S screen explicitly guards against
+  under-fuelling.
+- **turnaround (< 30 min)**: flat **12 g** · **short (< 75 min)**:
+  **0.4 g/kg** — both deliberately GI-limited, not resynthesis-limited: inside
+  ~75 min of kickoff gut tolerance binds first (glucose absorption saturates
+  ≈1.2 g/min, Gonzalez 2017).
+- **post-final-whistle recovery**: **1.2 g/kg** (ISSN upper rate over a 1 h
+  window — the one moment nothing downstream constrains the gut).
+
+Evidence: ISSN position stand (Kerksick 2017, 1.2 g/kg/h for <4 h recovery);
+Craven 2021 meta-analysis of 29 needle-biopsy trials (~1.0 g/kg/h maximises
+resynthesis; dosing FREQUENCY correlates positively with rate; co-ingested
+protein adds nothing to glycogen once carbs are adequate); Betts & Williams 2010. Full DOIs in SOT §6 (2026-07-17/18 entries) and the
+`nutrition.constants.ts` header.
+
+**Cramping is deliberately NOT modelled here.** No sodium or fluid figure in
+this table is presented to athletes as a cramp remedy — see LOGIC §13 for why
+(cramping is treated as a fatigue phenomenon, not an electrolyte one).
 
 ---
 

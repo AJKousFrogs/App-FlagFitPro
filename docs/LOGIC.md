@@ -6,7 +6,8 @@ sibling `CALCULATIONS.md` owns the formulas/constants; this file owns the
 **if-this-then-that**. `SOURCE_OF_TRUTH.md` owns schema/endpoints/status.
 
 **How to trust this file.** Written FROM the code. When it disagrees with the
-code, the **code wins** — fix this file in the same pass. As of **2026-07-13**.
+code, the **code wins** — fix this file in the same pass. As of **2026-07-18**
+(§13 game-day advisories added).
 
 ---
 
@@ -331,6 +332,57 @@ the week planner computed the day differently. Now:
   byte-identical) — so Today, This Week, the COMPOSE intent, and the server can
   never disagree about a day. The standalone single-day server prescription is
   retired as an authority (kept only as a runtime drift canary).
+
+---
+
+## 13. Game-day advisories — surface & cramping (2026-07-18)
+
+Two rules that produce **notes only**. Neither is a guard: they sit entirely
+outside `prescribeFor()`'s precedence pipeline (§1) and change no intent, RPE,
+duration, volume or macro target. Say it plainly, because the distinction is
+the whole design: an advisory can be wrong and cost an athlete some wasted
+attention; a guard can be wrong and cost them a season.
+
+**Surface advisory** (`gameday/surface-advisory.ts`) fires only when ALL THREE
+hold — otherwise silence:
+
+1. the event's `surface` is known to be `'turf'` (`null`/unknown → silence, no
+   guessing; `'grass'` → silence), **and**
+2. the day carries **more than one game** (back-to-back exposure), **and**
+3. the athlete has ≥1 active injury whose region matches the surface-sensitive
+   set (achilles · ankle · foot · heel · plantar · calf · shin · knee ·
+   patell…, case-insensitive substring match — `region` is a loose taxonomy
+   fed by both the chat tightness detector and free-text clinical entry).
+
+A healthy athlete on turf is told **nothing**. That restraint is deliberate:
+the evidence supports a shifted risk DISTRIBUTION (higher foot/ankle, and for
+football specifically higher knee), not a blanket "turf is dangerous", so a
+general warning would outrun what the literature justifies. See SOT §6 and the
+module header for citations.
+
+> **Input trap (a real bug this avoided):** it reads `InjuryService.active()`,
+> **not** `restrictions()`. `deriveRestrictions()` returns `null` unless an
+> injury carries a sprint/throwing-restricting `restrictionType`, and only
+> collects regions from those — so keying on `restrictions().regions` would
+> make the advisory silently never fire for a still-playing niggle (inflamed
+> Achilles, runner's knee), which is exactly the athlete it exists for.
+
+**Cramp guidance** (`gameday/cramp-guidance.ts`) fires on a **hot** day with
+**more than one game**, and enforces an ORDERING rather than a threshold:
+fatigue framing + stretch-and-hold first, sodium explicitly second and scoped
+to repeat crampers with heavy salty sweat. Both notes always ship together so
+the hierarchy stays visible; the sodium line is never rendered alone.
+
+The ordering IS the rule. Exercise-associated cramping is best explained by
+altered neuromuscular control in fatigued muscle rather than by dehydration or
+electrolyte deficit, and stretching — not salt — is the effective acute
+treatment. Telling a cramping athlete to reach for electrolytes is the popular
+answer and the least-supported one, so the app inverts it on purpose. Sodium
+is not dismissed, it is ranked. No fluid or sodium figure appears in this
+guidance (those stay single-sourced in `REFUEL` — CALCULATIONS §12.1).
+
+Heat is read from the same `conditions()` computation the Conditions card
+renders, so the two can't disagree about whether it's a hot day.
 
 ---
 
