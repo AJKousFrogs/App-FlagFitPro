@@ -1,9 +1,10 @@
-import { Injectable, computed, inject, signal } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { QB_THROW_MONITOR } from "../config/position-volume.config";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 import {
   QbThrowingData,
   QbThrowingSessionInput,
@@ -14,45 +15,108 @@ import {
  * `/api/qb-throwing` lane (V2.2). Wires the throw-count logger the engine's
  * `QB_THROW_MONITOR` (2026-07-14 re-anchor) consumes: ramp + arm-feeling
  * fatigue flags, never a borrowed pitch count.
+ *
+ * ── resource() reference implementation (2026-07-18) ────────────────────────
+ * This is the pilot for migrating the hand-rolled
+ * `_data`/`_loading`/`_error` signal triad to Angular's `resource()`. The
+ * shape to copy:
+ *
+ *   READS  → `resource()`. It owns loading/error/value and re-fetches when
+ *            its `params` identity changes. Never set those by hand.
+ *   WRITES → stay imperative (`firstValueFrom` + a plain `_saving` signal),
+ *            and call `.reload()` on success. `resource()` is a READ
+ *            primitive; forcing a mutation through it fights the API.
+ *   GATING → `params` returning `undefined` keeps the resource IDLE (the
+ *            loader never runs). That is how an opt-in lane stays free for
+ *            athletes it doesn't apply to — see {@link enable}.
+ *
+ * See `core/services/README.md` for the full convention.
  */
 @Injectable({ providedIn: "root" })
 export class QbThrowingService {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
 
-  private readonly _data = signal<QbThrowingData | null>(null);
-  private readonly _loading = signal(false);
-  private readonly _saving = signal(false);
-  private readonly _error = signal<string | null>(null);
+  /**
+   * The lane is OFF until a caller proves the athlete is a QB. While false,
+   * `params` is `undefined` and the loader never runs, so a non-QB never pays
+   * for a request they can't use. This replaces the consumer's former manual
+   * `loaded` boolean latch — `resource()` already refuses to re-fetch for an
+   * unchanged `params` identity, so the latch was guarding something the
+   * primitive guarantees.
+   */
+  private readonly enabled = signal(false);
 
-  readonly data = this._data.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly saving = this._saving.asReadonly();
-  readonly error = this._error.asReadonly();
-
-  async load(): Promise<void> {
-    this._loading.set(true);
-    this._error.set(null);
-    try {
-      const res = await firstValueFrom(
-        this.api.get<QbThrowingData>("/api/qb-throwing"),
-      );
-      if (res.success && res.data) {
-        this._data.set(res.data);
-      } else {
-        this._error.set(res.error ?? "Could not load throwing data");
+  private readonly throwingResource = resource({
+    // userId is in the key so the lane resets on logout and re-fetches for a
+    // different athlete, matching schedule.service.ts.
+    params: () => (this.enabled() ? this.supabase.userId() : undefined),
+    loader: async ({ params: userId }) => {
+      if (!userId) return null;
+      try {
+        const res = await firstValueFrom(
+          this.api.get<QbThrowingData>("/api/qb-throwing"),
+        );
+        if (res.success && res.data) return res.data;
+        throw new Error(res.error ?? "Could not load throwing data");
+      } catch (err) {
+        // The pre-resource version logged only genuine exceptions, not a
+        // `success: false` envelope. Both are load failures worth a log line.
+        this.logger.error("qb_throwing_load_failed", err);
+        throw err instanceof Error
+          ? err
+          : new Error("Could not load throwing data");
       }
-    } catch (err) {
-      this._error.set("Could not load throwing data");
-      this.logger.error("qb_throwing_load_failed", err);
-    } finally {
-      this._loading.set(false);
-    }
+    },
+  });
+
+  /**
+   * NOTE the `hasValue()` guard — it is load-bearing, not defensive noise.
+   * `resource.value()` THROWS while the resource is in an error state, so the
+   * obvious `computed(() => resource.value() ?? null)` propagates an exception
+   * into every consumer the moment a request fails, instead of degrading to
+   * null. Locked by the "surfaces a failed load" spec.
+   */
+  readonly data = computed(() =>
+    this.throwingResource.hasValue() ? this.throwingResource.value() : null,
+  );
+  readonly loading = this.throwingResource.isLoading;
+
+  // Mutation state is NOT resource state — it stays hand-rolled.
+  private readonly _saving = signal(false);
+  private readonly _mutationError = signal<string | null>(null);
+  readonly saving = this._saving.asReadonly();
+
+  /**
+   * One error surface for the component, whichever half failed. A fresh
+   * mutation error wins over a stale load error — it's the thing the athlete
+   * just did.
+   */
+  readonly error = computed<string | null>(() => {
+    const mutationError = this._mutationError();
+    if (mutationError) return mutationError;
+    const loadError = this.throwingResource.error();
+    if (!loadError) return null;
+    return loadError instanceof Error ? loadError.message : String(loadError);
+  });
+
+  /**
+   * Switch the lane on. Idempotent — safe to call from an effect that
+   * re-fires whenever `position` changes.
+   */
+  enable(): void {
+    this.enabled.set(true);
+  }
+
+  /** Force a re-fetch (no-op while the lane is disabled). */
+  reload(): void {
+    this.throwingResource.reload();
   }
 
   async logSession(input: QbThrowingSessionInput): Promise<void> {
     this._saving.set(true);
-    this._error.set(null);
+    this._mutationError.set(null);
     try {
       const res = await firstValueFrom(
         this.api.post("/api/qb-throwing", input),
@@ -60,11 +124,14 @@ export class QbThrowingService {
       if (!res.success) {
         throw new Error(res.error ?? "Could not log throwing session");
       }
-      await this.load();
+      // Fire-and-forget: the caller awaits the WRITE, not the refetch. The
+      // only consumer resets its form afterwards and reads `data()`
+      // reactively, so it picks the new value up when it lands.
+      this.throwingResource.reload();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Could not log throwing session";
-      this._error.set(message);
+      this._mutationError.set(message);
       this.logger.error("qb_throwing_log_failed", err);
       throw err;
     } finally {
@@ -79,7 +146,7 @@ export class QbThrowingService {
    */
   readonly monitor = computed<{ flags: string[]; youthNote: string | null }>(
     () => {
-      const data = this._data();
+      const data = this.data();
       const sessions = data?.recentSessions ?? [];
       const flags: string[] = [];
       if (sessions.length === 0) return { flags, youthNote: null };

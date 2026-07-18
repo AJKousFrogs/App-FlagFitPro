@@ -274,17 +274,14 @@ export class QbArmCareCardComponent {
   readonly armCareDone = signal(false);
   readonly iceApplied = signal(false);
 
-  private loaded = false;
-
   constructor() {
-    // Lazy-load once `position` resolves to "qb" — the signal starts null
-    // until the profile/schedule data loads, so a one-shot constructor check
-    // would miss it; the effect re-fires when position changes.
+    // Enable the lane once `position` resolves to "qb" — the signal starts
+    // null until the profile/schedule data loads, so a one-shot constructor
+    // check would miss it; the effect re-fires when position changes.
+    // enable() is idempotent and the underlying resource() won't re-fetch for
+    // an unchanged user, so this needs no manual "already loaded" latch.
     effect(() => {
-      if (this.isQb() && !this.loaded) {
-        this.loaded = true;
-        void this.qbThrowing.load();
-      }
+      if (this.isQb()) this.qbThrowing.enable();
     });
   }
 
