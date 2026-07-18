@@ -1,4 +1,8 @@
-# Service conventions
+# Service & form conventions
+
+Forms live in `core/forms/`. See [Signal Forms](#signal-forms) at the bottom.
+Note `core/forms/` (form schemas) is a different thing from `core/schemas/`
+(runtime API-response validation) — confusingly similar names, unrelated jobs.
 
 ## Data-fetching services: use `resource()`
 
@@ -187,3 +191,95 @@ to let the async loader resolve, and assertions on the _observable_ behaviour
 (was `api.get` called? did `data()` degrade to null?) rather than on resource
 internals. Cover the idle-gate explicitly — if a future Angular changes that
 semantic, you want a red test, not a silent request per athlete.
+
+---
+
+## Signal Forms
+
+Angular 22's `@angular/forms/signals` is **stable** in 22.0.6 (the only
+`@experimental` marker in its typings is on an unrelated WebMCP helper). There
+is no `ReactiveFormsModule`/`FormGroup`/`FormBuilder` anywhere in this repo and
+there should not be.
+
+Reference implementation: `core/forms/device-session.schema.ts` +
+`device-data.component.ts` (migrated 2026-07-18, 19 tests).
+
+### The shape
+
+```ts
+// core/forms/thing.schema.ts
+export interface ThingForm {
+  name: string;
+  count: number | null;
+}
+
+export const thingSchema = schema<ThingForm>((path) => {
+  required(path.name, { message: "Give it a name." });
+  min(path.count, 0, { message: "Can't be negative." });
+  validate(path, ({ value }) => /* cross-field rule */ null);
+});
+```
+
+```ts
+// component
+readonly model = signal<ThingForm>(emptyThing());
+readonly f = form(this.model, thingSchema);
+readonly canSave = computed(() => this.f().valid());
+```
+
+```html
+<input [formField]="f.name" />
+```
+
+### Four things that will bite you
+
+**1. The directive is `[formField]`, not `[field]`.** Import `FormField` from
+`@angular/forms/signals`. (`form[formRoot]` exists too, for the `<form>`
+element.)
+
+**2. You may NOT set `min`/`max`/`minlength`/`maxlength`/`required`/`disabled`/
+`readonly` as template attributes on a `[formField]` node.** It's a compile
+error:
+
+```
+NG8022: Setting the 'min' attribute is not allowed on nodes using
+the '[formField]' directive
+```
+
+This is the framework enforcing single-sourcing, and it's the good kind of
+strict: the directive PROJECTS the schema's constraints onto the DOM, so
+declaring `min(path.count, 0)` in the schema is what puts `min="0"` on the
+rendered input. Two sources of truth is precisely what it refuses to allow.
+Move the attribute into the schema; don't work around it.
+
+**3. `errors()` is field-local; use `errorSummary()` for a form-level message.**
+A field rule (`min`, `required` on a child) does NOT appear in the root's
+`errors()`. Bind a "why can't I submit" message to `f().errorSummary()` or the
+form sits invalid with nothing explaining why.
+
+**4. A custom error is just an object.** No helper needed — `ValidationError`
+is `{ kind: string; message?: string }`, so a tree validator returns
+`{ kind: "noMetrics", message: "…" }` or `null`.
+
+### Why bother
+
+Not for its own sake. The concrete wins on the pilot:
+
+- The safety rule ("never write an all-null objective-load row", Law #7) moved
+  from a `canSave` computed enforced only by a disabled button into a declared
+  validator on the model — it now holds wherever the form is used.
+- It became testable **without TestBed, without a fixture, without mounting
+  anything** (`core/forms/device-session.schema.spec.ts`).
+- A hardcoded template hint that duplicated the rule's wording is gone; the UI
+  renders the schema's own message.
+- Eight `[ngModel]` + `(ngModelChange)` pairs became eight `[formField]`
+  bindings, which removed the last legitimate `FormsModule` usage in the app.
+
+### Where NOT to use it
+
+Forms that are mostly **chip rows / custom buttons** rather than native inputs
+(`schedule-event-form.component.ts`, `staff/events/events.component.ts`) get
+much less out of this: `[formField]` binds native form controls, so a chip row
+still means `f.category().value.set(x)` by hand. The validation-schema half is
+still worth it if such a form grows real cross-field rules — the binding half
+is not. Judge per form; migrating one just to be consistent is not a reason.

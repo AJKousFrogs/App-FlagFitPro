@@ -18,79 +18,55 @@
       <div class="grid">
         <label class="fld">
           <span>Date</span>
-          <input
-            type="date"
-            [ngModel]="sessionDate()"
-            (ngModelChange)="sessionDate.set($event)"
-          />
+          <input type="date" [formField]="f.sessionDate" />
         </label>
         <label class="fld">
           <span>Device / source</span>
           <input
             type="text"
             placeholder="e.g. Garmin, phone GPS"
-            [ngModel]="deviceName()"
-            (ngModelChange)="deviceName.set($event)"
+            [formField]="f.deviceName"
           />
         </label>
         <label class="fld">
           <span>Duration (min)</span>
           <input
             type="number"
-            min="0"
             inputmode="numeric"
-            [ngModel]="durationMinutes()"
-            (ngModelChange)="durationMinutes.set($event)"
+            [formField]="f.durationMinutes"
           />
         </label>
         <label class="fld">
           <span>Total distance (m)</span>
           <input
             type="number"
-            min="0"
             inputmode="numeric"
-            [ngModel]="totalDistanceM()"
-            (ngModelChange)="totalDistanceM.set($event)"
+            [formField]="f.totalDistanceM"
           />
         </label>
         <label class="fld">
           <span>High-speed distance (m)</span>
           <input
             type="number"
-            min="0"
             inputmode="numeric"
-            [ngModel]="highSpeedDistanceM()"
-            (ngModelChange)="highSpeedDistanceM.set($event)"
+            [formField]="f.highSpeedDistanceM"
           />
         </label>
         <label class="fld">
           <span>Top speed (km/h)</span>
           <input
             type="number"
-            min="0"
             inputmode="decimal"
-            [ngModel]="maxVelocityKmh()"
-            (ngModelChange)="maxVelocityKmh.set($event)"
+            [formField]="f.maxVelocityKmh"
           />
         </label>
         <label class="fld">
           <span>Player load</span>
-          <input
-            type="number"
-            min="0"
-            inputmode="decimal"
-            [ngModel]="playerLoad()"
-            (ngModelChange)="playerLoad.set($event)"
-          />
+          <input type="number" inputmode="decimal" [formField]="f.playerLoad" />
         </label>
         <label class="fld fld--wide">
           <span>Notes</span>
-          <input
-            type="text"
-            placeholder="optional"
-            [ngModel]="notes()"
-            (ngModelChange)="notes.set($event)"
-          />
+          <input type="text" placeholder="optional" [formField]="f.notes" />
         </label>
       </div>
       <div class="actions">
@@ -107,10 +83,8 @@
             ><lucide-icon name="check" [size]="15" /> Logged</span
           >
         }
-        @if (!canSave()) {
-          <span class="hint"
-            >Add at least one metric (distance, duration…).</span
-          >
+        @if (formError(); as msg) {
+          <span class="hint">{{ msg }}</span>
         }
       </div>
     </div>

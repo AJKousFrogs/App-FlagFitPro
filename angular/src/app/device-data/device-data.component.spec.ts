@@ -88,14 +88,34 @@ describe("DeviceDataComponent", () => {
     const { fixture } = mount({ history: [] });
     const c = fixture.componentInstance;
     expect(c.canSave()).toBe(false);
-    c.totalDistanceM.set(3000);
+    c.model.update((v) => ({ ...v, totalDistanceM: 3000 }));
     expect(c.canSave()).toBe(true);
+  });
+
+  it("surfaces the schema's message rather than a hardcoded hint", () => {
+    const { fixture } = mount({ history: [] });
+    const c = fixture.componentInstance;
+    expect(c.formError()).toContain("at least one metric");
+    c.model.update((v) => ({ ...v, totalDistanceM: 3000 }));
+    expect(c.formError()).toBeNull();
+  });
+
+  it("rejects a negative metric (would corrupt the objective-load feed)", () => {
+    const { fixture } = mount({ history: [] });
+    const c = fixture.componentInstance;
+    c.model.update((v) => ({
+      ...v,
+      totalDistanceM: 3000,
+      durationMinutes: -10,
+    }));
+    expect(c.canSave()).toBe(false);
+    expect(c.formError()).toContain("negative");
   });
 
   it("logs a session and refreshes history", () => {
     const { fixture, log, list } = mount({ history: [] });
     const c = fixture.componentInstance;
-    c.totalDistanceM.set(5000);
+    c.model.update((v) => ({ ...v, totalDistanceM: 5000 }));
     c.save();
     expect(log).toHaveBeenCalledOnce();
     expect(log.mock.calls[0][0]).toMatchObject({
@@ -105,7 +125,21 @@ describe("DeviceDataComponent", () => {
     // one list() in constructor + one after save
     expect(list).toHaveBeenCalledTimes(2);
     expect(c.saved()).toBe(true);
-    expect(c.totalDistanceM()).toBeNull(); // numeric fields reset
+    expect(c.model().totalDistanceM).toBeNull(); // metrics reset
+  });
+
+  it("keeps date + device after a save, for a quick second entry", () => {
+    const { fixture } = mount({ history: [] });
+    const c = fixture.componentInstance;
+    c.model.update((v) => ({
+      ...v,
+      deviceName: "Garmin",
+      totalDistanceM: 5000,
+    }));
+    const date = c.model().sessionDate;
+    c.save();
+    expect(c.model().deviceName).toBe("Garmin");
+    expect(c.model().sessionDate).toBe(date);
   });
 
   it("shows the supported-device catalogue honestly (sync coming)", () => {

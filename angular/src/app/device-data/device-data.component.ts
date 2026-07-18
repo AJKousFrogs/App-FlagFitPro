@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { form, FormField } from "@angular/forms/signals";
 import { DecimalPipe } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { SparklineComponent } from "../shared/perf-viz";
@@ -17,6 +17,10 @@ import {
   WearableService,
   type DeviceStatus,
 } from "../core/services/wearable.service";
+import {
+  deviceSessionSchema,
+  emptyDeviceSession,
+} from "../core/forms/device-session.schema";
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -34,7 +38,7 @@ function todayIso(): string {
 @Component({
   selector: "app-device-data",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, DecimalPipe, LucideAngularModule, SparklineComponent],
+  imports: [FormField, DecimalPipe, LucideAngularModule, SparklineComponent],
   templateUrl: "./device-data.component.html",
   styleUrl: "./device-data.component.scss",
 })
@@ -48,15 +52,14 @@ export class DeviceDataComponent {
   readonly saving = signal(false);
   readonly saved = signal(false);
 
-  // form fields
-  readonly sessionDate = signal(todayIso());
-  readonly deviceName = signal("");
-  readonly durationMinutes = signal<number | null>(null);
-  readonly totalDistanceM = signal<number | null>(null);
-  readonly highSpeedDistanceM = signal<number | null>(null);
-  readonly maxVelocityKmh = signal<number | null>(null);
-  readonly playerLoad = signal<number | null>(null);
-  readonly notes = signal("");
+  /**
+   * Signal Forms (2026-07-18). The model is the source of truth; `f` is the
+   * field tree the template binds to via `[formField]`. Validation — including
+   * the "never write an all-null row" rule that used to be the `canSave`
+   * computed below — is declared in `core/forms/device-session.schema.ts`.
+   */
+  readonly model = signal(emptyDeviceSession(todayIso()));
+  readonly f = form(this.model, deviceSessionSchema);
 
   /** Distance sparkline over the most recent sessions (oldest→newest). */
   readonly distanceSeries = computed(() =>
@@ -67,17 +70,22 @@ export class DeviceDataComponent {
       .reverse(),
   );
 
-  /** A log needs at least one real metric — never write an all-null row. */
-  readonly canSave = computed(
-    () =>
-      !!this.sessionDate() &&
-      [
-        this.durationMinutes(),
-        this.totalDistanceM(),
-        this.highSpeedDistanceM(),
-        this.maxVelocityKmh(),
-        this.playerLoad(),
-      ].some((v) => typeof v === "number" && v > 0),
+  /**
+   * Now derived from the schema rather than restating the rule. Kept under the
+   * same name because it's the button's disabled-binding and the spec's entry
+   * point — the rule moved, the contract didn't.
+   */
+  readonly canSave = computed(() => this.f().valid());
+
+  /**
+   * First validation message to show under the form, if any.
+   *
+   * `errorSummary()` NOT `errors()`: the latter is field-local, so a
+   * field-level rule (the `min(…, 0)` non-negative bound) never appears on the
+   * root and the form would sit invalid with nothing explaining why.
+   */
+  readonly formError = computed<string | null>(
+    () => this.f().errorSummary()[0]?.message ?? null,
   );
 
   constructor() {
@@ -95,31 +103,31 @@ export class DeviceDataComponent {
 
   save(): void {
     if (!this.canSave() || this.saving()) return;
+    const v = this.model();
     this.saving.set(true);
     this.saved.set(false);
     this.externalLoad
       .log({
-        sessionDate: this.sessionDate(),
+        sessionDate: v.sessionDate,
         source: "manual",
-        deviceName: this.deviceName() || null,
-        durationMinutes: this.durationMinutes(),
-        totalDistanceM: this.totalDistanceM(),
-        highSpeedDistanceM: this.highSpeedDistanceM(),
-        maxVelocityKmh: this.maxVelocityKmh(),
-        playerLoad: this.playerLoad(),
-        notes: this.notes() || null,
+        deviceName: v.deviceName || null,
+        durationMinutes: v.durationMinutes,
+        totalDistanceM: v.totalDistanceM,
+        highSpeedDistanceM: v.highSpeedDistanceM,
+        maxVelocityKmh: v.maxVelocityKmh,
+        playerLoad: v.playerLoad,
+        notes: v.notes || null,
       })
       .subscribe((row) => {
         this.saving.set(false);
         if (row) {
           this.saved.set(true);
-          // reset the numeric fields; keep the date for a quick second entry
-          this.durationMinutes.set(null);
-          this.totalDistanceM.set(null);
-          this.highSpeedDistanceM.set(null);
-          this.maxVelocityKmh.set(null);
-          this.playerLoad.set(null);
-          this.notes.set("");
+          // Reset the metrics but keep the date + device for a quick second
+          // entry — one signal set now, instead of six.
+          this.model.set({
+            ...emptyDeviceSession(v.sessionDate),
+            deviceName: v.deviceName,
+          });
           this.refresh();
         }
       });
