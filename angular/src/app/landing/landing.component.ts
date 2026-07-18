@@ -4,7 +4,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
@@ -22,7 +21,7 @@ import { staffLaneFor } from "../core/guards/staff.guard";
  */
 @Component({
   selector: "app-landing",
-  imports: [NgOptimizedImage, FormsModule, LucideAngularModule],
+  imports: [NgOptimizedImage, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./landing.component.html",
   styles: [

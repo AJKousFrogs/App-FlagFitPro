@@ -5,7 +5,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { firstValueFrom, retry } from "rxjs";
@@ -40,7 +39,7 @@ interface RoleOption {
  */
 @Component({
   selector: "app-onboarding",
-  imports: [FormsModule, RouterLink, LucideAngularModule],
+  imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./onboarding.component.html",
   styles: [
