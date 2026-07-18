@@ -152,10 +152,11 @@ null param). Both appear in this codebase and they mean different things.
 
 Migrated: `schedule.service.ts`, `qb-throwing.service.ts`,
 `event-games.service.ts`, `athlete-events.service.ts`,
-`event-travel.service.ts`, `injury.service.ts`.
+`event-travel.service.ts`, `injury.service.ts`,
+`body-measurement.service.ts`.
 
-Still hand-rolling the triad (migrate opportunistically, one PR each, tests
-first): `body-measurement`, `privacy-settings`.
+Still hand-rolling the triad: `privacy-settings` (786 lines, 3 consumers) — the
+last one, and not urgent.
 
 ### Not everything should migrate
 
@@ -184,18 +185,15 @@ Cases where `resource()` is the wrong answer. Check for these before starting
   resource keyed on the prescription would do exactly that. Migrating it means
   first deciding what should happen when intent changes mid-session — a product
   question, not a refactor.
-- **`body-measurement.service.ts`** — migratable, but bodyweight feeds per-kg
-  nutrition dosing, so pin the derivations with tests first.
-
-`injury.service.ts` was on this list with the note that
-`periodization.service.ts` wrote into its state (`injury.active.set([])` on
-logout) and that a resource-derived computed can't accept an external write.
-That turned out to be backwards: keying on `userId` made the write
-**unnecessary** rather than impossible — sign-out drives the key to null, the
-loader short-circuits, and `active` empties on its own. Migrated 2026-07-18;
-the phantom-injury leak that write existed to prevent is now structurally
-impossible and pinned by a test. Worth remembering when a coupling looks like a
-blocker: check whether the new model deletes the reason for it.
+  `injury.service.ts` was on this list with the note that
+  `periodization.service.ts` wrote into its state (`injury.active.set([])` on
+  logout) and that a resource-derived computed can't accept an external write.
+  That turned out to be backwards: keying on `userId` made the write
+  **unnecessary** rather than impossible — sign-out drives the key to null, the
+  loader short-circuits, and `active` empties on its own. Migrated 2026-07-18;
+  the phantom-injury leak that write existed to prevent is now structurally
+  impossible and pinned by a test. Worth remembering when a coupling looks like a
+  blocker: check whether the new model deletes the reason for it.
 
 The general shape of the trap: a manual `loaded`/`triggered` boolean latch in a
 consumer is **usually** redundant (the pilot's was — `resource()` already
@@ -367,6 +365,14 @@ decision. The two that forced it into existence:
 
 `event-games` deliberately does NOT use it: its pre-resource version cleared on
 error too, and an empty game-day timeline is honest rather than dangerous.
+
+`body-measurement` uses it AND deviates on errors: its `error` signal carries
+mutation failures ONLY, never load failures. Stats renders that signal, and the
+original deliberately swallowed load errors ("an unavailable/empty history is a
+real state, not an error the athlete needs to see"). Merging the load error in,
+as the other services do, would start showing an error the original chose to
+hide. Match the service's own intent over the house pattern when they conflict
+— and say which you did, and why, in the class comment.
 
 > Two things this cost, both worth remembering. First, the naive
 > `hasValue() ? value() : []` shipped in three migrations before anyone asked
