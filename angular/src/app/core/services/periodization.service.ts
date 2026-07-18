@@ -144,18 +144,17 @@ export class PeriodizationService {
       if (!userId) {
         this.lastRecentSessionsUserId = null;
         this.recentSessions.set([]);
-        this.injury.active.set([]);
         return;
       }
       if (this.lastRecentSessionsUserId === userId) return;
       this.lastRecentSessionsUserId = userId;
       void this.loadRecentSessions(userId);
-      void this.injury.load();
       this.loadSettings();
-      // V2.4 acclimatization guard: travel state is per-user too, but
-      // EventTravelService now keys its resource() on userId directly, so it
-      // reloads on user change on its own — an explicit call here would just
-      // double-fetch. (Injuries + settings still need theirs.)
+      // Injuries and travel are NOT loaded/cleared here any more. Both services
+      // key their resource() on userId directly, so they load on sign-in and
+      // empty on sign-out on their own — the phantom-injury leak this effect was
+      // written to prevent is now structurally impossible rather than patched.
+      // Recent sessions + settings still need their explicit handling.
     });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).

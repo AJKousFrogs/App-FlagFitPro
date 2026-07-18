@@ -152,17 +152,29 @@ null param). Both appear in this codebase and they mean different things.
 
 Migrated: `schedule.service.ts`, `qb-throwing.service.ts`,
 `event-games.service.ts`, `athlete-events.service.ts`,
-`event-travel.service.ts`.
+`event-travel.service.ts`, `injury.service.ts`.
 
 Still hand-rolling the triad (migrate opportunistically, one PR each, tests
-first): `acwr`, `body-measurement`, `channel`, `injury`, `privacy-settings`,
-`readiness`.
+first): `body-measurement`, `privacy-settings`.
 
 ### Not everything should migrate
 
-Three cases found so far where `resource()` is the wrong answer. Check for
-these before starting:
+Cases where `resource()` is the wrong answer. Check for these before starting
+— the sweep stopped here on purpose, not because it ran out of steam:
 
+- **`readiness.service.ts` — do not migrate.** `calculateToday()` is a COMMAND
+  (a POST that computes and writes the score server-side), triggered by events
+  ("the athlete just logged wellness"), not by a params change. There is no
+  natural key; you'd have to invent a counter, which is `reload()` with extra
+  ceremony. It also carries a monotonic `calcRequestSeq` guard so a slower
+  earlier request can't clobber a fresher score — a deliberate concurrency
+  safeguard on a safety-critical value that a naive migration could lose.
+- **`acwr.service.ts` — do not migrate.** A client-side calculation service
+  (1328 lines) with a **realtime subscription**: `training_sessions` changes are
+  PUSHED in. `resource()` is a pull primitive. It could be bolted on (realtime
+  → `.reload()`), but the fetch is a small fraction of the file and the rest is
+  safety-critical load maths, so the value/risk is poor.
+- **`channel.service.ts`** — same realtime-push shape, 1384 lines, one consumer.
 - **`protocol.service.ts` — do not migrate as-is.** It's a command
   (POST-to-generate), not a query, and more importantly its consumer's
   `protocolTriggered` latch is **load-bearing**: ticking an exercise on the
@@ -172,11 +184,18 @@ these before starting:
   resource keyed on the prescription would do exactly that. Migrating it means
   first deciding what should happen when intent changes mid-session — a product
   question, not a refactor.
-- **`injury.service.ts`** — `periodization.service.ts` writes into its state
-  (`this.injury.active.set([])` on logout), which a resource-derived computed
-  can't accept. That coupling has to move in the same change, and the service
-  feeds the engine's injury guard.
-- **`body-measurement.service.ts`** — bodyweight feeds per-kg nutrition dosing.
+- **`body-measurement.service.ts`** — migratable, but bodyweight feeds per-kg
+  nutrition dosing, so pin the derivations with tests first.
+
+`injury.service.ts` was on this list with the note that
+`periodization.service.ts` wrote into its state (`injury.active.set([])` on
+logout) and that a resource-derived computed can't accept an external write.
+That turned out to be backwards: keying on `userId` made the write
+**unnecessary** rather than impossible — sign-out drives the key to null, the
+loader short-circuits, and `active` empties on its own. Migrated 2026-07-18;
+the phantom-injury leak that write existed to prevent is now structurally
+impossible and pinned by a test. Worth remembering when a coupling looks like a
+blocker: check whether the new model deletes the reason for it.
 
 The general shape of the trap: a manual `loaded`/`triggered` boolean latch in a
 consumer is **usually** redundant (the pilot's was — `resource()` already
