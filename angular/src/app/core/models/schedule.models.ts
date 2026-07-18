@@ -9,6 +9,25 @@
  * from these types. Add new fields here, never re-derive ad-hoc in components.
  */
 
+/**
+ * Playing surface (2026-07-18). `null` = unknown, which deliberately produces
+ * NO advisory rather than guessing. Shared by competition events and
+ * athlete-entered events; purely informational — it changes no training dose.
+ * Evidence: overall injury rates are similar on grass vs artificial turf, but
+ * foot/ankle load runs higher on turf (Gould 2022), so the app only speaks up
+ * when an athlete already carries a foot/ankle/Achilles/patellar restriction.
+ */
+export type PlayingSurface = "grass" | "turf" | null;
+
+/** Non-null surface options only — "not set" (unknown) is handled in the UI. */
+export const PLAYING_SURFACE_LABEL: Record<
+  Exclude<PlayingSurface, null>,
+  string
+> = {
+  grass: "Natural grass",
+  turf: "Artificial turf",
+};
+
 export type CompetitionKind = "league" | "cup" | "tournament" | "friendly";
 
 export type CompetitionLevel =
@@ -81,6 +100,13 @@ export interface CompetitionEvent {
   label: string | null;
   location: string | null;
   venue: string | null;
+  /**
+   * Playing surface — 'grass' | 'turf' | null (unknown). Sourced from
+   * competition_events via v_athlete_schedule, or from athlete_events for
+   * athlete-entered events. Drives the condition-aware game-day surface
+   * advisory only; it changes no training dose.
+   */
+  surface: PlayingSurface;
   hotelName: string | null;
   hotelAddress: string | null;
   notes: string | null;

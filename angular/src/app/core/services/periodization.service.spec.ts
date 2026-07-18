@@ -37,6 +37,7 @@ function event(overrides: Partial<CompetitionEvent> = {}): CompetitionEvent {
     label: "Round 1",
     location: null,
     venue: null,
+    surface: null,
     hotelName: null,
     hotelAddress: null,
     notes: null,

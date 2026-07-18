@@ -28,6 +28,10 @@ const IMPORTANCE = new Set(["regular", "high", "peak"]);
 // V2.4 — real competition tier for a national-team commitment, independent
 // of the coarser category. See the athlete_events.tier migration comment.
 const TIERS = new Set(["continental", "world", "olympic"]);
+// Playing surface (2026-07-18) — optional; null/unset means "unknown", which
+// deliberately produces NO advisory rather than guessing. Drives the
+// condition-aware game-day surface note only; it changes no training dose.
+const SURFACES = new Set(["grass", "turf"]);
 const STATUSES = new Set([
   "scheduled",
   "live",
@@ -111,6 +115,18 @@ function buildRow(body, { partial }) {
   if (!partial || has("venue")) {
     row.venue = str(body.venue, "venue", 200);
   }
+  if (!partial || has("surface")) {
+    const raw = body.surface;
+    if (raw === undefined || raw === null || raw === "") {
+      row.surface = null;
+    } else {
+      const surface = String(raw);
+      if (!SURFACES.has(surface)) {
+        throw validationError("surface must be grass or turf");
+      }
+      row.surface = surface;
+    }
+  }
   if (!partial || has("notes")) {
     row.notes = str(body.notes, "notes", 2000);
   }
@@ -142,6 +158,7 @@ function toApi(r) {
     tier: r.tier,
     location: r.location,
     venue: r.venue,
+    surface: r.surface ?? null,
     notes: r.notes,
     status: r.status,
     createdAt: r.created_at,

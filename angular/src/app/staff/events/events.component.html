@@ -157,6 +157,26 @@
         (input)="fVenue.set(val($event))"
       />
 
+      <p class="lbl" style="margin: 0">
+        Surface
+        <span class="muted"
+          >(optional — warns players carrying a foot/ankle/tendon issue on
+          multi-game turf days)</span
+        >
+      </p>
+      <div class="chiprow">
+        @for (s of surfaces; track s.key) {
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="fSurface() === s.key"
+            (click)="fSurface.set(s.key)"
+          >
+            {{ s.label }}
+          </button>
+        }
+      </div>
+
       <label class="lbl" for="ev-hotel-name"
         >Hotel <span class="muted">(optional — shown to players)</span></label
       >

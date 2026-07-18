@@ -287,6 +287,7 @@ function athleteEventToRow(ev) {
     label: ev.title,
     location: ev.location,
     venue: ev.venue,
+    surface: ev.surface ?? null,
     hotel_name: null,
     hotel_address: null,
     notes: ev.notes,
@@ -320,6 +321,9 @@ function rowToEvent(row) {
     label: row.label,
     location: row.location,
     venue: row.venue,
+    // 'grass' | 'turf' | null (unknown → no surface advisory). Comes from
+    // competition_events via v_athlete_schedule, or athlete_events directly.
+    surface: row.surface ?? null,
     hotelName: row.hotel_name,
     hotelAddress: row.hotel_address,
     notes: row.notes,

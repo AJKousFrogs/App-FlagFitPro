@@ -47,6 +47,14 @@ const IMPORTANCES: { key: EventImportance; label: string }[] = [
   { key: "peak", label: "Peak" },
 ];
 
+// "" = not set. Unknown surface deliberately produces NO advisory rather than
+// guessing — the game-day surface note only fires on a known 'turf'.
+const SURFACES: { key: "" | "grass" | "turf"; label: string }[] = [
+  { key: "", label: "Not set" },
+  { key: "grass", label: "Grass" },
+  { key: "turf", label: "Turf" },
+];
+
 const LEVELS: { key: CompetitionLevel; label: string }[] = [
   { key: "club", label: "Club" },
   { key: "regional", label: "Regional" },
@@ -104,6 +112,7 @@ export class StaffEventsComponent {
   readonly kinds = KINDS;
   readonly importances = IMPORTANCES;
   readonly levels = LEVELS;
+  readonly surfaces = SURFACES;
   readonly events = signal<EventRow[] | null>(null);
   readonly saved = signal<Set<string>>(new Set());
   readonly formatError = signal<string | null>(null);
@@ -127,6 +136,8 @@ export class StaffEventsComponent {
   readonly fLevel = signal<CompetitionLevel>("national");
   readonly fLocation = signal("");
   readonly fVenue = signal("");
+  /** "" = not set (unknown surface → no advisory). */
+  readonly fSurface = signal<"" | "grass" | "turf">("");
   readonly fHotelName = signal("");
   readonly fHotelAddress = signal("");
 
@@ -249,6 +260,7 @@ export class StaffEventsComponent {
     this.fLevel.set("national");
     this.fLocation.set("");
     this.fVenue.set("");
+    this.fSurface.set("");
     this.fHotelName.set("");
     this.fHotelAddress.set("");
     this.createError.set(null);
@@ -296,6 +308,7 @@ export class StaffEventsComponent {
       games: this.fGames(),
       location: this.fLocation().trim() || null,
       venue: this.fVenue().trim() || null,
+      surface: this.fSurface() || null,
       hotelName: this.fHotelName().trim() || null,
       hotelAddress: this.fHotelAddress().trim() || null,
       teamId,

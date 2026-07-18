@@ -11,6 +11,12 @@
  * team competition events remain read-only.
  */
 
+// Surface is a property of the event itself, not of who entered it — the
+// canonical type lives on the schedule spine and is shared by both sources.
+import type { PlayingSurface } from "./schedule.models";
+
+export type { PlayingSurface };
+
 /** Which level of the athlete's calendar an event belongs to. */
 export type AthleteEventCategory = "personal" | "domestic" | "national";
 
@@ -56,6 +62,7 @@ export interface AthleteEvent {
   tier: AthleteEventTier;
   location: string | null;
   venue: string | null;
+  surface: PlayingSurface;
   notes: string | null;
   status: AthleteEventStatus;
   createdAt: string;
@@ -74,6 +81,7 @@ export interface AthleteEventInput {
   tier?: AthleteEventTier;
   location?: string | null;
   venue?: string | null;
+  surface?: PlayingSurface;
   notes?: string | null;
   status?: AthleteEventStatus;
 }

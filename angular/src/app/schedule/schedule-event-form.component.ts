@@ -23,6 +23,7 @@ import {
   EVENT_CATEGORIES,
   EVENT_IMPORTANCES,
   EVENT_KINDS,
+  EVENT_SURFACES,
   EVENT_TIERS,
   KIND_DEFAULT_IMPORTANCE,
 } from "./schedule-event.options";
@@ -191,6 +192,26 @@ import {
         (input)="fLocation.set(val($event))"
       />
 
+      <p class="lbl" style="margin:0">
+        Surface
+        <span class="muted"
+          >(optional — lets us flag turf + back-to-back games if you're carrying
+          a foot, ankle or tendon issue)</span
+        >
+      </p>
+      <div class="chiprow">
+        @for (s of surfaces; track s.key) {
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="fSurface() === s.key"
+            (click)="fSurface.set(s.key)"
+          >
+            {{ s.label }}
+          </button>
+        }
+      </div>
+
       <label class="lbl" for="sch-notes"
         >Notes <span class="muted">(optional)</span></label
       >
@@ -268,12 +289,15 @@ export class ScheduleEventFormComponent implements OnInit {
   readonly fImportance = signal<AthleteEventImportance>("high");
   readonly fTier = signal<AthleteEventTier>(null);
   readonly fLocation = signal("");
+  /** "" = not set (unknown surface → no advisory). */
+  readonly fSurface = signal<"" | "grass" | "turf">("");
   readonly fNotes = signal("");
 
   readonly categories = EVENT_CATEGORIES;
   readonly kinds = EVENT_KINDS;
   readonly importances = EVENT_IMPORTANCES;
   readonly tiers = EVENT_TIERS;
+  readonly surfaces = EVENT_SURFACES;
 
   // event-target helpers — shared typed accessors (no two-way ngModel here)
   protected readonly val = eventValue;
@@ -292,6 +316,7 @@ export class ScheduleEventFormComponent implements OnInit {
     this.fImportance.set(ev.importance);
     this.fTier.set(ev.tier ?? null);
     this.fLocation.set(ev.location ?? "");
+    this.fSurface.set(ev.surface ?? "");
     this.fNotes.set(ev.notes ?? "");
   }
 
@@ -337,6 +362,7 @@ export class ScheduleEventFormComponent implements OnInit {
       // remembering to reset the chip.
       tier: this.fCategory() === "national" ? this.fTier() : null,
       location: this.fLocation().trim() || null,
+      surface: this.fSurface() || null,
       notes: this.fNotes().trim() || null,
     };
 

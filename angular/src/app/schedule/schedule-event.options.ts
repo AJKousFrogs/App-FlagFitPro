@@ -15,6 +15,7 @@ import {
   ATHLETE_EVENT_KIND_LABEL,
   ATHLETE_EVENT_TIER_LABEL,
 } from "../core/models/athlete-event.models";
+import { PLAYING_SURFACE_LABEL } from "../core/models/schedule.models";
 
 /** Importance suggested when a kind is picked; the athlete can still override. */
 export const KIND_DEFAULT_IMPORTANCE: Record<
@@ -59,6 +60,20 @@ export const EVENT_TIERS: { key: AthleteEventTier; label: string }[] = [
   { key: "continental", label: ATHLETE_EVENT_TIER_LABEL.continental },
   { key: "world", label: ATHLETE_EVENT_TIER_LABEL.world },
   { key: "olympic", label: ATHLETE_EVENT_TIER_LABEL.olympic },
+];
+
+/**
+ * Surface chips. The key is "" (not the `null` EVENT_TIERS uses) because the
+ * form signal round-trips through a string; the save path maps "" → null.
+ * Unknown surface deliberately produces NO advisory rather than guessing.
+ */
+export const EVENT_SURFACES: {
+  key: "" | "grass" | "turf";
+  label: string;
+}[] = [
+  { key: "", label: "Not set" },
+  { key: "grass", label: PLAYING_SURFACE_LABEL.grass },
+  { key: "turf", label: PLAYING_SURFACE_LABEL.turf },
 ];
 
 export function categoryLabel(c: AthleteEventCategory): string {

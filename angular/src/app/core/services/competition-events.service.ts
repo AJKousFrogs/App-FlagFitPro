@@ -4,6 +4,7 @@ import {
   CompetitionKind,
   CompetitionLevel,
   EventImportance,
+  PlayingSurface,
 } from "../models/schedule.models";
 
 export interface CompetitionEventRow {
@@ -26,6 +27,8 @@ export interface CreateEventInput {
   games: number;
   location: string | null;
   venue: string | null;
+  /** 'grass' | 'turf' | null (unknown → no surface advisory). */
+  surface: PlayingSurface;
   hotelName: string | null;
   hotelAddress: string | null;
   teamId: string;
@@ -145,6 +148,7 @@ export class CompetitionEventsService {
           importance: input.importance,
           location: input.location,
           venue: input.venue,
+          surface: input.surface,
           hotel_name: input.hotelName,
           hotel_address: input.hotelAddress,
           created_by: input.userId,

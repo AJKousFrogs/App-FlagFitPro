@@ -603,6 +603,7 @@ export type Database = {
           notes: string | null
           starts_at: string
           status: string
+          surface: string | null
           tier: string | null
           title: string
           updated_at: string
@@ -621,6 +622,7 @@ export type Database = {
           notes?: string | null
           starts_at: string
           status?: string
+          surface?: string | null
           tier?: string | null
           title: string
           updated_at?: string
@@ -639,6 +641,7 @@ export type Database = {
           notes?: string | null
           starts_at?: string
           status?: string
+          surface?: string | null
           tier?: string | null
           title?: string
           updated_at?: string
@@ -1954,6 +1957,7 @@ export type Database = {
           notes: string | null
           starts_at: string
           status: string
+          surface: string | null
           team_id: string
           updated_at: string
           venue: string | null
@@ -1977,6 +1981,7 @@ export type Database = {
           notes?: string | null
           starts_at: string
           status?: string
+          surface?: string | null
           team_id: string
           updated_at?: string
           venue?: string | null
@@ -2000,6 +2005,7 @@ export type Database = {
           notes?: string | null
           starts_at?: string
           status?: string
+          surface?: string | null
           team_id?: string
           updated_at?: string
           venue?: string | null
@@ -9566,6 +9572,7 @@ export type Database = {
           notes: string | null
           starts_at: string | null
           status: string | null
+          surface: string | null
           team_id: string | null
           team_name: string | null
           updated_at: string | null
