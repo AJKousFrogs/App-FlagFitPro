@@ -139,7 +139,10 @@ jobs:
       # OnPush + zoneless: mutating a signal's value in place changes no
       # reference, so nothing re-renders — silent, and not reliably caught in
       # review. The checker self-tests before reporting.
+      # working-directory is REQUIRED: this job defaults to ./angular, and the
+      # script lives in the ROOT package.json (it scans angular/ from outside).
       - name: Enforce no in-place signal mutation
+        working-directory: ./
         run: npm run check:signals
 
       - name: Enforce no encapsulation hacks
