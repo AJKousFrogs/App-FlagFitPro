@@ -45,8 +45,20 @@ export class ScheduleService {
     },
   });
 
-  /** Latest schedule snapshot, or `null` until first load. */
-  readonly snapshot = computed(() => this.scheduleResource.value() ?? null);
+  /**
+   * Latest schedule snapshot, or `null` until first load / after a failure.
+   *
+   * The `hasValue()` guard is load-bearing: `resource.value()` THROWS while
+   * the resource is in an error state, so the shorter
+   * `computed(() => this.scheduleResource.value() ?? null)` propagated an
+   * exception through `nextEvent`/`currentPhase`/`density*` and into every
+   * consumer (Today, gameday, periodization inputs) on any transient
+   * /api/schedule failure. Found 2026-07-18 during the qb-throwing
+   * `resource()` migration; locked by schedule.service.resource.spec.ts.
+   */
+  readonly snapshot = computed(() =>
+    this.scheduleResource.hasValue() ? this.scheduleResource.value() : null,
+  );
   readonly loading = this.scheduleResource.isLoading;
   readonly error = computed(() => {
     const err = this.scheduleResource.error();
