@@ -152,9 +152,10 @@ export class PeriodizationService {
       void this.loadRecentSessions(userId);
       void this.injury.load();
       this.loadSettings();
-      // V2.4 acclimatization guard — travel state is per-user too, so it must
-      // reload on user change alongside injuries/settings (same leak class).
-      void this.eventTravel.load();
+      // V2.4 acclimatization guard: travel state is per-user too, but
+      // EventTravelService now keys its resource() on userId directly, so it
+      // reloads on user change on its own — an explicit call here would just
+      // double-fetch. (Injuries + settings still need theirs.)
     });
 
     // Live weather → the prescription weather guard (metric: °C / mm / km/h).

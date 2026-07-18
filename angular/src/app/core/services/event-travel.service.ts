@@ -1,8 +1,9 @@
-import { Injectable, computed, inject, signal } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export type TravelMode = "bus" | "car" | "plane" | "train" | "other";
 
@@ -38,25 +39,64 @@ export interface EventTravelInput {
  * `/api/event-travel`. Feeds a proactive travel-aware card: today's wellness
  * check-in can suggest a travel-hours value from a declared leg instead of
  * only reacting after the fact. See docs/v2/V2.1-plan-travel.md.
+ *
+ * Follows the `resource()` convention in `core/services/README.md`. Loads
+ * eagerly on the signed-in user because the periodization engine reads
+ * {@link daysSinceArrival} and {@link arrivalDayTravelHours} on every plan —
+ * this is not an opt-in lane.
+ *
+ * SAFETY NOTE (pre-existing, deliberately preserved): a failed load leaves
+ * `legs` empty, so `daysSinceArrival`/`arrivalDayTravelHours` return null and
+ * the acclimatization + arrival-day guards simply don't fire. That is
+ * fail-OPEN — a transient travel-fetch failure means an athlete who just flew
+ * gets no arrival cap. The migration keeps that behaviour byte-for-byte rather
+ * than quietly changing it; flipping it to fail-closed is a safety/product
+ * call, not a refactor.
  */
 @Injectable({ providedIn: "root" })
 export class EventTravelService {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly supabase = inject(SupabaseService);
 
-  private readonly _legs = signal<EventTravelLeg[]>([]);
-  private readonly _loading = signal(false);
-  private readonly _error = signal<string | null>(null);
+  private readonly travelResource = resource({
+    params: () => this.supabase.userId(),
+    loader: async ({ params: userId }) => {
+      if (!userId) return [];
+      try {
+        const res = await firstValueFrom(
+          this.api.get<{ legs: EventTravelLeg[] }>("/api/event-travel"),
+        );
+        if (res.success && res.data) return res.data.legs ?? [];
+        throw new Error(res.error ?? "Could not load travel");
+      } catch (err) {
+        this.logger.error("event_travel_load_failed", err);
+        throw err instanceof Error ? err : new Error("Could not load travel");
+      }
+    },
+  });
 
-  readonly legs = this._legs.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly error = this._error.asReadonly();
+  /** `[]` until loaded / on failure — see the SAFETY NOTE above. */
+  readonly legs = computed<EventTravelLeg[]>(() =>
+    this.travelResource.hasValue() ? this.travelResource.value() : [],
+  );
+  readonly loading = this.travelResource.isLoading;
+
+  private readonly _mutationError = signal<string | null>(null);
+
+  readonly error = computed<string | null>(() => {
+    const mutationError = this._mutationError();
+    if (mutationError) return mutationError;
+    const loadError = this.travelResource.error();
+    if (!loadError) return null;
+    return loadError instanceof Error ? loadError.message : String(loadError);
+  });
 
   /** The leg (if any) whose window covers "now" — the trip happening today. */
   readonly legToday = computed(() => {
     const now = Date.now();
     return (
-      this._legs().find((leg) => {
+      this.legs().find((leg) => {
         const depart = new Date(leg.departAt).getTime();
         const arrive = new Date(leg.arriveAt).getTime();
         return now >= depart && now <= arrive;
@@ -73,7 +113,7 @@ export class EventTravelService {
    */
   readonly mostRecentArrival = computed(() => {
     const now = Date.now();
-    const past = this._legs()
+    const past = this.legs()
       .filter((leg) => new Date(leg.arriveAt).getTime() <= now)
       .sort(
         (a, b) =>
@@ -125,47 +165,43 @@ export class EventTravelService {
     return Math.round(hours);
   });
 
-  async load(): Promise<void> {
-    this._loading.set(true);
-    this._error.set(null);
-    try {
-      const res = await firstValueFrom(
-        this.api.get<{ legs: EventTravelLeg[] }>("/api/event-travel"),
-      );
-      if (res.success && res.data) {
-        this._legs.set(res.data.legs ?? []);
-      } else {
-        this._error.set(res.error ?? "Could not load travel");
-      }
-    } catch (err) {
-      this._error.set("Could not load travel");
-      this.logger.error("event_travel_load_failed", err);
-    } finally {
-      this._loading.set(false);
-    }
+  /**
+   * Force a refetch. The resource already loads on sign-in and re-loads for a
+   * different athlete, so this is only for "I want fresh data right now"
+   * (the wellness screen calls it on open, before offering a travel-hours
+   * suggestion from a declared leg).
+   */
+  load(): void {
+    this.travelResource.reload();
   }
 
   async create(input: EventTravelInput): Promise<EventTravelLeg> {
+    this._mutationError.set(null);
     const res = await firstValueFrom(
       this.api.post<EventTravelLeg>("/api/event-travel", input),
     );
     if (res.success && res.data) {
-      await this.load();
+      this.travelResource.reload();
       return res.data;
     }
-    throw new Error(res.error ?? "Could not add travel leg");
+    const message = res.error ?? "Could not add travel leg";
+    this._mutationError.set(message);
+    throw new Error(message);
   }
 
   async remove(id: string): Promise<void> {
+    this._mutationError.set(null);
     const res = await firstValueFrom(
       this.api.delete<{ id: string; deleted: boolean }>(
         `/api/event-travel/${id}`,
       ),
     );
     if (res.success) {
-      await this.load();
+      this.travelResource.reload();
       return;
     }
-    throw new Error(res.error ?? "Could not delete travel leg");
+    const message = res.error ?? "Could not delete travel leg";
+    this._mutationError.set(message);
+    throw new Error(message);
   }
 }
