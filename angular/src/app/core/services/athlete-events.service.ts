@@ -1,9 +1,10 @@
-import { Injectable, computed, inject, signal } from "@angular/core";
+import { Injectable, computed, inject, resource, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { ScheduleService } from "./schedule.service";
+import { SupabaseService } from "./supabase.service";
 import {
   AthleteEvent,
   AthleteEventInput,
@@ -15,91 +16,126 @@ import {
  *
  * Every write refreshes {@link ScheduleService} so the periodization engine,
  * Today, and Training immediately reflect the new event (taper/recovery).
+ *
+ * Follows the `resource()` convention in `core/services/README.md`.
  */
 @Injectable({ providedIn: "root" })
 export class AthleteEventsService {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly schedule = inject(ScheduleService);
+  private readonly supabase = inject(SupabaseService);
 
-  private readonly _events = signal<AthleteEvent[]>([]);
-  private readonly _loading = signal(false);
-  private readonly _error = signal<string | null>(null);
+  /**
+   * Kept lazy on purpose. This list is only read by the Schedule screen, so
+   * auto-loading on sign-in would spend a request for every athlete who never
+   * opens it. {@link load} switches it on — see README rule 4.
+   */
+  private readonly enabled = signal(false);
 
-  /** Athlete-entered events, soonest first. */
-  readonly events = this._events.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly error = this._error.asReadonly();
+  private readonly eventsResource = resource({
+    params: () => (this.enabled() ? this.supabase.userId() : undefined),
+    loader: async ({ params: userId }) => {
+      if (!userId) return [];
+      try {
+        const res = await firstValueFrom(
+          this.api.get<{ events: AthleteEvent[] }>("/api/athlete-events"),
+        );
+        if (res.success && res.data) return res.data.events ?? [];
+        throw new Error(res.error ?? "Could not load events");
+      } catch (err) {
+        this.logger.error("athlete_events_load_failed", err);
+        throw err instanceof Error ? err : new Error("Could not load events");
+      }
+    },
+  });
+
+  /** Athlete-entered events, soonest first. `[]` until loaded / on failure. */
+  readonly events = computed<AthleteEvent[]>(() =>
+    this.eventsResource.hasValue() ? this.eventsResource.value() : [],
+  );
+  readonly loading = this.eventsResource.isLoading;
+
+  private readonly _mutationError = signal<string | null>(null);
+
+  readonly error = computed<string | null>(() => {
+    const mutationError = this._mutationError();
+    if (mutationError) return mutationError;
+    const loadError = this.eventsResource.error();
+    if (!loadError) return null;
+    return loadError instanceof Error ? loadError.message : String(loadError);
+  });
 
   /** Upcoming athlete-entered events only (ends in the future). */
   readonly upcoming = computed(() => {
     const now = Date.now();
-    return this._events().filter(
+    return this.events().filter(
       (e) =>
         e.status !== "cancelled" &&
         new Date(e.endsAt ?? e.startsAt).getTime() >= now,
     );
   });
 
-  /** Load (or reload) the athlete's events. */
-  async load(): Promise<void> {
-    this._loading.set(true);
-    this._error.set(null);
-    try {
-      const res = await firstValueFrom(
-        this.api.get<{ events: AthleteEvent[] }>("/api/athlete-events"),
-      );
-      if (res.success && res.data) {
-        this._events.set(res.data.events ?? []);
-      } else {
-        this._error.set(res.error ?? "Could not load events");
-      }
-    } catch (err) {
-      this._error.set("Could not load events");
-      this.logger.error("athlete_events_load_failed", err);
-    } finally {
-      this._loading.set(false);
-    }
+  /**
+   * Load (or reload) the athlete's events. Preserves the pre-resource
+   * contract that calling this always results in a fetch — the first call
+   * switches the lane on, later ones force a refetch.
+   */
+  load(): void {
+    if (this.enabled()) this.eventsResource.reload();
+    else this.enabled.set(true);
   }
 
   async create(input: AthleteEventInput): Promise<AthleteEvent | null> {
+    this._mutationError.set(null);
     const res = await firstValueFrom(
       this.api.post<AthleteEvent>("/api/athlete-events", input),
     );
     if (res.success && res.data) {
-      await this.load();
+      // Single-row response — refetch the list (README rule 2).
+      this.eventsResource.reload();
+      // Awaited: the schedule spine feeds the engine, and callers navigate
+      // straight to screens that read it.
       await this.schedule.refresh();
       return res.data;
     }
-    throw new Error(res.error ?? "Could not add event");
+    const message = res.error ?? "Could not add event";
+    this._mutationError.set(message);
+    throw new Error(message);
   }
 
   async update(
     id: string,
     input: Partial<AthleteEventInput>,
   ): Promise<AthleteEvent | null> {
+    this._mutationError.set(null);
     const res = await firstValueFrom(
       this.api.put<AthleteEvent>(`/api/athlete-events/${id}`, input),
     );
     if (res.success && res.data) {
-      await this.load();
+      this.eventsResource.reload();
       await this.schedule.refresh();
       return res.data;
     }
-    throw new Error(res.error ?? "Could not update event");
+    const message = res.error ?? "Could not update event";
+    this._mutationError.set(message);
+    throw new Error(message);
   }
 
   async remove(id: string): Promise<void> {
+    this._mutationError.set(null);
     const res = await firstValueFrom(
       this.api.delete<{ id: string; deleted: boolean }>(
         `/api/athlete-events/${id}`,
       ),
     );
     if (res.success) {
-      await this.load();
+      this.eventsResource.reload();
       await this.schedule.refresh();
       return;
     }
-    throw new Error(res.error ?? "Could not delete event");
+    const message = res.error ?? "Could not delete event";
+    this._mutationError.set(message);
+    throw new Error(message);
   }
 }

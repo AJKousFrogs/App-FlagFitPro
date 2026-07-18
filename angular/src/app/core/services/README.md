@@ -151,11 +151,11 @@ null param). Both appear in this codebase and they mean different things.
 ### Migration status
 
 Migrated: `schedule.service.ts`, `qb-throwing.service.ts`,
-`event-games.service.ts`.
+`event-games.service.ts`, `athlete-events.service.ts`.
 
 Still hand-rolling the triad (migrate opportunistically, one PR each, tests
-first): `acwr`, `athlete-events`, `body-measurement`, `channel`,
-`event-travel`, `injury`, `privacy-settings`, `readiness`.
+first): `acwr`, `body-measurement`, `channel`, `event-travel`, `injury`,
+`privacy-settings`, `readiness`.
 
 ### Not everything should migrate
 
