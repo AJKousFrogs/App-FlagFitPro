@@ -20,8 +20,11 @@ import { LoggerService } from "../core/services/logger.service";
 import { TeamMembershipService } from "../core/services/team-membership.service";
 import { EventGamesService } from "../core/services/event-games.service";
 import { TournamentPlanService } from "../core/services/tournament-plan.service";
+import { InjuryService } from "../core/services/injury.service";
 import { TOURNAMENT_DAY } from "../core/config/position-volume.config";
 import { TournamentPlanBlock } from "../core/models/tournament-plan.models";
+import { surfaceAdvisory } from "./surface-advisory";
+import { crampGuidance } from "./cramp-guidance";
 
 /**
  * Game day — go-time card + heat guard + fueling timeline + hydration. Ported 1:1
@@ -54,6 +57,7 @@ export class GamedayComponent {
   private readonly logger = inject(LoggerService);
   private readonly teamMembership = inject(TeamMembershipService);
   private readonly eventGames = inject(EventGamesService);
+  private readonly injury = inject(InjuryService);
   readonly tournamentPlan = inject(TournamentPlanService);
 
   readonly nextEvent = this.schedule.nextEvent;
@@ -72,6 +76,46 @@ export class GamedayComponent {
       !this.tournamentPlan.isTournamentDay(),
   );
   readonly warmupNote = TOURNAMENT_DAY.note;
+
+  /**
+   * Games scheduled today: the coach's real kickoff list when Tournament Mode
+   * is populated, else the event's expected count.
+   */
+  private readonly gameCountToday = computed(() => {
+    const entered = this.eventGames.games().length;
+    return entered > 0 ? entered : (this.nextEvent()?.expectedGameCount ?? 0);
+  });
+
+  /**
+   * Condition-aware surface note — turf + a flagged foot/ankle/lower-leg/knee
+   * region + a multi-game day. Silent otherwise (see surface-advisory.ts for
+   * why this deliberately does NOT warn every athlete on turf).
+   *
+   * Reads injury.active() rather than injury.restrictions(): restrictions()
+   * returns null unless an injury formally restricts sprint/throwing, so a
+   * still-playing niggle (an inflamed Achilles, runner's knee) — precisely the
+   * athlete this note is for — would never reach it.
+   */
+  readonly surfaceNote = computed(
+    () =>
+      surfaceAdvisory({
+        surface: this.nextEvent()?.surface ?? null,
+        injuryRegions: this.injury.active().map((i) => i.region),
+        gameCount: this.gameCountToday(),
+      })?.note ?? null,
+  );
+
+  /**
+   * Cramp guidance for hot multi-game days — fatigue-first, sodium second.
+   * See cramp-guidance.ts for why that ordering is the point. Reuses the same
+   * heat determination the Conditions card renders, so the two can't disagree.
+   */
+  readonly cramp = computed(() =>
+    crampGuidance({
+      hot: this.conditions()?.label === "heat",
+      gameCount: this.gameCountToday(),
+    }),
+  );
 
   readonly isCoach = this.teamMembership.isCoach;
   readonly showScheduleEditor = signal(false);

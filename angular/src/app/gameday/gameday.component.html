@@ -59,6 +59,25 @@
     }
   }
 
+  @if (surfaceNote(); as note) {
+    <div class="card warn">
+      <div class="inline">
+        <lucide-icon name="shield-alert" /> <b>Turf + back-to-backs</b>
+      </div>
+      <small>{{ note }}</small>
+    </div>
+  }
+
+  @if (cramp(); as c) {
+    <div class="card info">
+      <div class="inline">
+        <lucide-icon name="activity" /> <b>If you cramp today</b>
+      </div>
+      <small>{{ c.note }}</small>
+      <small class="muted">{{ c.sodiumNote }}</small>
+    </div>
+  }
+
   @if (multiGame()) {
     <div class="card accent">
       <div class="inline">
