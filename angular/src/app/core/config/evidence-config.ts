@@ -230,6 +230,38 @@ export interface InjuryPreventionEvidenceConfig {
 }
 
 /**
+ * Game-day environment evidence (2026-07-18). EVIDENCE-ONLY, same contract as
+ * {@link InjuryPreventionEvidenceConfig}: it records what the literature says
+ * about conditions the athlete does NOT choose — the playing surface underfoot
+ * and cramping in the heat — and states plainly what the app does about each.
+ *
+ * These are deliberately NOT "modifiable risk factors": you cannot train your
+ * way out of the venue's surface. They shift risk distribution and therefore
+ * shift ADVICE, never dose. No numeric protocol values live here (fluid,
+ * sodium and carb figures stay single-sourced in nutrition-protocols.js /
+ * REFUEL — §4). Optional, like `phases`.
+ */
+export interface GameDayEnvironmentEvidenceConfig {
+  version: string;
+  population: PopulationAssumptions;
+  citations: ResearchCitation[];
+
+  /** Context factors that shift risk without being athlete-modifiable. */
+  contextFactors: {
+    factor: string; // e.g., "Artificial turf underfoot"
+    effect: string; // what the evidence says actually changes
+    appBehavior: string; // what the app does — honest, including "nothing"
+    citationIds: string[]; // keys into RESEARCH_CITATIONS
+  }[];
+
+  scienceNotes: {
+    surface: string;
+    cramping: string;
+    coachOverride: string;
+  };
+}
+
+/**
  * Complete evidence configuration preset
  */
 export interface EvidencePreset {
@@ -244,6 +276,7 @@ export interface EvidencePreset {
   tapering: TaperingEvidenceConfig;
   phases?: PhaseEvidenceConfig; // Optional phase definitions
   injuryPrevention?: InjuryPreventionEvidenceConfig; // Optional (2026-07-18)
+  gameDayEnvironment?: GameDayEnvironmentEvidenceConfig; // Optional (2026-07-18)
 
   // Metadata
   createdAt: string; // ISO date string

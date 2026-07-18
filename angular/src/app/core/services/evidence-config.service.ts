@@ -153,6 +153,15 @@ export class EvidenceConfigService {
   }
 
   /**
+   * Get game-day environment evidence (playing surface, cramping) from the
+   * active preset. Optional section — null for presets that don't define one.
+   * Evidence-only: no numeric protocol values live here.
+   */
+  getGameDayEnvironmentEvidence() {
+    return this.activePreset().gameDayEnvironment ?? null;
+  }
+
+  /**
    * Log preset change (for analytics/calibration)
    */
   private logPresetChange(presetId: string): void {

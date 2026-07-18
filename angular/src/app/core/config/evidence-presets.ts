@@ -113,6 +113,49 @@ export const RESEARCH_CITATIONS: Record<string, ResearchCitation> = {
     notes:
       "Minimal exposure to high-velocity efforts carried the GREATEST injury risk ('being underloaded may be a mediator for noncontact injury'). The evidence basis for the engine's sprint-exposure floor — regular max-velocity running is protective.",
   },
+  // ── Game-day environment (2026-07-18) ──────────────────────────────────────
+  gould2022: {
+    authors:
+      "Gould, H. P., Lostetter, S. J., Samuelson, E. R., & Guyton, G. P.",
+    year: 2022,
+    title:
+      "Lower Extremity Injury Rates on Artificial Turf Versus Natural Grass Playing Surfaces: A Systematic Review",
+    journal: "The American Journal of Sports Medicine",
+    doi: "10.1177/03635465211069562",
+    notes:
+      "53 studies. On new-generation turf most articles (13/18) found SIMILAR overall injury rates, but the largest share reported a HIGHER foot-and-ankle rate on turf. Knee/hip similar for soccer — but football players at high levels were more likely to sustain a knee injury on turf. The evidence basis for the condition-aware surface advisory (and for including the knee/patellar tendon in its sensitive region set).",
+  },
+  venishetty2024: {
+    authors:
+      "Venishetty, N., Xiao, A. X., Ghanta, R., Reddy, R., Pandya, N. K., & Feeley, B. T.",
+    year: 2024,
+    title:
+      "Lower Extremity Injury Rates on Artificial Turf Versus Natural Grass Surfaces in the National Football League During the 2021 and 2022 Seasons",
+    journal: "Orthopaedic Journal of Sports Medicine",
+    doi: "10.1177/23259671241265378",
+    notes:
+      "Counterpoint to Gould's 'similar overall' conclusion: NFL 2021-22 showed a higher overall lower-extremity injury rate on turf (1.42 vs 1.22 injuries/game) and higher odds of season-ending surgery (OR 1.60). Kept alongside gould2022 so the advisory's wording stays inside a genuinely unsettled picture.",
+  },
+  schwellnus2008: {
+    authors: "Schwellnus, M. P.",
+    year: 2008,
+    title:
+      "Cause of exercise associated muscle cramps (EAMC) — altered neuromuscular control, dehydration or electrolyte depletion?",
+    journal: "British Journal of Sports Medicine",
+    doi: "10.1136/bjsm.2008.050401",
+    notes:
+      "Support for the 'electrolyte depletion' and 'dehydration' hypotheses comes mainly from anecdote, case series (18 cases) and one n=10 case-control; four prospective cohort studies do NOT support them. Altered neuromuscular control is the better-supported mechanism. The evidence basis for the app's fatigue-first cramp framing.",
+  },
+  nelson2016: {
+    authors: "Nelson, N. L., & Churilla, J. R.",
+    year: 2016,
+    title:
+      "A narrative review of exercise-associated muscle cramps: Factors that contribute to neuromuscular fatigue and management implications",
+    journal: "Muscle & Nerve",
+    doi: "10.1002/mus.25176",
+    notes:
+      "EAMC stems from an imbalance between excitatory muscle-spindle drive and inhibitory Golgi-tendon-organ drive to the alpha motor neurons, 'rather than dehydration or electrolyte deficits'. The most successful acute treatment is STRETCHING; prevention works by delaying exercise-induced fatigue. Directly underwrites the app's stretch-and-hold advice and its conditioning-over-salt ordering.",
+  },
 };
 
 /**
@@ -313,11 +356,56 @@ export const ADULT_FLAG_COMPETITIVE_V1: EvidencePreset = {
     },
   },
 
+  gameDayEnvironment: {
+    version: "1.0",
+    population: {
+      ageRange: "18-35 years",
+      sportType: "5v5 flag football",
+      competitionLevel: "competitive",
+      trainingFrequency: "3-6 sessions/week",
+      notes:
+        "Applies to competition days, including multi-game tournament days (the app's peak-exposure window).",
+    },
+    citations: [
+      RESEARCH_CITATIONS["gould2022"],
+      RESEARCH_CITATIONS["venishetty2024"],
+      RESEARCH_CITATIONS["schwellnus2008"],
+      RESEARCH_CITATIONS["nelson2016"],
+    ].filter((c): c is ResearchCitation => c !== undefined),
+    contextFactors: [
+      {
+        factor: "Artificial turf underfoot",
+        effect:
+          "Shifts the injury DISTRIBUTION rather than clearly raising the total: across 53 studies most new-generation-turf articles (13/18) found similar overall rates, while the largest share reported a higher foot-and-ankle rate on turf. Football players at high levels were also more likely to sustain a knee injury on turf (Gould 2022). Not unanimous — NFL 2021-22 data found a higher overall lower-extremity rate and higher season-ending-surgery odds on turf (Venishetty 2024).",
+        appBehavior:
+          "Advisory only, and deliberately narrow: a note fires ONLY when a known-turf event meets a multi-game day AND the athlete already carries a foot/ankle/lower-leg/knee-tendon restriction. Healthy athletes on turf are told nothing, and unknown surface stays silent rather than guessing. No training dose changes.",
+        citationIds: ["gould2022", "venishetty2024"],
+      },
+      {
+        factor: "Cramping on hot multi-game days",
+        effect:
+          "Exercise-associated muscle cramping is best explained by altered neuromuscular control in fatigued muscle — excitatory muscle-spindle drive rising while inhibitory Golgi-tendon-organ drive falls — 'rather than dehydration or electrolyte deficits'. Prospective cohort evidence does not support the electrolyte/dehydration hypotheses (Schwellnus 2008; Nelson 2016). Stretching is the most successful acute treatment; prevention works by delaying fatigue.",
+        appBehavior:
+          "The hot-multi-game cramp note leads with fatigue and prescribes stretch-and-hold plus pacing, and ranks sodium explicitly as a SECOND lever scoped to repeat crampers with heavy salty sweat. It states no fluid or sodium figures — those stay single-sourced in nutrition-protocols.js / REFUEL.",
+        citationIds: ["schwellnus2008", "nelson2016"],
+      },
+    ],
+    scienceNotes: {
+      surface:
+        "The honest reading is 'different risk shape, not simply more risk', and the picture is genuinely unsettled — Gould's systematic review and the newer NFL cohort disagree on overall rate. That uncertainty is why the app's surface advisory never tells an athlete not to play, never changes dose, and only speaks to someone whose already-flagged tissue matches the region the evidence actually implicates. Gould also notes the few studies finding MORE injuries on grass were all turf-industry funded.",
+      cramping:
+        "The popular 'you cramped because your electrolytes ran out' model is the one the evidence least supports, and repeating it sends a cramping athlete to reach for salt instead of addressing fatigue. The app inverts that ordering on purpose. Sodium is not dismissed — it is ranked second and scoped to the subgroup where it is defensible.",
+      coachOverride:
+        "A coach or physio with venue knowledge (boot choice, shoe-surface interface, a specific athlete's cramp history) may add guidance beyond these population-level notes. Neither factor is an athlete-modifiable training variable, so neither is an input to the engine.",
+    },
+  },
+
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-07-18T00:00:00Z",
   changelog: [
     "v1.0 (2026-01-01): Initial release with evidence-based ACWR, readiness, and tapering configurations",
     "v1.0 (2026-07-18): Added injuryPrevention evidence section (Nordic/fascicle-length + sprint-exposure evidence — van Dyk 2019, Bourne 2018, Colby 2018) after a PubMed evidence audit. Evidence-only; no calculation change.",
+    "v1.0 (2026-07-18): Added gameDayEnvironment evidence section (playing surface — Gould 2022, Venishetty 2024; cramping — Schwellnus 2008, Nelson 2016) behind the condition-aware surface advisory and the fatigue-first cramp guidance. Evidence-only; no calculation change.",
   ],
 };
 
