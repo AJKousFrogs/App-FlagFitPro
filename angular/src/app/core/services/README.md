@@ -283,3 +283,34 @@ much less out of this: `[formField]` binds native form controls, so a chip row
 still means `f.category().value.set(x)` by hand. The validation-schema half is
 still worth it if such a form grows real cross-field rules — the binding half
 is not. Judge per form; migrating one just to be consistent is not a reason.
+
+---
+
+## Never mutate a signal's value in place
+
+Every component here is `OnPush` under `provideZonelessChangeDetection()`. A
+signal notifies consumers when its **reference** changes. Mutating the held
+array/object/Set in place changes no reference, so nothing re-renders — the
+data is right and the screen is wrong, with no error anywhere. On a
+load-management screen that's an athlete reading a stale prescription.
+
+```ts
+// ✗ silent staleness
+this.items().push(x);
+const arr = this.items();
+arr.push(x);
+this.chosen().add(x);
+
+// ✓ replace the value
+this.items.update((v) => [...v, x]);
+this.chosen.update((s) => new Set(s).add(x));
+```
+
+Watch `.sort()` and `.reverse()` — they mutate the receiver. Fine on a fresh
+array (`[...xs].sort()`, `xs.filter(…).sort()`), a bug on a signal's own array.
+
+Audited clean 2026-07-18 (0 violations, 183 files) and enforced from then on by
+`npm run check:signals` (`scripts/check-signal-mutation.mjs`), which runs in CI.
+The checker **self-tests against planted positives and negatives before it
+reports** — a "clean" result from a silently-broken detector is worse than no
+check, because it buys false confidence.

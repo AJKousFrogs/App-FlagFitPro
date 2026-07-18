@@ -136,6 +136,12 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      # OnPush + zoneless: mutating a signal's value in place changes no
+      # reference, so nothing re-renders — silent, and not reliably caught in
+      # review. The checker self-tests before reporting.
+      - name: Enforce no in-place signal mutation
+        run: npm run check:signals
+
       - name: Enforce no encapsulation hacks
         run: |
           if git grep -n "::ng-deep" -- src; then
