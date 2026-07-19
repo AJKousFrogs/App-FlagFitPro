@@ -210,7 +210,15 @@ export class OnboardingComponent {
     Sled: false,
     Bands: true,
   });
-  readonly preferredTime = signal("evening");
+  /**
+   * "HH:MM", venue-local. Replaces the old Morning/Afternoon/Evening select
+   * whose answer was sent as `preferredTime` — a key NO server code ever read
+   * (found in the 2026-07-19 contract audit; the athlete's answer was silently
+   * discarded). Saved through the same `teamTrainingDays.time` channel Settings
+   * uses, which anchors the Phase 5b cooler-hour suggestion from day one.
+   * Default matches Settings' default.
+   */
+  readonly trainingTime = signal("18:00");
 
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -296,7 +304,11 @@ export class OnboardingComponent {
               equipment: Object.keys(this.equipment()).filter(
                 (k) => this.equipment()[k],
               ),
-              preferredTime: this.preferredTime(),
+              // days:[] is correct for a first write — recurring practice days
+              // aren't known at onboarding; the engine reads .time independently
+              // (periodization-prescription parseTrainingHour), so Phase 5b gets
+              // its anchor even with no days set.
+              teamTrainingDays: { days: [], time: this.trainingTime() },
               seasonCalendar: this.season().filter((w) => w.from && w.to),
             })
             .pipe(retry({ count: 1, delay: 2000 })),

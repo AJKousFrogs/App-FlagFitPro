@@ -213,17 +213,14 @@
         </div>
       </div>
       <div class="field">
-        <label for="time">Preferred time</label>
-        <select
+        <label for="time">Usual training time</label>
+        <input
           id="time"
           class="input"
-          [value]="preferredTime()"
-          (change)="preferredTime.set($any($event.target).value)"
-        >
-          <option value="morning">Morning</option>
-          <option value="afternoon">Afternoon</option>
-          <option value="evening">Evening</option>
-        </select>
+          type="time"
+          [value]="trainingTime()"
+          (change)="trainingTime.set($any($event.target).value)"
+        />
       </div>
       @if (error(); as e) {
         <p class="note" style="color: var(--danger)">{{ e }}</p>
