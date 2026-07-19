@@ -8,8 +8,13 @@ import {
   signal,
 } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { form, FormField } from "@angular/forms/signals";
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
+import {
+  wellnessCheckinSchema,
+  defaultWellnessCheckin,
+} from "../core/forms/wellness-checkin.schema";
 import { TopbarComponent } from "../shared/topbar.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
 import { WellnessBarsComponent, type WellnessRow } from "../shared/perf-viz";
@@ -45,6 +50,7 @@ import { WELLNESS } from "../core/constants/wellness.constants";
     WellnessBarsComponent,
     RouterLink,
     LucideAngularModule,
+    FormField,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -179,12 +185,17 @@ export class WellnessComponent {
         .find((e) => e.date === todayKey);
       if (!entry) return;
       this.prefilledCheckin = true;
-      if (entry.sleep != null) this.sleepQuality.set(entry.sleep);
-      if (entry.sleepHours != null) this.sleepHours.set(entry.sleepHours);
-      if (entry.soreness != null) this.soreness.set(entry.soreness);
-      if (entry.energy != null) this.energy.set(entry.energy);
-      if (entry.mood != null) this.mood.set(entry.mood);
-      if (entry.stress != null) this.stress.set(entry.stress);
+      // Override only the fields the saved entry actually carries; the rest
+      // keep their neutral defaults (one model.update, was six .set calls).
+      this.model.update((m) => ({
+        ...m,
+        ...(entry.sleep != null ? { sleepQuality: entry.sleep } : {}),
+        ...(entry.sleepHours != null ? { sleepHours: entry.sleepHours } : {}),
+        ...(entry.soreness != null ? { soreness: entry.soreness } : {}),
+        ...(entry.energy != null ? { energy: entry.energy } : {}),
+        ...(entry.mood != null ? { mood: entry.mood } : {}),
+        ...(entry.stress != null ? { stress: entry.stress } : {}),
+      }));
       if (entry.travelHours != null) this.travelHours.set(entry.travelHours);
       // Form was already submitted today — lock it so the athlete can't accidentally
       // overwrite their real check-in with stale defaults on a return visit.
@@ -250,12 +261,14 @@ export class WellnessComponent {
   });
 
   // --- check-in sliders ---
-  readonly sleepQuality = signal(7);
-  readonly sleepHours = signal(7.5);
-  readonly soreness = signal(4);
-  readonly energy = signal(6);
-  readonly mood = signal(7);
-  readonly stress = signal(3);
+  /**
+   * The six wellness sliders (Signal Forms, 2026-07-19). `model` is the source
+   * of truth; `f` is the field tree the range inputs bind to via `[formField]`.
+   * Bounds are declared once in wellness-checkin.schema.ts. See that file for
+   * why this is a consistency migration, not a validation one.
+   */
+  readonly model = signal(defaultWellnessCheckin());
+  readonly f = form(this.model, wellnessCheckinSchema);
   /** Hours of seated travel today (drive/journey). Lowers readiness when high. */
   readonly travelHours = signal(0);
   readonly travelOptions: { label: string; h: number }[] = [
@@ -309,7 +322,7 @@ export class WellnessComponent {
     // athlete_injuries write that adapts the plan). One nudge, not a hard block —
     // a second tap ("Log check-in anyway") proceeds.
     const needsBodyCheck =
-      this.soreness() >= WELLNESS.HIGH_PAIN_THRESHOLD &&
+      this.model().soreness >= WELLNESS.HIGH_PAIN_THRESHOLD &&
       !this.tightRegion() &&
       this.activeInjuries().length === 0;
     if (needsBodyCheck && !this.bodyCheckPrompt()) {
@@ -322,12 +335,12 @@ export class WellnessComponent {
     this.submitError.set(null);
     this.wellnessSvc
       .logWellness({
-        sleep: this.sleepQuality(),
-        sleepHours: this.sleepHours(),
-        soreness: this.soreness(),
-        energy: this.energy(),
-        mood: this.mood(),
-        stress: this.stress(),
+        sleep: this.model().sleepQuality,
+        sleepHours: this.model().sleepHours,
+        soreness: this.model().soreness,
+        energy: this.model().energy,
+        mood: this.model().mood,
+        stress: this.model().stress,
         travelHours: this.travelHours(),
         // Pass selected tightness region so coach-inbox alert includes a body area.
         sorenessAreas: this.tightRegion() ? [this.tightRegion()!] : [],

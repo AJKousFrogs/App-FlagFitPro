@@ -119,13 +119,10 @@
         class="rng"
         id="sq"
         type="range"
-        min="1"
-        max="10"
-        [value]="sleepQuality()"
-        (input)="sleepQuality.set(+$any($event.target).value)"
+        [formField]="f.sleepQuality"
         aria-label="Sleep quality 1 to 10"
       />
-      <span class="val">{{ sleepQuality() }}</span>
+      <span class="val">{{ model().sleepQuality }}</span>
     </div>
     <div class="slider">
       <label for="sh">Sleep hours</label>
@@ -133,14 +130,11 @@
         class="rng"
         id="sh"
         type="range"
-        min="0"
-        max="12"
         step="0.5"
-        [value]="sleepHours()"
-        (input)="sleepHours.set(+$any($event.target).value)"
+        [formField]="f.sleepHours"
         aria-label="Sleep hours 0 to 12"
       />
-      <span class="val">{{ sleepHours() }}</span>
+      <span class="val">{{ model().sleepHours }}</span>
     </div>
     <div class="slider">
       <label for="so">Soreness</label>
@@ -148,13 +142,10 @@
         class="rng"
         id="so"
         type="range"
-        min="1"
-        max="10"
-        [value]="soreness()"
-        (input)="soreness.set(+$any($event.target).value)"
+        [formField]="f.soreness"
         aria-label="Soreness 1 to 10"
       />
-      <span class="val">{{ soreness() }}</span>
+      <span class="val">{{ model().soreness }}</span>
     </div>
     <div class="slider">
       <label for="en">Energy</label>
@@ -162,13 +153,10 @@
         class="rng"
         id="en"
         type="range"
-        min="1"
-        max="10"
-        [value]="energy()"
-        (input)="energy.set(+$any($event.target).value)"
+        [formField]="f.energy"
         aria-label="Energy 1 to 10"
       />
-      <span class="val">{{ energy() }}</span>
+      <span class="val">{{ model().energy }}</span>
     </div>
     <div class="slider">
       <label for="mo">Mood</label>
@@ -176,13 +164,10 @@
         class="rng"
         id="mo"
         type="range"
-        min="1"
-        max="10"
-        [value]="mood()"
-        (input)="mood.set(+$any($event.target).value)"
+        [formField]="f.mood"
         aria-label="Mood 1 to 10"
       />
-      <span class="val">{{ mood() }}</span>
+      <span class="val">{{ model().mood }}</span>
     </div>
     <div class="slider">
       <label for="st">Stress</label>
@@ -190,13 +175,10 @@
         class="rng"
         id="st"
         type="range"
-        min="1"
-        max="10"
-        [value]="stress()"
-        (input)="stress.set(+$any($event.target).value)"
+        [formField]="f.stress"
         aria-label="Stress 1 to 10"
       />
-      <span class="val">{{ stress() }}</span>
+      <span class="val">{{ model().stress }}</span>
     </div>
 
     <div style="margin-bottom: var(--s-3)">
