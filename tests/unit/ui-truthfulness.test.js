@@ -14,7 +14,7 @@ const read = (p) => readFileSync(resolve(here, "../..", p), "utf8");
  * athlete_injuries write, and the old fabricated copy must stay gone.
  */
 describe("Today body check: action-claims derive from real state, not hardcode", () => {
-  const src = read("angular/src/app/today/today.component.ts");
+  const src = read("angular/src/app/today/body-check/body-check.component.ts");
 
   it("no longer contains the fabricated 'Coach notified' / 'coach sees the flag' copy", () => {
     expect(src).not.toMatch(/coach notified/i);
