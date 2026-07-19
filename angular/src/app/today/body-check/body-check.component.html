@@ -1,0 +1,70 @@
+<section class="card bodycheck">
+  <div class="bc-head">
+    <div>
+      <div class="lbl">Body check</div>
+      <div class="sub">
+        Any niggles? Tap all that apply — 10 seconds, the earliest injury signal
+        we have.
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <button
+      class="flag-chip"
+      type="button"
+      [class.is-on]="isNoneOn()"
+      (click)="clearBody()"
+    >
+      None — all clear
+    </button>
+  </div>
+  @for (g of bodyGroups; track g) {
+    <div class="bc-group">
+      <span class="bc-lbl">{{ g }}</span>
+      @for (p of partsFor(g); track p.label) {
+        <button
+          class="flag-chip"
+          type="button"
+          [class.is-on]="isPartOn(p.label)"
+          (click)="togglePart(p.label)"
+        >
+          {{ p.label }}
+        </button>
+      }
+    </div>
+  }
+  @if (hasFlags()) {
+    <div class="bc-group">
+      <span class="bc-lbl">Worst one</span>
+      @for (s of ["mild", "moderate", "sharp"]; track s) {
+        <button
+          class="flag-chip sev-chip"
+          type="button"
+          [attr.data-sev]="s"
+          [class.is-on]="isSev(s)"
+          (click)="setSeverity(s)"
+        >
+          {{
+            s === "mild"
+              ? "Mild — aware of it"
+              : s === "moderate"
+                ? "Moderate — changes how I move"
+                : "Sharp — stops me"
+          }}
+        </button>
+      }
+    </div>
+    <div class="bc-group">
+      <button
+        class="btn btn--primary"
+        type="button"
+        [disabled]="!canLogBody()"
+        (click)="logBody()"
+      >
+        {{ bodyLogState() === "saving" ? "Logging…" : "Log it" }}
+      </button>
+    </div>
+  }
+  @if (bodyMsg(); as m) {
+    <span class="flag-msg {{ m.cls }}">{{ m.text }}</span>
+  }
+</section>

@@ -1,0 +1,93 @@
+/* Body check — moved verbatim from today.component.scss (2026-07-19).
+   View encapsulation means these could not stay in the parent: the card
+   would have rendered completely unstyled. */
+
+/* The host must be transparent to layout: Today's <main class="stack"> is a
+   grid, and before the extraction the <section class="card"> WAS the grid
+   item. Without this the host becomes the item instead and the gap/sizing
+   shift. Same pattern as topbar.component.ts. */
+:host {
+  display: contents;
+}
+
+.bodycheck {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+}
+.bc-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.bodycheck .lbl {
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-14);
+}
+.bodycheck .sub {
+  font-size: var(--fs-12);
+  color: var(--text-3);
+}
+.bc-head .spacer {
+  flex: 1;
+}
+.bc-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-6);
+}
+.bc-lbl {
+  flex: 0 0 var(--flex-92);
+  font-size: var(--fs-10);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: var(--fw-bold);
+}
+.flag-chip {
+  font-size: var(--fs-13);
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: var(--bw-thin) solid var(--line);
+  border-radius: var(--r-pill);
+  padding: var(--sp-6) var(--sp-13);
+  cursor: pointer;
+}
+.flag-chip:hover {
+  border-color: rgba(44, 224, 113, 0.4);
+  color: var(--brand-300);
+}
+.flag-chip.is-on {
+  background: var(--accent-soft);
+  border-color: rgba(44, 224, 113, 0.4);
+  color: var(--brand-300);
+  font-weight: var(--fw-semi);
+}
+.sev-chip.is-on[data-sev="moderate"] {
+  background: var(--warn-soft);
+  border-color: rgba(245, 183, 59, 0.45);
+  color: var(--warn);
+}
+.sev-chip.is-on[data-sev="sharp"] {
+  background: var(--danger-soft);
+  border-color: rgba(240, 86, 77, 0.5);
+  color: var(--danger);
+}
+.flag-msg {
+  font-size: var(--fs-12);
+  color: var(--brand-300);
+}
+.flag-msg.is-warn {
+  color: var(--warn);
+}
+.flag-msg.is-danger {
+  color: var(--danger);
+}
+
+@media (max-width: 620px) {
+  .bc-lbl {
+    flex-basis: 100%;
+  }
+}
