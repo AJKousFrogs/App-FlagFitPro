@@ -58,7 +58,6 @@
     "migrate:quickstart": "bash scripts/migration-quickstart.sh",
     "diagnostics:health": "node scripts/comprehensive-health-check.js",
     "diagnostics:features": "node scripts/feature-validator.js",
-    "audit:routes": "node scripts/audit-routes.js",
     "audit:error-shapes": "node scripts/audit-error-shape-contracts.js",
     "audit:rls-boundaries": "node scripts/audit-rls-boundaries.js",
     "docs:regen": "node scripts/docs-regen.mjs",

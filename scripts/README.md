@@ -33,7 +33,6 @@ Utility and tooling scripts for FlagFit Pro. All `npm run` commands below execut
 | `npm run lint:css`                | Stylelint                                           |
 | `npm run lint:tokens`             | Design token usage audit                            |
 | `npm run audit:error-shapes`      | Error-shape contract audit (CI gate)                |
-| `npm run audit:routes`            | Route classification audit                          |
 | `npm run audit:rls-boundaries`    | RLS boundary audit                                  |
 | `npm run audit:security`          | Security audit                                      |
 | `npm run audit:scss-duplications` | SCSS duplication check                              |
