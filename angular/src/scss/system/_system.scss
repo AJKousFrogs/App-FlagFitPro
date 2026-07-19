@@ -1097,7 +1097,10 @@
     width: 56px;
     height: 56px;
     border-radius: var(--r-pill);
-    background: var(--grad-brand);
+    /* Solid brand green, not --grad-brand (green→violet): the gradient orb was
+       the one element breaking the otherwise-disciplined green identity and
+       reading as a generic-AI accent. --grad-brand had no other consumer. */
+    background: var(--accent);
     color: var(--on-accent);
     display: flex;
     align-items: center;
