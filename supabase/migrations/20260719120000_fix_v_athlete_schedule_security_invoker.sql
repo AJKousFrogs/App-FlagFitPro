@@ -1,0 +1,12 @@
+-- 2026-07-19: restore security_invoker on v_athlete_schedule.
+--
+-- Migration 20260718120000 (add surface) recreated this view with
+-- CREATE OR REPLACE VIEW and did NOT restate the security_invoker option —
+-- Postgres treats an omitted option on REPLACE as "reset to default", silently
+-- stripping it. All six sibling views carry security_invoker=true; this one
+-- reverted to definer semantics, so a client querying it via PostgREST bypassed
+-- RLS on competition_events/competitions/teams/team_members and could read
+-- every team's schedule rows (incl. hotel_name/hotel_address). Supabase's
+-- security advisor flagged it as the sole ERROR; advisors were clean 2026-07-16,
+-- so the regression is attributable to that migration. Applied live via MCP.
+ALTER VIEW public.v_athlete_schedule SET (security_invoker = true);
