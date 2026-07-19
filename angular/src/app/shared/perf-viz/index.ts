@@ -14,7 +14,6 @@ export { KpiCardComponent } from "./kpi-card.component";
 export { ReadinessRingComponent } from "./readiness-ring.component";
 export { LoadTimelineComponent } from "./load-timeline.component";
 export { AcwrBandComponent } from "./acwr-band.component";
-export { LoadHeatmapComponent, type HeatCell } from "./load-heatmap.component";
 export {
   WellnessBarsComponent,
   type WellnessRow,

@@ -8,18 +8,11 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 import { NgOptimizedImage } from "@angular/common";
 import { TopbarComponent } from "../shared/topbar.component";
-import { AcwrTrendComponent } from "../shared/acwr-trend.component";
+import { AcwrBandComponent } from "../shared/perf-viz";
 
 import { AcwrService } from "../core/services/acwr.service";
 import { ReadinessService } from "../core/services/readiness.service";
 import { ApiService, API_ENDPOINTS } from "../core/services/api.service";
-
-interface Spark {
-  points: string;
-  last: { x: number; y: number };
-}
-const clamp = (v: number, lo: number, hi: number) =>
-  Math.min(hi, Math.max(lo, v));
 
 /**
  * Load / ACWR — the deep load-monitoring screen. Ported 1:1 from
@@ -32,7 +25,7 @@ const clamp = (v: number, lo: number, hi: number) =>
   imports: [
     NgOptimizedImage,
     TopbarComponent,
-    AcwrTrendComponent,
+    AcwrBandComponent,
     LucideAngularModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -104,37 +97,18 @@ export class AcwrComponent {
     };
   });
 
-  readonly chart = computed<Spark | null>(() => {
-    const vals = this.history()
-      .map((h) => h.acwr)
-      .filter((v) => Number.isFinite(v) && v > 0);
-    if (vals.length < 2) return null;
-    const n = vals.length;
-    const pts = vals.map((v, i) => ({
-      x: +((i / (n - 1)) * 359).toFixed(1),
-      y: +clamp(110 - v * 50, 8, 116).toFixed(1),
-    }));
-    return {
-      points: pts.map((p) => `${p.x},${p.y}`).join(" "),
-      last: pts[n - 1],
-    };
-  });
-
   /**
-   * Screen-reader description of the ACWR trend chart (audit V1). The svg
-   * previously had no role/aria-label at all, so the app's most safety-critical
-   * visualization was invisible to assistive tech. Announces the current value +
-   * zone + the reference thresholds so the chart conveys the same information
-   * non-visually.
+   * ACWR ratios over time, oldest→newest — feeds app-ff-acwr-band (replaced the
+   * plain app-acwr-trend so the line reads against its risk-zone bands). The
+   * band component owns its own y-scale, thresholds, and an equivalent
+   * safety-critical aria label (ratio + zone + safe band), so the audit-V1 a11y
+   * description that used to live here is preserved by the component itself.
    */
-  readonly chartAria = computed(() => {
-    const r = this.ratio();
-    const b = this.band();
-    if (r == null || !b) {
-      return "Acute-to-chronic workload ratio trend chart. Not enough history yet.";
-    }
-    return `Acute-to-chronic workload ratio trend. Current ratio ${r.toFixed(2)}, ${b.label}. Sweet spot is 0.8 to 1.3; danger above 1.5.`;
-  });
+  readonly acwrSeries = computed<number[]>(() =>
+    this.history()
+      .map((h) => h.acwr)
+      .filter((v) => Number.isFinite(v) && v > 0),
+  );
 
   readonly weeklyPct = computed(() => Math.round(this.weekly().changePercent));
 }

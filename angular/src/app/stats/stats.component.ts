@@ -11,10 +11,10 @@ import { NgOptimizedImage } from "@angular/common";
 import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 import { ReadinessTrendComponent } from "../shared/readiness-trend.component";
-import { AcwrTrendComponent } from "../shared/acwr-trend.component";
 import { LoadCalendarComponent } from "../shared/load-calendar.component";
 import { LoadDay } from "../shared/utils/load-calendar.util";
 import {
+  AcwrBandComponent,
   LoadTimelineComponent,
   WeightTrendComponent,
   type WeightPoint,
@@ -54,7 +54,7 @@ const clamp = (v: number, lo: number, hi: number) =>
     TopbarComponent,
     SkeletonComponent,
     ReadinessTrendComponent,
-    AcwrTrendComponent,
+    AcwrBandComponent,
     LoadCalendarComponent,
     LoadTimelineComponent,
     WeightTrendComponent,
@@ -165,14 +165,16 @@ export class StatsComponent {
     void this.bodySvc.loadHistory();
   }
 
-  /** ACWR sparkline — shared y-scale y = 110 − acwr·50 (1.5→35, 1.3→45, 0.8→70). */
-  readonly acwrChart = computed<Spark | null>(() =>
-    this.spark(
-      this.history()
-        .map((h) => h.acwr)
-        .filter((v) => Number.isFinite(v) && v > 0),
-      (v) => 110 - v * 50,
-    ),
+  /**
+   * ACWR ratios over time, oldest→newest. Feeds app-ff-acwr-band, which draws
+   * the line against its risk-zone bands (the plain app-acwr-trend it replaced
+   * couldn't show the zone context — the whole point of ACWR). The band
+   * component owns its own y-scale and thresholds (adult 0.8/1.3/1.5 defaults).
+   */
+  readonly acwrSeries = computed<number[]>(() =>
+    this.history()
+      .map((h) => h.acwr)
+      .filter((v) => Number.isFinite(v) && v > 0),
   );
 
   /** Readiness sparkline — y = 132 − 1.2·score (75→42, 55→66 gridlines). */

@@ -34,14 +34,9 @@
           </div>
         </div>
       </div>
-      @if (chart(); as c) {
+      @if (acwrSeries().length >= 2) {
         <div style="margin-top: var(--s-4)">
-          <app-acwr-trend
-            [points]="c.points"
-            [lastX]="c.last.x"
-            [lastY]="c.last.y"
-            [ariaLabel]="chartAria()"
-          />
+          <app-ff-acwr-band [series]="acwrSeries()" />
         </div>
       }
     </div>
