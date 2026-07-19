@@ -484,9 +484,8 @@ describe("ApiService", () => {
       expect(API_ENDPOINTS.community.getComments("123")).toBe(
         "/api/community/posts/123/comments",
       );
-      expect(API_ENDPOINTS.tournaments.details("456")).toBe(
-        "/api/tournaments/456",
-      );
+      // tournaments group removed 2026-07-19 — its endpoints never existed
+      // server-side (no redirect, no function; any call fell to the SPA).
       expect(API_ENDPOINTS.games.stats("789")).toBe("/api/games/789/stats");
     });
 

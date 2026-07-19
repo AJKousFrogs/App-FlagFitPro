@@ -482,15 +482,6 @@ export const API_ENDPOINTS = {
     challenges: "/api/community/challenges",
     health: "/api/community/health",
   },
-  tournaments: {
-    list: "/api/tournaments",
-    details: (tournamentId: string) => `/api/tournaments/${tournamentId}`,
-    register: (tournamentId: string) =>
-      `/api/tournaments/${tournamentId}/register`,
-    bracket: (tournamentId: string) =>
-      `/api/tournaments/${tournamentId}/bracket`,
-    health: "/api/tournaments/health",
-  },
   knowledge: {
     base: "/api/knowledge",
     search: "/api/knowledge/search",
@@ -612,8 +603,6 @@ export const API_ENDPOINTS = {
     aggregated: "/api/player-stats",
     dateRange: "/api/player-stats/date-range",
   },
-  // Fixtures
-  fixtures: "/api/fixtures",
   // Generic endpoints used by feature pages
   payments: "/api/payments",
   sleepData: "/api/sleep-data",
@@ -709,9 +698,6 @@ export const API_ENDPOINTS = {
   },
   account: {
     resume: "/api/account/resume",
-  },
-  player: {
-    notifyInactive: "/api/player/notify-inactive",
   },
   // Calibration logging endpoints
   calibration: {
