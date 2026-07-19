@@ -53,15 +53,20 @@ async function persistMappedRows(supabase, userId, rows, mappings) {
     const sessionType = `${row.trainingType || "imported_session"}`.trim();
     const workload = sessionWorkload(duration, rpe);
 
+    // Params MUST match the live log_training_session signature exactly —
+    // PostgREST resolves the function by its named-arg set, so a wrong name
+    // makes the whole call 404. This path used p_session_load (the column is
+    // p_workload) and p_source (no such param), so every import row failed.
+    // The sibling importer import-open-data.js already uses p_workload; this
+    // now matches. Verified 2026-07-19 against the live RPC (contract audit).
     const result = await supabase.rpc("log_training_session", {
       p_user_id: userId,
       p_session_date: sessionDate,
       p_session_type: sessionType,
       p_duration_minutes: duration,
-      p_session_load: workload,
+      p_workload: workload,
       p_status: "completed",
       p_notes: typeof row.notes === "string" ? row.notes : null,
-      p_source: "manual_import",
     });
 
     if (result.error) {
