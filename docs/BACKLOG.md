@@ -13,8 +13,9 @@ game-day caffeine timing, multi-tier competition calendar + global climate, QB
 arm-care lane wired. From the UI/UX audit: dead viz deps removed, `standalone:true`
 cleanup, shared `event.utils`, Stats "Performance" honest empty state, Today
 readiness card tappable, short-viewport hero collapse. Shared chart components:
-`app-acwr-trend` (was duplicated in acwr + stats) and `app-readiness-trend`
-(unified, `days`/`autoLoad` inputs). Shared `app-topbar` (bell + avatar were
+`app-ff-acwr-band` (the banded ACWR chart on acwr + stats; superseded the old
+`app-acwr-trend` on 2026-07-19) and `app-readiness-trend` (unified,
+`days`/`autoLoad` inputs). Shared `app-topbar` (bell + avatar were
 copy-pasted into 11 screens; left side projected, one implementation now).
 
 ## UI — bounded, safe, still worth doing
@@ -24,12 +25,12 @@ copy-pasted into 11 screens; left side projected, one implementation now).
   `acwr` per athlete); this consolidates the two partial overviews into one. Marginal
   now that the Cycle tab already renders trend micro-bars — do it when coach density
   is revisited.
-- **Chart tap-to-scrub** — the shared `app-acwr-trend` / `app-readiness-trend` are now
-  single implementations (extraction shipped); the remaining un-built polish is a
-  tap-to-scrub interaction to read a specific day's value off the sparkline.
+- **Chart tap-to-scrub** — the shared `app-ff-acwr-band` / `app-readiness-trend` are now
+  single implementations; the remaining un-built polish is a tap-to-scrub
+  interaction to read a specific day's value off the sparkline.
 - **Staff athlete-detail parity** — coach view is 2 static chips; embed the trend
-  charts for consented athletes. `app-acwr-trend` is already presentational (takes
-  `points`/`lastX`/`lastY`), so the ACWR half is a straight reuse; the readiness half
+  charts for consented athletes. `app-ff-acwr-band` is already presentational (takes
+  `series: number[]`), so the ACWR half is a straight reuse; the readiness half
   needs a presentational variant (today's `app-readiness-trend` reads the logged-in
   user's `ReadinessService.history()`, not an arbitrary athlete's) plus a consent-gated
   fetch of the athlete's series (`/api/monitoring-report?athleteId=` already returns it).
