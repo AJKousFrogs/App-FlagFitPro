@@ -68,6 +68,7 @@ test("design system applied: dark canvas + brand accent token resolve", async ({
     () => getComputedStyle(document.body).backgroundColor,
   );
   expect(bg).toBe("rgb(8, 9, 11)");
-  // the FAB renders with the brand gradient (a token-driven element)
+  // the FAB renders (a token-driven element; solid var(--accent) since
+  // 2026-07-19 — no longer the brand gradient)
   await expect(page.locator(".fab")).toBeVisible();
 });
