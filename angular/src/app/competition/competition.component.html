@@ -176,6 +176,78 @@
           }
         </div>
       </div>
+      <div style="margin: var(--s-2) 0">
+        <p
+          style="
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            margin: 0 0 var(--s-2);
+          "
+        >
+          How you played
+        </p>
+        <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="way() === 'one_way'"
+            (click)="setWay('one_way')"
+          >
+            One way
+          </button>
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="way() === 'both_ways'"
+            (click)="setWay('both_ways')"
+          >
+            Both ways
+          </button>
+        </div>
+      </div>
+      <div class="slider">
+        <label for="pp">Players on the day</label>
+        <input
+          class="rng"
+          id="pp"
+          type="range"
+          min="4"
+          max="15"
+          [value]="playersPresent() ?? 8"
+          (input)="playersPresent.set(+$any($event.target).value)"
+          aria-label="Players available on game day"
+        />
+        <span class="val">{{ playersPresent() ?? "—" }}</span>
+      </div>
+      <div style="margin: var(--s-2) 0">
+        <p
+          style="
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            margin: 0 0 var(--s-2);
+          "
+        >
+          Surface
+        </p>
+        <div class="inline" style="flex-wrap: wrap; gap: var(--s-2)">
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="surface() === 'grass'"
+            (click)="setSurface('grass')"
+          >
+            Natural grass
+          </button>
+          <button
+            type="button"
+            class="chip"
+            [class.sel]="surface() === 'turf'"
+            (click)="setSurface('turf')"
+          >
+            Artificial turf
+          </button>
+        </div>
+      </div>
       <div class="slider">
         <label for="gp">Games</label>
         <input
@@ -204,6 +276,17 @@
         />
         <span class="val">{{ formTouched() ? avgRpe() : "—" }}</span>
       </div>
+      @if (loadFactorLabel(); as lf) {
+        <p
+          style="
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            margin: var(--s-2) 0 0;
+          "
+        >
+          Competition load {{ lf }} — this day counts heavier toward your ACWR.
+        </p>
+      }
       @if (logged()) {
         <button class="btn secondary block" type="button" disabled>
           <lucide-icon name="check" /> Logged

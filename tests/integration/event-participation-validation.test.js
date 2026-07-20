@@ -148,4 +148,49 @@ describe("event-participation validation", () => {
     );
     expect(res.statusCode).toBe(403);
   });
+
+  it("accepts a full tournament day of minutes (regression: 320 was 422'd by the old 0-100 cap)", async () => {
+    const res = await handler(
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 8,
+        avgRpe: 8,
+        totalMinutes: 320,
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(201);
+    expect(state.rpcArgs.p_total_minutes).toBe(320);
+  });
+
+  it("still rejects minutes beyond a plausible tournament day", async () => {
+    const res = await handler(
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 8,
+        totalMinutes: 601,
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("folds one/both-ways, players and surface context into the session note", async () => {
+    await handler(
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 3,
+        avgRpe: 7,
+        totalMinutes: 166,
+        playedBothWays: false,
+        playersPresent: 5,
+        surface: "turf",
+      }),
+      {},
+    );
+    expect(state.rpcArgs.p_notes).toBe("one way · 5 players · turf");
+  });
 });
