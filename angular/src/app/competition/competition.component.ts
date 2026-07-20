@@ -15,6 +15,12 @@ import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { CompetitionEvent } from "../core/models/schedule.models";
+import {
+  competitionLoadFactor,
+  effectiveGameMinutes,
+  type PlayingSurface,
+  type PlayingWay,
+} from "./competition-load.util";
 
 interface PendingEvent {
   competition_event_id?: string;
@@ -73,14 +79,39 @@ export class CompetitionComponent {
     this.formTouched.set(true);
   }
 
-  // Game format → per-game minutes. This is what makes 2x12 vs 2x20 vs 2x40 load
-  // honest (a flat 40-min/game otherwise mis-scores short and World-champ formats).
+  // Game format → per-game minutes. This is what makes 2x12 vs 2x15 vs 2x20 load
+  // honest (a flat 40-min/game otherwise mis-scores the shorter formats). These are
+  // the three sanctioned flag formats (IFAF/AFFL play 2×20; domestic runs 2×12/2×15).
   readonly formats = [
     { label: "2 × 12 min", min: 24 },
+    { label: "2 × 15 min", min: 30 },
     { label: "2 × 20 min", min: 40 },
-    { label: "2 × 40 min", min: 80 },
   ] as const;
   readonly minutesPerGame = signal(40);
+
+  // Exposure inputs that scale the competition load fed to ACWR (single source:
+  // competition-load.util.ts). Defaults are neutral/conservative and preserve the
+  // app's prior behaviour: both-ways (= the old flat full-minutes model), and
+  // unknown players/surface (× 1.0 — never inferred). These do NOT gate submission
+  // (only games/RPE do), so an untouched card can't log a fabricated heavier day.
+  readonly way = signal<PlayingWay>("both_ways");
+  readonly playersPresent = signal<number | null>(null);
+  readonly surface = signal<PlayingSurface>(null);
+  readonly loadFactor = computed(() =>
+    competitionLoadFactor(this.way(), this.playersPresent(), this.surface()),
+  );
+  readonly loadFactorLabel = computed(() => {
+    const f = this.loadFactor();
+    return f === 1 ? null : `×${f.toFixed(2)}`;
+  });
+
+  setWay(w: PlayingWay): void {
+    this.way.set(w);
+  }
+  setSurface(s: Exclude<PlayingSurface, null>): void {
+    // Tapping the selected surface again clears it back to unknown (× 1.0).
+    this.surface.update((cur) => (cur === s ? null : s));
+  }
 
   constructor() {
     // The function returns { pending: [...] } (recent ended events awaiting a
@@ -160,8 +191,22 @@ export class CompetitionComponent {
         attended: true,
         gamesPlayed: this.games(),
         avgRpe: this.avgRpe(),
-        // real minutes from the chosen format → correct competition load
-        totalMinutes: this.games() * this.minutesPerGame(),
+        // Load-equivalent minutes: real game-clock minutes scaled by one/both-ways,
+        // players-on-the-day and surface (competition-load.util) → the Foster sRPE
+        // ACWR feed. The multiplier lives in the minutes because the fixed
+        // record_event_participation RPC scores load as minutes × RPE.
+        totalMinutes: effectiveGameMinutes(
+          this.games(),
+          this.minutesPerGame(),
+          this.way(),
+          this.playersPresent(),
+          this.surface(),
+        ),
+        // Context recorded for coach transparency (the multiplier is already in
+        // totalMinutes; the server stores this breakdown in the session note).
+        playedBothWays: this.way() === "both_ways",
+        playersPresent: this.playersPresent(),
+        surface: this.surface(),
       })
       .subscribe({
         next: () => this.logged.set(true),
