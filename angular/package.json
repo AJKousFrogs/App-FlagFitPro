@@ -85,7 +85,7 @@
     "@angular/cli": "~22.0.7",
     "@angular/compiler-cli": "~22.0.7",
     "@angular/platform-browser-dynamic": "~22.0.7",
-    "@axe-core/playwright": "^4.11.1",
+    "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^10.0.1",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify/utils": "^3.1.3",
