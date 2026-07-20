@@ -637,11 +637,20 @@ async function saveSettings(supabase, userId, payload, log = logger) {
       throw updateError;
     }
   } catch (updateError) {
-    log.warn("player_settings_user_update_warning", {
-      message: "Could not upsert users table",
+    // Profile fields mirror to users table for roster/nutrition/performance display.
+    // If this fails, the config save succeeded but the profile is incomplete. Log
+    // prominently so we can diagnose the issue (permission, constraint, concurrency race).
+    log.error("player_settings_user_update_failed", {
+      message: "Failed to update users table — profile fields not mirrored",
       err: updateError?.message,
+      code: updateError?.code,
       user_id: userId,
     });
+    // Onboarding persists the athlete_training_config successfully, which is the
+    // core. The users table update is a secondary denormalization. If it fails
+    // after config save succeeds, don't fail the entire request — the athlete can
+    // proceed and we'll fix the mirror. But log it so we can investigate the cause
+    // (permission issue, race condition, constraint violation).
   }
 
   return createSuccessResponse(
