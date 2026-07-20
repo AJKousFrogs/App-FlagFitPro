@@ -49,6 +49,36 @@
   @include system.all;
 }
 
+/* Mobile safe-area handling for notched devices (iPhone 14 Pro, etc).
+   Topbar and main content respect notch/home indicator via safe-area-inset. */
+@layer mobile {
+  app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* Topbar: honor safe-area for notch on iOS/iPad */
+  .topbar {
+    padding-left: max(var(--s-3), env(safe-area-inset-left));
+    padding-right: max(var(--s-3), env(safe-area-inset-right));
+    padding-top: max(var(--s-3), env(safe-area-inset-top));
+  }
+
+  /* Main screen content: horizontal safe-area + bottom padding for home indicator */
+  .screen {
+    padding-left: max(var(--s-3), env(safe-area-inset-left));
+    padding-right: max(var(--s-3), env(safe-area-inset-right));
+    padding-bottom: max(var(--s-4), env(safe-area-inset-bottom));
+  }
+
+  /* Forms and full-width containers also respect safe-area */
+  main {
+    padding-left: max(var(--s-3), env(safe-area-inset-left));
+    padding-right: max(var(--s-3), env(safe-area-inset-right));
+  }
+}
+
 /* Respect the OS "reduce motion" setting app-wide (WCAG 2.3.3). One global guard
    instead of per-component media queries — near-instant transitions/animations
    and no smooth-scroll for users with vestibular sensitivity. */
