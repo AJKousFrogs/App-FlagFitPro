@@ -47,12 +47,16 @@ interface RoleOption {
       :host {
         display: block;
         max-width: 480px;
+        width: 100%;
         margin: 0 auto;
         min-height: 100dvh;
+        /* Constrain width on small viewports to avoid horizontal overflow */
+        padding: 0 max(0px, calc((100% - 390px) / 2));
       }
       .dots {
         display: flex;
         gap: var(--s-2);
+        flex-wrap: wrap;
       }
       .dots i {
         width: 8px;
@@ -61,6 +65,7 @@ interface RoleOption {
         background: var(--surface-2);
         display: inline-block;
         transition: width 0.15s;
+        flex-shrink: 0;
       }
       .dots i.on {
         background: var(--accent);
@@ -83,6 +88,8 @@ interface RoleOption {
         padding: var(--s-3) var(--s-3);
         color: var(--text-strong);
         font-family: var(--font-body);
+        min-height: 44px;
+        font-size: 16px;
       }
       .chip.sel {
         background: var(--accent-soft);
@@ -224,10 +231,19 @@ export class OnboardingComponent {
   readonly error = signal<string | null>(null);
 
   next(): void {
-    // Can't leave the first step without a team chosen.
-    if (this.currentKey() === "team" && !this.selectedTeamId()) {
-      this.error.set("Pick your team to continue.");
-      return;
+    // Can't leave the first step without a team chosen and role explicitly set.
+    if (this.currentKey() === "team") {
+      if (!this.selectedTeamId()) {
+        this.error.set("Pick your team to continue.");
+        return;
+      }
+      // Require explicit role selection — never auto-assign. Staff roles especially
+      // must be chosen deliberately, not defaulted. This catches coaches/physios who
+      // click through without noticing the role chips.
+      if (this.role() === "player") {
+        this.error.set("Select your role (Player, Coach, etc.) to continue.");
+        return;
+      }
     }
     this.error.set(null);
     if (this.step() < this.totalSteps() - 1) this.step.update((s) => s + 1);
