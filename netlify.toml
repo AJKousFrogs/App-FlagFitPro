@@ -1749,6 +1749,49 @@
   status = 200
   force = true
 
+# Phase 3: Alert Engine
+[[redirects]]
+  from = "/api/alert-evaluate-rules"
+  to = "/.netlify/functions/alert-evaluate-rules"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alert-evaluate-rules/*"
+  to = "/.netlify/functions/alert-evaluate-rules"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alerts/athlete/*"
+  to = "/.netlify/functions/alert-get-athlete"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alerts/:alertId/acknowledge"
+  to = "/.netlify/functions/alert-acknowledge"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alerts/:alertId/acknowledge/*"
+  to = "/.netlify/functions/alert-acknowledge"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alerts/:alertId/resolve"
+  to = "/.netlify/functions/alert-resolve"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/alerts/:alertId/resolve/*"
+  to = "/.netlify/functions/alert-resolve"
+  status = 200
+  force = true
+
 
 
 # ============================================================================
