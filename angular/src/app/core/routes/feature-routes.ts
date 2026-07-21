@@ -174,6 +174,30 @@ export const featureRoutes: Routes = [
         title: "Athlete Readiness · FlagFit",
       },
       {
+        path: "psychologist-dashboard",
+        loadComponent: () =>
+          import("../../return-to-play/psychologist-dashboard.component").then(
+            (m) => m.PsychologistDashboardComponent,
+          ),
+        title: "Psychological Readiness · FlagFit",
+      },
+      {
+        path: "nutritionist-dashboard",
+        loadComponent: () =>
+          import("../../return-to-play/nutritionist-dashboard.component").then(
+            (m) => m.NutritionistDashboardComponent,
+          ),
+        title: "Nutrition Dashboard · FlagFit",
+      },
+      {
+        path: "admin",
+        loadComponent: () =>
+          import("../../return-to-play/administrator-dashboard.component").then(
+            (m) => m.AdministratorDashboardComponent,
+          ),
+        title: "Administration · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(
