@@ -158,6 +158,14 @@ export const featureRoutes: Routes = [
         title: "Injury Analytics · FlagFit",
       },
       {
+        path: "physio-protocol/:athleteId/:injuryId",
+        loadComponent: () =>
+          import("../../return-to-play/physio-protocol-dashboard.component").then(
+            (m) => m.PhysioProtocolDashboardComponent,
+          ),
+        title: "Physio Protocol · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(
