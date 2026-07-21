@@ -8,11 +8,12 @@ import {
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { switchMap, tap, catchError } from "rxjs/operators";
+import { switchMap, tap, catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { RtpAssessmentModalComponent } from "./rtp-assessment-modal.component";
 
 interface FunctionalCriterion {
   id: string;
@@ -83,7 +84,7 @@ interface ProtocolAssignment {
 @Component({
   selector: "app-physio-protocol-dashboard",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, RtpAssessmentModalComponent],
   template: `
     <div class="protocol-container">
       <div class="header">
@@ -103,6 +104,16 @@ interface ProtocolAssignment {
         </div>
       } @else if (assignment()) {
         <div class="content">
+          <!-- Assessment Modal -->
+          @if (assessmentModalOpen() && selectedCriterion()) {
+            <app-rtp-assessment-modal
+              [criterion]="selectedCriterion()!"
+              [assignmentId]="assignment()!.id"
+              (assessmentSubmitted)="onAssessmentSubmitted($event)"
+              (modalClosed)="onModalClosed()"
+            />
+          }
+
           <!-- Protocol Overview -->
           <section class="protocol-overview">
             <div class="overview-grid">
@@ -578,6 +589,8 @@ export class PhysioProtocolDashboardComponent {
   loading = signal(false);
   error = signal<string | null>(null);
   assignment = signal<ProtocolAssignment | null>(null);
+  assessmentModalOpen = signal(false);
+  selectedCriterion = signal<FunctionalCriterion | null>(null);
 
   daysToReturn = computed(() => {
     const a = this.assignment();
@@ -622,14 +635,60 @@ export class PhysioProtocolDashboardComponent {
           this.logger.error("Failed to load protocol", err);
           this.error.set("Failed to load protocol");
           return of(null);
-        })
+        }),
+        finalize(() => this.loading.set(false))
       )
-      .subscribe({ finalize: () => this.loading.set(false) });
+      .subscribe();
   }
 
   onRecordAssessment(criterion: FunctionalCriterion): void {
-    // TODO: Open assessment modal
-    this.logger.debug("Record assessment for", criterion);
+    this.selectedCriterion.set(criterion);
+    this.assessmentModalOpen.set(true);
+    this.logger.debug("Assessment modal opened for", criterion.criteria_name);
+  }
+
+  onModalClosed(): void {
+    this.assessmentModalOpen.set(false);
+    this.selectedCriterion.set(null);
+  }
+
+  onAssessmentSubmitted(event: {
+    criteriaId: string;
+    assessedValue: string;
+    pass_fail: boolean;
+    phaseAdvancementEligible: boolean;
+  }): void {
+    this.logger.info("Assessment recorded", event);
+
+    const a = this.assignment();
+    if (!a) return;
+
+    const updatedCriteria = a.criteria.map((c) => {
+      if (c.id === event.criteriaId) {
+        return {
+          ...c,
+          latestAssessment: {
+            criteria_id: event.criteriaId,
+            assessed_value: event.assessedValue,
+            pass_fail: event.pass_fail,
+            assessed_date: new Date().toISOString(),
+          },
+        };
+      }
+      return c;
+    });
+
+    this.assignment.set({
+      ...a,
+      criteria: updatedCriteria,
+    });
+
+    this.assessmentModalOpen.set(false);
+    this.selectedCriterion.set(null);
+
+    if (event.phaseAdvancementEligible) {
+      this.logger.info("Criteria complete for phase advancement");
+    }
   }
 
   onAdvancePhase(): void {
