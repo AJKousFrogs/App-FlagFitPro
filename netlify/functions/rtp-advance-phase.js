@@ -143,12 +143,19 @@ async function advancePhase(supabase, athleteId, injuryId, requestLogger) {
       });
     }
 
-    return createSuccessResponse({
-      success: true,
-      assignment: updatedAssignment,
-      nextPhaseDetails: nextPhaseDetails || null,
-      message: `Advanced to ${nextPhaseDetails?.phase_name || `Phase ${nextPhase}`}`,
-    });
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        success: true,
+        assignment: updatedAssignment,
+        nextPhaseDetails: nextPhaseDetails || null,
+        message: `Advanced to ${nextPhaseDetails?.phase_name || `Phase ${nextPhase}`}`,
+      }),
+    };
   } catch (err) {
     requestLogger.error("Unexpected error in advancePhase", {
       error: err.message,

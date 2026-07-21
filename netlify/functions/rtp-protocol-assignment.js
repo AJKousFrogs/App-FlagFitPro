@@ -64,11 +64,18 @@ async function getProtocolAssignment(
 
     if (assignmentError) {
       if (assignmentError.code === "PGRST116") {
-        return createSuccessResponse({
-          success: true,
-          assignment: null,
-          message: "No protocol assignment found for this injury",
-        });
+        return {
+          statusCode: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify({
+            success: true,
+            assignment: null,
+            message: "No protocol assignment found for this injury",
+          }),
+        };
       }
       requestLogger.error("DB error fetching assignment", {
         code: assignmentError.code,
@@ -131,14 +138,21 @@ async function getProtocolAssignment(
       };
     });
 
-    return createSuccessResponse({
-      success: true,
-      assignment: {
-        ...assignment,
-        currentPhase: currentPhase || null,
-        criteria: criteriaWithStatus,
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
       },
-    });
+      body: JSON.stringify({
+        success: true,
+        assignment: {
+          ...assignment,
+          currentPhase: currentPhase || null,
+          criteria: criteriaWithStatus,
+        },
+      }),
+    };
   } catch (err) {
     requestLogger.error("Unexpected error in getProtocolAssignment", {
       error: err.message,
