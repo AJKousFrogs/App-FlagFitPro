@@ -1,7 +1,8 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { getSupabaseClient } from "./utils/auth-helper.js";
 import {
   createSuccessResponse,
   createErrorResponse,
+  handleValidationError,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
@@ -50,7 +51,7 @@ async function verifyPhysioAccess(requestUserId, athleteId) {
   return { authorized: true };
 }
 
-async function getPhysioProtocol(supabase, athleteId, injuryId, requestLogger) {
+async function getPhysioProtocol(supabase, athleteId, injuryId, requestLogger, requestUserId) {
   try {
     const { data: rtp, error: rtpError } = await supabase
       .from("return_to_play_phases")
@@ -241,13 +242,15 @@ async function updatePhysioProtocol(
   }
 }
 
-async function handler(event, context) {
-  const requestLogger = buildRequestLogContext(logger, event);
+const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "physio-protocol",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: event.httpMethod === "GET" ? "READ" : "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      const requestLogger = buildRequestLogContext(logger, event);
 
-  return baseHandler(
-    event,
-    context,
-    async (supabase, requestUserId) => {
       const pathParts = event.path.split("/").filter((p) => p);
       const athleteId = pathParts[3];
       const injuryId = pathParts[4];
@@ -256,13 +259,15 @@ async function handler(event, context) {
         return handleValidationError("athleteId and injuryId required");
       }
 
-      const access = await verifyPhysioAccess(requestUserId, athleteId);
+      const access = await verifyPhysioAccess(userId, athleteId);
       if (!access.authorized) {
         return createErrorResponse(access.message, 403);
       }
 
+      const supabase = getSupabaseClient();
+
       if (event.httpMethod === "GET") {
-        return getPhysioProtocol(supabase, athleteId, injuryId, requestLogger);
+        return getPhysioProtocol(supabase, athleteId, injuryId, requestLogger, userId);
       }
 
       if (event.httpMethod === "POST") {
@@ -281,8 +286,6 @@ async function handler(event, context) {
 
       return createErrorResponse("Method not allowed", 405);
     },
-    requestLogger
-  );
-}
+  });
 
 export { handler };

@@ -126,6 +126,17 @@ type PositionFilter = string | "all";
               <span>Underload (&lt;0.8)</span>
             </div>
           </div>
+
+          <div class="export-actions">
+            <button (click)="exportToCSV()" class="export-btn">
+              <i-lucide name="download"></i-lucide>
+              Export CSV
+            </button>
+            <button (click)="exportToPDF()" class="export-btn">
+              <i-lucide name="file-pdf"></i-lucide>
+              Export PDF
+            </button>
+          </div>
         </section>
 
         <!-- Team Summary Bar -->
@@ -355,6 +366,40 @@ type PositionFilter = string | "all";
 
       .badge.underload {
         background: var(--info);
+      }
+
+      .export-actions {
+        display: flex;
+        gap: var(--s-2);
+        flex-wrap: wrap;
+        margin-top: var(--s-3);
+        padding-top: var(--s-3);
+        border-top: 1px solid var(--border);
+      }
+
+      .export-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--s-2);
+        padding: var(--s-2) var(--s-3);
+        background: var(--accent);
+        color: var(--on-accent);
+        border: none;
+        border-radius: var(--r-md);
+        cursor: pointer;
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-semibold);
+        transition: all 0.2s ease;
+      }
+
+      .export-btn:hover {
+        background: color-mix(in srgb, var(--accent) 110%, white);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .export-btn:active {
+        transform: translateY(0);
       }
 
       /* Summary Bar */
@@ -646,5 +691,155 @@ export class TeamAcwrHeatmapComponent {
       building_base: "— Building",
     };
     return labels[status] || status;
+  }
+
+  exportToCSV(): void {
+    try {
+      const summary = this.teamSummary();
+      const timestamp = new Date().toLocaleString();
+
+      let csv = "TEAM ACWR HEATMAP REPORT\n";
+      csv += `Date: ${timestamp}\n`;
+      csv += `Date Range: ${this.selectedDateRange()}\n`;
+      csv += `Position Filter: ${this.selectedPosition()}\n\n`;
+
+      csv += "SUMMARY STATISTICS\n";
+      csv += "Status,Count\n";
+      csv += `Safe,${summary.safe}\n`;
+      csv += `Yellow Flag,${summary.yellow_flag}\n`;
+      csv += `Red Flag,${summary.red_flag}\n`;
+      csv += `Underload,${summary.underload}\n`;
+      csv += `Building Base,${summary.building_base}\n\n`;
+
+      csv += "ATHLETE LOAD DATA\n";
+      csv +=
+        "Name,Position,ACWR Ratio,Acute Load (AU),Chronic Load (AU),Status\n";
+
+      this.filteredData().forEach((athlete) => {
+        const name = athlete.full_name || "Unknown";
+        const acwr = athlete.acwr_ratio ?? "—";
+        const acute = athlete.acute_load_au ?? "—";
+        const chronic = athlete.chronic_load_au ?? "—";
+        const status = this.statusLabel(athlete.acwr_status);
+
+        csv += `"${name}",${athlete.position},${acwr},${acute},${chronic},"${status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `team-acwr-${new Date().toISOString().split("T")[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      this.logger.info("team_acwr_export_csv_success", {
+        rowCount: this.filteredData().length,
+      });
+    } catch (err) {
+      this.logger.error("team_acwr_export_csv_failed", err);
+    }
+  }
+
+  exportToPDF(): void {
+    try {
+      const summary = this.teamSummary();
+      const timestamp = new Date().toLocaleString();
+
+      const html = `
+        <html>
+          <head>
+            <title>Team ACWR Report</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+              h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+              h2 { color: #34495e; margin-top: 30px; }
+              .summary { margin: 20px 0; }
+              .summary-item { display: inline-block; margin-right: 30px; }
+              .summary-item .label { font-weight: bold; color: #555; }
+              .summary-item .value { font-size: 1.5em; color: #2c3e50; }
+              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+              th { background: #34495e; color: white; padding: 12px; text-align: left; }
+              td { border-bottom: 1px solid #ddd; padding: 10px; }
+              tr:hover { background: #f5f5f5; }
+              .timestamp { color: #7f8c8d; font-size: 0.9em; }
+            </style>
+          </head>
+          <body>
+            <h1>Team ACWR Heatmap Report</h1>
+            <p class="timestamp">Generated: ${timestamp}</p>
+            <p>Date Range: <strong>${this.selectedDateRange()}</strong> | Position: <strong>${this.selectedPosition()}</strong></p>
+
+            <h2>Summary Statistics</h2>
+            <div class="summary">
+              <div class="summary-item">
+                <div class="label">Safe</div>
+                <div class="value">${summary.safe}</div>
+              </div>
+              <div class="summary-item">
+                <div class="label">Yellow Flag</div>
+                <div class="value">${summary.yellow_flag}</div>
+              </div>
+              <div class="summary-item">
+                <div class="label">Red Flag</div>
+                <div class="value">${summary.red_flag}</div>
+              </div>
+              <div class="summary-item">
+                <div class="label">Underload</div>
+                <div class="value">${summary.underload}</div>
+              </div>
+              <div class="summary-item">
+                <div class="label">Building Base</div>
+                <div class="value">${summary.building_base}</div>
+              </div>
+            </div>
+
+            <h2>Athlete Load Data</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>ACWR Ratio</th>
+                  <th>Acute Load (AU)</th>
+                  <th>Chronic Load (AU)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.filteredData()
+                  .map(
+                    (athlete) => `
+                  <tr>
+                    <td>${athlete.full_name || "Unknown"}</td>
+                    <td>${athlete.position}</td>
+                    <td>${athlete.acwr_ratio?.toFixed(2) ?? "—"}</td>
+                    <td>${athlete.acute_load_au ?? "—"}</td>
+                    <td>${athlete.chronic_load_au ?? "—"}</td>
+                    <td>${this.statusLabel(athlete.acwr_status)}</td>
+                  </tr>
+                `
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const blob = new Blob([html], { type: "text/html" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `team-acwr-${new Date().toISOString().split("T")[0]}.html`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      this.logger.info("team_acwr_export_pdf_success", {
+        rowCount: this.filteredData().length,
+      });
+    } catch (err) {
+      this.logger.error("team_acwr_export_pdf_failed", err);
+    }
   }
 }

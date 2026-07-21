@@ -1,12 +1,10 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { getSupabaseClient } from "./utils/auth-helper.js";
 import {
   createSuccessResponse,
   createErrorResponse,
   handleValidationError,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
-import { getUserRole } from "./utils/authorization-guard.js";
-import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import {
   buildRequestLogContext,
@@ -177,13 +175,16 @@ async function logRecoverySession(
   }
 }
 
-async function handler(event, context) {
-  const requestLogger = buildRequestLogContext(logger, event);
+const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "recovery-effectiveness",
+    allowedMethods: ["GET", "POST"],
+    rateLimitType: event.httpMethod === "GET" ? "READ" : "CREATE",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      const requestLogger = buildRequestLogContext(logger, event);
+      const supabase = getSupabaseClient();
 
-  return baseHandler(
-    event,
-    context,
-    async (supabase, requestUserId) => {
       if (event.httpMethod === "GET") {
         const queryString = event.rawQueryString || "";
         const params = new URLSearchParams(queryString);
@@ -191,7 +192,7 @@ async function handler(event, context) {
 
         return getRecoveryEffectiveness(
           supabase,
-          requestUserId,
+          userId,
           timeframe,
           requestLogger
         );
@@ -202,13 +203,11 @@ async function handler(event, context) {
         if (!payload) {
           return createErrorResponse("Invalid JSON body", 400);
         }
-        return logRecoverySession(supabase, requestUserId, payload, requestLogger);
+        return logRecoverySession(supabase, userId, payload, requestLogger);
       }
 
       return createErrorResponse("Method not allowed", 405);
     },
-    requestLogger
-  );
-}
+  });
 
 export { handler };

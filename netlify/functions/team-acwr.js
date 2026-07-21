@@ -1,17 +1,12 @@
-import { supabaseAdmin } from "./supabase-client.js";
+import { getSupabaseClient } from "./utils/auth-helper.js";
 import {
   createSuccessResponse,
   createErrorResponse,
-  handleValidationError,
 } from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { getUserRole } from "./utils/authorization-guard.js";
 import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { getUserTeam } from "./utils/team-scope.js";
-import {
-  tryParseJsonObjectBody,
-  isFiniteNumber,
-} from "./utils/input-validator.js";
 import {
   buildRequestLogContext,
   createLogger,
@@ -94,9 +89,13 @@ async function getTeamAcwr(supabase, teamId, dateRange, position, requestLogger)
 
       const acwrRatio = load.acwr_ratio || 0;
       let status = "safe";
-      if (acwrRatio > 1.3) status = "high-risk";
-      else if (acwrRatio > 0.8) status = "caution";
-      else if (acwrRatio < 0.5) status = "underload";
+      if (acwrRatio > 1.3) {
+        status = "high-risk";
+      } else if (acwrRatio > 0.8) {
+        status = "caution";
+      } else if (acwrRatio < 0.5) {
+        status = "underload";
+      }
 
       return {
         athlete_id: athlete.athlete_id,
@@ -133,18 +132,16 @@ async function getTeamAcwr(supabase, teamId, dateRange, position, requestLogger)
   }
 }
 
-async function handler(event, context) {
-  const requestLogger = buildRequestLogContext(logger, event);
+const handler = async (event, context) =>
+  baseHandler(event, context, {
+    functionName: "team-acwr",
+    allowedMethods: ["GET"],
+    rateLimitType: "READ",
+    requireAuth: true,
+    handler: async (event, _context, { userId }) => {
+      const requestLogger = buildRequestLogContext(logger, event);
 
-  return baseHandler(
-    event,
-    context,
-    async (supabase, requestUserId) => {
-      if (event.httpMethod !== "GET") {
-        return createErrorResponse("Method not allowed", 405);
-      }
-
-      const role = await getUserRole(requestUserId);
+      const role = await getUserRole(userId);
       if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
         return createErrorResponse(
           "Not authorized to view team ACWR data",
@@ -152,7 +149,7 @@ async function handler(event, context) {
         );
       }
 
-      const { teamId } = await getUserTeam(requestUserId);
+      const { teamId } = await getUserTeam(userId);
       if (!teamId) {
         return createErrorResponse("User is not part of any team", 403);
       }
@@ -162,10 +159,9 @@ async function handler(event, context) {
       const dateRange = params.get("dateRange") || "7d";
       const position = params.get("position") || "all";
 
+      const supabase = getSupabaseClient();
       return getTeamAcwr(supabase, teamId, dateRange, position, requestLogger);
     },
-    requestLogger
-  );
-}
+  });
 
 export { handler };

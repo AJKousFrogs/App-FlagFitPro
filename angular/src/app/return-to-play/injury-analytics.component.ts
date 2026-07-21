@@ -757,11 +757,185 @@ export class InjuryAnalyticsComponent {
 
   exportToCSV(): void {
     this.logger.info("export_csv_requested");
-    alert("CSV export coming soon");
+    try {
+      const stats = this.stats();
+      const rtpRates = this.rtpRatesByType();
+
+      // Build CSV content
+      const lines: string[] = [];
+      lines.push("INJURY ANALYTICS REPORT");
+      lines.push(`Season: ${this.season()}`);
+      lines.push(`Generated: ${new Date().toISOString()}`);
+      lines.push("");
+
+      // Summary Statistics
+      lines.push("SUMMARY STATISTICS");
+      lines.push("Metric,Value");
+      lines.push(`Total Injuries,${stats.total_injuries}`);
+      lines.push(`Currently Active,${stats.currently_active}`);
+      lines.push(`Recovering,${stats.recovering}`);
+      lines.push(`Returned,${stats.returned}`);
+      lines.push(`Return-to-Play Rate (%),.${stats.rtp_rate_percent}`);
+      lines.push(`Average RTP Timeline (days),${stats.avg_rtp_timeline_days}`);
+      lines.push("");
+
+      // RTP Rates by Injury Type
+      lines.push("RTP RATES BY INJURY TYPE");
+      lines.push("Injury Type,Count,RTP Rate (%),Average Days");
+      rtpRates.forEach((rate) => {
+        lines.push(
+          `"${rate.injury_type}",${rate.count},${rate.rtp_rate_percent},${rate.avg_days}`
+        );
+      });
+      lines.push("");
+
+      // Most Common Injuries
+      lines.push("MOST COMMON INJURIES");
+      lines.push("Injury Type,Count");
+      stats.most_common.forEach((injury) => {
+        lines.push(`"${injury.injury_type}",${injury.count}`);
+      });
+
+      const csv = lines.join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+
+      link.setAttribute("href", url);
+      link.setAttribute("download", `injury-analytics-${this.season()}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      this.logger.info("csv_export_completed");
+    } catch (error) {
+      this.logger.error("csv_export_failed", { error: String(error) });
+    }
   }
 
   exportToPDF(): void {
     this.logger.info("export_pdf_requested");
-    alert("PDF export coming soon");
+    try {
+      const stats = this.stats();
+      const rtpRates = this.rtpRatesByType();
+
+      // Create simple text-based PDF via HTML
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Injury Analytics Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h1 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+            h2 { color: #0066cc; margin-top: 20px; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #0066cc; color: white; }
+            .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; }
+            .summary-item { margin: 10px 0; }
+            .summary-label { font-weight: bold; color: #333; }
+            .summary-value { font-size: 18px; color: #0066cc; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <h1>Injury Analytics Report - Season ${this.season()}</h1>
+          <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+
+          <h2>Summary Statistics</h2>
+          <div class="summary">
+            <div class="summary-item">
+              <span class="summary-label">Total Injuries:</span>
+              <span class="summary-value">${stats.total_injuries}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Currently Active:</span>
+              <span class="summary-value">${stats.currently_active}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Recovering:</span>
+              <span class="summary-value">${stats.recovering}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Returned:</span>
+              <span class="summary-value">${stats.returned}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Return-to-Play Rate:</span>
+              <span class="summary-value">${stats.rtp_rate_percent}%</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Average RTP Timeline:</span>
+              <span class="summary-value">${stats.avg_rtp_timeline_days} days</span>
+            </div>
+          </div>
+
+          <h2>RTP Rates by Injury Type</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Injury Type</th>
+                <th>Count</th>
+                <th>RTP Rate (%)</th>
+                <th>Average Days</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rtpRates
+                .map(
+                  (rate) => `
+              <tr>
+                <td>${rate.injury_type}</td>
+                <td>${rate.count}</td>
+                <td>${rate.rtp_rate_percent}%</td>
+                <td>${rate.avg_days}</td>
+              </tr>
+            `
+                )
+                .join("")}
+            </tbody>
+          </table>
+
+          <h2>Most Common Injuries</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Injury Type</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${stats.most_common
+                .map(
+                  (injury) => `
+              <tr>
+                <td>${injury.injury_type}</td>
+                <td>${injury.count}</td>
+              </tr>
+            `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+
+      link.setAttribute("href", url);
+      link.setAttribute("download", `injury-analytics-${this.season()}.html`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      this.logger.info("pdf_export_completed");
+    } catch (error) {
+      this.logger.error("pdf_export_failed", { error: String(error) });
+    }
   }
 }
