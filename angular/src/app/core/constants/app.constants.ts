@@ -257,7 +257,6 @@ export const TRAINING = {
   ACWR_WARNING_THRESHOLD: 1.5,
   ACWR_DANGER_THRESHOLD: 2.0,
   ACUTE_LOAD_DAYS: 7,
-  CHRONIC_LOAD_DAYS: 28,
   MIN_DAYS_FOR_CHRONIC: 21, // Minimum days needed for ACWR calculation
   /** Midpoint milestone toward full ACWR baseline (UI progress messaging) */
   ACWR_HALF_BASELINE_DAYS: 14,
