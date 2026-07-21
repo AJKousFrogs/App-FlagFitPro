@@ -29,6 +29,16 @@ import { normalizeSeverity } from "./utils/periodization-input-helpers.js";
 // Netlify Function: Calculate Readiness Score
 // Evidence-based readiness scoring combining session-RPE, ACWR, wellness, and game proximity
 // Endpoint: /api/calc-readiness
+//
+// ARCHITECTURAL NOTE (P1 audit):
+// This function computes COMPOSITE readiness for dashboards/prescription (ACWR + wellness + sleep + game proximity).
+// It is INTENTIONALLY DISTINCT from wellness-checkin.js's calculateReadiness() function,
+// which computes a CHECK-IN-TIME estimate (wellness signals only, no ACWR/game data).
+// Both functions use the SHARED wellness weighting scheme (utils/readiness-score.js —
+// WELLNESS_REQUIRED_WEIGHTS / WELLNESS_OPTIONAL_WEIGHTS), unified 2026-07-08 to prevent drift.
+// See readiness-score.js header (lines 1-27) for the full audit history (2026-07-08/C5, 2026-07-15).
+// DO NOT refactor these as a single formula — they must remain separate to serve their distinct roles
+// (composite vs check-in-time), while sharing the underlying wellness weighting logic.
 
 const logger = createLogger({ service: "netlify.calc-readiness" });
 

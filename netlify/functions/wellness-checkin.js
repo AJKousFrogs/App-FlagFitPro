@@ -1056,6 +1056,15 @@ async function saveCheckin(supabase, userId, payload, requestId, log = logger) {
  * IMPORTANT: Returns null if required data is missing.
  * DO NOT use default values - readiness must be calculated from real user input.
  *
+ * ARCHITECTURAL NOTE (P1 audit):
+ * This is the CHECK-IN-TIME estimate and is INTENTIONALLY DISTINCT from calc-readiness.js's
+ * composite readiness function. calc-readiness computes a full composite (ACWR + wellness + sleep + game),
+ * while this function estimates from wellness signals only (no ACWR/game data available at check-in time).
+ * Both functions use the SHARED wellness weighting scheme (utils/readiness-score.js —
+ * WELLNESS_REQUIRED_WEIGHTS / WELLNESS_OPTIONAL_WEIGHTS), unified 2026-07-08 to prevent drift.
+ * See readiness-score.js header (lines 1-27) for the full audit history (2026-07-08/C5, 2026-07-15).
+ * DO NOT refactor these as a single formula — they must remain separate while sharing the underlying wellness logic.
+ *
  * Required: sleepQuality AND energyLevel (minimum for valid calculation)
  *
  * Weighting (2026-07-08 unified with calc-readiness.js's composite wellness index —
