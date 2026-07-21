@@ -4,7 +4,6 @@ import {
   computed,
   inject,
   signal,
-  effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -243,9 +242,10 @@ const PHASES: PhaseInfo[] = [
 
               <form (ngSubmit)="submitWeeklyUpdate()" #weeklyForm="ngForm">
                 <div class="form-group">
-                  <label>Pain Level (0-10)</label>
+                  <label for="painLevel">Pain Level (0-10)</label>
                   <div class="pain-input">
                     <input
+                      id="painLevel"
                       type="range"
                       min="0"
                       max="10"
@@ -258,9 +258,10 @@ const PHASES: PhaseInfo[] = [
                 </div>
 
                 <div class="form-group">
-                  <label>Athlete Confidence (0-10)</label>
+                  <label for="athleteConfidence">Athlete Confidence (0-10)</label>
                   <div class="confidence-input">
                     <input
+                      id="athleteConfidence"
                       type="range"
                       min="0"
                       max="10"
@@ -273,9 +274,10 @@ const PHASES: PhaseInfo[] = [
                 </div>
 
                 <div class="form-group">
-                  <label>Coach Confidence (0-10)</label>
+                  <label for="coachConfidence">Coach Confidence (0-10)</label>
                   <div class="confidence-input">
                     <input
+                      id="coachConfidence"
                       type="range"
                       min="0"
                       max="10"
@@ -288,8 +290,9 @@ const PHASES: PhaseInfo[] = [
                 </div>
 
                 <div class="form-group">
-                  <label>Coach Notes</label>
+                  <label for="coachNotes">Coach Notes</label>
                   <textarea
+                    id="coachNotes"
                     [(ngModel)]="coachNotes"
                     name="coachNotes"
                     placeholder="Add any observations or notes about this week's progress"

@@ -33,7 +33,7 @@ interface EffectivenessResponse {
   timeframe: string;
   modalities: ModalityEffectiveness[];
   domains: DomainEffectiveness[];
-  acwrCorrelation?: Record<string, Array<{ name: string; score: number; count: number }>>;
+  acwrCorrelation?: Record<string, { name: string; score: number; count: number }[]>;
 }
 
 type TimeframeOption = "1-week" | "2-week" | "4-week";
@@ -69,16 +69,18 @@ type TimeframeOption = "1-week" | "2-week" | "4-week";
         <!-- Filters -->
         <section class="filters">
           <div class="filter-group">
-            <label>Time Period</label>
+            <label for="timeframe">Time Period</label>
             <div class="timeframe-buttons">
-              <button
-                *ngFor="let opt of timeframeOptions"
-                [class.active]="selectedTimeframe() === opt.value"
-                (click)="setTimeframe(opt.value)"
-                class="filter-btn"
-              >
-                {{ opt.label }}
-              </button>
+              @for (opt of timeframeOptions; track opt.value) {
+                <button
+                  id="timeframe"
+                  [class.active]="selectedTimeframe() === opt.value"
+                  (click)="setTimeframe(opt.value)"
+                  class="filter-btn"
+                >
+                  {{ opt.label }}
+                </button>
+              }
             </div>
           </div>
         </section>
@@ -207,22 +209,26 @@ type TimeframeOption = "1-week" | "2-week" | "4-week";
           <form (ngSubmit)="submitRecoveryLog()" #recoveryForm="ngForm">
             <div class="form-row">
               <div class="form-group">
-                <label>Modality</label>
+                <label for="modality">Modality</label>
                 <select
+                  id="modality"
                   [(ngModel)]="selectedModality"
                   name="modality"
                   class="form-control"
                 >
                   <option value="">Select a modality...</option>
-                  <option *ngFor="let mod of availableModalities()" [value]="mod">
-                    {{ mod }}
-                  </option>
+                  @for (mod of availableModalities(); track mod) {
+                    <option [value]="mod">
+                      {{ mod }}
+                    </option>
+                  }
                 </select>
               </div>
 
               <div class="form-group">
-                <label>Date</label>
+                <label for="logDate">Date</label>
                 <input
+                  id="logDate"
                   type="date"
                   [(ngModel)]="logDate"
                   name="logDate"
@@ -231,9 +237,10 @@ type TimeframeOption = "1-week" | "2-week" | "4-week";
               </div>
 
               <div class="form-group">
-                <label>Effectiveness (1-10)</label>
+                <label for="effectiveness">Effectiveness (1-10)</label>
                 <div class="effectiveness-input">
                   <input
+                    id="effectiveness"
                     type="range"
                     min="1"
                     max="10"
@@ -742,7 +749,7 @@ export class RecoveryEffectivenessComponent {
   readonly error = signal<string | null>(null);
   readonly modalitiesData = signal<ModalityEffectiveness[]>([]);
   readonly domainsData = signal<DomainEffectiveness[]>([]);
-  readonly acwrCorrelationData = signal<Record<string, Array<{ name: string; score: number; count: number }>>>({});
+  readonly acwrCorrelationData = signal<Record<string, { name: string; score: number; count: number }[]>>({});
 
   readonly selectedTimeframe = signal<TimeframeOption>("4-week");
   readonly selectedModality = signal("");
@@ -780,7 +787,7 @@ export class RecoveryEffectivenessComponent {
   });
 
   readonly acwrCorrelation = computed(() => {
-    const map = new Map<string, Array<{ name: string; score: number; count: number }>>();
+    const map = new Map<string, { name: string; score: number; count: number }[]>();
     const data = this.acwrCorrelationData();
     if (data.red_flag) map.set("red_flag", data.red_flag);
     if (data.yellow_flag) map.set("yellow_flag", data.yellow_flag);

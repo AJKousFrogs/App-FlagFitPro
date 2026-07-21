@@ -4,14 +4,13 @@ import {
   computed,
   signal,
   ChangeDetectionStrategy,
+  inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { Observable, of } from "rxjs";
 import { catchError, switchMap, tap } from "rxjs/operators";
 import { RtpService } from "./services/rtp.service";
 import { extractApiPayload } from "../utils/api-response.utils";
-import { MonitoringDataService } from "../monitoring-report/services/monitoring-data.service";
 
 interface ReadinessMetrics {
   readinessScore: number;
@@ -51,7 +50,7 @@ interface AthleteReadinessSnapshot {
 @Component({
   selector: "app-coach-athlete-readiness",
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="coach-readiness-container">
@@ -171,28 +170,35 @@ interface AthleteReadinessSnapshot {
       <div class="recommendations-section">
         <h2>Coaching Recommendations</h2>
         <div class="recommendations-list">
-          <div
-            *ngFor="let rec of recommendations(); let i = index"
-            class="recommendation-card"
-            [class]="'priority-' + rec.priority"
-          >
-            <div class="rec-header">
-              <div class="rec-title">{{ rec.title }}</div>
-              <div class="rec-priority-badge">{{ rec.priority }}</div>
+          @for (rec of recommendations(); track rec.id) {
+            <div
+              class="recommendation-card"
+              [class]="'priority-' + rec.priority"
+            >
+              <div class="rec-header">
+                <div class="rec-title">{{ rec.title }}</div>
+                <div class="rec-priority-badge">{{ rec.priority }}</div>
+              </div>
+              <div class="rec-category">{{ rec.category }}</div>
+              <div class="rec-description">{{ rec.description }}</div>
+              @if (rec.actionItems?.length) {
+                <div class="action-items">
+                  <div class="action-label">Action items:</div>
+                  <ul>
+                    @for (item of rec.actionItems; track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                </div>
+              }
             </div>
-            <div class="rec-category">{{ rec.category }}</div>
-            <div class="rec-description">{{ rec.description }}</div>
-            <div class="action-items" *ngIf="rec.actionItems?.length">
-              <div class="action-label">Action items:</div>
-              <ul>
-                <li *ngFor="let item of rec.actionItems">{{ item }}</li>
-              </ul>
-            </div>
+          }
+        </div>
+        @if (!recommendations().length) {
+          <div class="no-recommendations">
+            No specific recommendations at this time. Athlete is performing well.
           </div>
-        </div>
-        <div *ngIf="!recommendations().length" class="no-recommendations">
-          No specific recommendations at this time. Athlete is performing well.
-        </div>
+        }
       </div>
 
       <!-- Data Quality & Attribution -->
@@ -652,7 +658,8 @@ interface AthleteReadinessSnapshot {
   ],
 })
 export class CoachAthleteReadinessComponent implements OnInit {
-  private rtpService = new RtpService();
+  private rtpService = inject(RtpService);
+  private route = inject(ActivatedRoute);
 
   athleteId = signal<string>("");
   athleteName = signal<string>("Loading...");
@@ -706,8 +713,6 @@ export class CoachAthleteReadinessComponent implements OnInit {
     if (level === "moderate") return "Normal training";
     return "High intensity";
   });
-
-  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.route.params

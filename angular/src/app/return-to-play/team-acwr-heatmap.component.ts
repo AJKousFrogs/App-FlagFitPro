@@ -70,37 +70,41 @@ type PositionFilter = string | "all";
         <!-- Filters Section -->
         <section class="filters">
           <div class="filter-group">
-            <label>Date Range</label>
+            <label for="dateRange">Date Range</label>
             <div class="date-range-buttons">
-              <button
-                *ngFor="let opt of dateRangeOptions"
-                [class.active]="selectedDateRange() === opt.value"
-                (click)="setDateRange(opt.value)"
-                class="filter-btn"
-              >
-                {{ opt.label }}
-              </button>
+              @for (opt of dateRangeOptions; track opt.value) {
+                <button
+                  id="dateRange"
+                  [class.active]="selectedDateRange() === opt.value"
+                  (click)="setDateRange(opt.value)"
+                  class="filter-btn"
+                >
+                  {{ opt.label }}
+                </button>
+              }
             </div>
           </div>
 
           <div class="filter-group">
-            <label>Position</label>
+            <label for="position">Position</label>
             <div class="position-buttons">
               <button
+                id="position"
                 [class.active]="selectedPosition() === 'all'"
                 (click)="setPosition('all')"
                 class="filter-btn"
               >
                 All
               </button>
-              <button
-                *ngFor="let pos of uniquePositions()"
-                [class.active]="selectedPosition() === pos"
-                (click)="setPosition(pos)"
-                class="filter-btn"
-              >
-                {{ pos }}
-              </button>
+              @for (pos of uniquePositions(); track pos) {
+                <button
+                  [class.active]="selectedPosition() === pos"
+                  (click)="setPosition(pos)"
+                  class="filter-btn"
+                >
+                  {{ pos }}
+                </button>
+              }
             </div>
           </div>
 

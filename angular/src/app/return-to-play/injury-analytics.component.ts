@@ -19,7 +19,7 @@ interface InjuryStats {
   returned: number;
   avg_rtp_timeline_days: number;
   rtp_rate_percent: number;
-  most_common: Array<{ injury_type: string; count: number }>;
+  most_common: { injury_type: string; count: number }[];
 }
 
 interface InjuryTypeRate {
@@ -31,12 +31,12 @@ interface InjuryTypeRate {
 
 interface TimelineEntry {
   month: string;
-  athletes: Array<{
+  athletes: {
     athlete_id: string;
     athlete_name: string;
     injury_type: string;
     status: "active" | "recovering" | "rehab" | "returned";
-  }>;
+  }[];
 }
 
 interface InjuryAnalyticsResponse {

@@ -30,11 +30,11 @@ interface PhaseProgressDetail {
   target_duration_weeks: number;
   weeks_elapsed: number;
   completion_percent: number;
-  key_milestones: Array<{
+  key_milestones: {
     milestone: string;
     achieved: boolean;
     achieved_date?: string;
-  }>;
+  }[];
   exercises: ExerciseProgress[];
 }
 

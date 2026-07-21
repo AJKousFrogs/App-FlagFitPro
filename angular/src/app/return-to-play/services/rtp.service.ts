@@ -128,7 +128,7 @@ export class RtpService {
    */
   getPsychologicalAssessments(
     athleteId: string,
-    limit: number = 10
+    limit = 10
   ): Observable<PsychologicalAssessmentResponse> {
     return this.api.get<PsychologicalAssessmentResponse>(`/api/rtp/psychological-assessment`, {
       athleteId,
