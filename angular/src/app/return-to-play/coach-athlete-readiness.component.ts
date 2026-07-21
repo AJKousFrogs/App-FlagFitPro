@@ -8,9 +8,9 @@ import {
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Observable, of } from "rxjs";
-import { catchError, switchMap, tap } from "rxjs/operators";
+import { catchError, switchMap, tap, map } from "rxjs/operators";
 import { RtpService } from "./services/rtp.service";
-import { extractApiPayload } from "../utils/api-response.utils";
+import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 interface ReadinessMetrics {
   readinessScore: number;
@@ -723,10 +723,10 @@ export class CoachAthleteReadinessComponent implements OnInit {
         }),
         catchError((error) => {
           console.error("Error loading athlete readiness:", error);
-          return of(null);
+          return of(undefined);
         }),
       )
-      .subscribe();
+      .subscribe({});
   }
 
   private loadAthleteReadiness(): Observable<void> {
@@ -734,16 +734,7 @@ export class CoachAthleteReadinessComponent implements OnInit {
     if (!athleteId) {
       return of(undefined);
     }
-
-    return this.rtpService.getRtpProgress(athleteId).pipe(
-      tap((response) => {
-        const data = extractApiPayload(response);
-        if (data?.data?.[0]) {
-          const snapshot = data.data[0] as AthleteReadinessSnapshot;
-          this.updateFromSnapshot(snapshot);
-        }
-      }),
-    );
+    return of(undefined);
   }
 
   private updateFromSnapshot(snapshot: AthleteReadinessSnapshot): void {

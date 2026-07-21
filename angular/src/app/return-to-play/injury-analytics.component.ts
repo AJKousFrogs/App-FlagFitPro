@@ -759,7 +759,7 @@ export class InjuryAnalyticsComponent {
     this.logger.info("export_csv_requested");
     try {
       const stats = this.stats();
-      const rtpRates = this.rtpRatesByType();
+      const rtpRates = this.rtpRates();
 
       // Build CSV content
       const lines: string[] = [];
@@ -782,7 +782,7 @@ export class InjuryAnalyticsComponent {
       // RTP Rates by Injury Type
       lines.push("RTP RATES BY INJURY TYPE");
       lines.push("Injury Type,Count,RTP Rate (%),Average Days");
-      rtpRates.forEach((rate) => {
+      rtpRates.forEach((rate: InjuryTypeRate) => {
         lines.push(
           `"${rate.injury_type}",${rate.count},${rate.rtp_rate_percent},${rate.avg_days}`
         );
@@ -818,7 +818,7 @@ export class InjuryAnalyticsComponent {
     this.logger.info("export_pdf_requested");
     try {
       const stats = this.stats();
-      const rtpRates = this.rtpRatesByType();
+      const rtpRates = this.rtpRates();
 
       // Create simple text-based PDF via HTML
       const htmlContent = `
@@ -884,7 +884,7 @@ export class InjuryAnalyticsComponent {
             <tbody>
               ${rtpRates
                 .map(
-                  (rate) => `
+                  (rate: InjuryTypeRate) => `
               <tr>
                 <td>${rate.injury_type}</td>
                 <td>${rate.count}</td>
