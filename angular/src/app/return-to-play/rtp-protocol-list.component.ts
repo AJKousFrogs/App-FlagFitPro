@@ -32,6 +32,12 @@ interface ProtocolAssignment {
   };
 }
 
+interface ProtocolListResponse {
+  protocols: ProtocolAssignment[];
+  phaseProgress: Record<string, { passed: number; total: number }>;
+  count: number;
+}
+
 type SortBy = "phase" | "returnDate" | "injury" | "athlete";
 
 @Component({
@@ -534,7 +540,7 @@ export class RtpProtocolListComponent implements OnInit {
       : `/api/rtp/protocols`;
 
     this.api.get(endpoint).subscribe({
-      next: (response: any) => {
+      next: (response: ProtocolListResponse) => {
         if (response.protocols) {
           const protocolsWithCalcs = response.protocols.map(
             (p: ProtocolAssignment) => {
@@ -560,7 +566,7 @@ export class RtpProtocolListComponent implements OnInit {
         }
         this.loading.set(false);
       },
-      error: (err: any) => {
+      error: (err: Error) => {
         this.logger.error("Failed to load protocols", err);
         this.error.set("Failed to load protocols");
         this.loading.set(false);

@@ -2,8 +2,8 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  computed,
   effect,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,7 @@ interface Alert {
   trigger_data?: Record<string, unknown>;
   created_at: string;
   ruleName: string;
-  deliveryChannels: Array<{ channel: string; status: string }>;
+  deliveryChannels: { channel: string; status: string }[];
 }
 
 interface AlertResponse {
@@ -64,16 +64,23 @@ interface AlertResponse {
         </div>
       </div>
 
-      <app-loading *ngIf="isLoading()"></app-loading>
-      <app-error *ngIf="error()" [message]="error()"></app-error>
+      @if (isLoading()) {
+        <app-loading></app-loading>
+      }
+      @if (error()) {
+        <app-error [message]="error()"></app-error>
+      }
 
-      <div class="alert-list" *ngIf="!isLoading() && !error()">
-        <div *ngIf="displayedAlerts().length === 0" class="empty-state">
+      @if (!isLoading() && !error()) {
+      <div class="alert-list">
+        @if (displayedAlerts().length === 0) {
+        <div class="empty-state">
           No alerts matching your filters.
         </div>
+        }
 
+        @for (alert of displayedAlerts(); track alert.id) {
         <div
-          *ngFor="let alert of displayedAlerts()"
           class="alert-item"
           [class.critical]="alert.alert_type === 'critical'"
           [class.high]="alert.alert_type === 'high'"
@@ -91,36 +98,43 @@ interface AlertResponse {
             <p class="description">{{ alert.description }}</p>
             <div class="metadata">
               <small>{{ alert.created_at | date: 'short' }}</small>
-              <small *ngIf="alert.acknowledged">
+              @if (alert.acknowledged) {
+              <small>
                 Acknowledged: {{ alert.acknowledged_at | date: 'short' }}
               </small>
+              }
             </div>
           </div>
 
           <div class="alert-actions">
+            @if (!alert.acknowledged && alert.status === 'active') {
             <button
-              *ngIf="!alert.acknowledged && alert.status === 'active'"
               class="btn-acknowledge"
               (click)="acknowledgeAlert(alert)"
             >
               Acknowledge
             </button>
+            }
+            @if (alert.status === 'active') {
             <button
-              *ngIf="alert.status === 'active'"
               class="btn-resolve"
               (click)="resolveAlert(alert)"
             >
               Resolve
             </button>
+            }
             <button class="btn-details" (click)="viewDetails(alert)">
               Details
             </button>
           </div>
         </div>
+        }
       </div>
+      }
 
       <!-- Pagination -->
-      <div class="pagination" *ngIf="pagination()">
+      @if (pagination()) {
+      <div class="pagination">
         <button
           (click)="previousPage()"
           [disabled]="currentOffset() === 0 || isLoading()"
@@ -138,6 +152,7 @@ interface AlertResponse {
           Next
         </button>
       </div>
+      }
     </div>
   `,
   styles: [
@@ -349,10 +364,12 @@ export class AlertInboxComponent implements OnInit {
     return filtered;
   });
 
-  Math = Math;
-  private searchTimeout: any;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {
+  Math = Math;
+  private searchTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
     effect(() => {
       this.refreshAlerts();
     });
@@ -379,8 +396,8 @@ export class AlertInboxComponent implements OnInit {
           this.alerts.set(response.data);
           this.pagination.set(response.pagination);
         }),
-        catchError((err: any) => {
-          this.error.set(err?.error?.message || 'Failed to load alerts');
+        catchError((_err) => {
+          this.error.set('Failed to load alerts');
           return of(null);
         }),
         finalize(() => this.isLoading.set(false))
@@ -400,7 +417,7 @@ export class AlertInboxComponent implements OnInit {
     this.http
       .patch(`/api/alerts/${alert.id}/acknowledge`, { note: null })
       .pipe(
-        catchError((err) => {
+        catchError(() => {
           this.error.set('Failed to acknowledge alert');
           return of(null);
         })
@@ -419,7 +436,7 @@ export class AlertInboxComponent implements OnInit {
         resolutionNotes: notes || null,
       })
       .pipe(
-        catchError((err) => {
+        catchError(() => {
           this.error.set('Failed to resolve alert');
           return of(null);
         })

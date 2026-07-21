@@ -6,12 +6,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="error-container" *ngIf="message">
-      <span class="error-icon">⚠️</span>
-      <div class="error-content">
-        <p class="error-message">{{ message }}</p>
+    @if (message) {
+      <div class="error-container">
+        <span class="error-icon">⚠️</span>
+        <div class="error-content">
+          <p class="error-message">{{ message }}</p>
+        </div>
       </div>
-    </div>
+    }
   `,
   styles: [
     `

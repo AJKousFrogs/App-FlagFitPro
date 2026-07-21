@@ -2,7 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  computed,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -30,19 +30,24 @@ interface AlertPreference {
     <div class="preferences-container">
       <h2>Alert Notification Preferences</h2>
 
-      <div *ngIf="isLoading()" class="loading">Loading preferences...</div>
-      <div *ngIf="error()" class="error">{{ error() }}</div>
-      <div *ngIf="successMessage()" class="success">{{ successMessage() }}</div>
+      @if (isLoading()) {
+      <div class="loading">Loading preferences...</div>
+      }
+      @if (error()) {
+      <div class="error">{{ error() }}</div>
+      }
+      @if (successMessage()) {
+      <div class="success">{{ successMessage() }}</div>
+      }
 
-      <form *ngIf="!isLoading()" (ngSubmit)="savePreferences()">
+      @if (!isLoading()) {
+      <form (ngSubmit)="savePreferences()">
         <!-- Alert Type Preferences -->
         <div class="preferences-section">
           <h3>Alert Severity Settings</h3>
 
-          <div
-            *ngFor="let pref of preferences()"
-            class="preference-item"
-          >
+          @for (pref of preferences(); track pref.id) {
+          <div class="preference-item">
             <div class="pref-header">
               <label>
                 <input
@@ -54,7 +59,8 @@ interface AlertPreference {
               </label>
             </div>
 
-            <div class="pref-details" *ngIf="pref.enabled">
+            @if (pref.enabled) {
+            <div class="pref-details">
               <div class="channels">
                 <label>
                   <input
@@ -121,7 +127,9 @@ interface AlertPreference {
                 </select>
               </label>
             </div>
+            }
           </div>
+          }
         </div>
 
         <div class="form-actions">
@@ -133,6 +141,7 @@ interface AlertPreference {
           </button>
         </div>
       </form>
+      }
 
       <div class="preferences-info">
         <h4>About Your Alert Preferences</h4>
@@ -284,12 +293,12 @@ interface AlertPreference {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertPreferencesComponent implements OnInit {
+  private http = inject(HttpClient);
+
   isLoading = signal(false);
   error = signal<string | null>(null);
   successMessage = signal<string | null>(null);
   preferences = signal<AlertPreference[]>([]);
-
-  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.loadPreferences();
@@ -305,7 +314,7 @@ export class AlertPreferencesComponent implements OnInit {
         tap((response) => {
           this.preferences.set(response.data);
         }),
-        catchError((err) => {
+        catchError(() => {
           this.error.set('Failed to load preferences. Using defaults.');
           this.initializeDefaults();
           return of(null);
@@ -329,7 +338,7 @@ export class AlertPreferencesComponent implements OnInit {
           this.successMessage.set('Preferences saved successfully!');
           setTimeout(() => this.successMessage.set(null), 3000);
         }),
-        catchError((err) => {
+        catchError(() => {
           this.error.set('Failed to save preferences');
           return of(null);
         }),

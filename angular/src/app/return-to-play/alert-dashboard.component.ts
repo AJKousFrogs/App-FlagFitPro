@@ -2,7 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  computed,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -33,7 +33,7 @@ interface AlertHistory {
 interface AlertDashboardData {
   summary: AlertSummary;
   history: AlertHistory[];
-  topRules: Array<{ ruleName: string; count: number; alertType: string }>;
+  topRules: { ruleName: string; count: number; alertType: string }[];
 }
 
 @Component({
@@ -44,10 +44,15 @@ interface AlertDashboardData {
     <div class="alert-dashboard-container">
       <h2>Alert Dashboard</h2>
 
-      <app-loading *ngIf="isLoading()"></app-loading>
-      <app-error *ngIf="error()" [message]="error()"></app-error>
+      @if (isLoading()) {
+        <app-loading></app-loading>
+      }
+      @if (error()) {
+        <app-error [message]="error()"></app-error>
+      }
 
-      <div *ngIf="!isLoading() && !error() && dashboardData()" class="dashboard">
+      @if (!isLoading() && !error() && dashboardData()) {
+      <div class="dashboard">
         <!-- Summary Cards -->
         <div class="summary-cards">
           <div class="card total">
@@ -85,60 +90,63 @@ interface AlertDashboardData {
           <div class="heatmap">
             <div class="heatmap-header">
               <div class="day-label">Date</div>
-              <div
-                *ngFor="let entry of dashboardData()?.history"
-                class="day-column"
-              >
+              @for (entry of dashboardData()?.history; track entry.date) {
+              <div class="day-column">
                 <span class="day-name">{{ entry.date }}</span>
               </div>
+              }
             </div>
 
             <div class="heatmap-row critical-row">
               <span class="row-label">Critical</span>
+              @for (entry of dashboardData()?.history; track entry.date) {
               <div
-                *ngFor="let entry of dashboardData()?.history"
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.critical)"
                 [class.has-data]="entry.critical > 0"
               >
                 {{ entry.critical > 0 ? entry.critical : '—' }}
               </div>
+              }
             </div>
 
             <div class="heatmap-row high-row">
               <span class="row-label">High</span>
+              @for (entry of dashboardData()?.history; track entry.date) {
               <div
-                *ngFor="let entry of dashboardData()?.history"
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.high)"
                 [class.has-data]="entry.high > 0"
               >
                 {{ entry.high > 0 ? entry.high : '—' }}
               </div>
+              }
             </div>
 
             <div class="heatmap-row medium-row">
               <span class="row-label">Medium</span>
+              @for (entry of dashboardData()?.history; track entry.date) {
               <div
-                *ngFor="let entry of dashboardData()?.history"
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.medium)"
                 [class.has-data]="entry.medium > 0"
               >
                 {{ entry.medium > 0 ? entry.medium : '—' }}
               </div>
+              }
             </div>
 
             <div class="heatmap-row low-row">
               <span class="row-label">Low</span>
+              @for (entry of dashboardData()?.history; track entry.date) {
               <div
-                *ngFor="let entry of dashboardData()?.history"
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.low)"
                 [class.has-data]="entry.low > 0"
               >
                 {{ entry.low > 0 ? entry.low : '—' }}
               </div>
+              }
             </div>
           </div>
         </div>
@@ -155,7 +163,8 @@ interface AlertDashboardData {
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let rule of dashboardData()?.topRules">
+              @for (rule of dashboardData()?.topRules; track rule.ruleName) {
+              <tr>
                 <td>{{ rule.ruleName }}</td>
                 <td>
                   <span class="badge" [class]="rule.alertType">
@@ -164,10 +173,12 @@ interface AlertDashboardData {
                 </td>
                 <td>{{ rule.count }}</td>
               </tr>
+              }
             </tbody>
           </table>
         </div>
       </div>
+      }
     </div>
   `,
   styles: [
@@ -376,11 +387,11 @@ interface AlertDashboardData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertDashboardComponent implements OnInit {
+  private http = inject(HttpClient);
+
   isLoading = signal(false);
   error = signal<string | null>(null);
   dashboardData = signal<AlertDashboardData | null>(null);
-
-  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.loadDashboardData();
@@ -398,7 +409,7 @@ export class AlertDashboardComponent implements OnInit {
         tap((data) => {
           this.dashboardData.set(data);
         }),
-        catchError((err) => {
+        catchError(() => {
           this.error.set('Failed to load dashboard data');
           return of(null);
         }),

@@ -80,10 +80,11 @@ interface AssessmentPayload {
           <div class="space-y-4">
             <!-- Assessed Value -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
+              <label for="assessedValue" class="block text-sm font-medium text-gray-700 mb-1">
                 Assessed Value *
               </label>
               <input
+                id="assessedValue"
                 type="text"
                 [(ngModel)]="assessedValue"
                 placeholder="Enter the measurement result"
@@ -95,10 +96,10 @@ interface AssessmentPayload {
             </div>
 
             <!-- Pass/Fail -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+            <fieldset>
+              <legend class="block text-sm font-medium text-gray-700 mb-2">
                 Result *
-              </label>
+              </legend>
               <div class="flex gap-4">
                 <label class="flex items-center">
                   <input
@@ -127,14 +128,15 @@ interface AssessmentPayload {
                   </span>
                 </label>
               </div>
-            </div>
+            </fieldset>
 
             <!-- Notes -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
+              <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
                 Notes
               </label>
               <textarea
+                id="notes"
                 [(ngModel)]="notes"
                 placeholder="Add any observations or context (optional)"
                 rows="3"
@@ -157,20 +159,19 @@ interface AssessmentPayload {
             [disabled]="!isValid() || loading()"
             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            <span *ngIf="loading()">
+            @if (loading()) {
               <i-lucide name="loader" class="w-4 h-4 animate-spin"></i-lucide>
-            </span>
+            }
             <span>{{ loading() ? "Submitting..." : "Record Assessment" }}</span>
           </button>
         </div>
 
         <!-- Error Alert -->
-        <div
-          *ngIf="error()"
-          class="px-6 py-3 bg-red-50 border-t border-red-200 text-red-700 text-sm"
-        >
-          {{ error() }}
-        </div>
+        @if (error()) {
+          <div class="px-6 py-3 bg-red-50 border-t border-red-200 text-red-700 text-sm">
+            {{ error() }}
+          </div>
+        }
       </div>
     </div>
   `,
@@ -225,7 +226,7 @@ export class RtpAssessmentModalComponent implements OnInit {
     };
 
     this.api.post("/api/rtp/assessments", payload).subscribe({
-      next: (response: any) => {
+      next: (response: { phaseAdvancementEligible?: boolean }) => {
         this.logger.info("Assessment recorded successfully", {
           criteriaId: this.criterion().id,
           assessedValue: payload.assessedValue,
@@ -241,7 +242,7 @@ export class RtpAssessmentModalComponent implements OnInit {
 
         this.loading.set(false);
       },
-      error: (err: any) => {
+      error: (err: { error?: { message?: string } }) => {
         this.logger.error("Failed to record assessment", err);
         this.error.set(
           err?.error?.message || "Failed to record assessment. Please try again."

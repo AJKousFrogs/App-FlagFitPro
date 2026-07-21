@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   computed,
   inject,
   signal,
@@ -55,7 +56,7 @@ interface ProtocolDefinition {
   typical_rtp_timeline_days_max: number;
   rts_rate_percent: number;
   description: string;
-  key_studies: any;
+  key_studies: string[];
 }
 
 interface ProtocolAssignment {
@@ -66,7 +67,7 @@ interface ProtocolAssignment {
   current_phase: number;
   phase_start_date: string;
   estimated_return_date: string;
-  individual_modifiers: Record<string, any>;
+  individual_modifiers: Record<string, string | number | boolean>;
   biological_maturity_gate_passed: boolean;
   created_at: string;
   updated_at: string;
@@ -581,7 +582,7 @@ interface ProtocolAssignment {
     `,
   ],
 })
-export class PhysioProtocolDashboardComponent {
+export class PhysioProtocolDashboardComponent implements OnInit {
   private apiService = inject(ApiService);
   private route = inject(ActivatedRoute);
   private logger = inject(LoggerService);
@@ -624,15 +625,15 @@ export class PhysioProtocolDashboardComponent {
         switchMap(({ athleteId, injuryId }) =>
           this.apiService.get(`/api/rtp/protocols/${athleteId}/${injuryId}`)
         ),
-        tap((res: any) => {
+        tap((res: { assignment: ProtocolAssignment }) => {
           if (res.assignment) {
             this.assignment.set(res.assignment);
           } else {
             this.error.set("No protocol found for this injury");
           }
         }),
-        catchError((err) => {
-          this.logger.error("Failed to load protocol", err);
+        catchError(() => {
+          this.logger.error("Failed to load protocol");
           this.error.set("Failed to load protocol");
           return of(null);
         }),
@@ -699,15 +700,15 @@ export class PhysioProtocolDashboardComponent {
     this.apiService
       .patch(`/api/rtp/athletes/${a.athlete_id}/${a.injury_id}/phase`, {})
       .subscribe({
-        next: (res: any) => {
+        next: (res: { success: boolean; assignment: ProtocolAssignment }) => {
           if (res.success) {
             this.assignment.set(res.assignment);
             this.logger.info("Phase advanced successfully");
           }
           this.loading.set(false);
         },
-        error: (err) => {
-          this.logger.error("Failed to advance phase", err);
+        error: () => {
+          this.logger.error("Failed to advance phase");
           this.error.set("Failed to advance phase");
           this.loading.set(false);
         },
