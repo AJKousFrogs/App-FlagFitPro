@@ -1829,6 +1829,18 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/rtp/protocols"
+  to = "/.netlify/functions/rtp-all-protocols"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/rtp/team/:teamId/protocols"
+  to = "/.netlify/functions/rtp-team-protocols"
+  status = 200
+  force = true
+
 # ============================================================================
 # STATIC FILES - Serve before SPA fallback
 # ============================================================================
