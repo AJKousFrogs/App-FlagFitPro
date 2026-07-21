@@ -11,8 +11,8 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
 
-import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { RtpService, AssessmentResponse } from "./services/rtp.service";
 
 interface FunctionalCriterion {
   id: string;
@@ -177,7 +177,7 @@ interface AssessmentPayload {
   `,
 })
 export class RtpAssessmentModalComponent implements OnInit {
-  private api = inject(ApiService);
+  private rtpService = inject(RtpService);
   private logger = inject(LoggerService);
 
   criterion = input.required<FunctionalCriterion>();
@@ -225,8 +225,8 @@ export class RtpAssessmentModalComponent implements OnInit {
       notes: this.notes().trim(),
     };
 
-    this.api.post("/api/rtp/assessments", payload).subscribe({
-      next: (response: { phaseAdvancementEligible?: boolean }) => {
+    this.rtpService.recordAssessment(payload).subscribe({
+      next: (response: AssessmentResponse) => {
         this.logger.info("Assessment recorded successfully", {
           criteriaId: this.criterion().id,
           assessedValue: payload.assessedValue,
@@ -237,7 +237,7 @@ export class RtpAssessmentModalComponent implements OnInit {
           criteriaId: this.criterion().id,
           assessedValue: payload.assessedValue,
           pass_fail: payload.pass_fail,
-          phaseAdvancementEligible: response.phaseAdvancementEligible || false,
+          phaseAdvancementEligible: response?.phaseAdvancementEligible || false,
         });
 
         this.loading.set(false);

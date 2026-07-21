@@ -539,10 +539,11 @@ export class RtpProtocolListComponent implements OnInit {
       ? `/api/rtp/team/${this.teamId()}/protocols`
       : `/api/rtp/protocols`;
 
-    this.api.get(endpoint).subscribe({
-      next: (response: ProtocolListResponse) => {
-        if (response.protocols) {
-          const protocolsWithCalcs = response.protocols.map(
+    this.api.get<ProtocolListResponse>(endpoint).subscribe({
+      next: (response: Record<string, unknown> | ProtocolListResponse) => {
+        const payload = ((response as Record<string, unknown>)?.data || response) as ProtocolListResponse;
+        if (payload?.protocols) {
+          const protocolsWithCalcs = payload.protocols.map(
             (p: ProtocolAssignment) => {
               const returnDate = new Date(p.estimated_return_date);
               const today = new Date();
@@ -553,7 +554,7 @@ export class RtpProtocolListComponent implements OnInit {
               return {
                 ...p,
                 daysToReturn,
-                phaseProgress: response.phaseProgress?.[p.id] || {
+                phaseProgress: payload.phaseProgress?.[p.id] || {
                   passed: 0,
                   total: 0,
                 },
