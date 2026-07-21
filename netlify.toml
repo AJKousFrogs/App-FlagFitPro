@@ -1804,7 +1804,30 @@
   status = 200
   force = true
 
+# Phase 1D: RTP Protocol Management
+[[redirects]]
+  from = "/api/rtp/protocols/:athleteId/:injuryId"
+  to = "/.netlify/functions/rtp-protocol-assignment"
+  status = 200
+  force = true
 
+[[redirects]]
+  from = "/api/rtp/assignments"
+  to = "/.netlify/functions/rtp-create-assignment"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/rtp/athletes/:athleteId/:injuryId/phase"
+  to = "/.netlify/functions/rtp-advance-phase"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/rtp/assessments"
+  to = "/.netlify/functions/rtp-record-assessment"
+  status = 200
+  force = true
 
 # ============================================================================
 # STATIC FILES - Serve before SPA fallback

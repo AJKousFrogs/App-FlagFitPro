@@ -47,6 +47,13 @@ export const PSYCHOLOGY_ACCESS_ROLES = [
   "sports_psychologist",
 ];
 
+export const PHYSIOTHERAPIST_ROLES = [
+  "owner",
+  "admin",
+  "head_coach",
+  "physiotherapist",
+];
+
 export const LOAD_MANAGEMENT_ACCESS_ROLES = [
   "owner",
   "admin",
