@@ -8,9 +8,8 @@ import {
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Observable, of } from "rxjs";
-import { catchError, switchMap, tap, map } from "rxjs/operators";
+import { catchError, switchMap } from "rxjs/operators";
 import { RtpService } from "./services/rtp.service";
-import { extractApiPayload } from "../core/utils/api-response-mapper";
 
 interface ReadinessMetrics {
   readinessScore: number;
