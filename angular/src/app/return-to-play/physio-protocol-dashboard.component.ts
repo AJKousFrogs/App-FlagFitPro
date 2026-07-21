@@ -6,60 +6,78 @@ import {
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ActivatedRoute } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { switchMap, tap, catchError } from "rxjs/operators";
+import { of } from "rxjs";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
-import { extractApiPayload } from "../core/utils/api-response-mapper";
 
-interface ExerciseProgress {
-  exercise_id: string;
-  exercise_name: string;
-  prescribed_sets: number;
-  prescribed_reps: number;
-  actual_sets_completed: number;
-  compliance_percent: number;
-  pain_during_exercise: number;
-  progression_ready: boolean;
+interface FunctionalCriterion {
+  id: string;
+  criteria_name: string;
+  criteria_type: string;
+  target_value: string;
+  measurement_method: string;
+  pass_threshold: string;
+  phase_required: number;
+  latestAssessment?: {
+    criteria_id: string;
+    assessed_value: string;
+    pass_fail: boolean;
+    assessed_date: string;
+  } | null;
 }
 
-interface PhaseProgressDetail {
-  phase: number;
+interface ProtocolPhaseDetail {
+  id: string;
+  phase_number: number;
   phase_name: string;
-  started_date: string;
-  target_duration_weeks: number;
-  weeks_elapsed: number;
-  completion_percent: number;
-  key_milestones: {
-    milestone: string;
-    achieved: boolean;
-    achieved_date?: string;
-  }[];
-  exercises: ExerciseProgress[];
+  week_start: number;
+  week_end: number;
+  acwr_target_min: number;
+  acwr_target_max: number;
+  description: string;
+  activities: string[];
+  restrictions: string[];
+  pain_level_max: number;
+  key_milestones: string;
 }
 
-interface AthleteRtpStatus {
-  athlete_id: string;
-  athlete_name: string;
-  injury_id: string;
+interface ProtocolDefinition {
+  id: string;
   injury_type: string;
-  current_phase: number;
-  phase_details: PhaseProgressDetail;
-  overall_compliance: number;
-  red_flags: string[];
-  recommendations: string[];
+  display_name: string;
+  evidence_grade: string;
+  typical_rtp_timeline_days_min: number;
+  typical_rtp_timeline_days_max: number;
+  rts_rate_percent: number;
+  description: string;
+  key_studies: any;
 }
 
-interface PhysioResponse {
-  success: boolean;
-  athlete: AthleteRtpStatus;
-  lastUpdated: string;
+interface ProtocolAssignment {
+  id: string;
+  athlete_id: string;
+  injury_id: string;
+  protocol_id: string;
+  current_phase: number;
+  phase_start_date: string;
+  estimated_return_date: string;
+  individual_modifiers: Record<string, any>;
+  biological_maturity_gate_passed: boolean;
+  created_at: string;
+  updated_at: string;
+  rtp_protocol_definitions: ProtocolDefinition;
+  currentPhase?: ProtocolPhaseDetail | null;
+  criteria: FunctionalCriterion[];
 }
 
 /**
- * Physiotherapist Protocol Adherence Dashboard
+ * Physiotherapist Protocol Dashboard
  * Route: /staff/physio-protocol/:athleteId/:injuryId
- * Tracks rehab compliance, exercise progression, and functional milestones.
+ * Phase 1D: Evidence-based RTP protocol with criteria-based advancement
  * Audience: Physiotherapist, rehabilitation specialist
  */
 @Component({
@@ -67,754 +85,573 @@ interface PhysioResponse {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="physio-container">
+    <div class="protocol-container">
       <div class="header">
-        <h1>Rehabilitation Protocol Tracking</h1>
-        <p class="subtitle">Monitor exercise compliance and functional progression</p>
+        <h1>Return-to-Play Protocol</h1>
+        <p class="subtitle">Evidence-based rehabilitation tracking</p>
       </div>
 
       @if (loading()) {
         <div class="loading">
           <div class="spinner"></div>
-          <p>Loading protocol data...</p>
+          <p>Loading protocol...</p>
         </div>
       } @else if (error()) {
         <div class="error-state">
           <i-lucide name="alert-triangle"></i-lucide>
           <p>{{ error() }}</p>
         </div>
-      } @else if (athlete()) {
+      } @else if (assignment()) {
         <div class="content">
-          <!-- Athlete Header -->
-          <section class="athlete-header">
-            <div class="athlete-info">
-              <h2>{{ athlete().athlete_name }}</h2>
-              <p class="injury-info">{{ athlete().injury_type }} | Phase {{ athlete().current_phase }}</p>
-            </div>
-            <div class="compliance-summary">
-              <div class="compliance-badge">
-                <span class="label">Overall Compliance</span>
-                <span
-                  class="value"
-                  [class.excellent]="athlete().overall_compliance >= 90"
-                  [class.good]="athlete().overall_compliance >= 70 && athlete().overall_compliance < 90"
-                  [class.fair]="athlete().overall_compliance < 70"
-                >
-                  {{ athlete().overall_compliance }}%
-                </span>
+          <!-- Protocol Overview -->
+          <section class="protocol-overview">
+            <div class="overview-grid">
+              <div class="card">
+                <div class="card-label">Injury</div>
+                <div class="card-value">{{ assignment()!.rtp_protocol_definitions.display_name }}</div>
+                <div class="card-detail">Grade: {{ assignment()!.rtp_protocol_definitions.evidence_grade }}</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">Current Phase</div>
+                <div class="card-value">{{ assignment()!.current_phase }}/5</div>
+                <div class="card-detail">{{ assignment()!.currentPhase?.phase_name || "Loading..." }}</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">Estimated Return</div>
+                <div class="card-value">{{ daysToReturn() }}d</div>
+                <div class="card-detail">{{ assignment()!.estimated_return_date | date: "MMM dd" }}</div>
+              </div>
+
+              <div class="card">
+                <div class="card-label">RTS Rate</div>
+                <div class="card-value">{{ assignment()!.rtp_protocol_definitions.rts_rate_percent }}%</div>
+                <div class="card-detail">Successful return probability</div>
               </div>
             </div>
           </section>
 
-          <!-- Red Flags Alert -->
-          @if (athlete().red_flags && athlete().red_flags.length > 0) {
-            <section class="red-flags">
-              <div class="flag-header">
-                <i-lucide name="alert-circle" class="icon"></i-lucide>
-                <h3>Red Flags</h3>
-              </div>
-              <ul class="flag-list">
-                @for (flag of athlete().red_flags; track flag) {
-                  <li>{{ flag }}</li>
-                }
-              </ul>
-            </section>
-          }
+          <!-- Current Phase Details -->
+          @if (assignment()!.currentPhase) {
+            <section class="phase-section">
+              <h2>{{ assignment()!.currentPhase!.phase_name }}</h2>
+              <p class="phase-description">{{ assignment()!.currentPhase!.description }}</p>
 
-          <!-- Phase Progress -->
-          <section class="phase-progress">
-            <h3>Phase Progress: {{ phaseDetails().phase_name }}</h3>
-            <div class="phase-info">
-              <div class="timeline">
-                <span class="weeks">
-                  {{ phaseDetails().weeks_elapsed }}/{{ phaseDetails().target_duration_weeks }} weeks
-                </span>
-              </div>
-              <div class="progress-bar">
-                <div
-                  class="filled"
-                  [style.width.%]="phaseDetails().completion_percent"
-                ></div>
-              </div>
-              <span class="percent">{{ phaseDetails().completion_percent }}%</span>
-            </div>
-
-            <!-- Milestones -->
-            @if (phaseDetails().key_milestones && phaseDetails().key_milestones.length > 0) {
-              <div class="milestones">
-                <h4>Key Milestones</h4>
-                <ul class="milestone-list">
-                  @for (milestone of phaseDetails().key_milestones; track milestone.milestone) {
-                    <li [class.achieved]="milestone.achieved">
-                      <span class="checkbox">
-                        @if (milestone.achieved) {
-                          <i-lucide name="check" size="16"></i-lucide>
-                        }
-                      </span>
-                      <span class="text">{{ milestone.milestone }}</span>
-                      @if (milestone.achieved_date) {
-                        <span class="date">{{ formatDate(milestone.achieved_date) }}</span>
-                      }
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
-          </section>
-
-          <!-- Exercise Compliance -->
-          @if (phaseDetails().exercises && phaseDetails().exercises.length > 0) {
-            <section class="exercise-section">
-              <h3>Exercise Prescription & Compliance</h3>
-              <div class="exercises-grid">
-                @for (exercise of phaseDetails().exercises; track exercise.exercise_id) {
-                  <div class="exercise-card" [class.ready-to-progress]="exercise.progression_ready">
-                    <div class="exercise-header">
-                      <h4>{{ exercise.exercise_name }}</h4>
-                      @if (exercise.progression_ready) {
-                        <span class="badge ready">Ready to Progress</span>
-                      }
-                    </div>
-
-                    <div class="exercise-details">
-                      <div class="detail-row">
-                        <span class="label">Prescription</span>
-                        <span class="value">
-                          {{ exercise.prescribed_sets }} × {{ exercise.prescribed_reps }}
-                        </span>
-                      </div>
-                      <div class="detail-row">
-                        <span class="label">Completed</span>
-                        <span class="value">{{ exercise.actual_sets_completed }}/{{ exercise.prescribed_sets }} sets</span>
-                      </div>
-                      <div class="detail-row">
-                        <span class="label">Compliance</span>
-                        <div class="compliance-bar">
-                          <div
-                            class="filled"
-                            [style.width.%]="exercise.compliance_percent"
-                            [class.excellent]="exercise.compliance_percent >= 90"
-                            [class.good]="exercise.compliance_percent >= 70 && exercise.compliance_percent < 90"
-                            [class.fair]="exercise.compliance_percent < 70"
-                          ></div>
-                        </div>
-                        <span class="percent">{{ exercise.compliance_percent }}%</span>
-                      </div>
-                    </div>
-
-                    <div class="pain-assessment">
-                      <span class="label">Pain During Exercise</span>
-                      <div class="pain-scale">
-                        <div class="pain-bar">
-                          <div
-                            class="filled"
-                            [style.width.%]="(exercise.pain_during_exercise / 10) * 100"
-                            [class.acceptable]="exercise.pain_during_exercise <= 3"
-                            [class.elevated]="exercise.pain_during_exercise > 3 && exercise.pain_during_exercise <= 6"
-                            [class.concerning]="exercise.pain_during_exercise > 6"
-                          ></div>
-                        </div>
-                        <span class="pain-value">{{ exercise.pain_during_exercise }}/10</span>
-                      </div>
-                    </div>
+              <div class="phase-grid">
+                <div class="phase-card">
+                  <h3>ACWR Target</h3>
+                  <div class="acwr-range">
+                    {{ assignment()!.currentPhase!.acwr_target_min }} –
+                    {{ assignment()!.currentPhase!.acwr_target_max }}
                   </div>
-                }
+                  <p>Coaching load guidance for this phase</p>
+                </div>
+
+                <div class="phase-card">
+                  <h3>Recommended Activities</h3>
+                  <ul class="activity-list">
+                    @for (activity of assignment()!.currentPhase!.activities; track $index) {
+                      <li>{{ activity }}</li>
+                    }
+                  </ul>
+                </div>
+
+                <div class="phase-card">
+                  <h3>Contraindications</h3>
+                  <ul class="restriction-list">
+                    @for (restriction of assignment()!.currentPhase!.restrictions; track $index) {
+                      <li>{{ restriction }}</li>
+                    }
+                  </ul>
+                </div>
+
+                <div class="phase-card">
+                  <h3>Key Milestones</h3>
+                  <p>{{ assignment()!.currentPhase!.key_milestones }}</p>
+                </div>
               </div>
             </section>
           }
 
-          <!-- Recommendations -->
-          @if (athlete().recommendations && athlete().recommendations.length > 0) {
-            <section class="recommendations">
-              <div class="rec-header">
-                <i-lucide name="lightbulb" class="icon"></i-lucide>
-                <h3>Clinical Recommendations</h3>
-              </div>
-              <ul class="rec-list">
-                @for (rec of athlete().recommendations; track rec) {
-                  <li>{{ rec }}</li>
-                }
-              </ul>
-            </section>
-          }
+          <!-- Functional Criteria -->
+          <section class="criteria-section">
+            <h2>Functional Criteria Assessment</h2>
+            <p class="criteria-intro">
+              Complete criteria for phase advancement. All required criteria must pass before advancing.
+            </p>
 
-          <div class="last-updated">
-            <p>Last updated: {{ lastUpdated() }}</p>
-          </div>
+            <div class="criteria-list">
+              @for (criterion of assignment()!.criteria; track criterion.id) {
+                <div class="criteria-card">
+                  <div class="criteria-header">
+                    <h3>{{ criterion.criteria_name }}</h3>
+                    <span class="type-badge">{{ criterion.criteria_type }}</span>
+                  </div>
+
+                  <div class="criteria-details">
+                    <p><strong>Target:</strong> {{ criterion.target_value }}</p>
+                    <p><strong>Method:</strong> {{ criterion.measurement_method }}</p>
+                    <p><strong>Threshold:</strong> {{ criterion.pass_threshold }}</p>
+                  </div>
+
+                  <div class="assessment-status">
+                    @if (criterion.latestAssessment) {
+                      <div class="assessed">
+                        <span
+                          class="status-badge"
+                          [ngClass]="criterion.latestAssessment.pass_fail ? 'pass' : 'fail'"
+                        >
+                          {{ criterion.latestAssessment.pass_fail ? "✓ Passed" : "✗ Failed" }}
+                        </span>
+                        <div class="assessment-value">
+                          {{ criterion.latestAssessment.assessed_value }}
+                          <span class="date">({{ criterion.latestAssessment.assessed_date | date: "MMM dd" }})</span>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="pending">
+                        <span class="status-badge pending">⊝ Pending</span>
+                      </div>
+                    }
+                  </div>
+
+                  <button class="record-btn" (click)="onRecordAssessment(criterion)">
+                    Record Assessment
+                  </button>
+                </div>
+              }
+            </div>
+          </section>
+
+          <!-- Phase Advancement -->
+          @if (assignment()!.current_phase < 5) {
+            <section class="advancement-section">
+              <h2>Phase Advancement</h2>
+              <p>{{ advancement() }}</p>
+              @if (canAdvance()) {
+                <button class="advance-btn primary" (click)="onAdvancePhase()">
+                  Advance to Phase {{ assignment()!.current_phase + 1 }}
+                </button>
+              } @else {
+                <button class="advance-btn disabled" disabled>
+                  Criteria not yet met
+                </button>
+              }
+            </section>
+          } @else {
+            <div class="completion-banner">
+              <h2>✓ Return to Sport Complete</h2>
+              <p>Athlete has cleared all protocol phases and is approved for full participation.</p>
+            </div>
+          }
         </div>
       }
     </div>
   `,
   styles: [
     `
-      .physio-container {
+      .protocol-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: var(--s-5);
+        padding: 20px;
         background: var(--surface);
         min-height: 100vh;
       }
 
       .header {
-        margin-bottom: var(--s-6);
+        margin-bottom: 30px;
       }
 
       .header h1 {
-        font-size: var(--fs-xl);
-        color: var(--text-strong);
-        margin: 0 0 var(--s-2) 0;
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
       }
 
       .subtitle {
-        color: var(--text-muted);
-        font-size: var(--fs-sm);
+        color: #666;
+        font-size: 14px;
         margin: 0;
       }
 
-      .loading,
-      .error-state {
+      .loading, .error-state {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 300px;
-        gap: var(--s-3);
-        color: var(--text-muted);
+        padding: 60px 20px;
+        text-align: center;
       }
 
       .spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid var(--surface-2);
-        border-top-color: var(--accent);
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e0e0e0;
+        border-top-color: #007bff;
         border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+        animation: spin 1s linear infinite;
       }
 
       @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .error-state {
-        color: var(--danger);
-        gap: var(--s-2);
+        to { transform: rotate(360deg); }
       }
 
       .content {
         display: flex;
         flex-direction: column;
-        gap: var(--s-5);
+        gap: 30px;
       }
 
-      section {
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: var(--r-lg);
-        padding: var(--s-4);
+      h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
       }
 
-      section h3 {
-        font-size: var(--fs-md);
-        color: var(--text-strong);
-        margin: 0 0 var(--s-3) 0;
+      /* Overview Cards */
+      .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 15px;
       }
 
-      /* Athlete Header */
-      .athlete-header {
+      .card {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+      }
+
+      .card-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: #999;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+
+      .card-value {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .card-detail {
+        font-size: 12px;
+        color: #666;
+      }
+
+      /* Phase Section */
+      .phase-section {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .phase-description {
+        color: #555;
+        margin: 10px 0 20px 0;
+        line-height: 1.5;
+      }
+
+      .phase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .phase-card {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 3px solid #28a745;
+      }
+
+      .phase-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .acwr-range {
+        font-size: 20px;
+        font-weight: 600;
+        color: #28a745;
+        margin-bottom: 5px;
+      }
+
+      .activity-list, .restriction-list {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .activity-list li, .restriction-list li {
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #555;
+      }
+
+      /* Criteria Section */
+      .criteria-intro {
+        color: #666;
+        margin: 0 0 20px 0;
+      }
+
+      .criteria-list {
+        display: grid;
+        gap: 15px;
+      }
+
+      .criteria-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .criteria-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
-        border-color: var(--accent-faint);
+        margin-bottom: 12px;
       }
 
-      .athlete-info h2 {
-        font-size: var(--fs-lg);
-        color: var(--text-strong);
-        margin: 0 0 var(--s-1) 0;
-      }
-
-      .injury-info {
-        color: var(--text-muted);
-        font-size: var(--fs-sm);
+      .criteria-header h3 {
         margin: 0;
+        font-size: 16px;
       }
 
-      .compliance-summary {
-        display: flex;
-        gap: var(--s-3);
-      }
-
-      .compliance-badge {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--s-1);
-        padding: var(--s-3);
-        background: var(--surface);
-        border-radius: var(--r-md);
-        border: 1px solid var(--border);
-      }
-
-      .compliance-badge .label {
-        font-size: var(--fs-xs);
-        color: var(--text-faint);
+      .type-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
       }
 
-      .compliance-badge .value {
-        font-size: var(--fs-xl);
-        font-weight: var(--fw-bold);
+      .criteria-details {
+        margin: 12px 0;
+        padding: 12px;
+        background: #f9f9f9;
+        border-radius: 6px;
       }
 
-      .compliance-badge .value.excellent {
-        color: var(--good);
+      .criteria-details p {
+        margin: 5px 0;
+        font-size: 13px;
+        color: #555;
       }
 
-      .compliance-badge .value.good {
-        color: var(--accent);
+      .assessment-status {
+        margin: 12px 0;
       }
 
-      .compliance-badge .value.fair {
-        color: var(--warn);
-      }
-
-      /* Red Flags */
-      .red-flags {
-        background: color-mix(in srgb, var(--danger) 10%, transparent);
-        border-color: var(--danger);
-        border-left: 4px solid var(--danger);
-      }
-
-      .flag-header {
+      .assessed, .pending {
         display: flex;
         align-items: center;
-        gap: var(--s-2);
-        margin-bottom: var(--s-2);
+        gap: 12px;
       }
 
-      .flag-header .icon {
-        color: var(--danger);
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 80px;
+        text-align: center;
       }
 
-      .flag-header h3 {
-        color: var(--danger);
-        margin: 0;
+      .status-badge.pass {
+        background: #d4edda;
+        color: #155724;
       }
 
-      .flag-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-2);
+      .status-badge.fail {
+        background: #f8d7da;
+        color: #721c24;
       }
 
-      .flag-list li {
-        padding-left: var(--s-3);
-        color: var(--text-strong);
-        font-size: var(--fs-sm);
-        position: relative;
+      .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
       }
 
-      .flag-list li::before {
-        content: "⚠";
-        position: absolute;
-        left: 0;
-        color: var(--danger);
-      }
-
-      /* Phase Progress */
-      .phase-progress h3 {
-        margin-bottom: var(--s-3);
-      }
-
-      .phase-info {
-        display: flex;
-        align-items: center;
-        gap: var(--s-3);
-        margin-bottom: var(--s-4);
-      }
-
-      .timeline {
-        min-width: 120px;
-        font-size: var(--fs-sm);
-        color: var(--text-muted);
-      }
-
-      .progress-bar {
-        flex: 1;
-        height: 8px;
-        background: var(--surface);
-        border-radius: var(--r-pill);
-        overflow: hidden;
-      }
-
-      .progress-bar .filled {
-        height: 100%;
-        background: var(--accent);
-        border-radius: var(--r-pill);
-        transition: width 0.3s ease;
-      }
-
-      .percent {
-        min-width: 50px;
-        text-align: right;
-        font-weight: var(--fw-bold);
-        color: var(--text-strong);
-      }
-
-      .milestones {
-        margin-top: var(--s-4);
-      }
-
-      .milestones h4 {
-        font-size: var(--fs-sm);
-        color: var(--text-strong);
-        margin: 0 0 var(--s-2) 0;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .milestone-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-2);
-      }
-
-      .milestone-list li {
-        display: flex;
-        align-items: center;
-        gap: var(--s-2);
-        padding: var(--s-2);
-        background: var(--surface);
-        border-radius: var(--r-sm);
-        border: 1px solid var(--border);
-        opacity: 0.6;
-        transition: all 0.2s ease;
-      }
-
-      .milestone-list li.achieved {
-        opacity: 1;
-        border-color: var(--good);
-        background: color-mix(in srgb, var(--good) 10%, transparent);
-      }
-
-      .checkbox {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        border: 2px solid var(--border);
-        color: var(--text-muted);
-        flex-shrink: 0;
-      }
-
-      .milestone-list li.achieved .checkbox {
-        background: var(--good);
-        border-color: var(--good);
-        color: white;
-      }
-
-      .text {
-        flex: 1;
-        color: var(--text-strong);
-        font-size: var(--fs-sm);
+      .assessment-value {
+        font-size: 13px;
+        color: #555;
       }
 
       .date {
-        font-size: var(--fs-xs);
-        color: var(--text-faint);
+        color: #999;
+        font-size: 12px;
+        margin-left: 5px;
       }
 
-      /* Exercise Section */
-      .exercise-section {
+      .record-btn {
+        width: 100%;
+        margin-top: 10px;
+        padding: 8px 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
       }
 
-      .exercises-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: var(--s-3);
+      .record-btn:hover {
+        background: #0056b3;
       }
 
-      .exercise-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--r-md);
-        padding: var(--s-3);
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-3);
-        transition: all 0.2s ease;
+      /* Advancement Section */
+      .advancement-section {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #1976d2;
       }
 
-      .exercise-card.ready-to-progress {
-        border-color: var(--good);
-        background: color-mix(in srgb, var(--good) 5%, transparent);
+      .advancement-section p {
+        margin: 0 0 15px 0;
+        color: #555;
       }
 
-      .exercise-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: var(--s-2);
+      .advance-btn {
+        width: 100%;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
       }
 
-      .exercise-header h4 {
-        margin: 0;
-        font-size: var(--fs-sm);
-        color: var(--text-strong);
+      .advance-btn.primary {
+        background: #28a745;
+        color: white;
       }
 
-      .badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: var(--r-sm);
-        font-size: var(--fs-xs);
-        font-weight: var(--fw-bold);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+      .advance-btn.primary:hover {
+        background: #218838;
       }
 
-      .badge.ready {
-        background: color-mix(in srgb, var(--good) 20%, transparent);
-        color: var(--good);
+      .advance-btn.disabled {
+        background: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
       }
 
-      .exercise-details {
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-2);
-      }
-
-      .detail-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--fs-sm);
-      }
-
-      .detail-row .label {
-        color: var(--text-muted);
-      }
-
-      .detail-row .value {
-        font-weight: var(--fw-bold);
-        color: var(--text-strong);
-      }
-
-      .compliance-bar {
-        flex: 1;
-        height: 6px;
-        background: var(--surface-2);
-        border-radius: var(--r-pill);
-        overflow: hidden;
-      }
-
-      .compliance-bar .filled {
-        height: 100%;
-        border-radius: var(--r-pill);
-        transition: width 0.3s ease;
-      }
-
-      .compliance-bar .filled.excellent {
-        background: var(--good);
-      }
-
-      .compliance-bar .filled.good {
-        background: var(--accent);
-      }
-
-      .compliance-bar .filled.fair {
-        background: var(--warn);
-      }
-
-      .percent {
-        font-size: var(--fs-xs);
-        font-weight: var(--fw-bold);
-        min-width: 40px;
-        text-align: right;
-      }
-
-      .pain-assessment {
-        padding: var(--s-2);
-        background: var(--surface-2);
-        border-radius: var(--r-sm);
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-2);
-      }
-
-      .pain-assessment .label {
-        font-size: var(--fs-xs);
-        color: var(--text-faint);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      .pain-scale {
-        display: flex;
-        align-items: center;
-        gap: var(--s-2);
-      }
-
-      .pain-bar {
-        flex: 1;
-        height: 6px;
-        background: var(--surface);
-        border-radius: var(--r-pill);
-        overflow: hidden;
-      }
-
-      .pain-bar .filled {
-        height: 100%;
-        border-radius: var(--r-pill);
-      }
-
-      .pain-bar .filled.acceptable {
-        background: var(--good);
-      }
-
-      .pain-bar .filled.elevated {
-        background: var(--warn);
-      }
-
-      .pain-bar .filled.concerning {
-        background: var(--danger);
-      }
-
-      .pain-value {
-        font-weight: var(--fw-bold);
-        min-width: 40px;
-        text-align: right;
-      }
-
-      /* Recommendations */
-      .recommendations {
-        background: color-mix(in srgb, var(--accent) 10%, transparent);
-        border-color: var(--accent-faint);
-      }
-
-      .rec-header {
-        display: flex;
-        align-items: center;
-        gap: var(--s-2);
-        margin-bottom: var(--s-3);
-      }
-
-      .rec-header .icon {
-        color: var(--accent);
-      }
-
-      .rec-header h3 {
-        color: var(--text-strong);
-        margin: 0;
-      }
-
-      .rec-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--s-2);
-      }
-
-      .rec-list li {
-        padding-left: var(--s-3);
-        color: var(--text-strong);
-        font-size: var(--fs-sm);
-        position: relative;
-      }
-
-      .rec-list li::before {
-        content: "→";
-        position: absolute;
-        left: 0;
-        color: var(--accent);
-        font-weight: var(--fw-bold);
-      }
-
-      /* Last Updated */
-      .last-updated {
+      .completion-banner {
+        background: #d4edda;
+        border: 2px solid #28a745;
+        border-radius: 8px;
+        padding: 20px;
         text-align: center;
-        color: var(--text-faint);
-        font-size: var(--fs-xs);
-        padding: var(--s-3);
       }
 
-      .last-updated p {
+      .completion-banner h2 {
+        color: #155724;
+        border: none;
+        margin-bottom: 10px;
+      }
+
+      .completion-banner p {
         margin: 0;
+        color: #155724;
       }
     `,
   ],
 })
 export class PhysioProtocolDashboardComponent {
-  private readonly api = inject(ApiService);
-  private readonly logger = inject(LoggerService);
+  private apiService = inject(ApiService);
+  private route = inject(ActivatedRoute);
+  private logger = inject(LoggerService);
 
-  readonly loading = signal(true);
-  readonly error = signal<string | null>(null);
-  readonly athleteData = signal<AthleteRtpStatus | null>(null);
-  readonly updatedTime = signal<string>("");
+  loading = signal(false);
+  error = signal<string | null>(null);
+  assignment = signal<ProtocolAssignment | null>(null);
 
-  readonly athlete = computed(() => this.athleteData());
-  readonly phaseDetails = computed(() => this.athleteData()?.phase_details || {
-    phase: 0,
-    phase_name: "Loading...",
-    started_date: "",
-    target_duration_weeks: 0,
-    weeks_elapsed: 0,
-    completion_percent: 0,
-    key_milestones: [],
-    exercises: [],
+  daysToReturn = computed(() => {
+    const a = this.assignment();
+    if (!a?.estimated_return_date) return 0;
+    const returnDate = new Date(a.estimated_return_date);
+    const today = new Date();
+    return Math.ceil((returnDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   });
 
-  readonly lastUpdated = computed(() => {
-    if (this.updatedTime()) {
-      const date = new Date(this.updatedTime());
-      return date.toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+  advancement = computed(() => {
+    const a = this.assignment();
+    if (!a) return "";
+    const criteria = a.criteria.filter((c) => c.phase_required <= a.current_phase);
+    const passed = criteria.filter((c) => c.latestAssessment?.pass_fail).length;
+    return `${passed}/${criteria.length} criteria passed for phase ${a.current_phase}`;
+  });
+
+  canAdvance = computed(() => {
+    const a = this.assignment();
+    if (!a || a.current_phase >= 5) return false;
+    const nextPhase = a.current_phase + 1;
+    const nextCriteria = a.criteria.filter((c) => c.phase_required === nextPhase);
+    if (!nextCriteria.length) return true;
+    return nextCriteria.every((c) => c.latestAssessment?.pass_fail);
+  });
+
+  ngOnInit(): void {
+    this.loading.set(true);
+    this.route.params
+      .pipe(
+        switchMap(({ athleteId, injuryId }) =>
+          this.apiService.get(`/api/rtp/protocols/${athleteId}/${injuryId}`)
+        ),
+        tap((res: any) => {
+          if (res.assignment) {
+            this.assignment.set(res.assignment);
+          } else {
+            this.error.set("No protocol found for this injury");
+          }
+        }),
+        catchError((err) => {
+          this.logger.error("Failed to load protocol", err);
+          this.error.set("Failed to load protocol");
+          return of(null);
+        })
+      )
+      .subscribe({ finalize: () => this.loading.set(false) });
+  }
+
+  onRecordAssessment(criterion: FunctionalCriterion): void {
+    // TODO: Open assessment modal
+    this.logger.debug("Record assessment for", criterion);
+  }
+
+  onAdvancePhase(): void {
+    const a = this.assignment();
+    if (!a) return;
+
+    this.loading.set(true);
+    this.apiService
+      .patch(`/api/rtp/athletes/${a.athlete_id}/${a.injury_id}/phase`, {})
+      .subscribe({
+        next: (res: any) => {
+          if (res.success) {
+            this.assignment.set(res.assignment);
+            this.logger.info("Phase advanced successfully");
+          }
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Failed to advance phase", err);
+          this.error.set("Failed to advance phase");
+          this.loading.set(false);
+        },
       });
-    }
-    return "—";
-  });
-
-  constructor() {
-    this.fetchProtocolData();
-  }
-
-  private fetchProtocolData(): void {
-    this.api.get<PhysioResponse>("/api/physio-protocol").subscribe({
-      next: (apiResponse) => {
-        const response = extractApiPayload<PhysioResponse>(apiResponse);
-        if (response?.athlete) {
-          this.athleteData.set(response.athlete);
-          this.updatedTime.set(response.lastUpdated);
-        }
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("physio_protocol_fetch_failed", err);
-        this.error.set("Failed to load protocol data");
-        this.loading.set(false);
-      },
-    });
-  }
-
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 }
