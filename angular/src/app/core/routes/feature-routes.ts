@@ -150,6 +150,14 @@ export const featureRoutes: Routes = [
         title: "Team Load Status · FlagFit",
       },
       {
+        path: "injury-analytics",
+        loadComponent: () =>
+          import("../../return-to-play/injury-analytics.component").then(
+            (m) => m.InjuryAnalyticsComponent,
+          ),
+        title: "Injury Analytics · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(
