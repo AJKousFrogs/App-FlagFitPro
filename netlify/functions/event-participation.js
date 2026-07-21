@@ -152,8 +152,11 @@ const handler = async (event, context) =>
       // has no columns for the breakdown, so fold it into the session note for coach
       // transparency (and so the load number isn't unexplained).
       const contextParts = [];
-      if (body.playedBothWays === true) contextParts.push("both ways");
-      else if (body.playedBothWays === false) contextParts.push("one way");
+      if (body.playedBothWays === true) {
+        contextParts.push("both ways");
+      } else if (body.playedBothWays === false) {
+        contextParts.push("one way");
+      }
       const playersPresent = Number(body.playersPresent);
       if (
         Number.isInteger(playersPresent) &&

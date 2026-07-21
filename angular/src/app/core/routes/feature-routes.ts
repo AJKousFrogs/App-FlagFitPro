@@ -272,6 +272,14 @@ export const featureRoutes: Routes = [
         title: "Return to play · FlagFit",
       },
       {
+        path: "return-to-play/:injuryId",
+        loadComponent: () =>
+          import("../../return-to-play/rtp-progress-dashboard.component").then(
+            (m) => m.RtpProgressDashboardComponent,
+          ),
+        title: "RTP Progress · FlagFit",
+      },
+      {
         path: "sleep-debt",
         loadComponent: () =>
           import("../../sleep-debt/sleep-debt.component").then(
