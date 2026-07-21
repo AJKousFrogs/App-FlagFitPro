@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
+import { extractApiPayload } from '../../core/utils/api-response-mapper';
 
 export interface RtpPhaseProgress {
   id: string;
@@ -94,10 +96,16 @@ export class RtpService {
    * GET /api/rtp/phase-progress?athleteId=X&injuryId=Y
    */
   getRtpProgress(athleteId: string, injuryId: string): Observable<RtpProgressResponse> {
-    return this.api.get(`/api/rtp/phase-progress`, {
+    return this.api.get<RtpProgressResponse>(`/api/rtp/phase-progress`, {
       athleteId,
       injuryId,
-    });
+    }).pipe(
+      map(response => extractApiPayload<RtpProgressResponse>(response) ?? {
+        success: false,
+        data: [],
+        count: 0,
+      })
+    );
   }
 
   /**
@@ -105,7 +113,13 @@ export class RtpService {
    * POST /api/rtp/phase-progress
    */
   updateRtpProgress(payload: Partial<RtpPhaseProgress>): Observable<RtpProgressResponse> {
-    return this.api.post(`/api/rtp/phase-progress`, payload);
+    return this.api.post<RtpProgressResponse>(`/api/rtp/phase-progress`, payload).pipe(
+      map(response => extractApiPayload<RtpProgressResponse>(response) ?? {
+        success: false,
+        data: [],
+        count: 0,
+      })
+    );
   }
 
   /**
@@ -116,10 +130,17 @@ export class RtpService {
     athleteId: string,
     limit: number = 10
   ): Observable<PsychologicalAssessmentResponse> {
-    return this.api.get(`/api/rtp/psychological-assessment`, {
+    return this.api.get<PsychologicalAssessmentResponse>(`/api/rtp/psychological-assessment`, {
       athleteId,
       limit: limit.toString(),
-    });
+    }).pipe(
+      map(response => extractApiPayload<PsychologicalAssessmentResponse>(response) ?? {
+        success: false,
+        data: [],
+        latestStatus: { aclRsiReady: null, tsk11Ready: null, overallReady: false },
+        count: 0,
+      })
+    );
   }
 
   /**
@@ -129,7 +150,12 @@ export class RtpService {
   logPsychologicalAssessment(
     payload: Partial<PsychologicalAssessment>
   ): Observable<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }> {
-    return this.api.post(`/api/rtp/psychological-assessment`, payload);
+    return this.api.post<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }>(`/api/rtp/psychological-assessment`, payload).pipe(
+      map(response => extractApiPayload<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }>(response) ?? {
+        success: false,
+        readinessStatus: { aclRsiReady: null, tsk11Ready: null, overallReady: false },
+      })
+    );
   }
 
   /**
@@ -142,6 +168,15 @@ export class RtpService {
   ): Observable<RecoveryRecommendationResponse> {
     const params: Record<string, string> = { athleteId };
     if (date) params.date = date;
-    return this.api.get(`/api/recovery-recommendations`, params);
+    return this.api.get<RecoveryRecommendationResponse>(`/api/recovery-recommendations`, params).pipe(
+      map(response => extractApiPayload<RecoveryRecommendationResponse>(response) ?? {
+        success: false,
+        date: new Date().toISOString().slice(0, 10),
+        acwrStatus: 'safe',
+        recommendations: [],
+        totalCount: 0,
+        triggers: { acwrBased: 0, markerBased: 0, injuryPhaseBased: 0, biomarkerBased: 0 },
+      })
+    );
   }
 }

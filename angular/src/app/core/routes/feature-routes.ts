@@ -142,6 +142,14 @@ export const featureRoutes: Routes = [
         title: "Engine inspector · FlagFit",
       },
       {
+        path: "team-acwr-heatmap",
+        loadComponent: () =>
+          import("../../return-to-play/team-acwr-heatmap.component").then(
+            (m) => m.TeamAcwrHeatmapComponent,
+          ),
+        title: "Team Load Status · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(
