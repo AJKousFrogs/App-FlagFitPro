@@ -161,7 +161,7 @@ const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "rtp-advance-phase",
     allowedMethods: ["PATCH"],
-    rateLimitType: "WRITE",
+    rateLimitType: "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const requestLogger = buildRequestLogContext(logger, event);

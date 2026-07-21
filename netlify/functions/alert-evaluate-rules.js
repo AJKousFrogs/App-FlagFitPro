@@ -524,7 +524,7 @@ const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "alert-evaluate-rules",
     allowedMethods: ["POST"],
-    rateLimitType: "WRITE",
+    rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const requestLogger = buildRequestLogContext(logger, event);

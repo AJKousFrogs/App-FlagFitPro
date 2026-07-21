@@ -135,7 +135,7 @@ const handler = async (event, context) =>
   baseHandler(event, context, {
     functionName: "rtp-record-assessment",
     allowedMethods: ["POST"],
-    rateLimitType: "WRITE",
+    rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
       const requestLogger = buildRequestLogContext(logger, event);
