@@ -166,6 +166,14 @@ export const featureRoutes: Routes = [
         title: "Physio Protocol · FlagFit",
       },
       {
+        path: "athlete-readiness/:id",
+        loadComponent: () =>
+          import("../../return-to-play/coach-athlete-readiness.component").then(
+            (m) => m.CoachAthleteReadinessComponent,
+          ),
+        title: "Athlete Readiness · FlagFit",
+      },
+      {
         path: "more",
         loadComponent: () =>
           import("../../staff/staff-more/staff-more.component").then(
