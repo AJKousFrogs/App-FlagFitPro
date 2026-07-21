@@ -288,6 +288,14 @@ export const featureRoutes: Routes = [
         title: "RTP Progress · FlagFit",
       },
       {
+        path: "recovery-effectiveness",
+        loadComponent: () =>
+          import("../../return-to-play/recovery-effectiveness.component").then(
+            (m) => m.RecoveryEffectivenessComponent,
+          ),
+        title: "Recovery Effectiveness · FlagFit",
+      },
+      {
         path: "sleep-debt",
         loadComponent: () =>
           import("../../sleep-debt/sleep-debt.component").then(
