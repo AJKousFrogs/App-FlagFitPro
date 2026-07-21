@@ -18,6 +18,7 @@ function createFakeSupabase() {
   return {
     from(table) {
       return {
+        table,
         select() { return this; },
         eq(field, value) { this.eqField = field; this.eqValue = value; return this; },
         in(field, values) { this.inField = field; this.inValues = values; return this; },
@@ -51,7 +52,7 @@ function createFakeSupabase() {
             return cb({
               data: {
                 ferritin_ugL: 18, // Low, triggers supplementation
-                vitamin_d_status: 22, // Deficient
+                vitamin_d_status: 18, // Deficient
                 cortisol_morning_nmolL: 12, // Elevated
               },
               error: null,

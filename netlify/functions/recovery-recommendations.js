@@ -297,6 +297,9 @@ const handler = async (event, context) => {
     rateLimitType: "READ",
     requireAuth: true,
     handler: async (evt, _ctx, { userId, requestId, correlationId }) => {
+      if (evt.httpMethod !== "GET") {
+        return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      }
       const requestLogger = logger.child(
         buildRequestLogContext(evt, {
           function_name: "recovery-recommendations",
@@ -411,18 +414,26 @@ const handler = async (event, context) => {
           recommendation_count: recommendations.length,
         });
 
-        return createSuccessResponse({
-          date: dateStr,
-          acwrStatus,
-          recommendations,
-          totalCount: recommendations.length,
-          triggers: {
-            acwrBased: acwrRecs.length,
-            markerBased: markerRecs.length,
-            injuryPhaseBased: injuryRecs.length,
-            biomarkerBased: biomarkerRecs.length,
+        return {
+          statusCode: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
-        });
+          body: JSON.stringify({
+            success: true,
+            date: dateStr,
+            acwrStatus,
+            recommendations,
+            totalCount: recommendations.length,
+            triggers: {
+              acwrBased: acwrRecs.length,
+              markerBased: markerRecs.length,
+              injuryPhaseBased: injuryRecs.length,
+              biomarkerBased: biomarkerRecs.length,
+            },
+          }),
+        };
       } catch (error) {
         requestLogger.error("recovery_recommendations_failed", error);
         return createErrorResponse(

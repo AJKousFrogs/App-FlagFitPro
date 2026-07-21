@@ -249,11 +249,19 @@ const handler = async (event, context) => {
               latest.tsk11_score < 37,
           };
 
-          return createSuccessResponse({
-            data,
-            latestStatus,
-            count: data?.length || 0,
-          });
+          return {
+            statusCode: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+              success: true,
+              data,
+              latestStatus,
+              count: data?.length || 0,
+            }),
+          };
         }
 
         // POST /api/rtp/psychological-assessment
@@ -266,6 +274,11 @@ const handler = async (event, context) => {
           const payload = parsedBody.data;
           const { athleteId } = payload;
 
+          // Validate athleteId exists before checking authorization
+          if (!athleteId) {
+            return handleValidationError("athleteId is required");
+          }
+
           const access = await verifyAthleteAccess(userId, athleteId);
           if (!access.authorized) {
             return createErrorResponse(access.message, 403, "authorization_error");
@@ -277,6 +290,11 @@ const handler = async (event, context) => {
             requestLogger
           );
           if (result.error) {
+            // If error is already a full HTTP response (from validation), return it directly
+            if (result.error.statusCode) {
+              return result.error;
+            }
+            // Otherwise treat as database error
             return createErrorResponse(
               "Failed to log psychological assessment",
               500,
@@ -284,15 +302,23 @@ const handler = async (event, context) => {
             );
           }
 
-          return createSuccessResponse({
-            data: result.data,
-            readinessStatus: {
-              aclRsiReady: result.aclRsiReady,
-              tsk11Ready: result.tsk11Ready,
-              overallReady: result.overallReady,
+          return {
+            statusCode: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
             },
-            message: "Psychological assessment logged successfully",
-          });
+            body: JSON.stringify({
+              success: true,
+              data: result.data,
+              readinessStatus: {
+                aclRsiReady: result.aclRsiReady,
+                tsk11Ready: result.tsk11Ready,
+                overallReady: result.overallReady,
+              },
+              message: "Psychological assessment logged successfully",
+            }),
+          };
         }
 
         return createErrorResponse("Method not allowed", 405, "method_not_allowed");

@@ -206,10 +206,18 @@ const handler = async (event, context) => {
             );
           }
 
-          return createSuccessResponse({
-            data,
-            count: data?.length || 0,
-          });
+          return {
+            statusCode: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+              success: true,
+              data,
+              count: data?.length || 0,
+            }),
+          };
         }
 
         // POST /api/rtp/phase-progress
@@ -222,6 +230,10 @@ const handler = async (event, context) => {
           const payload = parsedBody.data;
           const { athleteId } = payload;
 
+          if (!athleteId) {
+            return handleValidationError("athleteId is required");
+          }
+
           const access = await verifyAthleteAccess(userId, athleteId);
           if (!access.authorized) {
             return createErrorResponse(access.message, 403, "authorization_error");
@@ -233,6 +245,11 @@ const handler = async (event, context) => {
             requestLogger
           );
           if (result.error) {
+            // If error is already a full HTTP response (from validation), return it directly
+            if (result.error.statusCode) {
+              return result.error;
+            }
+            // Otherwise treat as database error
             return createErrorResponse(
               "Failed to update RTP progress",
               500,
@@ -240,10 +257,18 @@ const handler = async (event, context) => {
             );
           }
 
-          return createSuccessResponse({
-            data: result.data,
-            message: "RTP progress updated successfully",
-          });
+          return {
+            statusCode: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+              success: true,
+              data: result.data,
+              message: "RTP progress updated successfully",
+            }),
+          };
         }
 
         return createErrorResponse("Method not allowed", 405, "method_not_allowed");

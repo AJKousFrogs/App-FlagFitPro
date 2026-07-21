@@ -15,6 +15,7 @@ function createFakeSupabase() {
   return {
     from(table) {
       return {
+        table,
         select() { return this; },
         eq(field, value) { this.eqField = field; this.eqValue = value; return this; },
         order(field, opts) { return this; },
