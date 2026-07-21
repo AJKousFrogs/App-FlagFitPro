@@ -339,9 +339,13 @@ const handler = async (event, context) => {
         // Calculate ACWR
         const loadsByDay = new Map();
         for (const s of sessions || []) {
-          if (!s?.session_date) continue;
+          if (!s?.session_date) {
+            continue;
+          }
           const load = s.workload || (s.duration_minutes * s.rpe) / 10;
-          if (load <= 0) continue;
+          if (load <= 0) {
+            continue;
+          }
           loadsByDay.set(s.session_date, (loadsByDay.get(s.session_date) || 0) + load);
         }
 
