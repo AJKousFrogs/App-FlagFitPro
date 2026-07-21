@@ -1,9 +1,9 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-07-19**
+> **Last verified: 2026-07-21**
 
-**121 functions: 118 exercised, 3 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**128 functions: 118 exercised, 10 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -132,6 +132,13 @@
 
 | Function | Methods | /api path(s) | Tables / RPCs touched |
 |---|---|---|---|
+| `injury-analytics` | GET | _(no /api redirect)_ | athlete_injuries |
+| `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️ |
+| `recovery-effectiveness` | GET, POST | _(no /api redirect)_ | recovery_logs ⚠️ |
+| `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, athlete_injuries, individual_profiles ⚠️, training_sessions |
+| `rtp-phase-progress` | GET, POST | _(no /api redirect)_ | rtp_phase_progress ⚠️ |
+| `rtp-psychological-assessment` | GET, POST | _(no /api redirect)_ | psychological_assessments |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
+| `team-acwr` | GET | _(no /api redirect)_ | team_members, daily_load_score ⚠️ |
 | `team-practice-plan` | POST | /api/team-practice-plan | — |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
