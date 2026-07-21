@@ -197,6 +197,31 @@ export const featureRoutes: Routes = [
           ),
         title: "Administration · FlagFit",
       },
+      // Phase 3: Alert Engine routes
+      {
+        path: "alerts",
+        loadComponent: () =>
+          import("../../return-to-play/alert-inbox.component").then(
+            (m) => m.AlertInboxComponent,
+          ),
+        title: "Alerts · FlagFit",
+      },
+      {
+        path: "alert-dashboard",
+        loadComponent: () =>
+          import("../../return-to-play/alert-dashboard.component").then(
+            (m) => m.AlertDashboardComponent,
+          ),
+        title: "Alert Dashboard · FlagFit",
+      },
+      {
+        path: "alert-preferences",
+        loadComponent: () =>
+          import("../../return-to-play/alert-preferences.component").then(
+            (m) => m.AlertPreferencesComponent,
+          ),
+        title: "Alert Preferences · FlagFit",
+      },
       {
         path: "more",
         loadComponent: () =>
