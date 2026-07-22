@@ -251,6 +251,13 @@
   status = 200
   force = true
 
+# API Routes for Athlete Profile (TIER 1 onboarding — self-service bio fields on users)
+[[redirects]]
+  from = "/api/athlete/profile"
+  to = "/.netlify/functions/athlete-profile"
+  status = 200
+  force = true
+
 # API Routes for External Load metrics (Catapult/GPS-style; monitoring feature)
 [[redirects]]
   from = "/api/external-load/*"
@@ -698,6 +705,59 @@
 [[redirects]]
   from = "/api/staff-psychology"
   to = "/.netlify/functions/staff"
+  status = 200
+  force = true
+
+# API Routes for TIER 1 staff onboarding profiles (self-reported, verification-gated)
+# Each role gets its own function (not one shared "staff-profile" route) because a
+# non-wildcard redirect doesn't carry the original path through to event.path — see
+# the createProfileHandler() comment in staff-profile.js.
+[[redirects]]
+  from = "/api/staff/physiotherapist-profile"
+  to = "/.netlify/functions/staff-physiotherapist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/nutritionist-profile"
+  to = "/.netlify/functions/staff-nutritionist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/psychologist-profile"
+  to = "/.netlify/functions/staff-psychologist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/strength-coach-profile"
+  to = "/.netlify/functions/staff-strength-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/coach-profile"
+  to = "/.netlify/functions/staff-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/head-coach-profile"
+  to = "/.netlify/functions/staff-head-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/manager-profile"
+  to = "/.netlify/functions/staff-manager-profile"
+  status = 200
+  force = true
+
+# API Routes for Physiotherapist Dashboard (TIER 1 — injury roster by RTP phase)
+[[redirects]]
+  from = "/api/staff/physiotherapist/dashboard"
+  to = "/.netlify/functions/physiotherapist-dashboard"
   status = 200
   force = true
 

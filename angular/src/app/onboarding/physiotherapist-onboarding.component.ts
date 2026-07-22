@@ -11,7 +11,6 @@ import { Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
-import type { ApiResponse } from "../core/models/common.models";
 
 @Component({
   selector: "app-physiotherapist-onboarding",

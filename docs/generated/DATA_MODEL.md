@@ -584,6 +584,9 @@ Touched by: _(no endpoint references this table)_
 - `verification_completed_at` timestamp with time zone
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
+- `years_as_head_coach` integer
+- `coaching_background` text
+- `team_development_approach` text
 
 ### `comment_likes`
 Touched by: `community`
@@ -702,7 +705,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `credential_verifications`
-Touched by: _(no endpoint references this table)_
+Touched by: `staff-profile`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2309,7 +2312,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `rtp_athlete_protocol_assignments`
-Touched by: `recovery-recommendations`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-protocol-assignment`, `rtp-record-assessment`, `rtp-team-protocols`
+Touched by: `physiotherapist-dashboard`, `recovery-recommendations`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-protocol-assignment`, `rtp-record-assessment`, `rtp-team-protocols`
 
 - `id` uuid · not null
 - `athlete_id` uuid · not null
@@ -2700,7 +2703,7 @@ Touched by: `session-load-import`
 - `created_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `payments-core`, `performance-data`, `physiotherapist-dashboard`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -3073,7 +3076,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `athlete-profile`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
@@ -3113,6 +3116,11 @@ Touched by: `accept-invitation`, `admin`, `ai-chat`, `analytics-core`, `coach-co
 - `injury_gate_set_at` timestamp with time zone
 - `verification_token` text
 - `verification_token_expires_at` timestamp with time zone
+- `sport` character varying
+- `years_experience` integer
+- `medical_history` text
+- `emergency_contact_name` character varying
+- `emergency_contact_phone` character varying
 
 ### `warmup_protocols`
 Touched by: `training-programs`

@@ -91,7 +91,7 @@ type FilterStatus = "all" | "acute" | "rehab" | "rtp";
       <!-- Filters -->
       <div class="filters-section">
         <div class="filter-group">
-          <label class="filter-label">Filter by Status:</label>
+          <span class="filter-label">Filter by Status:</span>
           <div class="filter-buttons">
             @for (status of statuses; track status) {
               <button

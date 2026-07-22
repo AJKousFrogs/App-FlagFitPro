@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-22**
 
-**139 functions: 122 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**149 functions: 132 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -23,6 +23,7 @@
 | `api-docs` | GET | /api/api-docs | — |
 | `athlete-events` | GET, POST, PUT, PATCH, DELETE | /api/athlete-events/*<br>/api/athlete-events | athlete_events |
 | `athlete-injuries` | GET, POST | /api/athlete-injuries/*<br>/api/athlete-injuries | athlete_injuries |
+| `athlete-profile` | GET | /api/athlete/profile | users |
 | `attendance` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, team_events, attendance_records |
 | `auth` | OPTIONS | /api/auth/me<br>/api/auth-me<br>/api/auth/reset-password<br>/api/auth/login<br>/api/accept-invitation<br>/api/validate-invitation<br>/api/account/pause<br>/api/account/resume<br>/api/account/*<br>/api/parental-consent/*<br>/api/parental-consent | — |
 | `auth-login` | POST | _(router submodule)_ | — |
@@ -78,6 +79,7 @@
 | `performance-heatmap` | GET | _(router submodule)_ | training_sessions |
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
 | `periodization-prescription` | GET | /api/periodization-prescription | athlete_travel_log, taper_rules, readiness_scores, users, athlete_training_config, training_sessions |
+| `physiotherapist-dashboard` | GET | /api/staff/physiotherapist/dashboard | team_members, rtp_athlete_protocol_assignments, users |
 | `player-programs` | GET, POST, PUT | _(router submodule)_ | player_programs, training_programs |
 | `player-settings` | GET, POST | _(router submodule)_ | athlete_training_config, users, age_recovery_modifiers, ensure_public_user_profile() |
 | `player-stats` | GET | _(router submodule)_ | games, game_events |
@@ -101,9 +103,17 @@
 | `sponsor-logo` | GET | _(router submodule)_ | — |
 | `sponsors` | GET | _(router submodule)_ | — |
 | `staff` | OPTIONS | /api/staff-nutritionist/*<br>/api/staff-nutritionist<br>/api/staff-physiotherapist/*<br>/api/staff-physiotherapist<br>/api/staff-psychology/*<br>/api/staff-psychology | — |
+| `staff-coach-profile` | — | /api/staff/coach-profile | — |
+| `staff-head-coach-profile` | — | /api/staff/head-coach-profile | — |
+| `staff-manager-profile` | — | /api/staff/manager-profile | — |
 | `staff-nutritionist` | GET | _(router submodule)_ | team_members, athlete_nutrition_profiles, physical_measurements, supplement_logs, user_supplements, athlete_hydration_logs, nutrition_reports |
+| `staff-nutritionist-profile` | — | /api/staff/nutritionist-profile | — |
 | `staff-physiotherapist` | GET | _(router submodule)_ | team_members, athlete_injuries, ownership_transitions, notifications |
+| `staff-physiotherapist-profile` | — | /api/staff/physiotherapist-profile | — |
+| `staff-profile` | GET | _(router submodule)_ | credential_verifications |
+| `staff-psychologist-profile` | — | /api/staff/psychologist-profile | — |
 | `staff-psychology` | GET | _(router submodule)_ | team_members, mental_performance_logs, psychological_assessments, mental_wellness_reports |
+| `staff-strength-coach-profile` | — | /api/staff/strength-coach-profile | — |
 | `supplements` | GET, POST | /api/supplements<br>/api/supplements/* | supplement_logs, user_supplements, notifications |
 | `team` | OPTIONS | /api/team-calendar/*<br>/api/team-calendar<br>/api/team-invite<br>/api/attendance/*<br>/api/attendance<br>/api/season/*<br>/api/season<br>/api/season-archive/*<br>/api/season-archive<br>/api/team-templates/*<br>/api/team-templates | — |
 | `team-calendar` | GET, POST | _(router submodule)_ | attendance_records, games, practice_plans, team_events |

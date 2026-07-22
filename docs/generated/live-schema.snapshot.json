@@ -1,6 +1,6 @@
 {
   "generatedOn": "2026-07-22",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-22: (1) migration 20260722_staff_profiles_and_credentials added 7 new tables (credential_verifications, physiotherapist_profiles, nutritionist_profiles, psychologist_profiles, strength_coach_profiles, coach_profiles, manager_profiles) for TIER 1 staff onboarding and credential verification; (2) snapshot had drifted since 2026-07-18 and was missing 6 tables already live from earlier Phase 1D/1E RTP work (rtp_athlete_protocol_assignments, rtp_criteria_assessments, rtp_functional_criteria, rtp_protocol_definitions, rtp_protocol_phases) plus zz_video_backup_20260719 (a backup table, RLS disabled by design as a throwaway snapshot copy) \u2014 all now captured. Table-level set matches live (191 base tables).",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-22 (second pass, same day): migration 20260722_extend_coach_profiles_head_coach_fields added years_as_head_coach/coaching_background/team_development_approach to coach_profiles (head-coach onboarding form fields the original TIER 1 migration missed), and 20260722_extend_users_athlete_profile_fields added sport/years_experience/medical_history/emergency_contact_name/emergency_contact_phone to users (athlete onboarding form fields \u2014 reusing users since it already holds date_of_birth/position/height_cm/weight_kg as the canonical athlete bio-profile location, not duplicating into a new table). Table-level set matches live (191 base tables).",
   "tables": {
     "account_deletion_requests": [
       {
@@ -2227,6 +2227,21 @@
         "col": "updated_at",
         "type": "timestamp with time zone",
         "nullable": false
+      },
+      {
+        "col": "years_as_head_coach",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "coaching_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "team_development_approach",
+        "type": "text",
+        "nullable": true
       }
     ],
     "comment_likes": [
@@ -12189,6 +12204,31 @@
       {
         "col": "verification_token_expires_at",
         "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "sport",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "years_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "medical_history",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "emergency_contact_name",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "emergency_contact_phone",
+        "type": "character varying",
         "nullable": true
       }
     ],

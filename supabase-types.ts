@@ -1808,6 +1808,7 @@ export type Database = {
         Row: {
           bio: string | null
           coach_specialty: string | null
+          coaching_background: string | null
           coaching_certifications: string[] | null
           coaching_license_issued_by: string | null
           coaching_license_number: string | null
@@ -1817,14 +1818,17 @@ export type Database = {
           education_background: string | null
           id: string
           position_specialization: string | null
+          team_development_approach: string | null
           updated_at: string
           user_id: string
           verification_completed_at: string | null
+          years_as_head_coach: number | null
           years_of_coaching_experience: number | null
         }
         Insert: {
           bio?: string | null
           coach_specialty?: string | null
+          coaching_background?: string | null
           coaching_certifications?: string[] | null
           coaching_license_issued_by?: string | null
           coaching_license_number?: string | null
@@ -1834,14 +1838,17 @@ export type Database = {
           education_background?: string | null
           id?: string
           position_specialization?: string | null
+          team_development_approach?: string | null
           updated_at?: string
           user_id: string
           verification_completed_at?: string | null
+          years_as_head_coach?: number | null
           years_of_coaching_experience?: number | null
         }
         Update: {
           bio?: string | null
           coach_specialty?: string | null
+          coaching_background?: string | null
           coaching_certifications?: string[] | null
           coaching_license_issued_by?: string | null
           coaching_license_number?: string | null
@@ -1851,9 +1858,11 @@ export type Database = {
           education_background?: string | null
           id?: string
           position_specialization?: string | null
+          team_development_approach?: string | null
           updated_at?: string
           user_id?: string
           verification_completed_at?: string | null
+          years_as_head_coach?: number | null
           years_of_coaching_experience?: number | null
         }
         Relationships: []
@@ -9814,6 +9823,8 @@ export type Database = {
           date_of_birth: string | null
           email: string
           email_verified: boolean | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           experience_level: string | null
           first_name: string
           full_name: string | null
@@ -9826,6 +9837,7 @@ export type Database = {
           jersey_number: number | null
           last_login: string | null
           last_name: string
+          medical_history: string | null
           name: string | null
           notification_last_opened_at: string | null
           onboarding_completed: boolean
@@ -9837,12 +9849,14 @@ export type Database = {
           profile_photo_url: string | null
           profile_picture: string | null
           secondary_position: string | null
+          sport: string | null
           team: string | null
           throwing_arm: string | null
           updated_at: string | null
           verification_token: string | null
           verification_token_expires_at: string | null
           weight_kg: number | null
+          years_experience: number | null
         }
         Insert: {
           account_status?: string | null
@@ -9854,6 +9868,8 @@ export type Database = {
           date_of_birth?: string | null
           email: string
           email_verified?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           experience_level?: string | null
           first_name: string
           full_name?: string | null
@@ -9866,6 +9882,7 @@ export type Database = {
           jersey_number?: number | null
           last_login?: string | null
           last_name: string
+          medical_history?: string | null
           name?: string | null
           notification_last_opened_at?: string | null
           onboarding_completed?: boolean
@@ -9877,12 +9894,14 @@ export type Database = {
           profile_photo_url?: string | null
           profile_picture?: string | null
           secondary_position?: string | null
+          sport?: string | null
           team?: string | null
           throwing_arm?: string | null
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null
           weight_kg?: number | null
+          years_experience?: number | null
         }
         Update: {
           account_status?: string | null
@@ -9894,6 +9913,8 @@ export type Database = {
           date_of_birth?: string | null
           email?: string
           email_verified?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           experience_level?: string | null
           first_name?: string
           full_name?: string | null
@@ -9906,6 +9927,7 @@ export type Database = {
           jersey_number?: number | null
           last_login?: string | null
           last_name?: string
+          medical_history?: string | null
           name?: string | null
           notification_last_opened_at?: string | null
           onboarding_completed?: boolean
@@ -9917,12 +9939,14 @@ export type Database = {
           profile_photo_url?: string | null
           profile_picture?: string | null
           secondary_position?: string | null
+          sport?: string | null
           team?: string | null
           throwing_arm?: string | null
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null
           weight_kg?: number | null
+          years_experience?: number | null
         }
         Relationships: []
       }
