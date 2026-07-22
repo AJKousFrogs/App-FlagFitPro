@@ -225,7 +225,7 @@ export class RtpAssessmentModalComponent implements OnInit {
       notes: this.notes().trim(),
     };
 
-    this.rtpService.recordAssessment(payload).subscribe({
+    this.rtpService.recordAssessment(payload as Record<string, unknown>).subscribe({
       next: (response: AssessmentResponse) => {
         this.logger.info("Assessment recorded successfully", {
           criteriaId: this.criterion().id,

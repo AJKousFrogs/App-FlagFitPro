@@ -94,6 +94,17 @@ export interface ProtocolAssignment {
   biological_maturity_gate_passed: boolean;
   created_at: string;
   updated_at: string;
+  rtp_protocol_definitions: {
+    id: string;
+    injury_type: string;
+    display_name: string;
+    evidence_grade: string;
+    typical_rtp_timeline_days_min: number;
+    typical_rtp_timeline_days_max: number;
+    rts_rate_percent: number;
+    description: string;
+    key_studies: string[];
+  };
   criteria: {
     id: string;
     criteria_name: string;
@@ -238,7 +249,7 @@ export class RtpService {
     injuryId: string
   ): Observable<ProtocolAssignmentResponse> {
     return this.api.get<ProtocolAssignmentResponse>(`/api/rtp/protocols/${athleteId}/${injuryId}`).pipe(
-      map(response => extractApiPayload<ProtocolAssignmentResponse>(response) ?? response)
+      map(response => extractApiPayload<ProtocolAssignmentResponse>(response) ?? { success: false, assignment: null, message: 'Empty response' })
     );
   }
 
@@ -248,7 +259,7 @@ export class RtpService {
    */
   recordAssessment(payload: Record<string, unknown>): Observable<AssessmentResponse> {
     return this.api.post<AssessmentResponse>(`/api/rtp/assessments`, payload).pipe(
-      map(response => extractApiPayload<AssessmentResponse>(response) ?? response)
+      map(response => extractApiPayload<AssessmentResponse>(response) ?? { success: false, assessment: {}, message: 'Empty response' })
     );
   }
 
@@ -261,7 +272,7 @@ export class RtpService {
     injuryId: string
   ): Observable<AdvancePhaseResponse> {
     return this.api.patch<AdvancePhaseResponse>(`/api/rtp/athletes/${athleteId}/${injuryId}/phase`, {}).pipe(
-      map(response => extractApiPayload<AdvancePhaseResponse>(response) ?? response)
+      map(response => extractApiPayload<AdvancePhaseResponse>(response) ?? { success: false, assignment: null, nextPhaseDetails: null, message: 'Empty response' })
     );
   }
 }

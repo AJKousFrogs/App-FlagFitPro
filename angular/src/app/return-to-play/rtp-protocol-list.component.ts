@@ -13,6 +13,7 @@ import { LucideAngularModule } from "lucide-angular";
 
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import type { ApiResponse } from "../core/models/common.models";
 
 interface ProtocolAssignment {
   id: string;
@@ -540,8 +541,8 @@ export class RtpProtocolListComponent implements OnInit {
       : `/api/rtp/protocols`;
 
     this.api.get<ProtocolListResponse>(endpoint).subscribe({
-      next: (response: Record<string, unknown> | ProtocolListResponse) => {
-        const payload = ((response as Record<string, unknown>)?.data || response) as ProtocolListResponse;
+      next: (response: ApiResponse<ProtocolListResponse>) => {
+        const payload = response?.data || (response as unknown as ProtocolListResponse);
         if (payload?.protocols) {
           const protocolsWithCalcs = payload.protocols.map(
             (p: ProtocolAssignment) => {
