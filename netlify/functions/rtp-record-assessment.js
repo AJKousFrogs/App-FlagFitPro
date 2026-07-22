@@ -117,12 +117,19 @@ async function recordAssessment(
       }
     }
 
-    return createSuccessResponse({
-      success: true,
-      assessment,
-      phaseAdvancementEligible,
-      nextPhase,
-    });
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        success: true,
+        assessment,
+        phaseAdvancementEligible,
+        nextPhase,
+      }),
+    };
   } catch (err) {
     requestLogger.error("Unexpected error in recordAssessment", {
       error: err.message,

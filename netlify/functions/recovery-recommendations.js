@@ -154,58 +154,107 @@ async function objectiveMarkerRecommendations(supabase, athleteId) {
 }
 
 /**
- * Trigger 3: Injury phase-based recommendations
- * Early RTP (phase 0-2) → sport psychology (A1), proprioceptive training (A2)
- * Late RTP (phase 3-4) → yoga (A2), maintenance exercises (B1)
- * Maintenance (phase 5+) → eccentric loading (A1), annual assessment
+ * Trigger 3: Injury phase-based recommendations (Phase 1D Evidence-Based RTP)
+ * Queries rtp_athlete_protocol_assignments for structured, criteria-based recovery phases
+ * Early RTP (phase 1-2) → sport psychology (A1), proprioceptive training (A2)
+ * Late RTP (phase 3-4) → yoga (A2), eccentric loading (A1)
+ * Maintenance (phase 5) → eccentric loading (A1), annual assessment
  */
 async function injuryPhaseRecommendations(supabase, athleteId) {
   const recommendations = [];
 
-  // Fetch active injuries and their RTP phase
-  const { data: injuries } = await supabase
-    .from("athlete_injuries")
-    .select("injury_type, current_rtp_phase, expected_return_date")
-    .eq("user_id", athleteId)
-    .in("recovery_status", ["active", "recovering", "rehab"]);
+  // Fetch active RTP protocol assignments (Phase 1D evidence-based)
+  const { data: assignments } = await supabase
+    .from("rtp_athlete_protocol_assignments")
+    .select(
+      `
+      id,
+      current_phase,
+      protocol_id,
+      rtp_protocol_definitions (
+        injury_type,
+        display_name,
+        evidence_grade
+      )
+    `
+    )
+    .eq("athlete_id", athleteId);
 
-  if (injuries && injuries.length > 0) {
-    for (const injury of injuries) {
-      const phase = injury.current_rtp_phase || 0;
+  if (assignments && assignments.length > 0) {
+    for (const assignment of assignments) {
+      const phase = assignment.current_phase || 1;
+      const protocol = assignment.rtp_protocol_definitions || {};
+      const injuryType = protocol.display_name || protocol.injury_type || "Unknown injury";
 
       if (phase <= 2) {
-        // Early RTP: psychology + proprioceptive foundation
+        // Early RTP (Phase 1-2): Psychological readiness + neuromuscular foundation
         recommendations.push({
           modality_name: "Sport Psychology",
           evidence_grade: "A1",
-          trigger_reason: `Early RTP (${injury.injury_type}, phase ${phase})`,
-          dosage: "Weekly sessions, confidence building",
+          trigger_reason: `Early RTP (${injuryType}, Phase ${phase})`,
+          dosage: "Weekly sessions, confidence building, RTS clearance",
           priority: "immediate",
         });
 
         recommendations.push({
           modality_name: "Proprioceptive Training",
           evidence_grade: "A2",
-          trigger_reason: "Neuromuscular control restoration",
-          dosage: "10-15 min daily, balance exercises",
+          trigger_reason: "Neuromuscular control restoration post-injury",
+          dosage: "10-15 min daily, balance/stability exercises",
           priority: "high",
         });
-      } else if (phase <= 4) {
-        // Late RTP: yoga for mobility + maintenance
+
+        // Pain management in early phases
         recommendations.push({
-          modality_name: "Yoga / Mobility",
+          modality_name: "Cryotherapy / Ice Bath",
           evidence_grade: "A2",
-          trigger_reason: `Late RTP (${injury.injury_type}, phase ${phase})`,
-          dosage: "20-30 min, 3×/week",
+          trigger_reason: "Early RTP pain and swelling management",
+          dosage: "10-15 min post-rehab session as needed",
           priority: "medium",
         });
-      } else {
-        // Maintenance: eccentric loading, annual reassessment
+      } else if (phase <= 4) {
+        // Late RTP (Phase 3-4): Strength maintenance + sports-specific work
         recommendations.push({
           modality_name: "Eccentric Loading Protocol",
           evidence_grade: "A1",
-          trigger_reason: "Injury maintenance (phase 5+)",
-          dosage: "1×/week indefinitely",
+          trigger_reason: `Late RTP strength maintenance (${injuryType}, Phase ${phase})`,
+          dosage: "2-3×/week, injury-specific eccentric exercises",
+          priority: "high",
+        });
+
+        recommendations.push({
+          modality_name: "Yoga / Mobility",
+          evidence_grade: "A2",
+          trigger_reason: "ROM optimization and injury-specific mobility",
+          dosage: "20-30 min, 3×/week, injury-focused sequences",
+          priority: "medium",
+        });
+
+        // Sport-specific drills at Phase 4
+        if (phase === 4) {
+          recommendations.push({
+            modality_name: "Sport-Specific Drills",
+            evidence_grade: "A2",
+            trigger_reason: "Advanced RTP progression to competition readiness",
+            dosage: "Progressive intensity 50% → 75% → 90% full speed",
+            priority: "high",
+          });
+        }
+      } else if (phase === 5) {
+        // Maintenance (Phase 5): Long-term injury prevention
+        recommendations.push({
+          modality_name: "Eccentric Loading Protocol",
+          evidence_grade: "A1",
+          trigger_reason: "Injury maintenance and re-injury prevention (Phase 5)",
+          dosage: "1×/week indefinitely (annual strength testing)",
+          priority: "medium",
+        });
+
+        recommendations.push({
+          modality_name: "Annual Injury Assessment",
+          evidence_grade: "A1",
+          trigger_reason: "Phase 5 RTS maintenance protocol compliance",
+          dosage: "Formal assessment 12 months post-RTS",
           priority: "low",
         });
       }

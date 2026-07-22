@@ -12,8 +12,8 @@ import { LucideAngularModule } from "lucide-angular";
 import { switchMap, tap, catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs";
 
-import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
+import { RtpService, ProtocolAssignmentResponse, AdvancePhaseResponse } from "./services/rtp.service";
 import { RtpAssessmentModalComponent } from "./rtp-assessment-modal.component";
 
 interface FunctionalCriterion {
@@ -583,7 +583,7 @@ interface ProtocolAssignment {
   ],
 })
 export class PhysioProtocolDashboardComponent implements OnInit {
-  private apiService = inject(ApiService);
+  private rtpService = inject(RtpService);
   private route = inject(ActivatedRoute);
   private logger = inject(LoggerService);
 
@@ -623,10 +623,10 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     this.route.params
       .pipe(
         switchMap(({ athleteId, injuryId }) =>
-          this.apiService.get(`/api/rtp/protocols/${athleteId}/${injuryId}`)
+          this.rtpService.getProtocolAssignment(athleteId, injuryId)
         ),
-        tap((res: { assignment: ProtocolAssignment }) => {
-          if (res.assignment) {
+        tap((res: ProtocolAssignmentResponse) => {
+          if (res?.assignment) {
             this.assignment.set(res.assignment);
           } else {
             this.error.set("No protocol found for this injury");
@@ -697,11 +697,11 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     if (!a) return;
 
     this.loading.set(true);
-    this.apiService
-      .patch(`/api/rtp/athletes/${a.athlete_id}/${a.injury_id}/phase`, {})
+    this.rtpService
+      .advancePhase(a.athlete_id, a.injury_id)
       .subscribe({
-        next: (res: { success: boolean; assignment: ProtocolAssignment }) => {
-          if (res.success) {
+        next: (res: AdvancePhaseResponse) => {
+          if (res?.success && res?.assignment) {
             this.assignment.set(res.assignment);
             this.logger.info("Phase advanced successfully");
           }

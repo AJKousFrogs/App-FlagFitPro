@@ -82,6 +82,55 @@ export interface RecoveryRecommendationResponse {
   };
 }
 
+export interface ProtocolAssignment {
+  id: string;
+  athlete_id: string;
+  injury_id: string;
+  protocol_id: string;
+  current_phase: number;
+  phase_start_date: string;
+  estimated_return_date: string | null;
+  individual_modifiers: Record<string, unknown> | null;
+  biological_maturity_gate_passed: boolean;
+  created_at: string;
+  updated_at: string;
+  criteria: {
+    id: string;
+    criteria_name: string;
+    criteria_type: string;
+    target_value: string;
+    measurement_method: string;
+    pass_threshold: string;
+    phase_required: number;
+    latestAssessment?: {
+      criteria_id: string;
+      assessed_value: string;
+      pass_fail: boolean;
+      assessed_date: string;
+    } | null;
+  }[];
+}
+
+export interface ProtocolAssignmentResponse {
+  success: boolean;
+  assignment: ProtocolAssignment | null;
+  message?: string;
+}
+
+export interface AssessmentResponse {
+  success: boolean;
+  assessment: Record<string, unknown>;
+  phaseAdvancementEligible?: boolean;
+  nextPhase?: number | null;
+}
+
+export interface AdvancePhaseResponse {
+  success: boolean;
+  assignment: ProtocolAssignment;
+  nextPhaseDetails: Record<string, unknown> | null;
+  message?: string;
+}
+
 /**
  * RTP (Return-to-Play) Service
  * Fetches RTP progress, psychological assessments, and recovery recommendations
@@ -177,6 +226,42 @@ export class RtpService {
         totalCount: 0,
         triggers: { acwrBased: 0, markerBased: 0, injuryPhaseBased: 0, biomarkerBased: 0 },
       })
+    );
+  }
+
+  /**
+   * Fetch protocol assignment for an athlete's injury (Phase 1D)
+   * GET /api/rtp/protocols/:athleteId/:injuryId
+   */
+  getProtocolAssignment(
+    athleteId: string,
+    injuryId: string
+  ): Observable<ProtocolAssignmentResponse> {
+    return this.api.get<ProtocolAssignmentResponse>(`/api/rtp/protocols/${athleteId}/${injuryId}`).pipe(
+      map(response => extractApiPayload<ProtocolAssignmentResponse>(response) ?? response)
+    );
+  }
+
+  /**
+   * Record functional criterion assessment (Phase 1D)
+   * POST /api/rtp/assessments
+   */
+  recordAssessment(payload: Record<string, unknown>): Observable<AssessmentResponse> {
+    return this.api.post<AssessmentResponse>(`/api/rtp/assessments`, payload).pipe(
+      map(response => extractApiPayload<AssessmentResponse>(response) ?? response)
+    );
+  }
+
+  /**
+   * Advance athlete to next RTP phase (Phase 1D)
+   * PATCH /api/rtp/athletes/:athleteId/:injuryId/phase
+   */
+  advancePhase(
+    athleteId: string,
+    injuryId: string
+  ): Observable<AdvancePhaseResponse> {
+    return this.api.patch<AdvancePhaseResponse>(`/api/rtp/athletes/${athleteId}/${injuryId}/phase`, {}).pipe(
+      map(response => extractApiPayload<AdvancePhaseResponse>(response) ?? response)
     );
   }
 }
