@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiService } from '../../core/services/api.service';
-import { extractApiPayload } from '../../core/utils/api-response-mapper';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { ApiService } from "../../core/services/api.service";
+import { extractApiPayload } from "../../core/utils/api-response-mapper";
 
 export interface RtpPhaseProgress {
   id: string;
@@ -137,7 +137,7 @@ export interface AssessmentResponse {
 
 export interface AdvancePhaseResponse {
   success: boolean;
-  assignment: ProtocolAssignment;
+  assignment: ProtocolAssignment | null;
   nextPhaseDetails: Record<string, unknown> | null;
   message?: string;
 }
@@ -147,7 +147,7 @@ export interface AdvancePhaseResponse {
  * Fetches RTP progress, psychological assessments, and recovery recommendations
  * from Phase 2b-2c endpoints.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class RtpService {
   private readonly api = inject(ApiService);
 
@@ -155,31 +155,46 @@ export class RtpService {
    * Fetch RTP phase progress history for an athlete's injury
    * GET /api/rtp/phase-progress?athleteId=X&injuryId=Y
    */
-  getRtpProgress(athleteId: string, injuryId: string): Observable<RtpProgressResponse> {
-    return this.api.get<RtpProgressResponse>(`/api/rtp/phase-progress`, {
-      athleteId,
-      injuryId,
-    }).pipe(
-      map(response => extractApiPayload<RtpProgressResponse>(response) ?? {
-        success: false,
-        data: [],
-        count: 0,
+  getRtpProgress(
+    athleteId: string,
+    injuryId: string,
+  ): Observable<RtpProgressResponse> {
+    return this.api
+      .get<RtpProgressResponse>(`/api/rtp/phase-progress`, {
+        athleteId,
+        injuryId,
       })
-    );
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<RtpProgressResponse>(response) ?? {
+              success: false,
+              data: [],
+              count: 0,
+            },
+        ),
+      );
   }
 
   /**
    * Update RTP phase progress for a week
    * POST /api/rtp/phase-progress
    */
-  updateRtpProgress(payload: Partial<RtpPhaseProgress>): Observable<RtpProgressResponse> {
-    return this.api.post<RtpProgressResponse>(`/api/rtp/phase-progress`, payload).pipe(
-      map(response => extractApiPayload<RtpProgressResponse>(response) ?? {
-        success: false,
-        data: [],
-        count: 0,
-      })
-    );
+  updateRtpProgress(
+    payload: Partial<RtpPhaseProgress>,
+  ): Observable<RtpProgressResponse> {
+    return this.api
+      .post<RtpProgressResponse>(`/api/rtp/phase-progress`, payload)
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<RtpProgressResponse>(response) ?? {
+              success: false,
+              data: [],
+              count: 0,
+            },
+        ),
+      );
   }
 
   /**
@@ -188,19 +203,31 @@ export class RtpService {
    */
   getPsychologicalAssessments(
     athleteId: string,
-    limit = 10
+    limit = 10,
   ): Observable<PsychologicalAssessmentResponse> {
-    return this.api.get<PsychologicalAssessmentResponse>(`/api/rtp/psychological-assessment`, {
-      athleteId,
-      limit: limit.toString(),
-    }).pipe(
-      map(response => extractApiPayload<PsychologicalAssessmentResponse>(response) ?? {
-        success: false,
-        data: [],
-        latestStatus: { aclRsiReady: null, tsk11Ready: null, overallReady: false },
-        count: 0,
-      })
-    );
+    return this.api
+      .get<PsychologicalAssessmentResponse>(
+        `/api/rtp/psychological-assessment`,
+        {
+          athleteId,
+          limit: limit.toString(),
+        },
+      )
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<PsychologicalAssessmentResponse>(response) ?? {
+              success: false,
+              data: [],
+              latestStatus: {
+                aclRsiReady: null,
+                tsk11Ready: null,
+                overallReady: false,
+              },
+              count: 0,
+            },
+        ),
+      );
   }
 
   /**
@@ -208,14 +235,32 @@ export class RtpService {
    * POST /api/rtp/psychological-assessment
    */
   logPsychologicalAssessment(
-    payload: Partial<PsychologicalAssessment>
-  ): Observable<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }> {
-    return this.api.post<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }>(`/api/rtp/psychological-assessment`, payload).pipe(
-      map(response => extractApiPayload<{ success: boolean; readinessStatus: PsychologicalReadinessStatus }>(response) ?? {
-        success: false,
-        readinessStatus: { aclRsiReady: null, tsk11Ready: null, overallReady: false },
-      })
-    );
+    payload: Partial<PsychologicalAssessment>,
+  ): Observable<{
+    success: boolean;
+    readinessStatus: PsychologicalReadinessStatus;
+  }> {
+    return this.api
+      .post<{
+        success: boolean;
+        readinessStatus: PsychologicalReadinessStatus;
+      }>(`/api/rtp/psychological-assessment`, payload)
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<{
+              success: boolean;
+              readinessStatus: PsychologicalReadinessStatus;
+            }>(response) ?? {
+              success: false,
+              readinessStatus: {
+                aclRsiReady: null,
+                tsk11Ready: null,
+                overallReady: false,
+              },
+            },
+        ),
+      );
   }
 
   /**
@@ -224,20 +269,33 @@ export class RtpService {
    */
   getRecoveryRecommendations(
     athleteId: string,
-    date?: string
+    date?: string,
   ): Observable<RecoveryRecommendationResponse> {
     const params: Record<string, string> = { athleteId };
     if (date) params.date = date;
-    return this.api.get<RecoveryRecommendationResponse>(`/api/recovery-recommendations`, params).pipe(
-      map(response => extractApiPayload<RecoveryRecommendationResponse>(response) ?? {
-        success: false,
-        date: new Date().toISOString().slice(0, 10),
-        acwrStatus: 'safe',
-        recommendations: [],
-        totalCount: 0,
-        triggers: { acwrBased: 0, markerBased: 0, injuryPhaseBased: 0, biomarkerBased: 0 },
-      })
-    );
+    return this.api
+      .get<RecoveryRecommendationResponse>(
+        `/api/recovery-recommendations`,
+        params,
+      )
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<RecoveryRecommendationResponse>(response) ?? {
+              success: false,
+              date: new Date().toISOString().slice(0, 10),
+              acwrStatus: "safe",
+              recommendations: [],
+              totalCount: 0,
+              triggers: {
+                acwrBased: 0,
+                markerBased: 0,
+                injuryPhaseBased: 0,
+                biomarkerBased: 0,
+              },
+            },
+        ),
+      );
   }
 
   /**
@@ -246,21 +304,43 @@ export class RtpService {
    */
   getProtocolAssignment(
     athleteId: string,
-    injuryId: string
+    injuryId: string,
   ): Observable<ProtocolAssignmentResponse> {
-    return this.api.get<ProtocolAssignmentResponse>(`/api/rtp/protocols/${athleteId}/${injuryId}`).pipe(
-      map(response => extractApiPayload<ProtocolAssignmentResponse>(response) ?? { success: false, assignment: null, message: 'Empty response' })
-    );
+    return this.api
+      .get<ProtocolAssignmentResponse>(
+        `/api/rtp/protocols/${athleteId}/${injuryId}`,
+      )
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<ProtocolAssignmentResponse>(response) ?? {
+              success: false,
+              assignment: null,
+              message: "Empty response",
+            },
+        ),
+      );
   }
 
   /**
    * Record functional criterion assessment (Phase 1D)
    * POST /api/rtp/assessments
    */
-  recordAssessment(payload: Record<string, unknown>): Observable<AssessmentResponse> {
-    return this.api.post<AssessmentResponse>(`/api/rtp/assessments`, payload).pipe(
-      map(response => extractApiPayload<AssessmentResponse>(response) ?? { success: false, assessment: {}, message: 'Empty response' })
-    );
+  recordAssessment(
+    payload: Record<string, unknown>,
+  ): Observable<AssessmentResponse> {
+    return this.api
+      .post<AssessmentResponse>(`/api/rtp/assessments`, payload)
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<AssessmentResponse>(response) ?? {
+              success: false,
+              assessment: {},
+              message: "Empty response",
+            },
+        ),
+      );
   }
 
   /**
@@ -269,10 +349,23 @@ export class RtpService {
    */
   advancePhase(
     athleteId: string,
-    injuryId: string
+    injuryId: string,
   ): Observable<AdvancePhaseResponse> {
-    return this.api.patch<AdvancePhaseResponse>(`/api/rtp/athletes/${athleteId}/${injuryId}/phase`, {}).pipe(
-      map(response => extractApiPayload<AdvancePhaseResponse>(response) ?? { success: false, assignment: null, nextPhaseDetails: null, message: 'Empty response' })
-    );
+    return this.api
+      .patch<AdvancePhaseResponse>(
+        `/api/rtp/athletes/${athleteId}/${injuryId}/phase`,
+        {},
+      )
+      .pipe(
+        map(
+          (response) =>
+            extractApiPayload<AdvancePhaseResponse>(response) ?? {
+              success: false,
+              assignment: null,
+              nextPhaseDetails: null,
+              message: "Empty response",
+            },
+        ),
+      );
   }
 }
