@@ -40,10 +40,21 @@ function createFakeSupabase() {
               });
             }
           }
-          if (this.table === "athlete_injuries") {
+          if (this.table === "rtp_athlete_protocol_assignments") {
+            // Phase 1D protocol assignment (active RTP)
             return cb({
               data: [
-                { injury_type: "ACL Tear", current_rtp_phase: 2, recovery_status: "active" },
+                {
+                  id: "assign-1",
+                  athlete_id: "athlete-123",
+                  current_phase: 2,
+                  protocol_id: "proto-acl",
+                  rtp_protocol_definitions: {
+                    injury_type: "ACL Tear",
+                    display_name: "ACL Rupture",
+                    evidence_grade: "A1",
+                  },
+                },
               ],
               error: null,
             });
