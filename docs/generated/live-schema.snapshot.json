@@ -1,6 +1,6 @@
 {
-  "generatedOn": "2026-07-18",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-18 after migration 20260718120000 added a nullable playing-surface column (grass|turf) to competition_events and athlete_events (and appended ce.surface to v_athlete_schedule). Table-level set matches live (178 base tables).",
+  "generatedOn": "2026-07-22",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-22: (1) migration 20260722_staff_profiles_and_credentials added 7 new tables (credential_verifications, physiotherapist_profiles, nutritionist_profiles, psychologist_profiles, strength_coach_profiles, coach_profiles, manager_profiles) for TIER 1 staff onboarding and credential verification; (2) snapshot had drifted since 2026-07-18 and was missing 6 tables already live from earlier Phase 1D/1E RTP work (rtp_athlete_protocol_assignments, rtp_criteria_assessments, rtp_functional_criteria, rtp_protocol_definitions, rtp_protocol_phases) plus zz_video_backup_20260719 (a backup table, RLS disabled by design as a throwaway snapshot copy) \u2014 all now captured. Table-level set matches live (191 base tables).",
   "tables": {
     "account_deletion_requests": [
       {
@@ -2152,6 +2152,83 @@
         "nullable": true
       }
     ],
+    "coach_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "coaching_license_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "coaching_license_issued_by",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "coach_specialty",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "position_specialization",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "years_of_coaching_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "coaching_certifications",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "coaching_philosophy",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "credentials_verified",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "verification_completed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "comment_likes": [
       {
         "col": "id",
@@ -2566,6 +2643,88 @@
       },
       {
         "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      }
+    ],
+    "credential_verifications": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "credential_type",
+        "type": "character varying",
+        "nullable": false
+      },
+      {
+        "col": "credential_name",
+        "type": "character varying",
+        "nullable": false
+      },
+      {
+        "col": "issuing_body",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "credential_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "issue_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "expiry_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "document_url",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "status",
+        "type": "character varying",
+        "nullable": false
+      },
+      {
+        "col": "verified_by",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "verification_notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "rejected_reason",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "verified_at",
         "type": "timestamp with time zone",
         "nullable": true
       }
@@ -4647,6 +4806,48 @@
         "nullable": false
       }
     ],
+    "manager_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "years_of_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "management_specialization",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "meal_templates": [
       {
         "col": "id",
@@ -5608,6 +5809,78 @@
         "nullable": false
       }
     ],
+    "nutritionist_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "credential_type",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "credential_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "credential_issuing_body",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "specializations",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "years_of_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "certifications",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "credentials_verified",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "verification_completed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "opponent_analysis": [
       {
         "col": "id",
@@ -6375,6 +6648,83 @@
       {
         "col": "clinical_note",
         "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
+    "physiotherapist_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "license_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "license_issued_by",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "specializations",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "years_of_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "insurance_provider",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "insurance_policy_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "insurance_expiry_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "credentials_verified",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "verification_completed_at",
+        "type": "timestamp with time zone",
         "nullable": true
       },
       {
@@ -7595,6 +7945,83 @@
         "nullable": false
       }
     ],
+    "psychologist_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "license_number",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "license_issued_by",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "degree_type",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "degree_field",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "specializations",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "years_of_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "certifications",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "credentials_verified",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "verification_completed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      }
+    ],
     "push_subscriptions": [
       {
         "col": "id",
@@ -8599,6 +9026,157 @@
         "nullable": true
       }
     ],
+    "rtp_athlete_protocol_assignments": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "athlete_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "injury_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "protocol_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "current_phase",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "phase_start_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "estimated_return_date",
+        "type": "date",
+        "nullable": true
+      },
+      {
+        "col": "individual_modifiers",
+        "type": "jsonb",
+        "nullable": true
+      },
+      {
+        "col": "biological_maturity_gate_passed",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      }
+    ],
+    "rtp_criteria_assessments": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "assignment_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "criteria_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "assessed_date",
+        "type": "date",
+        "nullable": false
+      },
+      {
+        "col": "assessed_value",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "pass_fail",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "notes",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "assessed_by_staff_id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      }
+    ],
+    "rtp_functional_criteria": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "protocol_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "criteria_name",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "criteria_type",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "target_value",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "measurement_method",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "pass_threshold",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "phase_required",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      }
+    ],
     "rtp_prescription_approvals": [
       {
         "col": "id",
@@ -8654,6 +9232,135 @@
         "col": "created_at",
         "type": "timestamp with time zone",
         "nullable": false
+      }
+    ],
+    "rtp_protocol_definitions": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "injury_type",
+        "type": "character varying",
+        "nullable": false
+      },
+      {
+        "col": "display_name",
+        "type": "character varying",
+        "nullable": false
+      },
+      {
+        "col": "evidence_grade",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "typical_rtp_timeline_days_min",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "typical_rtp_timeline_days_max",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "rts_rate_percent",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "description",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "key_studies",
+        "type": "jsonb",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp without time zone",
+        "nullable": true
+      }
+    ],
+    "rtp_protocol_phases": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "protocol_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "phase_number",
+        "type": "integer",
+        "nullable": false
+      },
+      {
+        "col": "phase_name",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "week_start",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "week_end",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "acwr_target_min",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "acwr_target_max",
+        "type": "numeric",
+        "nullable": true
+      },
+      {
+        "col": "description",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "activities",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "restrictions",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "pain_level_max",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "key_milestones",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp without time zone",
+        "nullable": true
       }
     ],
     "safety_override_log": [
@@ -9374,6 +10081,73 @@
         "col": "metadata",
         "type": "jsonb",
         "nullable": true
+      }
+    ],
+    "strength_coach_profiles": [
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "user_id",
+        "type": "uuid",
+        "nullable": false
+      },
+      {
+        "col": "certifications",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "primary_certification",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "certification_issued_by",
+        "type": "character varying",
+        "nullable": true
+      },
+      {
+        "col": "specializations",
+        "type": "ARRAY",
+        "nullable": true
+      },
+      {
+        "col": "years_of_experience",
+        "type": "integer",
+        "nullable": true
+      },
+      {
+        "col": "education_background",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "bio",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "credentials_verified",
+        "type": "boolean",
+        "nullable": true
+      },
+      {
+        "col": "verification_completed_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      },
+      {
+        "col": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false
+      },
+      {
+        "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": false
       }
     ],
     "superadmins": [
@@ -11659,6 +12433,38 @@
       },
       {
         "col": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": true
+      }
+    ],
+    "zz_video_backup_20260719": [
+      {
+        "col": "src_table",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "id",
+        "type": "uuid",
+        "nullable": true
+      },
+      {
+        "col": "video_url",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "thumbnail_url",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "video_id",
+        "type": "text",
+        "nullable": true
+      },
+      {
+        "col": "backed_up_at",
         "type": "timestamp with time zone",
         "nullable": true
       }

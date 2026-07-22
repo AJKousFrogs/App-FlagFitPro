@@ -1804,6 +1804,60 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_profiles: {
+        Row: {
+          bio: string | null
+          coach_specialty: string | null
+          coaching_certifications: string[] | null
+          coaching_license_issued_by: string | null
+          coaching_license_number: string | null
+          coaching_philosophy: string | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          position_specialization: string | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_coaching_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          coach_specialty?: string | null
+          coaching_certifications?: string[] | null
+          coaching_license_issued_by?: string | null
+          coaching_license_number?: string | null
+          coaching_philosophy?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          position_specialization?: string | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_coaching_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          coach_specialty?: string | null
+          coaching_certifications?: string[] | null
+          coaching_license_issued_by?: string | null
+          coaching_license_number?: string | null
+          coaching_philosophy?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          position_specialization?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_coaching_experience?: number | null
+        }
+        Relationships: []
+      }
       comment_likes: {
         Row: {
           comment_id: string
@@ -2183,6 +2237,63 @@ export type Database = {
           session_id?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      credential_verifications: {
+        Row: {
+          created_at: string
+          credential_name: string
+          credential_number: string | null
+          credential_type: string
+          document_url: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuing_body: string | null
+          rejected_reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          credential_name: string
+          credential_number?: string | null
+          credential_type: string
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          rejected_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          credential_name?: string
+          credential_number?: string | null
+          credential_type?: string
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          rejected_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: []
       }
@@ -3894,6 +4005,39 @@ export type Database = {
           },
         ]
       }
+      manager_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          education_background: string | null
+          id: string
+          management_specialization: string | null
+          updated_at: string
+          user_id: string
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          education_background?: string | null
+          id?: string
+          management_specialization?: string | null
+          updated_at?: string
+          user_id: string
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          education_background?: string | null
+          id?: string
+          management_specialization?: string | null
+          updated_at?: string
+          user_id?: string
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       meal_templates: {
         Row: {
           calories: number | null
@@ -4659,6 +4803,57 @@ export type Database = {
           },
         ]
       }
+      nutritionist_profiles: {
+        Row: {
+          bio: string | null
+          certifications: string[] | null
+          created_at: string
+          credential_issuing_body: string | null
+          credential_number: string | null
+          credential_type: string | null
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credential_issuing_body?: string | null
+          credential_number?: string | null
+          credential_type?: string | null
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credential_issuing_body?: string | null
+          credential_number?: string | null
+          credential_type?: string | null
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       opponent_analysis: {
         Row: {
           avg_points_per_game: number | null
@@ -5235,6 +5430,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      physiotherapist_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          insurance_expiry_date: string | null
+          insurance_policy_number: string | null
+          insurance_provider: string | null
+          license_issued_by: string | null
+          license_number: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
       }
       player_achievements: {
         Row: {
@@ -6299,6 +6548,60 @@ export type Database = {
         }
         Relationships: []
       }
+      psychologist_profiles: {
+        Row: {
+          bio: string | null
+          certifications: string[] | null
+          created_at: string
+          credentials_verified: boolean | null
+          degree_field: string | null
+          degree_type: string | null
+          education_background: string | null
+          id: string
+          license_issued_by: string | null
+          license_number: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          degree_field?: string | null
+          degree_type?: string | null
+          education_background?: string | null
+          id?: string
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          degree_field?: string | null
+          degree_type?: string | null
+          education_background?: string | null
+          id?: string
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth_key: string
@@ -7035,6 +7338,165 @@ export type Database = {
           },
         ]
       }
+      rtp_athlete_protocol_assignments: {
+        Row: {
+          athlete_id: string
+          biological_maturity_gate_passed: boolean | null
+          created_at: string | null
+          current_phase: number | null
+          estimated_return_date: string | null
+          id: string
+          individual_modifiers: Json | null
+          injury_id: string
+          phase_start_date: string
+          protocol_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          athlete_id: string
+          biological_maturity_gate_passed?: boolean | null
+          created_at?: string | null
+          current_phase?: number | null
+          estimated_return_date?: string | null
+          id?: string
+          individual_modifiers?: Json | null
+          injury_id: string
+          phase_start_date?: string
+          protocol_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          athlete_id?: string
+          biological_maturity_gate_passed?: boolean | null
+          created_at?: string | null
+          current_phase?: number | null
+          estimated_return_date?: string | null
+          id?: string
+          individual_modifiers?: Json | null
+          injury_id?: string
+          phase_start_date?: string
+          protocol_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_criteria_assessments: {
+        Row: {
+          assessed_by_staff_id: string | null
+          assessed_date: string
+          assessed_value: string | null
+          assignment_id: string
+          created_at: string | null
+          criteria_id: string
+          id: string
+          notes: string | null
+          pass_fail: boolean | null
+        }
+        Insert: {
+          assessed_by_staff_id?: string | null
+          assessed_date?: string
+          assessed_value?: string | null
+          assignment_id: string
+          created_at?: string | null
+          criteria_id: string
+          id?: string
+          notes?: string | null
+          pass_fail?: boolean | null
+        }
+        Update: {
+          assessed_by_staff_id?: string | null
+          assessed_date?: string
+          assessed_value?: string | null
+          assignment_id?: string
+          created_at?: string | null
+          criteria_id?: string
+          id?: string
+          notes?: string | null
+          pass_fail?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_criteria_assessments_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_athlete_protocol_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_criteria_assessments_criteria_id_fkey"
+            columns: ["criteria_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_functional_criteria"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_functional_criteria: {
+        Row: {
+          created_at: string | null
+          criteria_name: string | null
+          criteria_type: string | null
+          id: string
+          measurement_method: string | null
+          pass_threshold: string | null
+          phase_required: number | null
+          protocol_id: string
+          target_value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          criteria_name?: string | null
+          criteria_type?: string | null
+          id?: string
+          measurement_method?: string | null
+          pass_threshold?: string | null
+          phase_required?: number | null
+          protocol_id: string
+          target_value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          criteria_name?: string | null
+          criteria_type?: string | null
+          id?: string
+          measurement_method?: string | null
+          pass_threshold?: string | null
+          phase_required?: number | null
+          protocol_id?: string
+          target_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_functional_criteria_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rtp_prescription_approvals: {
         Row: {
           approved_by: string | null
@@ -7102,6 +7564,107 @@ export type Database = {
             columns: ["return_to_play_id"]
             isOneToOne: false
             referencedRelation: "return_to_play_protocols"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_protocol_definitions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_name: string
+          evidence_grade: string | null
+          id: string
+          injury_type: string
+          key_studies: Json | null
+          rts_rate_percent: number | null
+          typical_rtp_timeline_days_max: number | null
+          typical_rtp_timeline_days_min: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          evidence_grade?: string | null
+          id?: string
+          injury_type: string
+          key_studies?: Json | null
+          rts_rate_percent?: number | null
+          typical_rtp_timeline_days_max?: number | null
+          typical_rtp_timeline_days_min?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          evidence_grade?: string | null
+          id?: string
+          injury_type?: string
+          key_studies?: Json | null
+          rts_rate_percent?: number | null
+          typical_rtp_timeline_days_max?: number | null
+          typical_rtp_timeline_days_min?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rtp_protocol_phases: {
+        Row: {
+          activities: string[] | null
+          acwr_target_max: number | null
+          acwr_target_min: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          key_milestones: string | null
+          pain_level_max: number | null
+          phase_name: string | null
+          phase_number: number
+          protocol_id: string
+          restrictions: string[] | null
+          week_end: number | null
+          week_start: number | null
+        }
+        Insert: {
+          activities?: string[] | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key_milestones?: string | null
+          pain_level_max?: number | null
+          phase_name?: string | null
+          phase_number: number
+          protocol_id: string
+          restrictions?: string[] | null
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Update: {
+          activities?: string[] | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key_milestones?: string | null
+          pain_level_max?: number | null
+          phase_name?: string | null
+          phase_number?: number
+          protocol_id?: string
+          restrictions?: string[] | null
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_protocol_phases_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
             referencedColumns: ["id"]
           },
         ]
@@ -7689,6 +8252,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      strength_coach_profiles: {
+        Row: {
+          bio: string | null
+          certification_issued_by: string | null
+          certifications: string[] | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          primary_certification: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certification_issued_by?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          primary_certification?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certification_issued_by?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          primary_certification?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
       }
       superadmins: {
         Row: {
@@ -9509,6 +10120,33 @@ export type Database = {
         }
         Relationships: []
       }
+      zz_video_backup_20260719: {
+        Row: {
+          backed_up_at: string | null
+          id: string | null
+          src_table: string | null
+          thumbnail_url: string | null
+          video_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          backed_up_at?: string | null
+          id?: string | null
+          src_table?: string | null
+          thumbnail_url?: string | null
+          video_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          backed_up_at?: string | null
+          id?: string | null
+          src_table?: string | null
+          thumbnail_url?: string | null
+          video_id?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       physical_measurements_latest: {
@@ -9769,6 +10407,10 @@ export type Database = {
       }
       app_schema_columns: { Args: never; Returns: Json }
       archive_season_data: { Args: { p_season_id: string }; Returns: boolean }
+      athlete_phase_criteria_met: {
+        Args: { p_assignment_id: string; p_phase: number }
+        Returns: boolean
+      }
       auth_user_team_ids: { Args: never; Returns: string[] }
       award_achievement: {
         Args: {
@@ -9776,6 +10418,10 @@ export type Database = {
           p_context?: Json
           p_user_id: string
         }
+        Returns: string
+      }
+      calculate_estimated_rtp_date: {
+        Args: { p_current_phase: number; p_protocol_id: string }
         Returns: string
       }
       calculate_player_tournament_cost: {

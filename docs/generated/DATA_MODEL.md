@@ -2,9 +2,11 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-18** · doc regenerated: 2026-07-21
+> **Schema snapshot (live): 2026-07-22** · doc regenerated: 2026-07-22
 
-**178 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+**191 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+
+**DRIFT (live, no migration file):** `zz_video_backup_20260719`
 
 ## Tables
 
@@ -236,7 +238,7 @@ Touched by: `hydration`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_injuries`
-Touched by: `athlete-injuries`, `calc-readiness`, `coach-core`, `injury-analytics`, `monitoring-report`, `recovery-recommendations`, `staff-physiotherapist`, `user-profile-core`
+Touched by: `alert-evaluate-rules`, `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach-core`, `injury-analytics`, `monitoring-report`, `rtp-create-assignment`, `staff-physiotherapist`, `user-profile-core`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -564,6 +566,25 @@ Touched by: _(no endpoint references this table)_
 - `expires_at` timestamp with time zone
 - `created_at` timestamp with time zone
 
+### `coach_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `coaching_license_number` character varying
+- `coaching_license_issued_by` character varying
+- `coach_specialty` character varying
+- `position_specialization` character varying
+- `years_of_coaching_experience` integer
+- `education_background` text
+- `coaching_certifications` ARRAY
+- `coaching_philosophy` text
+- `bio` text
+- `credentials_verified` boolean
+- `verification_completed_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `comment_likes`
 Touched by: `community`
 
@@ -679,6 +700,26 @@ Touched by: _(no endpoint references this table)_
 - `is_active` boolean
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
+
+### `credential_verifications`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `credential_type` character varying · not null
+- `credential_name` character varying · not null
+- `issuing_body` character varying
+- `credential_number` character varying
+- `issue_date` date
+- `expiry_date` date
+- `document_url` text
+- `status` character varying · not null
+- `verified_by` uuid
+- `verification_notes` text
+- `rejected_reason` text
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+- `verified_at` timestamp with time zone
 
 ### `cycle_logs`
 Touched by: `cycle`
@@ -1189,6 +1230,18 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
+### `manager_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `education_background` text
+- `years_of_experience` integer
+- `management_specialization` character varying
+- `bio` text
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `meal_templates`
 Touched by: `nutrition`
 
@@ -1446,6 +1499,24 @@ Touched by: `staff-nutritionist`
 - `period_end` date
 - `created_at` timestamp with time zone · not null
 
+### `nutritionist_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `credential_type` character varying
+- `credential_number` character varying
+- `credential_issuing_body` character varying
+- `specializations` ARRAY
+- `years_of_experience` integer
+- `education_background` text
+- `certifications` ARRAY
+- `bio` text
+- `credentials_verified` boolean
+- `verification_completed_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `opponent_analysis`
 Touched by: _(no endpoint references this table)_
 
@@ -1635,6 +1706,25 @@ Touched by: `monitoring-report`
 - `is_active` boolean · not null
 - `authored_by` uuid
 - `clinical_note` text
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
+### `physiotherapist_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `license_number` character varying
+- `license_issued_by` character varying
+- `specializations` ARRAY
+- `years_of_experience` integer
+- `education_background` text
+- `insurance_provider` character varying
+- `insurance_policy_number` character varying
+- `insurance_expiry_date` date
+- `bio` text
+- `credentials_verified` boolean
+- `verification_completed_at` timestamp with time zone
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
@@ -1955,6 +2045,25 @@ Touched by: `rtp-psychological-assessment`, `staff-psychology`
 - `completed_at` timestamp with time zone
 - `created_at` timestamp with time zone · not null
 
+### `psychologist_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `license_number` character varying
+- `license_issued_by` character varying
+- `degree_type` character varying
+- `degree_field` character varying
+- `specializations` ARRAY
+- `years_of_experience` integer
+- `education_background` text
+- `certifications` ARRAY
+- `bio` text
+- `credentials_verified` boolean
+- `verification_completed_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `push_subscriptions`
 Touched by: _(no endpoint references this table)_
 
@@ -2199,6 +2308,47 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `created_at` timestamp with time zone
 
+### `rtp_athlete_protocol_assignments`
+Touched by: `recovery-recommendations`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-protocol-assignment`, `rtp-record-assessment`, `rtp-team-protocols`
+
+- `id` uuid · not null
+- `athlete_id` uuid · not null
+- `injury_id` uuid · not null
+- `protocol_id` uuid · not null
+- `current_phase` integer
+- `phase_start_date` date · not null
+- `estimated_return_date` date
+- `individual_modifiers` jsonb
+- `biological_maturity_gate_passed` boolean
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
+### `rtp_criteria_assessments`
+Touched by: `rtp-advance-phase`, `rtp-protocol-assignment`, `rtp-record-assessment`
+
+- `id` uuid · not null
+- `assignment_id` uuid · not null
+- `criteria_id` uuid · not null
+- `assessed_date` date · not null
+- `assessed_value` character varying
+- `pass_fail` boolean
+- `notes` text
+- `assessed_by_staff_id` uuid
+- `created_at` timestamp without time zone
+
+### `rtp_functional_criteria`
+Touched by: `rtp-advance-phase`, `rtp-protocol-assignment`, `rtp-record-assessment`
+
+- `id` uuid · not null
+- `protocol_id` uuid · not null
+- `criteria_name` character varying
+- `criteria_type` character varying
+- `target_value` character varying
+- `measurement_method` text
+- `pass_threshold` character varying
+- `phase_required` integer
+- `created_at` timestamp without time zone
+
 ### `rtp_prescription_approvals`
 Touched by: _(no endpoint references this table)_
 
@@ -2213,6 +2363,39 @@ Touched by: _(no endpoint references this table)_
 - `reviewed_at` timestamp with time zone
 - `coach_notes` text
 - `created_at` timestamp with time zone · not null
+
+### `rtp_protocol_definitions`
+Touched by: `rtp-advance-phase`, `rtp-create-assignment`
+
+- `id` uuid · not null
+- `injury_type` character varying · not null
+- `display_name` character varying · not null
+- `evidence_grade` character varying
+- `typical_rtp_timeline_days_min` integer
+- `typical_rtp_timeline_days_max` integer
+- `rts_rate_percent` numeric
+- `description` text
+- `key_studies` jsonb
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
+### `rtp_protocol_phases`
+Touched by: `rtp-advance-phase`, `rtp-protocol-assignment`
+
+- `id` uuid · not null
+- `protocol_id` uuid · not null
+- `phase_number` integer · not null
+- `phase_name` character varying
+- `week_start` integer
+- `week_end` integer
+- `acwr_target_min` numeric
+- `acwr_target_max` numeric
+- `description` text
+- `activities` ARRAY
+- `restrictions` ARRAY
+- `pain_level_max` integer
+- `key_milestones` text
+- `created_at` timestamp without time zone
 
 ### `safety_override_log`
 Touched by: _(no endpoint references this table)_
@@ -2394,6 +2577,23 @@ Touched by: _(no endpoint references this table)_
 - `reason` text
 - `metadata` jsonb
 
+### `strength_coach_profiles`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `certifications` ARRAY
+- `primary_certification` character varying
+- `certification_issued_by` character varying
+- `specializations` ARRAY
+- `years_of_experience` integer
+- `education_background` text
+- `bio` text
+- `credentials_verified` boolean
+- `verification_completed_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `superadmins`
 Touched by: _(no endpoint references this table)_
 
@@ -2500,7 +2700,7 @@ Touched by: `session-load-import`
 - `created_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `payments-core`, `performance-data`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2980,6 +3180,16 @@ Touched by: _(no endpoint references this table)_
 - `rest_day_requirements` integer
 - `created_at` timestamp with time zone
 - `updated_at` timestamp with time zone
+
+### `zz_video_backup_20260719` — ⚠️ DRIFT
+Touched by: _(no endpoint references this table)_
+
+- `src_table` text
+- `id` uuid
+- `video_url` text
+- `thumbnail_url` text
+- `video_id` text
+- `backed_up_at` timestamp with time zone
 
 ## Views
 
