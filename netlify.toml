@@ -1892,6 +1892,28 @@
   status = 200
   force = true
 
+# Alert Preferences (self-service) -- function built, was never wired
+[[redirects]]
+  from = "/api/alert-preferences"
+  to = "/.netlify/functions/alert-preferences"
+  status = 200
+  force = true
+
+# RTP Phase Progress + Psychological Assessment -- both fully built, called by
+# rtp.service.ts, but had zero redirect (same class of gap as
+# injury-analytics/team-acwr/recovery-effectiveness, found in the same audit)
+[[redirects]]
+  from = "/api/rtp/phase-progress"
+  to = "/.netlify/functions/rtp-phase-progress"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/rtp/psychological-assessment"
+  to = "/.netlify/functions/rtp-psychological-assessment"
+  status = 200
+  force = true
+
 # Phase 1D: RTP Protocol Management
 [[redirects]]
   from = "/api/rtp/protocols/:athleteId/:injuryId"
