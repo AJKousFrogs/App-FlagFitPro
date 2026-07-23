@@ -319,6 +319,13 @@
   status = 200
   force = true
 
+# API Route for session-load CSV import (POST; vendor/manual CSV -> same import core)
+[[redirects]]
+  from = "/api/session-load-import/csv"
+  to = "/.netlify/functions/session-load-import-csv"
+  status = 200
+  force = true
+
 # API Route for wearable-health ingest (POST ingest / PUT consent)
 [[redirects]]
   from = "/api/wearable-health-ingest"

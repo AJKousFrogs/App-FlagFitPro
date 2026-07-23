@@ -92,9 +92,34 @@ const statsportsAdapter = {
   }),
 };
 
+// For a coach with no vendor export at all — just a spreadsheet of
+// manually-recorded/typed-up training-log numbers (the raw "CSV numbers"
+// case, no Catapult/STATSports schema to match). Column names are FlagFit's
+// own canonical field names (documented for the coach), not an arbitrary
+// column-mapping UI — that's a real gap for later if a coach's existing
+// spreadsheet layout can't be reheadered to match.
+const manualAdapter = {
+  provider: "manual",
+  externalAthleteId: (r) =>
+    pick(r, "external_athlete_id", "athlete_id", "athlete", "player_id"),
+  sessionId: (r) => pick(r, "session_id", "session", "activity_id"),
+  recordedAt: (r) => pick(r, "recorded_at", "date", "session_date"),
+  map: (r) => ({
+    total_distance_m: num(pick(r, "total_distance_m", "distance", "total_distance")),
+    player_load: num(pick(r, "player_load", "load")),
+    sprint_count: int(pick(r, "sprint_count", "sprints")),
+    sprint_distance_m: num(pick(r, "sprint_distance_m", "sprint_distance")),
+    max_velocity_kmh: num(pick(r, "max_velocity_kmh", "max_speed", "max_velocity")),
+    hr_max: int(pick(r, "hr_max", "max_hr")),
+    hr_avg: int(pick(r, "hr_avg", "avg_hr")),
+    notes: pick(r, "notes", "note", "comment"),
+  }),
+};
+
 const ADAPTERS = Object.freeze({
   catapult: catapultAdapter,
   statsports: statsportsAdapter,
+  manual: manualAdapter,
 });
 
 export function getAdapter(provider) {
