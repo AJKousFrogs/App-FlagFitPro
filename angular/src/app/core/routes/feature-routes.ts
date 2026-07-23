@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { ShellComponent } from "../../shell/shell.component";
 import { staffGuard, homeRedirectGuard } from "../guards/staff.guard";
 import { authGuard } from "../guards/auth.guard";
+import { billingGuard } from "../guards/billing.guard";
 
 /**
  * Feature routes — rebuilt incrementally in Phase E from the approved static
@@ -17,6 +18,15 @@ export const featureRoutes: Routes = [
     loadComponent: () =>
       import("../../landing/landing.component").then((m) => m.LandingComponent),
     title: "FlagFit Pro",
+  },
+  {
+    path: "paywall",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("../../billing/paywall.component").then(
+        (m) => m.PaywallComponent,
+      ),
+    title: "Subscribe · FlagFit",
   },
   {
     path: "login",
@@ -330,6 +340,7 @@ export const featureRoutes: Routes = [
     path: "",
     component: ShellComponent,
     canActivate: [authGuard],
+    canActivateChild: [billingGuard],
     children: [
       { path: "", pathMatch: "full", redirectTo: "today" },
       {
