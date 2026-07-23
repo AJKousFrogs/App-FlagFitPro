@@ -1,4 +1,3 @@
-export { AthleteOnboardingComponent } from "./athlete-onboarding.component";
 export { HeadCoachOnboardingComponent } from "./head-coach-onboarding.component";
 export { CoachOnboardingComponent } from "./coach-onboarding.component";
 export { PhysiotherapistOnboardingComponent } from "./physiotherapist-onboarding.component";

@@ -118,6 +118,43 @@ describe("user-profile authorization and error hardening", () => {
     expect(body.data.userId).toBe("user-2");
   });
 
+  it("returns the TIER 1 athlete profile fields (sport/experience/medical/emergency contact)", async () => {
+    state.usersRow = {
+      id: "user-1",
+      height_cm: 180,
+      weight_kg: 80,
+      position: "QB",
+      birth_date: null,
+      date_of_birth: "2000-01-01",
+      experience_level: "advanced",
+      sport: "football",
+      years_experience: 5,
+      medical_history: "Prior ACL 2023",
+      emergency_contact_name: "John Athlete",
+      emergency_contact_phone: "+1234567890",
+    };
+
+    const response = await handler(
+      {
+        httpMethod: "GET",
+        path: "/.netlify/functions/user-profile",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    expect(body.data).toMatchObject({
+      sport: "football",
+      yearsExperience: 5,
+      medicalHistory: "Prior ACL 2023",
+      emergencyContactName: "John Athlete",
+      emergencyContactPhone: "+1234567890",
+    });
+  });
+
   it("returns sanitized 500 when database query fails", async () => {
     state.usersError = new Error("sensitive connection details");
 

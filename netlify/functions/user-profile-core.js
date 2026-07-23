@@ -152,7 +152,7 @@ const handler = async (event, context) => {
         const { data: userInfo, error: userError } = await supabaseAdmin
           .from("users")
           .select(
-            "id, height_cm, weight_kg, position, birth_date, date_of_birth, experience_level",
+            "id, height_cm, weight_kg, position, birth_date, date_of_birth, experience_level, sport, years_experience, medical_history, emergency_contact_name, emergency_contact_phone",
           )
           .eq("id", targetUserId)
           .maybeSingle();
@@ -243,6 +243,11 @@ const handler = async (event, context) => {
           birthDate,
           role: userRole || "athlete",
           experienceLevel: userInfo.experience_level || "beginner",
+          sport: userInfo.sport || null,
+          yearsExperience: userInfo.years_experience ?? null,
+          medicalHistory: userInfo.medical_history || null,
+          emergencyContactName: userInfo.emergency_contact_name || null,
+          emergencyContactPhone: userInfo.emergency_contact_phone || null,
           injuries: (injuriesRes.data ?? []).map((row) => ({
             type: row.injury_type,
             severity: row.injury_grade,

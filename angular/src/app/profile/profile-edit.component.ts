@@ -22,6 +22,11 @@ interface ProfileRead {
   weightKg?: number | null;
   birthDate?: string | null;
   position?: string | null;
+  sport?: string | null;
+  yearsExperience?: number | null;
+  medicalHistory?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
 }
 
 /**
@@ -146,6 +151,74 @@ interface ProfileRead {
           </div>
         </div>
 
+        <div>
+          <label class="lbl" for="pe-sport">Primary sport</label>
+          <input
+            id="pe-sport"
+            class="input"
+            type="text"
+            placeholder="e.g., American Football"
+            [value]="sport()"
+            (input)="sport.set(val($event))"
+          />
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label class="lbl" for="pe-years-experience"
+              >Years of experience</label
+            >
+            <input
+              id="pe-years-experience"
+              class="input"
+              type="number"
+              min="0"
+              inputmode="numeric"
+              [value]="yearsExperience()"
+              (input)="yearsExperience.set(numOrEmpty($event))"
+            />
+          </div>
+          <div>
+            <label class="lbl" for="pe-emergency-name"
+              >Emergency contact name</label
+            >
+            <input
+              id="pe-emergency-name"
+              class="input"
+              type="text"
+              [value]="emergencyContactName()"
+              (input)="emergencyContactName.set(val($event))"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="lbl" for="pe-emergency-phone"
+            >Emergency contact phone</label
+          >
+          <input
+            id="pe-emergency-phone"
+            class="input"
+            type="tel"
+            [value]="emergencyContactPhone()"
+            (input)="emergencyContactPhone.set(val($event))"
+          />
+        </div>
+
+        <div>
+          <label class="lbl" for="pe-medical-history"
+            >Medical / injury history</label
+          >
+          <textarea
+            id="pe-medical-history"
+            class="input"
+            rows="3"
+            placeholder="Previous injuries or medical conditions relevant to training"
+            [value]="medicalHistory()"
+            (input)="medicalHistory.set(val($event))"
+          ></textarea>
+        </div>
+
         @if (error(); as e) {
           <p class="note" style="color:var(--danger)">{{ e }}</p>
         }
@@ -203,6 +276,11 @@ export class ProfileEditComponent implements OnInit {
   readonly birthDate = signal("");
   readonly heightCm = signal<string>("");
   readonly weightKg = signal<string>("");
+  readonly sport = signal("");
+  readonly yearsExperience = signal<string>("");
+  readonly medicalHistory = signal("");
+  readonly emergencyContactName = signal("");
+  readonly emergencyContactPhone = signal("");
 
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -235,6 +313,14 @@ export class ProfileEditComponent implements OnInit {
         if (p.heightCm != null) this.heightCm.set(String(p.heightCm));
         if (p.weightKg != null) this.weightKg.set(String(p.weightKg));
         if (p.birthDate) this.birthDate.set(p.birthDate.slice(0, 10));
+        if (p.sport) this.sport.set(p.sport);
+        if (p.yearsExperience != null)
+          this.yearsExperience.set(String(p.yearsExperience));
+        if (p.medicalHistory) this.medicalHistory.set(p.medicalHistory);
+        if (p.emergencyContactName)
+          this.emergencyContactName.set(p.emergencyContactName);
+        if (p.emergencyContactPhone)
+          this.emergencyContactPhone.set(p.emergencyContactPhone);
       },
       error: () => {
         /* keep identity-derived defaults */
@@ -258,6 +344,14 @@ export class ProfileEditComponent implements OnInit {
     if (this.birthDate()) payload["birthDate"] = this.birthDate();
     if (this.heightCm() !== "") payload["heightCm"] = Number(this.heightCm());
     if (this.weightKg() !== "") payload["weightKg"] = Number(this.weightKg());
+    if (this.sport()) payload["sport"] = this.sport();
+    if (this.yearsExperience() !== "")
+      payload["yearsExperience"] = Number(this.yearsExperience());
+    if (this.medicalHistory()) payload["medicalHistory"] = this.medicalHistory();
+    if (this.emergencyContactName())
+      payload["emergencyContactName"] = this.emergencyContactName();
+    if (this.emergencyContactPhone())
+      payload["emergencyContactPhone"] = this.emergencyContactPhone();
 
     if (Object.keys(payload).length === 0) {
       this.error.set("Nothing to save yet — fill in at least one field.");
