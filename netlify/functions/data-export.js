@@ -149,6 +149,85 @@ const USER_DATA_TABLES = [
 // DATA EXPORT FUNCTIONS
 // =============================================================================
 
+const BILLING_EXPORT_NAME = "billing";
+const BILLING_EXPORT_DESCRIPTION =
+  "Subscription billing history (individual subscriptions only -- a team's billing belongs to the team, not an individual member's personal export)";
+
+/**
+ * Export a user's own billing data (individual subscriptions only). Unlike
+ * USER_DATA_TABLES, invoices/subscriptions don't carry a direct user_id
+ * column -- they hang off billing_customers.owner_user_id via
+ * billing_customer_id/subscription_id -- so this needs its own two-hop fetch
+ * rather than the generic single-eq() export path.
+ */
+async function exportBillingData(userId, log = logger) {
+  try {
+    const { data: billingCustomer, error: bcError } = await supabaseAdmin
+      .from("billing_customers")
+      .select("id, stripe_customer_id, created_at")
+      .eq("owner_user_id", userId)
+      .maybeSingle();
+
+    if (bcError) {
+      throw bcError;
+    }
+
+    if (!billingCustomer) {
+      return {
+        name: BILLING_EXPORT_NAME,
+        description: BILLING_EXPORT_DESCRIPTION,
+        status: "skipped",
+        reason: "No individual billing customer",
+        records: 0,
+      };
+    }
+
+    const { data: subscriptions, error: subError } = await supabaseAdmin
+      .from("subscriptions")
+      .select("*")
+      .eq("billing_customer_id", billingCustomer.id);
+
+    if (subError) {
+      throw subError;
+    }
+
+    const subscriptionIds = (subscriptions || []).map((s) => s.id);
+    let invoices = [];
+    if (subscriptionIds.length > 0) {
+      const { data: invoiceRows, error: invError } = await supabaseAdmin
+        .from("invoices")
+        .select("*")
+        .in("subscription_id", subscriptionIds);
+
+      if (invError) {
+        throw invError;
+      }
+      invoices = invoiceRows || [];
+    }
+
+    return {
+      name: BILLING_EXPORT_NAME,
+      description: BILLING_EXPORT_DESCRIPTION,
+      status: "success",
+      records: 1 + (subscriptions?.length || 0) + invoices.length,
+      data: { billingCustomer, subscriptions: subscriptions || [], invoices },
+    };
+  } catch (error) {
+    log.error("data_export_section_failed", error, {
+      table: "billing_customers/subscriptions/invoices",
+      export_name: BILLING_EXPORT_NAME,
+      user_id: userId,
+    });
+    return {
+      name: BILLING_EXPORT_NAME,
+      description: BILLING_EXPORT_DESCRIPTION,
+      status: "error",
+      error: "Section export failed",
+      records: 0,
+    };
+  }
+}
+
 /**
  * Remove sensitive fields from data
  */
@@ -272,6 +351,17 @@ async function generateDataExport(userId, log = logger) {
     }
   }
 
+  const billingResult = await exportBillingData(userId, log);
+  exportData.sections[billingResult.name] = billingResult;
+  if (billingResult.status === "success") {
+    exportData.summary.tablesExported++;
+    exportData.summary.totalRecords += billingResult.records;
+  } else if (billingResult.status === "skipped") {
+    exportData.summary.tablesSkipped++;
+  } else {
+    exportData.summary.tablesError++;
+  }
+
   exportData.summary.durationMs = Date.now() - startTime;
 
   return exportData;
@@ -308,6 +398,14 @@ async function generateDataInventory(userId) {
       // Skip tables that don't exist
     }
   }
+
+  const billingResult = await exportBillingData(userId);
+  inventory.categories.push({
+    name: billingResult.name,
+    description: billingResult.description,
+    recordCount: billingResult.records,
+    hasData: billingResult.records > 0,
+  });
 
   return inventory;
 }
@@ -418,11 +516,18 @@ async function handleRequest(
     // Get information about what data is collected
     if (event.httpMethod === "GET" && path === "info") {
       return createSuccessResponse({
-        dataCategories: USER_DATA_TABLES.map((t) => ({
-          name: t.exportName,
-          description: t.description,
-          table: t.table,
-        })),
+        dataCategories: [
+          ...USER_DATA_TABLES.map((t) => ({
+            name: t.exportName,
+            description: t.description,
+            table: t.table,
+          })),
+          {
+            name: BILLING_EXPORT_NAME,
+            description: BILLING_EXPORT_DESCRIPTION,
+            table: "billing_customers / subscriptions / invoices",
+          },
+        ],
         gdprRights: {
           access:
             "You have the right to access all personal data we hold about you (Article 15)",
@@ -435,7 +540,7 @@ async function handleRequest(
         },
         exportFormats: ["JSON"],
         retentionPolicy:
-          "Data is retained for 3 years after account deletion for legal compliance, then permanently deleted",
+          "Most personal data is permanently deleted 30 days after your account-deletion request is processed (see /account-deletion). Financial records (subscription and invoice history) are a separate, narrower exception: they're retained for 3 years after deletion for legal/tax compliance, scrubbed of everything beyond what that compliance requires, then permanently deleted.",
         contact: PRIVACY_EMAIL,
       });
     }
