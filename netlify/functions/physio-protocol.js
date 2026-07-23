@@ -249,7 +249,7 @@ const handler = async (event, context) =>
     rateLimitType: event.httpMethod === "GET" ? "READ" : "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
 
       const pathParts = event.path.split("/").filter((p) => p);
       const athleteId = pathParts[3];

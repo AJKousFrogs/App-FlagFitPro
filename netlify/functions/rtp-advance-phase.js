@@ -178,7 +178,7 @@ const handler = async (event, context) =>
     rateLimitType: "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
 
       const role = await getUserRole(userId);
       if (!hasAnyRole(role, PHYSIOTHERAPIST_ROLES)) {

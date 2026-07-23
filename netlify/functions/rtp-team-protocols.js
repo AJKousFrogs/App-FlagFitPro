@@ -158,7 +158,7 @@ const handler = async (event, context) =>
     rateLimitType: "READ",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
 
       const role = await getUserRole(userId);
       if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
