@@ -945,7 +945,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `device_pairings`
-Touched by: `session-load-import`, `session-load-import-csv`
+Touched by: `session-load-import`, `session-load-import-csv`, `wearables-callback`, `wearables-webhook`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1530,7 +1530,7 @@ Touched by: `monitoring-report`
 - `updated_at` timestamp with time zone · not null
 
 ### `monitoring_providers`
-Touched by: `session-load-import`, `session-load-import-csv`
+Touched by: `session-load-import`, `session-load-import-csv`, `wearables-callback`, `wearables-connect`, `wearables-webhook`
 
 - `id` uuid · not null
 - `key` text · not null
@@ -3323,7 +3323,7 @@ Touched by: `training`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `wearable_consent`
-Touched by: `wearable-health-ingest`
+Touched by: `wearable-health-ingest`, `wearables-webhook`
 
 - `user_id` uuid · not null
 - `source` text · not null
@@ -3333,7 +3333,7 @@ Touched by: `wearable-health-ingest`
 - `updated_at` timestamp with time zone · not null
 
 ### `wearable_health`
-Touched by: `monitoring-report`, `wearable-health-ingest`
+Touched by: `monitoring-report`, `wearable-health-ingest`, `wearables-webhook`
 
 - `id` uuid · not null
 - `user_id` uuid · not null

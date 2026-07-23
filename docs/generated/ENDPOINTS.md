@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-23**
 
-**154 functions: 136 exercised, 18 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**157 functions: 136 exercised, 21 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -168,3 +168,6 @@
 | `stripe-webhook` | POST | _(no /api redirect)_ | billing_customers, subscriptions, team_members, notifications, invoices |
 | `team-practice-plan` | POST | /api/team-practice-plan | team_members, exercises |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
+| `wearables-callback` | GET | /api/wearables/callback/* | device_pairings, monitoring_providers |
+| `wearables-connect` | GET | /api/wearables/connect/* | monitoring_providers |
+| `wearables-webhook` | POST | /api/wearables/webhook/* | monitoring_providers, device_pairings, wearable_consent, wearable_health |
