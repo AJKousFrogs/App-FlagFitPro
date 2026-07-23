@@ -62,7 +62,7 @@ async function advancePhase(supabase, athleteId, injuryId, requestLogger) {
     if (nextPhaseCriteria && nextPhaseCriteria.length > 0) {
       const { data: passedAssessments, error: assessmentError } = await supabase
         .from("rtp_criteria_assessments")
-        .select("DISTINCT criteria_id")
+        .select("criteria_id")
         .eq("assignment_id", assignment.id)
         .eq("pass_fail", true)
         .in(
@@ -77,7 +77,14 @@ async function advancePhase(supabase, athleteId, injuryId, requestLogger) {
         return createErrorResponse("Failed to verify criteria", 500);
       }
 
-      const passedCount = passedAssessments ? passedAssessments.length : 0;
+      // "DISTINCT criteria_id" isn't valid PostgREST select syntax (it's not
+      // SQL) — was previously failing the query whenever any criteria
+      // existed for the next phase. Dedupe in JS instead: a criterion can
+      // have multiple pass_fail=true assessment rows over time, but only
+      // counts once toward "all criteria passed".
+      const passedCount = passedAssessments
+        ? new Set(passedAssessments.map((a) => a.criteria_id)).size
+        : 0;
       if (passedCount < nextPhaseCriteria.length) {
         return createErrorResponse(
           `Not all criteria passed for phase ${nextPhase}. Passed: ${passedCount}/${nextPhaseCriteria.length}`,

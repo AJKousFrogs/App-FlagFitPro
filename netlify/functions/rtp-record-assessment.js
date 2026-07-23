@@ -95,10 +95,16 @@ async function recordAssessment(
         .eq("phase_required", assignment.current_phase + 1);
 
       if (nextPhaseCriteria && nextPhaseCriteria.length > 0) {
-        // Check if all next-phase criteria are passed
-        const { data: passedForNextPhase } = await supabase
+        // Check if all next-phase criteria are passed. "DISTINCT criteria_id"
+        // isn't valid PostgREST select syntax (it's not SQL) — was previously
+        // failing this query every time, and the error was silently dropped
+        // (only `data` was destructured), so phaseAdvancementEligible was
+        // always false regardless of real progress. Dedupe in JS instead: a
+        // criterion can have multiple pass_fail=true rows over time, but
+        // only counts once toward "all criteria passed".
+        const { data: passedForNextPhase, error: passedError } = await supabase
           .from("rtp_criteria_assessments")
-          .select("DISTINCT criteria_id")
+          .select("criteria_id")
           .eq("assignment_id", assignmentId)
           .eq("pass_fail", true)
           .in(
@@ -106,9 +112,16 @@ async function recordAssessment(
             nextPhaseCriteria.map((c) => c.id)
           );
 
-        phaseAdvancementEligible =
-          passedForNextPhase &&
-          passedForNextPhase.length === nextPhaseCriteria.length;
+        if (passedError) {
+          requestLogger.warn("DB error checking next-phase criteria", {
+            code: passedError.code,
+          });
+        }
+
+        const passedCount = passedForNextPhase
+          ? new Set(passedForNextPhase.map((a) => a.criteria_id)).size
+          : 0;
+        phaseAdvancementEligible = passedCount === nextPhaseCriteria.length;
         nextPhase = assignment.current_phase + 1;
       } else {
         // No criteria required for next phase — eligible to advance
