@@ -93,7 +93,7 @@
 | `return-to-play` | GET, POST | /api/return-to-play/*<br>/api/return-to-play | return_to_play_protocols |
 | `roster` | OPTIONS | /api/roster/*<br>/api/scouting/*<br>/api/scouting<br>/api/player-stats<br>/api/player-stats/*<br>/api/depth-chart/*<br>/api/depth-chart<br>/api/player-settings<br>/api/player-settings/* | — |
 | `roster-core` | GET | _(router submodule)_ | team_members |
-| `rtp-all-protocols` | GET | /api/rtp/protocols | rtp_athlete_protocol_assignments |
+| `rtp-all-protocols` | GET | /api/rtp/protocols | rtp_athlete_protocol_assignments, users |
 | `rtp-record-assessment` | POST | /api/rtp/assessments | rtp_athlete_protocol_assignments, rtp_functional_criteria, rtp_criteria_assessments |
 | `schedule` | GET | /api/schedule/*<br>/api/schedule | v_athlete_schedule, athlete_events |
 | `season-archive` | POST | _(router submodule)_ | archive_season_data() |
@@ -158,7 +158,7 @@
 | `rtp-phase-progress` | GET, POST | _(no /api redirect)_ | rtp_phase_progress ⚠️ |
 | `rtp-protocol-assignment` | GET | /api/rtp/protocols/:athleteId/:injuryId | rtp_athlete_protocol_assignments, rtp_protocol_phases, rtp_functional_criteria, rtp_criteria_assessments |
 | `rtp-psychological-assessment` | GET, POST | _(no /api redirect)_ | psychological_assessments |
-| `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments |
+| `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `team-acwr` | GET | _(no /api redirect)_ | team_members, daily_load_score ⚠️ |
 | `team-practice-plan` | POST | /api/team-practice-plan | — |

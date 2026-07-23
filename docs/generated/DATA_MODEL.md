@@ -3076,7 +3076,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
