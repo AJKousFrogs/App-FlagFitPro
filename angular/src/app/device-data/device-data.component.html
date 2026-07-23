@@ -157,30 +157,106 @@
     </div>
   </section>
 
-  <!-- SUPPORTED DEVICES (honest status) -->
+  <!-- SUPPORTED DEVICES -->
   @if (devices().length) {
     <section class="card">
       <div class="card-head">
         <h2>Supported devices</h2>
-        <span class="meta">automated sync coming</span>
       </div>
       <div class="card-body">
+        @if (justConnected(); as provider) {
+          <p class="ok">
+            <lucide-icon name="check" [size]="15" />
+            {{ provider }} connected. Grant sync consent below to start
+            importing its readings.
+          </p>
+        }
         <p class="muted small">
-          Direct sync with these brands is on the roadmap — it needs each
-          provider's approval, so it isn't live yet. Until then, log your
-          session numbers manually above.
+          Connect a device to authorize sync with its vendor. Ingestion only
+          starts once you also grant consent for that source — revoke it any
+          time to stop.
         </p>
         <ul class="devices">
           @for (d of devices(); track d.id) {
             <li class="dev">
-              <span>{{ d.name }}</span>
-              <span class="dev-state">{{
-                d.connected ? "connected" : "sync coming"
-              }}</span>
+              <div class="dev-info">
+                <span>{{ d.name }}</span>
+                @if (d.connected) {
+                  <span class="dev-state">
+                    connected{{ d.lastSync ? " · synced" : "" }}
+                  </span>
+                } @else {
+                  <span class="dev-state muted">not connected</span>
+                }
+              </div>
+              <div class="dev-actions">
+                @if (!d.connected) {
+                  <button
+                    class="btn btn--ghost sm"
+                    type="button"
+                    [disabled]="connectingProvider() === d.id"
+                    (click)="connectDevice(d.id)"
+                  >
+                    {{
+                      connectingProvider() === d.id ? "Connecting…" : "Connect"
+                    }}
+                  </button>
+                } @else {
+                  <button
+                    class="btn sm"
+                    [class.btn--primary]="d.consentState !== 'granted'"
+                    [class.btn--ghost]="d.consentState === 'granted'"
+                    type="button"
+                    [disabled]="consentBusyProvider() === d.id"
+                    (click)="toggleConsent(d)"
+                  >
+                    {{
+                      d.consentState === "granted"
+                        ? "Revoke sync"
+                        : "Grant sync"
+                    }}
+                  </button>
+                }
+              </div>
             </li>
           }
         </ul>
+        @if (connectError(); as err) {
+          <p class="hint">{{ err }}</p>
+        }
       </div>
     </section>
   }
+
+  <!-- APPLE HEALTH MANUAL EXPORT -->
+  <section class="card">
+    <div class="card-head"><h2>Apple Health</h2></div>
+    <div class="card-body">
+      <p class="muted small">
+        Apple doesn't allow direct vendor sync. Export your data from the
+        Health app ("Export All Health Data"), unzip it, and upload the
+        <code>export.xml</code> file here.
+      </p>
+      <div class="actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="appleHealthBusy()"
+          (click)="appleHealthInput.click()"
+        >
+          {{ appleHealthBusy() ? "Importing…" : "Upload export.xml" }}
+        </button>
+        <input
+          #appleHealthInput
+          type="file"
+          accept=".xml,text/xml,application/xml"
+          hidden
+          (change)="onAppleHealthFileSelected($event)"
+        />
+      </div>
+      @if (appleHealthMsg(); as msg) {
+        <p class="hint" role="status" aria-live="polite">{{ msg }}</p>
+      }
+    </div>
+  </section>
 </main>
