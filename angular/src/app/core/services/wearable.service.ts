@@ -12,12 +12,13 @@ export interface DeviceStatus {
 }
 
 /**
- * Thin client for `/api/wearables/status`. The backend currently returns a
- * placeholder catalogue (Garmin / Polar / WHOOP / Catapult, all disconnected) —
- * automated OAuth sync is a separate integration that needs provider credentials.
- * The UI presents this honestly (no fake "Connect" that does nothing); until sync
- * lands, athletes enter their objective session metrics manually via
- * `ExternalLoadService`.
+ * Thin client for `/api/wearables/status`. The backend reads real
+ * device_pairings/monitoring_providers state (Garmin/Oura/WHOOP/Polar) — the
+ * OAuth connect/callback backend exists (2026-07-23), but no vendor
+ * credentials are configured yet, so every device reads disconnected in
+ * practice. The UI presents this honestly (no fake "Connect" that does
+ * nothing); until real credentials land, athletes enter their objective
+ * session metrics manually via `ExternalLoadService`.
  */
 @Injectable({ providedIn: "root" })
 export class WearableService {
