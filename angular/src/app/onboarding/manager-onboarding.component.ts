@@ -317,7 +317,7 @@ export class ManagerOnboardingComponent implements OnInit {
       next: () => {
         this.logger.info("Manager profile saved");
         this.submitting.set(false);
-        this.router.navigate(["/staff/dashboard"]);
+        this.router.navigate(["/staff/more"]);
       },
       error: (err: any) => {
         this.logger.error("Failed to save profile", err);
@@ -328,6 +328,6 @@ export class ManagerOnboardingComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(["/staff/dashboard"]);
+    this.router.navigate(["/staff/more"]);
   }
 }

@@ -561,7 +561,7 @@ export class PsychologistOnboardingComponent implements OnInit {
       next: () => {
         this.logger.info("Psychologist profile saved");
         this.submitting.set(false);
-        this.router.navigate(["/staff/dashboard"]);
+        this.router.navigate(["/staff/more"]);
       },
       error: (err: any) => {
         this.logger.error("Failed to save profile", err);
@@ -572,6 +572,6 @@ export class PsychologistOnboardingComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(["/staff/dashboard"]);
+    this.router.navigate(["/staff/more"]);
   }
 }
