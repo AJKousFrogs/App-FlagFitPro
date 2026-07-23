@@ -1,6 +1,6 @@
 {
   "generatedOn": "2026-07-23",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-23: applied the Phase 2a (ACWR alerting storage) and Phase 3 (Alert Engine) migrations live after fixing several pre-existing bugs found in them (psychological_assessments table-name collision with an already-live table -> renamed to rtp_psychological_assessments; a duplicate/broken calculate_acwr_for_athlete SQL function and a FK-broken athlete_recovery_logs table both dropped before applying; a Postgres-invalid UNIQUE(..., DATE(created_at)) constraint replaced with a plain alert_date column; a wrong-column-alias bug in the alert_routes seed INSERT fixed; 6 new SECURITY DEFINER functions hardened with a pinned search_path and revoked PUBLIC/anon/authenticated EXECUTE). Also created recovery_logs (a genuinely separate, unrelated pre-existing gap: recovery-effectiveness.js referenced a table that no migration had ever created). Table-level set now 201 base tables (was 191), 7 views (unchanged).",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-23: applied the billing_and_subscriptions migration (billing_customers, subscriptions, invoices, seat_sync_queue tables; team_members.is_billable_seat column) for Stripe subscription billing, then dropped the broken player_payments table (0 live rows, write path referenced columns that never existed on the table -- see docs/payments_billing_and_data_retention_proposal.md \u00a76). Table-level set now 204 base tables (was 201), 7 views (unchanged).",
   "tables": {
     "account_deletion_requests": [
       {
@@ -1664,6 +1664,33 @@
         "col": "request_body",
         "nullable": true,
         "type": "jsonb"
+      }
+    ],
+    "billing_customers": [
+      {
+        "col": "id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "stripe_customer_id",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "owner_user_id",
+        "nullable": true,
+        "type": "uuid"
+      },
+      {
+        "col": "owner_team_id",
+        "nullable": true,
+        "type": "uuid"
+      },
+      {
+        "col": "created_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
       }
     ],
     "blocked_users": [
@@ -4965,6 +4992,53 @@
         "type": "timestamp without time zone"
       }
     ],
+    "invoices": [
+      {
+        "col": "id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "subscription_id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "stripe_invoice_id",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "amount_due_cents",
+        "nullable": false,
+        "type": "integer"
+      },
+      {
+        "col": "currency",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "status",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "hosted_invoice_url",
+        "nullable": true,
+        "type": "text"
+      },
+      {
+        "col": "paid_at",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "created_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
+      }
+    ],
     "knowledge_base_entries": [
       {
         "col": "id",
@@ -7211,68 +7285,6 @@
       {
         "col": "created_at",
         "nullable": false,
-        "type": "timestamp with time zone"
-      }
-    ],
-    "player_payments": [
-      {
-        "col": "id",
-        "nullable": false,
-        "type": "uuid"
-      },
-      {
-        "col": "user_id",
-        "nullable": false,
-        "type": "uuid"
-      },
-      {
-        "col": "tournament_id",
-        "nullable": false,
-        "type": "uuid"
-      },
-      {
-        "col": "team_id",
-        "nullable": false,
-        "type": "uuid"
-      },
-      {
-        "col": "amount",
-        "nullable": false,
-        "type": "numeric"
-      },
-      {
-        "col": "payment_date",
-        "nullable": false,
-        "type": "date"
-      },
-      {
-        "col": "payment_method",
-        "nullable": true,
-        "type": "character varying"
-      },
-      {
-        "col": "transaction_id",
-        "nullable": true,
-        "type": "character varying"
-      },
-      {
-        "col": "status",
-        "nullable": true,
-        "type": "character varying"
-      },
-      {
-        "col": "notes",
-        "nullable": true,
-        "type": "text"
-      },
-      {
-        "col": "created_at",
-        "nullable": true,
-        "type": "timestamp with time zone"
-      },
-      {
-        "col": "updated_at",
-        "nullable": true,
         "type": "timestamp with time zone"
       }
     ],
@@ -10062,6 +10074,33 @@
         "type": "jsonb"
       }
     ],
+    "seat_sync_queue": [
+      {
+        "col": "id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "team_id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "requested_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "processed_at",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "error_message",
+        "nullable": true,
+        "type": "text"
+      }
+    ],
     "session_exercises": [
       {
         "col": "id",
@@ -10775,6 +10814,68 @@
         "type": "timestamp with time zone"
       }
     ],
+    "subscriptions": [
+      {
+        "col": "id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "billing_customer_id",
+        "nullable": false,
+        "type": "uuid"
+      },
+      {
+        "col": "stripe_subscription_id",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "tier",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "status",
+        "nullable": false,
+        "type": "text"
+      },
+      {
+        "col": "seat_quantity",
+        "nullable": true,
+        "type": "integer"
+      },
+      {
+        "col": "current_period_start",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "current_period_end",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "cancel_at_period_end",
+        "nullable": false,
+        "type": "boolean"
+      },
+      {
+        "col": "past_due_since",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "created_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "updated_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
+      }
+    ],
     "superadmins": [
       {
         "col": "id",
@@ -11231,6 +11332,11 @@
         "col": "role_rejection_reason",
         "nullable": true,
         "type": "text"
+      },
+      {
+        "col": "is_billable_seat",
+        "nullable": false,
+        "type": "boolean"
       }
     ],
     "team_season_phases": [

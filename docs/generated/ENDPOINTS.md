@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-23**
 
-**150 functions: 138 exercised, 12 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**153 functions: 136 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -75,8 +75,6 @@
 | `notifications` | OPTIONS | /api/notifications<br>/api/notifications/* | — |
 | `nutrition` | GET, POST, PUT | _(router submodule)_ | athlete_nutrition_profiles, nutrition_plans, meal_templates, users |
 | `parental-consent` | GET, POST, PUT | _(router submodule)_ | users, parental_consent, privacy_audit_log |
-| `payments` | OPTIONS | /api/payments/*<br>/api/payments<br>/api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
-| `payments-core` | GET, POST, PUT | _(router submodule)_ | team_members, player_payments |
 | `performance-data` | GET, POST, PUT, PATCH, DELETE | _(router submodule)_ | team_members, physical_measurements, performance_tests, daily_wellness_checkin, supplement_logs, v_injuries_unified |
 | `performance-heatmap` | GET | _(router submodule)_ | training_sessions |
 | `performance-metrics` | GET | _(router submodule)_ | training_sessions, performance_tests |
@@ -155,6 +153,8 @@
 | `alert-acknowledge` | PATCH | /api/alerts/:alertId/acknowledge<br>/api/alerts/:alertId/acknowledge/* | generated_alerts, team_members |
 | `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules, acwr_snapshots, generated_alerts, alert_delivery_logs |
 | `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts, team_members, athlete_injuries, acwr_snapshots |
+| `billing-lapse-check` | POST | _(no /api redirect)_ | subscriptions, billing_customers, users |
+| `payments` | OPTIONS | /api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️ |
 | `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, rtp_athlete_protocol_assignments, individual_profiles ⚠️, training_sessions |
 | `rtp-advance-phase` | PATCH | /api/rtp/athletes/:athleteId/:injuryId/phase | rtp_athlete_protocol_assignments, rtp_functional_criteria, rtp_criteria_assessments, rtp_protocol_definitions, rtp_protocol_phases |
@@ -162,5 +162,8 @@
 | `rtp-protocol-assignment` | GET | /api/rtp/protocols/:athleteId/:injuryId | rtp_athlete_protocol_assignments, rtp_protocol_phases, rtp_functional_criteria, rtp_criteria_assessments |
 | `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
+| `stripe-checkout` | POST | _(no /api redirect)_ | billing_customers, team_members |
+| `stripe-portal` | POST | _(no /api redirect)_ | team_members, billing_customers |
+| `stripe-webhook` | POST | _(no /api redirect)_ | billing_customers, subscriptions, team_members, notifications, invoices |
 | `team-practice-plan` | POST | /api/team-practice-plan | — |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |

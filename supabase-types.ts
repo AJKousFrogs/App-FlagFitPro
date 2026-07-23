@@ -1345,6 +1345,38 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_customers: {
+        Row: {
+          created_at: string
+          id: string
+          owner_team_id: string | null
+          owner_user_id: string | null
+          stripe_customer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_team_id?: string | null
+          owner_user_id?: string | null
+          stripe_customer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_team_id?: string | null
+          owner_user_id?: string | null
+          stripe_customer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_customers_owner_team_id_fkey"
+            columns: ["owner_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blocked_users: {
         Row: {
           blocked_user_id: string
@@ -4189,6 +4221,50 @@ export type Database = {
           },
         ]
       }
+      invoices: {
+        Row: {
+          amount_due_cents: number
+          created_at: string
+          currency: string
+          hosted_invoice_url: string | null
+          id: string
+          paid_at: string | null
+          status: string
+          stripe_invoice_id: string
+          subscription_id: string
+        }
+        Insert: {
+          amount_due_cents: number
+          created_at?: string
+          currency: string
+          hosted_invoice_url?: string | null
+          id?: string
+          paid_at?: string | null
+          status: string
+          stripe_invoice_id: string
+          subscription_id: string
+        }
+        Update: {
+          amount_due_cents?: number
+          created_at?: string
+          currency?: string
+          hosted_invoice_url?: string | null
+          id?: string
+          paid_at?: string | null
+          status?: string
+          stripe_invoice_id?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_base_entries: {
         Row: {
           answer: string
@@ -5933,59 +6009,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      player_payments: {
-        Row: {
-          amount: number
-          created_at: string | null
-          id: string
-          notes: string | null
-          payment_date: string
-          payment_method: string | null
-          status: string | null
-          team_id: string
-          tournament_id: string
-          transaction_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          payment_date: string
-          payment_method?: string | null
-          status?: string | null
-          team_id: string
-          tournament_id: string
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          payment_date?: string
-          payment_method?: string | null
-          status?: string | null
-          team_id?: string
-          tournament_id?: string
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_payments_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -8301,6 +8324,38 @@ export type Database = {
         }
         Relationships: []
       }
+      seat_sync_queue: {
+        Row: {
+          error_message: string | null
+          id: string
+          processed_at: string | null
+          requested_at: string
+          team_id: string
+        }
+        Insert: {
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          requested_at?: string
+          team_id: string
+        }
+        Update: {
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          requested_at?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seat_sync_queue_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_exercises: {
         Row: {
           created_at: string | null
@@ -8873,6 +8928,59 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          billing_customer_id: string
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          past_due_since: string | null
+          seat_quantity: number | null
+          status: string
+          stripe_subscription_id: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          billing_customer_id: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          past_due_since?: string | null
+          seat_quantity?: number | null
+          status: string
+          stripe_subscription_id: string
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          billing_customer_id?: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          past_due_since?: string | null
+          seat_quantity?: number | null
+          status?: string
+          stripe_subscription_id?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_billing_customer_id_fkey"
+            columns: ["billing_customer_id"]
+            isOneToOne: false
+            referencedRelation: "billing_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       superadmins: {
         Row: {
           granted_at: string | null
@@ -9208,6 +9316,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_billable_seat: boolean
           jersey_number: number | null
           joined_at: string
           position: string | null
@@ -9225,6 +9334,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_billable_seat?: boolean
           jersey_number?: number | null
           joined_at?: string
           position?: string | null
@@ -9242,6 +9352,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_billable_seat?: boolean
           jersey_number?: number | null
           joined_at?: string
           position?: string | null

@@ -1726,19 +1726,6 @@
 
 
 
-# Payments API
-[[redirects]]
-  from = "/api/payments/*"
-  to = "/.netlify/functions/payments"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/payments"
-  to = "/.netlify/functions/payments"
-  status = 200
-  force = true
-
 # Sponsors API
 [[redirects]]
   from = "/api/sponsors/*"

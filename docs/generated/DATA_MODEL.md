@@ -4,7 +4,7 @@
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
 > **Schema snapshot (live): 2026-07-23** · doc regenerated: 2026-07-23
 
-**201 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+**204 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
 **DRIFT (live, no migration file):** `zz_video_backup_20260719`
 
@@ -439,6 +439,15 @@ Touched by: _(no endpoint references this table)_
 - `request_path` text
 - `request_method` text
 - `request_body` jsonb
+
+### `billing_customers`
+Touched by: `billing-lapse-check`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`
+
+- `id` uuid · not null
+- `stripe_customer_id` text · not null
+- `owner_user_id` uuid
+- `owner_team_id` uuid
+- `created_at` timestamp with time zone · not null
 
 ### `blocked_users`
 Touched by: `community`
@@ -1269,6 +1278,19 @@ Touched by: `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `ale
 - `created_at` timestamp without time zone
 - `updated_at` timestamp without time zone
 
+### `invoices`
+Touched by: `stripe-webhook`
+
+- `id` uuid · not null
+- `subscription_id` uuid · not null
+- `stripe_invoice_id` text · not null
+- `amount_due_cents` integer · not null
+- `currency` text · not null
+- `status` text · not null
+- `hosted_invoice_url` text
+- `paid_at` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+
 ### `knowledge_base_entries`
 Touched by: `ai-chat`, `ai-telemetry`, `knowledge-governance`, `knowledge-search`
 
@@ -1527,7 +1549,7 @@ Touched by: `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `notifications`
-Touched by: `coach-core`, `staff-physiotherapist`, `supplements`, `training-complete`, `wellness-checkin`
+Touched by: `coach-core`, `staff-physiotherapist`, `stripe-webhook`, `supplements`, `training-complete`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1851,22 +1873,6 @@ Touched by: `achievements`
 - `earned_at` timestamp with time zone · not null
 - `context_data` jsonb · not null
 - `created_at` timestamp with time zone · not null
-
-### `player_payments`
-Touched by: `payments-core`
-
-- `id` uuid · not null
-- `user_id` uuid · not null
-- `tournament_id` uuid · not null
-- `team_id` uuid · not null
-- `amount` numeric · not null
-- `payment_date` date · not null
-- `payment_method` character varying
-- `transaction_id` character varying
-- `status` character varying
-- `notes` text
-- `created_at` timestamp with time zone
-- `updated_at` timestamp with time zone
 
 ### `player_programs`
 Touched by: `daily-protocol`, `player-programs`, `smart-training-recommendations`, `training-plan`
@@ -2580,6 +2586,15 @@ Touched by: _(no endpoint references this table)_
 - `archived_at` timestamp with time zone · not null
 - `metadata` jsonb · not null
 
+### `seat_sync_queue`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `team_id` uuid · not null
+- `requested_at` timestamp with time zone · not null
+- `processed_at` timestamp with time zone
+- `error_message` text
+
 ### `session_exercises`
 Touched by: `training-programs`
 
@@ -2755,6 +2770,22 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
+### `subscriptions`
+Touched by: `billing-lapse-check`, `stripe-webhook`
+
+- `id` uuid · not null
+- `billing_customer_id` uuid · not null
+- `stripe_subscription_id` text · not null
+- `tier` text · not null
+- `status` text · not null
+- `seat_quantity` integer
+- `current_period_start` timestamp with time zone
+- `current_period_end` timestamp with time zone
+- `cancel_at_period_end` boolean · not null
+- `past_due_since` timestamp with time zone
+- `created_at` timestamp with time zone · not null
+- `updated_at` timestamp with time zone · not null
+
 ### `superadmins`
 Touched by: _(no endpoint references this table)_
 
@@ -2861,7 +2892,7 @@ Touched by: `session-load-import`
 - `created_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `payments-core`, `performance-data`, `physiotherapist-dashboard`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `performance-data`, `physiotherapist-dashboard`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2878,6 +2909,7 @@ Touched by: `accept-invitation`, `admin-credentials`, `ai-chat`, `ai-telemetry`,
 - `role_approved_by` uuid
 - `role_approved_at` timestamp with time zone
 - `role_rejection_reason` text
+- `is_billable_seat` boolean · not null
 
 ### `team_season_phases`
 Touched by: `daily-protocol`
@@ -3234,7 +3266,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics-core`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics-core`, `billing-lapse-check`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null

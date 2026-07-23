@@ -604,7 +604,6 @@ export const API_ENDPOINTS = {
     dateRange: "/api/player-stats/date-range",
   },
   // Generic endpoints used by feature pages
-  payments: "/api/payments",
   sleepData: "/api/sleep-data",
   qbThrowing: {
     base: "/api/qb-throwing",

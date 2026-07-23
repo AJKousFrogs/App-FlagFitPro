@@ -1,10 +1,14 @@
 /**
  * Payments & Sponsors Domain Handler — Netlify Functions v2 (native, no adapter)
  *
- * Routes: /api/payments, /api/sponsors, /api/sponsor-logo
+ * Routes: /api/sponsors, /api/sponsor-logo
+ *
+ * The old /api/payments (player_payments manual tracking) route was retired --
+ * see docs/payments_billing_and_data_retention_proposal.md §6. Stripe
+ * subscription billing lives in stripe-checkout.js/stripe-webhook.js/
+ * stripe-portal.js instead.
  */
 
-import { handler as paymentsHandler } from "./payments-core.js";
 import { dispatch } from "./utils/web-lambda-bridge.js";
 import { toLambdaHandler } from "./utils/lambda-adapter.js";
 import { handler as sponsorsHandler } from "./sponsors.js";
@@ -23,9 +27,6 @@ const handleRequest = async (req) => {
   }
   if (path.includes("/sponsors")) {
     return dispatch(sponsorsHandler, req, url);
-  }
-  if (path.includes("/payments")) {
-    return dispatch(paymentsHandler, req, url);
   }
   return new Response(
     JSON.stringify({
