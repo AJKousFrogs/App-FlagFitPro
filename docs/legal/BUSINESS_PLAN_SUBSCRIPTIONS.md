@@ -1,7 +1,16 @@
 # FlagFit Pro — Business Plan & Subscription Model
-**Version:** 1.0  
+**Version:** 1.1 (2026-07-23 revision — see note below)  
 **Date:** 2026-07-22  
 **Currency:** EUR (Primary), USD (Secondary), GBP (Tertiary)
+
+> **2026-07-23 revision note:** the permanent "Forever Free Tier" described below has been
+> replaced product-wide by a single 7-day full-featured trial (every paid tier, every segment —
+> athletes, coaches, professionals) followed by a hard paywall; there is no free-forever plan and
+> no per-tier trial-length variation. This revision updates every section that referenced the old
+> model (§1 adoption paths, §2.1 tier tables, §3 go-to-market, §7.2 retention, §9 roadmap,
+> Conclusion) to the current, single, product-wide trial. See `docs/SOURCE_OF_TRUTH.md` for the
+> live entitlement mechanics (`netlify/functions/utils/entitlements.js`) — this document states
+> pricing/positioning, not the enforcement mechanism.
 
 ---
 
@@ -18,13 +27,13 @@
 - **Market:** Recreational to competitive flag football players
 - **Pain point:** Training load management, injury prevention, recovery optimization
 - **Size:** ~50,000–100,000+ across Europe/North America in next 3 years
-- **Adoption path:** Free tier → Athlete Pro subscription
+- **Adoption path:** 7-day free trial → Athlete Pro subscription
 
 #### 1B. Individual Coaches (HC, OC, DC, Position Coaches)
 - **Market:** Volunteer & semi-professional coaches
 - **Pain point:** Athlete monitoring, injury management, load tracking, team coordination
 - **Size:** ~5,000–10,000 target coaches
-- **Adoption path:** Free tier → Coach Pro subscription
+- **Adoption path:** 7-day free trial → Coach Pro subscription
 
 #### 1C. Medical/Support Staff (Standalone)
 - **Physiotherapists:** Treat flag football injuries, freelance or clinic-based
@@ -32,7 +41,7 @@
 - **Psychologists:** Sport psychologists
 - **S&C Coaches:** Strength & conditioning specialists
 - **Market:** ~1,000–2,000 professionals (secondary revenue)
-- **Adoption path:** Free tier → Professional Freelancer tier
+- **Adoption path:** 7-day free trial → Professional Freelancer tier
 
 #### 1D. Domestic Teams (Team Package)
 - **Market:** Semi-professional & amateur flag football clubs
@@ -54,48 +63,45 @@
 
 ### 2.1 Subscription Tiers
 
-#### **FREE (Forever Free Tier)**
-**Target:** Casual athletes, hobbyist coaches, evaluation users  
-**Price:** €0/month or €0/year  
-**Commit:** Serve free tier indefinitely (no removal)
+#### **7-DAY FREE TRIAL** (replaces the former permanent Free tier — 2026-07-23)
+**Target:** Every new signup, every segment (athlete, coach, professional) — one trial mechanism,
+not a per-segment variant  
+**Price:** €0 for 7 days, then the account is locked behind a paywall until a paid tier is chosen  
+**Commit:** Full product access for exactly 7 days from `trial_started_at` (not `created_at` —
+kept separate so a retroactive product change never silently locks out existing accounts), no
+feature gating during the trial itself
 
-**Features:**
-- Athlete profile (name, position, team)
-- Basic injury tracking (log injury, date)
-- View own training load (ACWR) - read-only
-- Onboarding + profile setup
-- Community forum access (moderated)
-- Mobile app download
+**Features during the trial:** everything — full training history, ACWR dashboard, wearable
+connect/consent, export, roster management (up to whatever the eventual paid tier would allow),
+nutrition/sleep tracking. The trial is a genuine "full glimpse," not a crippled preview — see
+`docs/SOURCE_OF_TRUTH.md`'s entitlements section for the exact `TRIAL_LIMITS` shape.
 
-**Limits:**
-- 1 team per user
-- No custom season calendar
-- No support (community only)
-- Limited historical data (30 days)
-- No export/reports
-- No API access
-- Ads (optional, low-impact)
+**After day 7 with no subscription:** the account is locked (`LOCKED_LIMITS` — zeroed/false
+across the board) and every screen redirects to a paywall until the athlete/coach/professional
+subscribes to one of the paid tiers below. There is no permanent free tier to fall back to, and no
+partial/read-only access after the trial — this was an explicit product decision (2026-07-23),
+not an oversight: "Free tier is only for a week, to get a glimpse of it."
 
 **Unit Economics:**
-- Hosting cost per user: ~€0.02/month
-- Target: Break-even or slight profit through:
-  - Ad revenue (~€0.01–0.05 per user/month)
-  - Freemium conversion (20–30% to paid)
+- Hosting cost per trial user: ~€0.02/week (bounded — trial isn't indefinite)
+- Target: trial → paid conversion is now the entire top-of-funnel metric (no ad revenue line,
+  since there's no indefinite free cohort to monetize via ads)
 
 ---
 
 #### **ATHLETE PRO**
 **Target:** Serious individual athletes (competitive level)  
-**Price:** FREE or €14.99/month or €149.99/year (17% discount)  
+**Price:** €14.99/month or €149.99/year (17% discount), after the 7-day trial  
 **Billing:** Auto-renewing subscription via Stripe
 
-**Features:**
-- Everything in Free tier, plus:
+**Features (same set available during the 7-day trial; a subscription is what keeps them after
+day 7):**
 - Full training history (unlimited, with analytics)
 - Personalized ACWR dashboard (recommendations)
 - Injury protocol tracking (Phase 1D/1E access)
 - Recovery recommendations (integrated with load)
-- Wearable integration (Garmin, Apple Watch, Oura Ring)
+- Wearable sync (Garmin, Oura, WHOOP via OAuth; Apple Health via manual export — see
+  `docs/gps_wearable_csv_import_proposal.md`)
 - Nutrition tracking (sync with MyFitnessPal, Cronometer)
 - Sleep tracking (Oura, Apple Health)
 - Custom season calendar (unlimited)
@@ -115,7 +121,6 @@
 - Monthly: €14.99 × 12 = €179.88/year
 - Annual: €149.99/year
 - Savings: €29.89/year (17%)
-- **Option:** Free tier remains available for budget-conscious athletes
 
 **Target Metrics:**
 - Penetration: 5–10% of free athletes (5,000–10,000 users in Y3)
@@ -317,8 +322,8 @@
 
 | Tier | Monthly | Annual | Annual Saving | Target Users/Teams (Y3) | Annual Revenue (Y3) |
 |------|---------|--------|----------------|-------------------------|---------------------|
-| Free | €0 | €0 | — | 50,000 | €0 |
-| Athlete Pro (Free or Paid) | €14.99 | €149.99 | €29.89 | 10,000 (6K paid) | €900,000 |
+| 7-day trial (not yet converted) | €0 | €0 | — | 50,000 | €0 |
+| Athlete Pro | €14.99 | €149.99 | €29.89 | 10,000 (6K paid) | €900,000 |
 | Coach Pro | €9.99 | €99.99 | €19.89 | 1,000 | €100,000 |
 | Professional Freelancer | €49.99 | €499.99 | €99.89 | 300 | €150,000 |
 | Team Package (Domestic) | €189.82 (avg) | €2,277.84 (avg) | — | 150 teams | €341,676 |
@@ -336,10 +341,11 @@
 2. **Influencer:** Partner with flag football athletes/coaches (micro-influencers)
 3. **Direct partnerships:** Flag football leagues, college clubs, national federations
 4. **Referral program:** €10 credit for athlete referral (cap: €50/year)
-5. **Free trial:** 14-day free Athlete Pro trial (no payment upfront)
+5. **Free trial:** 7-day full-access Athlete Pro trial (no payment upfront) — same product-wide
+   trial mechanism every segment gets, not an athlete-specific 14-day variant
 
-**CAC Target:** €5–15 per free user, €30–50 per Athlete Pro subscriber  
-**Expected Conversion:** 5–10% of free → paid
+**CAC Target:** €5–15 per trial signup, €30–50 per Athlete Pro subscriber  
+**Expected Conversion:** 5–10% of trial → paid
 
 ---
 
@@ -362,7 +368,8 @@
 **Channels:**
 1. **Professional associations:** Partner with APTA (physios), AND (nutritionists), APA (psychologists), NSCA (S&C)
 2. **Direct outreach:** LinkedIn sales, cold email to sports medicine clinics
-3. **Free tier + trial:** Free Freelancer tier for 30 days, then paid
+3. **Free trial:** 7-day full-access Professional Freelancer trial, then paid (same
+   product-wide 7-day mechanism, not a professional-specific 30-day variant)
 4. **Clinic partnerships:** White-label offering for multi-provider clinics
 
 **Expected:** 50–300 professionals in Y3
@@ -492,10 +499,10 @@
 
 ### 7.2 Retention Strategy
 
-**Free Tier:**
-- Engagement: Weekly email digest of load/recovery
-- Upgrade prompts: At injury, when ACWR triggers
-- Community: Forum, user groups
+**7-Day Trial (pre-conversion):**
+- Engagement: Weekly email digest of load/recovery, sent within the trial window
+- Upgrade prompts: At injury, when ACWR triggers, and as day 7 approaches
+- Community: Forum, user groups (open during the trial, same as after conversion)
 
 **Athlete Pro:**
 - Monthly email with insights (strength trends, recovery patterns)
@@ -542,9 +549,11 @@
 ## 9. Monetization Roadmap
 
 ### Q3 2026 (MVP)
-- Launch: Free + Athlete Pro + Team Package (domestic)
+- Launch: 7-day trial + Athlete Pro + Team Package (domestic)
 - Payment: Stripe (cards + SEPA)
 - Invoicing: Automated PDF
+- Wearable connect framework (Garmin/Oura/WHOOP OAuth, Apple Health manual export) — built and
+  included in Athlete Pro / Team Package at launch, not a later add-on (see below)
 
 ### Q4 2026
 - Add: Coach Pro tier
@@ -559,7 +568,10 @@
 ### Q2–Q3 2027
 - B2B white-label offering
 - Advanced analytics upsell (€500–1,000/team/year)
-- Wearable integrations (as premium add-on, +€500/year)
+- Wearable integrations, phase 2: live vendor credentials + automatic background sync (the
+  OAuth framework itself ships at MVP per above; what's still 2027 scope is onboarding real
+  Garmin/Oura/WHOOP developer accounts and turning on production sync — not the integration
+  as a whole, which was the previous, now-corrected, drift in this document)
 
 ---
 
@@ -595,9 +607,11 @@
 - **CAC Payback:** 2.4–5 months (team packages fastest)
 
 **Pricing Strategy Rationale:**
-- ✅ **Free tier forever** (50K+ users, retention cohort data, SEO/organic growth)
+- ✅ **7-day full-access trial** (50K+ signups, SEO/organic growth, no indefinite free cohort to
+  subsidize — replaces the earlier "Free tier forever" plan, 2026-07-23)
 - ✅ **Coach Pro at €9.99/mo** (85% cheaper than competitors, drives adoption)
-- ✅ **Athlete tier at €14.99/mo** (premium option, but free tier prevents churn)
+- ✅ **Athlete tier at €14.99/mo** (premium option; a genuine full-featured trial, not a crippled
+  free tier, is what prevents early churn)
 - ✅ **Team per-user pricing** (€4.99/user above base) scales with team growth
 - ✅ **Exceptional LTV:CAC ratios** (5:1 to 25:1, well above 3:1 threshold)
 - ✅ **European market focus** (GDPR-compliant, Slovenian arbitration, federation partnerships)

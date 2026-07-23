@@ -3328,7 +3328,7 @@ Touched by: `training`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `wearable_consent`
-Touched by: `wearable-health-ingest`, `wearable-health-ingest-apple-xml`, `wearables-webhook`
+Touched by: `data`, `wearable-health-ingest`, `wearable-health-ingest-apple-xml`, `wearables`, `wearables-webhook`
 
 - `user_id` uuid · not null
 - `source` text · not null

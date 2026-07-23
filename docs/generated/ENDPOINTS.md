@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-23**
 
-**159 functions: 136 exercised, 23 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**159 functions: 142 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -29,6 +29,7 @@
 | `auth` | OPTIONS | /api/auth/me<br>/api/auth-me<br>/api/auth/reset-password<br>/api/auth/login<br>/api/accept-invitation<br>/api/validate-invitation<br>/api/account/pause<br>/api/account/resume<br>/api/account/*<br>/api/parental-consent/*<br>/api/parental-consent | account_deletion_requests, users, team_invitations, team_members, parental_consent, privacy_audit_log, initiate_account_deletion(), cancel_account_deletion(), pause_account(), resume_account() |
 | `auth-login` | POST | _(router submodule)_ | team_members |
 | `auth-me` | GET | _(router submodule)_ | team_members |
+| `billing-status` | GET | /api/billing/status | billing_customers, subscriptions, team_members, users |
 | `bloodwork` | GET, POST | /api/bloodwork/*<br>/api/bloodwork | bloodwork_panels, bloodwork_markers |
 | `cache` | — | _(router submodule)_ | — |
 | `calc-readiness` | GET, POST | _(router submodule)_ | v_athlete_schedule, training_sessions, daily_wellness_checkin, readiness_scores, athlete_injuries, team_members, authorization_violations, account_pause_requests, users, return_to_play_protocols, has_active_safety_override(), detect_pain_trigger(), detect_acwr_trigger() |
@@ -47,7 +48,7 @@
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, exercises, team_members, coach_inbox_items, team_season_phases, daily_wellness_checkin, training_sessions, notifications, user_notification_preferences, sponsors, training_session_templates, team_activities, training_programs, recovery_sessions, readiness_gates, recovery_blocks, return_to_play_protocols, rtp_prescription_approvals, athlete_injuries, session_exercises, protocol_generation_requests, player_training_stats, get_athlete_readiness(), generate_protocol_transactional(), update_player_streak(), award_achievement() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games, merlin_violation_log, team_members, authorization_violations, account_pause_requests, has_active_safety_override(), detect_pain_trigger(), detect_acwr_trigger() |
 | `dashboard` | GET | /api/dashboard/*<br>/api/dashboard | training_sessions, team_members |
-| `data` | OPTIONS | /api/wearables/status<br>/api/import/fetch-url<br>/api/import/process<br>/api/import-open-data<br>/api/data-export/*<br>/api/data-export | billing_customers, subscriptions, invoices, monitoring_providers, device_pairings, wearable_health, team_members, training_sessions, log_training_session() |
+| `data` | OPTIONS | /api/wearables/status<br>/api/import/fetch-url<br>/api/import/process<br>/api/import-open-data<br>/api/data-export/*<br>/api/data-export | billing_customers, subscriptions, invoices, monitoring_providers, device_pairings, wearable_consent, wearable_health, team_members, training_sessions, log_training_session() |
 | `data-export` | GET, POST | _(router submodule)_ | billing_customers, subscriptions, invoices |
 | `decisions` | GET, POST | _(router submodule)_ | team_members, decision_ledger, merlin_violation_log |
 | `event-availability` | GET, POST | /api/event-availability/*<br>/api/event-availability | event_availability, set_event_availability() |
@@ -117,6 +118,8 @@
 | `staff-psychologist-profile` | — | /api/staff/psychologist-profile | credential_verifications |
 | `staff-psychology` | GET | _(router submodule)_ | team_members, mental_performance_logs, psychological_assessments, mental_wellness_reports, training_sessions, daily_wellness_checkin, team_sharing_settings, privacy_settings, consent_access_log |
 | `staff-strength-coach-profile` | — | /api/staff/strength-coach-profile | credential_verifications |
+| `stripe-checkout` | POST | /api/billing/checkout | billing_customers, users, team_members |
+| `stripe-portal` | POST | /api/billing/portal | team_members, billing_customers |
 | `supplements` | GET, POST | /api/supplements<br>/api/supplements/* | supplement_logs, user_supplements, notifications |
 | `team` | OPTIONS | /api/team-calendar/*<br>/api/team-calendar<br>/api/team-invite<br>/api/attendance/*<br>/api/attendance<br>/api/season/*<br>/api/season<br>/api/season-archive/*<br>/api/season-archive<br>/api/team-templates/*<br>/api/team-templates | attendance_records, games, practice_plans, team_events, teams, team_members, team_invitations, users, team_templates, coach_inbox_items, ai_messages, micro_sessions, template_assignments, archive_season_data() |
 | `team-acwr` | GET | /api/team-acwr | team_members, daily_load_score ⚠️, authorization_violations |
@@ -139,7 +142,10 @@
 | `user-profile` | OPTIONS | /api/user/context<br>/api/user-context<br>/api/user/context/*<br>/api/user-context/*<br>/api/user/profile<br>/api/user-profile<br>/api/user/profile/*<br>/api/user-profile/*<br>/api/privacy-settings/*<br>/api/privacy-settings<br>/api/parent-dashboard/*<br>/api/parent-dashboard | users, athlete_injuries, training_sessions, v_injuries_unified, daily_wellness_checkin, supplement_logs, team_members, privacy_settings, team_sharing_settings, parental_consent, privacy_audit_log |
 | `user-profile-core` | GET, PUT | _(router submodule)_ | users, athlete_injuries, training_sessions, team_members, authorization_violations |
 | `validate-invitation` | GET | _(router submodule)_ | team_invitations, team_members |
-| `wearables` | GET | _(router submodule)_ | monitoring_providers, device_pairings, wearable_health |
+| `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
+| `wearable-health-ingest-apple-xml` | POST | /api/wearable-health-ingest/apple-health-xml | wearable_consent, wearable_health |
+| `wearables` | GET | _(router submodule)_ | monitoring_providers, device_pairings, wearable_consent, wearable_health |
+| `wearables-connect` | GET | /api/wearables/connect/* | monitoring_providers |
 | `weather` | GET | /api/weather/current<br>/api/weather/* | team_members |
 | `weekend-games` | GET, POST | /api/weekend-games | training_sessions |
 | `wellness` | OPTIONS | /api/sleep-data<br>/api/nutrition/*<br>/api/wellness/checkin<br>/api/wellness/checkin/*<br>/api/wellness/*<br>/api/hydration<br>/api/hydration/*<br>/api/wellness-checkin<br>/api/wellness-checkin/* | daily_wellness_checkin, users, recovery_blocks, notifications, team_members, ownership_transitions, shared_insights, event_availability, competition_events, nutrition_logs, player_streaks, coach_inbox_items, athlete_hydration_logs, athlete_nutrition_profiles, nutrition_plans, meal_templates, upsert_wellness_checkin(), update_player_streak(), award_achievement() |
@@ -154,7 +160,6 @@
 | `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules, acwr_snapshots, generated_alerts, alert_delivery_logs, team_members |
 | `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts, team_members, athlete_injuries, acwr_snapshots, authorization_violations |
 | `billing-lapse-check` | POST | /api/billing/lapse-check | subscriptions, billing_customers, users, team_members |
-| `billing-status` | GET | /api/billing/status | billing_customers, subscriptions, team_members, users |
 | `payments` | OPTIONS | /api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️, team_members, authorization_violations |
 | `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, rtp_athlete_protocol_assignments, individual_profiles ⚠️, training_sessions, team_members, authorization_violations, account_pause_requests |
@@ -164,12 +169,7 @@
 | `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users, team_members, authorization_violations |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `session-load-import-csv` | POST | /api/session-load-import/csv | team_member_roles, monitoring_providers, device_pairings, session_load |
-| `stripe-checkout` | POST | /api/billing/checkout | billing_customers, users, team_members |
-| `stripe-portal` | POST | /api/billing/portal | team_members, billing_customers |
 | `stripe-webhook` | POST | /api/billing/webhook | billing_customers, subscriptions, team_members, notifications, invoices |
 | `team-practice-plan` | POST | /api/team-practice-plan | team_members, exercises |
-| `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
-| `wearable-health-ingest-apple-xml` | POST | /api/wearable-health-ingest/apple-health-xml | wearable_consent, wearable_health |
 | `wearables-callback` | GET | /api/wearables/callback/* | device_pairings, monitoring_providers |
-| `wearables-connect` | GET | /api/wearables/connect/* | monitoring_providers |
 | `wearables-webhook` | POST | /api/wearables/webhook/* | monitoring_providers, device_pairings, wearable_consent, wearable_health |

@@ -1,8 +1,15 @@
 # Payments, Billing & Data Retention — Technical Proposal
 
-**Status:** PROPOSAL — nothing in this document is built yet. Written in response to a request to
-audit what exists and propose the full solution before any implementation starts.
-**Date:** 2026-07-23
+**Status:** IMPLEMENTED (2026-07-23). Originally written as a pre-build proposal; every mechanism
+described below has since been built (Stripe checkout/webhook/portal, seat counting, past-due →
+suspended lifecycle, `player_payments` retired, retention reconciled) and the §9 open decisions
+have been resolved — each is marked RESOLVED inline with the actual answer given, rather than left
+as an open question. **This document is now historical design rationale, not a live spec** — for
+current mechanics (entitlement logic, trial/paywall behavior, endpoint list) read
+`docs/SOURCE_OF_TRUTH.md`, which is kept in sync with the code. Where this document and
+SOURCE_OF_TRUTH disagree, SOURCE_OF_TRUTH wins.
+**Date:** 2026-07-23 (proposal) / resolved 2026-07-23 (same day — decisions came back from the
+user before implementation started)
 **Companion documents:** `docs/legal/BUSINESS_PLAN_SUBSCRIPTIONS.md` (pricing/tiers, already
 finalized), `docs/legal/TERMS_AND_CONDITIONS.md` §7–8 (billing terms, already finalized),
 `docs/legal/PRIVACY_POLICY.md` / `docs/legal/GDPR_COMPLIANCE_DPA.md` (already name Stripe as a
@@ -65,7 +72,12 @@ A full repo audit before writing this proposal found:
 - **The Terms & Conditions already answer more of "what happens on lapse" than you'd expect**,
   and I've kept every existing figure rather than inventing new ones:
   - Failed payment: retry 3×, **suspend at 14 days unpaid** (T&C §7.5).
-  - Free tier: **30-day rolling data-visibility window** (Business Plan §2.1 Free tier limits).
+  - Free tier: **30-day rolling data-visibility window** (Business Plan §2.1 Free tier limits, as
+    originally proposed here). **Superseded before implementation** — the actual product decision
+    (2026-07-23, same day) replaced the permanent Free tier with a single 7-day full-access trial
+    followed by a hard paywall (no partial/read-only access afterward). §5 below documents the
+    mechanism as originally proposed for historical reference; the as-built behavior is in
+    `docs/SOURCE_OF_TRUTH.md`.
   - Roster removal: *"Data is archived; player can access via personal account (if applicable)"*
     (T&C §8.3) — this is the existing, already-stated intent that this proposal makes concrete.
   - Domestic Team Package: 30-day money-back guarantee (T&C §7.4).
@@ -189,7 +201,8 @@ used for `generated_alerts`.
 
 ## 2. Mapping the 6 tiers to enforceable checks
 
-The business plan's tiers are marketing/pricing language; each needs one concrete, checkable rule:
+The business plan's tiers are marketing/pricing language; each needs one concrete, checkable rule.
+**As originally proposed** (superseded — see §5's note; kept for rationale):
 
 | Tier | Enforced as |
 |---|---|
@@ -258,26 +271,27 @@ active ──(3 failed retries, 14 days)──► past_due_grace ──(still un
   card that might just need re-entering. A banner + email fires (reusing the existing
   notification infrastructure) telling the team owner/individual to update payment.
 - **`suspended`** (at day 14, matching T&C exactly): entitlement helper downgrades the account to
-  Free-tier limits **without touching any row of athlete data**. This is the answer to "do
+  locked limits **without touching any row of athlete data**. This is the answer to "do
   athletes start over": **no** — every training session, readiness score, injury record, RTP
   assessment stays exactly where it is, in the same tables, with the same history. What changes
-  is *what the UI/API will show and allow*: the 30-day rolling window applies (§5), coach
-  roster-management/bulk-programming/team-analytics screens gate closed, exports disable. A
-  suspended team's athletes individually keep whatever their own free-tier view already was —
-  this is really just "the team's Coach Pro/Team Package add-on features go away," not "delete the
-  team." This matches T&C §8.3's existing "data is archived, player can access via personal
-  account" line precisely — suspension IS the archive-in-place mechanism, just made concrete.
+  is *what the UI/API will show and allow*. **As built, this is a stricter lock than originally
+  proposed here**: the "30-day rolling window, partial access" design below was superseded by the
+  7-day-trial/hard-paywall product decision (§5's note) — a suspended account gets the same full
+  `LOCKED_LIMITS` lock as a trial-expired account (`entitlement.locked === true`, HTTP 402 from
+  gated endpoints), not a degraded-but-partially-working view. This matches T&C §8.3's existing
+  "data is archived, player can access via personal account" line precisely — suspension IS the
+  archive-in-place mechanism, just made concrete, and stricter than first proposed.
 - **Reactivation**: paying again (new card via the Stripe Billing Portal) flips `subscriptions.status`
   back to `active` and **everything reappears instantly** — there is no re-onboarding, no data
-  migration, no "welcome back, let's rebuild your profile." The 30-day window was a display
-  filter, not a deletion, so lifting it just means the same rows become visible again.
-- **Voluntary pause** (the existing `account-pause.js` flow, e.g. an athlete's off-season): stays
-  exactly as-is, but the entitlement helper now also treats `paused` as "keep whatever tier they
-  were on, don't force them to Free" — pausing is about not training, not about downgrading a
-  subscription. If they were on Athlete Pro before pausing, they're still on Athlete Pro after.
-  Whether their subscription itself keeps billing during a pause (most SaaS either bills through
-  a pause or offers a discounted "hold" rate) is a genuine pricing decision, not something I'll
-  invent — flagged in §9. **Also fixing the pre-existing `acwr_frozen` gap here**: since we're
+  migration, no "welcome back, let's rebuild your profile." Nothing was deleted, so lifting the
+  lock just means the same rows become visible again.
+- **Voluntary pause** (the existing `account-pause.js` flow, e.g. an athlete's off-season) —
+  **RESOLVED, §9 item 2: billing continues through any voluntary pause; there is no discounted or
+  free pause option.** (Originally flagged as an open pricing question here; the user's answer was
+  explicit: *"Yes. There is no voluntary pause. And no discounts sad to see you go."*) Pausing via
+  `account-pause.js` still changes the athlete-data-visibility behavior it always did, but does
+  **not** pause or discount the underlying Stripe subscription — the only way to stop being billed
+  is to cancel. **Also fixing the pre-existing `acwr_frozen` gap here**: since we're
   already touching the pause code path to add entitlement awareness, wire `acwr_frozen` into the
   ACWR-snapshot computation (skip/carry-forward rather than compute against a gap in training
   data) — it's a column that's existed with a `true` default since the pause feature shipped but
@@ -289,9 +303,20 @@ active ──(3 failed retries, 14 days)──► past_due_grace ──(still un
 
 ---
 
-## 5. The Free-tier "30-day history" mechanism, precisely
+## 5. The Free-tier "30-day history" mechanism, precisely (superseded — see note)
 
-Business Plan §2.1 already states this as a Free-tier limit. The mechanism:
+> **Superseded 2026-07-23, before this was implemented.** The permanent Free tier described here
+> never shipped — it was replaced with a single 7-day full-access trial (`TRIAL_LIMITS`: no
+> history cap, everything unlocked) followed by a hard `locked: true` paywall (`LOCKED_LIMITS`:
+> zeroed/false across the board, endpoints return HTTP 402) once the trial elapses with no paid
+> subscription. There is no rolling 30-day filter in the shipped code — the design below is kept
+> for historical rationale (why data is never deleted for tier reasons, why the ACWR engine is
+> exempt from any tier-based filter) but the specific "add `.gte(..., 30 days)` per endpoint"
+> mechanism it describes does not exist in `netlify/functions/utils/entitlements.js`. See
+> `docs/SOURCE_OF_TRUTH.md` for the actual `getEntitlement()` contract.
+
+Business Plan §2.1 already states this as a Free-tier limit. The mechanism (as originally
+proposed — not what shipped):
 
 - **No data is ever deleted or truncated because of tier.** `training_sessions`,
   `daily_wellness_checkin`, `readiness_scores`, `athlete_injuries`, RTP records — all keep
@@ -341,21 +366,15 @@ Recommendation: **retire it**, don't repair it. Reasoning:
   manager/owner is the Stripe customer and pays for the whole roster (this already matches how
   Team Package is described in the business plan: "Team Manager subscribes for entire roster").
   A 14-year-old on a Team Package roster is never asked for a card.
-- **Individual paid tiers (Athlete Pro) for a minor**: Stripe requires the cardholder to have
-  contractual capacity, so a minor can never directly hold the subscription. Two real options,
-  flagged for a decision in §9 rather than picked silently:
-  1. Extend `parental_consent.consent_scope` with a `billing: boolean` scope — a guardian must
-     explicitly consent before a minor's account can be linked to *any* paid subscription (their
-     own, gifted, or via a parent's payment method), reusing the existing verified-guardian-email
-     flow.
-  2. Simply don't offer individual paid tiers to accounts flagged as minors at all — Free tier
-     only until 18, full stop, with Team Package coverage still available (a national academy's
-     16-year-old still gets every Team Package feature the roster pays for; they just can't
-     personally buy Athlete Pro).
-  My recommended default is **option 2** for launch simplicity (it requires zero new consent
-  schema and closes the "who's the legal payer" question entirely for the MVP), with option 1 as
-  a fast-follow if there's real demand from individually-subscribing minors once the Team Package
-  channel (where the org pays) is live.
+- **Individual paid tiers (Athlete Pro) for a minor — RESOLVED, option 2, as built.** Stripe
+  requires the cardholder to have contractual capacity, so a minor can never directly hold the
+  subscription. Implemented: `stripe-checkout.js` blocks individual-tier checkout outright for any
+  account under 18 (`ageFromDob()` on `date_of_birth ?? birth_date`, returning `403
+  minor_account`); Team Package checkout is untouched by this check, since team billing never
+  touches an individual's card. A minor still gets the same 7-day trial as everyone (trial access
+  isn't gated on age — only *paid individual* checkout is), and any Team Package coverage from
+  their roster is unaffected. Option 1 (a `billing` consent scope for guardian-authorized minor
+  subscriptions) was not built — no fast-follow demand signal yet; revisit if it comes up.
 
 ---
 
@@ -386,26 +405,39 @@ about, but the current doc text conflates them:
 
 ---
 
-## 9. Open decisions — flagged, not decided silently
+## 9. Open decisions — RESOLVED (2026-07-23, same day as this proposal)
 
-Per CLAUDE.md's own house rule on product/business decisions, these get a recommended default
-(stated above, repeated here for visibility) rather than a silent choice:
+Per CLAUDE.md's own house rule on product/business decisions, each was flagged with a recommended
+default rather than picked silently. All five came back from the user before implementation
+started; the actual answer (not just the default) is recorded below for each.
 
-1. **Who counts as a billable seat** (§3): default = every active `team_members` row, all 13
-   roles. Alternative = only certain roles count, others are free roster add-ons.
-2. **Does a subscription keep billing during a voluntary pause** (§4): default unstated here
-   deliberately — needs a real pricing-policy call (bill through / discounted hold / free pause up
-   to N days per year), not an engineering one.
-3. **Minors + individual paid tiers** (§7): default = Free-tier-only for minors, Team Package
-   coverage unaffected. Alternative = build the billing-consent-scope guardian flow now instead of
-   deferring it.
-4. **Exact legal financial-record retention period** (§8): needs a real answer from whoever owns
-   VAT/tax compliance for the actual jurisdictions being launched in (Slovenia primary) — I used
-   "3 years" only because that's the number already in `data-export.js`'s copy, not because I
-   verified it against EU VAT law myself.
-5. **Manual/offline fee tracking** (§6): is there still a real need for a *separate*,
-   non-Stripe feature (tournament entry fees, cash team dues) independent of subscription
-   billing? If yes, that's new scope, not a repair of `player_payments`.
+1. **Who counts as a billable seat** (§3) — **RESOLVED: every active `team_members` row, all 13
+   roles.** User's answer: *"Billable seat is every person who gets in."* This confirms the
+   recommended default exactly as proposed — no roles are free roster add-ons. As built: every
+   active row in `team_members` counts, unconditionally.
+2. **Does a subscription keep billing during a voluntary pause** (§4) — **RESOLVED: yes, billing
+   continues through any voluntary pause, and there is no retention discount on cancellation.**
+   User's answer: *"Yes. There is no voluntary pause. And no discounts sad to see you go."* As
+   built: `account-pause.js` still exists for the athlete-data-visibility behavior it already had,
+   but pausing an account does **not** pause or discount the Stripe subscription — the only way to
+   stop being billed is to cancel outright, and cancellation flows do not offer a retention
+   discount.
+3. **Minors + individual paid tiers** (§7) — **RESOLVED: option 2 (block individual paid-tier
+   checkout for minors; Team Package unaffected), no billing-consent-scope guardian flow built.**
+   See §7 above for the as-built behavior.
+4. **Exact legal financial-record retention period** (§8) — **RESOLVED: 3 years, the existing
+   number, confirmed acceptable.** User's answer: *"Is ok if you think its ok"* — the proposed
+   default (3 years, already the number in `data-export.js`'s copy) stands. This is **not** a
+   verified answer to the underlying EU VAT/tax-compliance question (the proposal's own caveat
+   about member-state law requiring up to 10 years in some jurisdictions still applies) — it's the
+   user accepting the engineering default rather than escalating to a real compliance review. If
+   this app operates somewhere with a longer statutory requirement, this number needs a real legal
+   check before that matters financially.
+5. **Manual/offline fee tracking** (§6) — **RESOLVED: not built.** User's answer: *"I dont know,
+   you decide"* — decided **not** to build a parallel cash/offline-fee-tracking feature.
+   Reasoning: `player_payments` had 0 live rows and Stripe now covers all real subscription
+   payments; a separate manual-fee feature (tournament entry fees, cash team dues) is new,
+   unrequested scope, not a repair of the retired table. Revisit only if a real user need surfaces.
 
 ---
 
