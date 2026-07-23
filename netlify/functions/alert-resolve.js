@@ -129,7 +129,7 @@ async function clearAutomationFlags(supabase, alert, requestLogger) {
       const { data: snapshot } = await supabase
         .from("acwr_snapshots")
         .select("id")
-        .eq("athlete_id", alert.user_id)
+        .eq("user_id", alert.user_id)
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
@@ -139,7 +139,6 @@ async function clearAutomationFlags(supabase, alert, requestLogger) {
           .from("acwr_snapshots")
           .update({
             safety_alert: false,
-            load_restriction_active: false,
           })
           .eq("id", snapshot.id);
       }
@@ -160,7 +159,7 @@ const handler = async (event, context) =>
     rateLimitType: "UPDATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
 
       const role = await getUserRole(userId);
       if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
