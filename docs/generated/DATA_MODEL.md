@@ -11,7 +11,7 @@
 ## Tables
 
 ### `account_deletion_requests`
-Touched by: `account-deletion`
+Touched by: `account-deletion`, `auth`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -27,7 +27,7 @@ Touched by: `account-deletion`
 - `error_message` text
 
 ### `account_pause_requests`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-load`, `daily-training`, `load-management`, `monitoring-report`, `recovery-recommendations`, `smart-training-recommendations`, `training-metrics`, `training-plan`, `training-stats-enhanced`, `user-context`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -79,7 +79,7 @@ Touched by: `alert-evaluate-rules`, `alert-resolve`
 - `updated_at` timestamp with time zone
 
 ### `age_recovery_modifiers`
-Touched by: `daily-protocol`, `player-settings`
+Touched by: `daily-protocol`, `player-settings`, `roster`
 
 - `id` integer · not null
 - `age_min` integer · not null
@@ -103,7 +103,7 @@ Touched by: `ai-chat`, `ai-telemetry`
 - `updated_at` timestamp with time zone · not null
 
 ### `ai_followups`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -119,7 +119,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `ai_messages`
-Touched by: `ai-telemetry`, `coach-analytics`, `coach-inbox`, `response-feedback`, `team-templates`
+Touched by: `ai-chat`, `ai-telemetry`, `coach`, `coach-analytics`, `coach-inbox`, `response-feedback`, `team`, `team-templates`
 
 - `id` uuid · not null
 - `session_id` uuid · not null
@@ -136,7 +136,7 @@ Touched by: `ai-telemetry`, `coach-analytics`, `coach-inbox`, `response-feedback
 - `feedback_received` boolean · not null
 
 ### `ai_recommendations`
-Touched by: `ai-telemetry`
+Touched by: `ai-chat`, `ai-telemetry`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -153,7 +153,7 @@ Touched by: `ai-telemetry`
 - `created_at` timestamp with time zone · not null
 
 ### `ai_response_feedback`
-Touched by: `coach-analytics`, `response-feedback`
+Touched by: `ai-chat`, `coach`, `coach-analytics`, `response-feedback`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -278,7 +278,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `athlete_consent_settings`
-Touched by: _(no endpoint references this table)_
+Touched by: `performance-data`, `readiness-history`, `team-monitoring`, `wellness-checkin`, `wellness-logs`
 
 - `user_id` uuid · not null
 - `share_readiness_with_coach` boolean · not null
@@ -290,7 +290,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_events`
-Touched by: `athlete-events`, `schedule`
+Touched by: `athlete-events`, `periodization-prescription`, `schedule`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -311,7 +311,7 @@ Touched by: `athlete-events`, `schedule`
 - `surface` text
 
 ### `athlete_hydration_logs`
-Touched by: `hydration`, `staff-nutritionist`
+Touched by: `hydration`, `staff`, `staff-nutritionist`, `wellness`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -325,7 +325,7 @@ Touched by: `hydration`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_injuries`
-Touched by: `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach-core`, `injury-analytics`, `monitoring-report`, `rtp-create-assignment`, `staff-physiotherapist`, `user-profile-core`
+Touched by: `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach`, `coach-core`, `daily-protocol`, `injury-analytics`, `monitoring-report`, `periodization-prescription`, `physiotherapist-dashboard`, `readiness`, `rtp-create-assignment`, `staff`, `staff-physiotherapist`, `user-profile`, `user-profile-core`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -346,7 +346,7 @@ Touched by: `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach-core`,
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_nutrition_profiles`
-Touched by: `nutrition`, `staff-nutritionist`
+Touched by: `nutrition`, `staff`, `staff-nutritionist`, `wellness`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -368,7 +368,7 @@ Touched by: `nutrition`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_training_config`
-Touched by: `daily-protocol`, `periodization-prescription`, `player-settings`
+Touched by: `daily-protocol`, `periodization-prescription`, `player-settings`, `roster`
 
 - `user_id` uuid · not null
 - `primary_position` text · not null
@@ -409,7 +409,7 @@ Touched by: `event-travel`, `periodization-prescription`
 - `overnight_stay` boolean · not null
 
 ### `attendance_records`
-Touched by: `attendance`, `team-calendar`
+Touched by: `attendance`, `team`, `team-calendar`
 
 - `id` uuid · not null
 - `event_id` text · not null
@@ -424,7 +424,7 @@ Touched by: `attendance`, `team-calendar`
 - `updated_at` timestamp with time zone · not null
 
 ### `authorization_violations`
-Touched by: _(no endpoint references this table)_
+Touched by: `admin`, `admin-credentials`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `calc-readiness`, `calibration-logs`, `coach-core`, `compute-acwr`, `daily-training`, `import-open-data`, `injury-analytics`, `knowledge-governance`, `performance-data`, `physio-protocol`, `readiness-history`, `recovery-recommendations`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-phase-progress`, `rtp-protocol-assignment`, `rtp-psychological-assessment`, `rtp-record-assessment`, `rtp-team-protocols`, `season-archive`, `smart-training-recommendations`, `staff-profile`, `team-acwr`, `team-monitoring`, `training-metrics`, `training-sessions`, `user-profile-core`, `wellness-checkin`, `wellness-logs`
 
 - `violation_id` uuid · not null
 - `user_id` uuid · not null
@@ -441,7 +441,7 @@ Touched by: _(no endpoint references this table)_
 - `request_body` jsonb
 
 ### `billing_customers`
-Touched by: `billing-lapse-check`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`
+Touched by: `billing-lapse-check`, `daily-load`, `data`, `data-export`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `training-sessions`
 
 - `id` uuid · not null
 - `stripe_customer_id` text · not null
@@ -450,7 +450,7 @@ Touched by: `billing-lapse-check`, `stripe-checkout`, `stripe-portal`, `stripe-w
 - `created_at` timestamp with time zone · not null
 
 ### `blocked_users`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -521,7 +521,7 @@ Touched by: `calibration-logs`
 - `created_at` timestamp with time zone · not null
 
 ### `channel_members`
-Touched by: `chat`
+Touched by: `chat`, `social`
 
 - `id` uuid · not null
 - `channel_id` uuid · not null
@@ -533,7 +533,7 @@ Touched by: `chat`
 - `joined_at` timestamp with time zone · not null
 
 ### `channels`
-Touched by: `chat`
+Touched by: `chat`, `social`
 
 - `id` uuid · not null
 - `team_id` uuid
@@ -551,7 +551,7 @@ Touched by: `chat`
 - `updated_at` timestamp with time zone · not null
 
 ### `chat_messages`
-Touched by: `chat`
+Touched by: `chat`, `social`
 
 - `id` uuid · not null
 - `user_id` uuid
@@ -579,7 +579,7 @@ Touched by: `chat`
 - `updated_at` timestamp with time zone · not null
 
 ### `classification_history`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -591,7 +591,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `coach_activity_log`
-Touched by: `coach-activity`
+Touched by: `coach`, `coach-activity`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -607,7 +607,7 @@ Touched by: `coach-activity`
 - `updated_at` timestamp with time zone · not null
 
 ### `coach_alert_acknowledgments`
-Touched by: `coach-alerts`
+Touched by: `coach`, `coach-alerts`
 
 - `id` uuid · not null
 - `coach_id` uuid · not null
@@ -630,7 +630,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `coach_inbox_items`
-Touched by: `coach-inbox`, `daily-protocol`, `team-templates`, `wellness-checkin`
+Touched by: `ai-chat`, `coach`, `coach-inbox`, `daily-protocol`, `team`, `team-templates`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `coach_id` uuid · not null
@@ -685,7 +685,7 @@ Touched by: _(no endpoint references this table)_
 - `team_development_approach` text
 
 ### `comment_likes`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `comment_id` uuid · not null
@@ -693,7 +693,7 @@ Touched by: `community`
 - `created_at` timestamp with time zone · not null
 
 ### `community_poll_options`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `poll_id` uuid · not null
@@ -701,7 +701,7 @@ Touched by: `community`
 - `votes_count` integer · not null
 
 ### `community_poll_votes`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `option_id` uuid · not null
@@ -709,7 +709,7 @@ Touched by: `community`
 - `created_at` timestamp with time zone · not null
 
 ### `community_polls`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `post_id` uuid · not null
@@ -718,7 +718,7 @@ Touched by: `community`
 - `created_at` timestamp with time zone · not null
 
 ### `competition_events`
-Touched by: `event-games`, `wellness-checkin`
+Touched by: `event-games`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `competition_id` uuid · not null
@@ -765,7 +765,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `consent_access_log`
-Touched by: _(no endpoint references this table)_
+Touched by: `analytics-core`, `coach-core`, `load-management`, `performance-data`, `staff-nutritionist`, `staff-psychology`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -788,7 +788,7 @@ Touched by: _(no endpoint references this table)_
 - `is_active` boolean · not null
 
 ### `conversation_context`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -801,7 +801,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `credential_verifications`
-Touched by: `admin-credentials`, `staff-profile`
+Touched by: `admin-credentials`, `staff-coach-profile`, `staff-head-coach-profile`, `staff-manager-profile`, `staff-nutritionist-profile`, `staff-physiotherapist-profile`, `staff-profile`, `staff-psychologist-profile`, `staff-strength-coach-profile`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -846,7 +846,7 @@ Touched by: `cycle`
 - `updated_at` timestamp with time zone · not null
 
 ### `daily_protocols`
-Touched by: `ai-chat`, `coach-alerts`, `coach-core`, `daily-protocol`
+Touched by: `ai-chat`, `coach`, `coach-alerts`, `coach-core`, `daily-protocol`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -900,7 +900,7 @@ Touched by: `ai-chat`, `coach-alerts`, `coach-core`, `daily-protocol`
 - `cool_down_completed_at` timestamp with time zone
 
 ### `daily_wellness_checkin`
-Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `daily-protocol`, `monitoring-report`, `performance-data`, `sleep-data`, `smart-training-recommendations`, `team-monitoring`, `user-context`, `wellness-checkin`, `wellness-logs`
+Touched by: `ai-chat`, `analytics`, `analytics-core`, `calc-readiness`, `coach`, `coach-core`, `daily-protocol`, `load-management`, `monitoring-report`, `performance-data`, `readiness`, `sleep-data`, `smart-training-recommendations`, `staff-nutritionist`, `staff-psychology`, `team-monitoring`, `training`, `user-context`, `user-profile`, `wellness`, `wellness-checkin`, `wellness-logs`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -921,7 +921,7 @@ Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `daily-protocol`, `monito
 - `travel_hours` integer
 
 ### `decision_ledger`
-Touched by: `decisions`
+Touched by: `decisions`, `programs`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -945,7 +945,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `device_pairings`
-Touched by: `session-load-import`
+Touched by: `session-load-import`, `session-load-import-csv`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -974,7 +974,7 @@ Touched by: _(no endpoint references this table)_
 - `retention_expires_at` timestamp with time zone
 
 ### `event_availability`
-Touched by: `event-availability`, `wellness-checkin`
+Touched by: `event-availability`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1080,7 +1080,7 @@ Touched by: _(no endpoint references this table)_
 - `status` character varying
 
 ### `exercises`
-Touched by: `daily-protocol`, `exercise-progression`
+Touched by: `daily-protocol`, `exercise-progression`, `exercises`, `team-practice-plan`
 
 - `id` uuid · not null
 - `name` character varying · not null
@@ -1182,7 +1182,7 @@ Touched by: _(no endpoint references this table)_
 - `context` jsonb · not null
 
 ### `game_events`
-Touched by: `game-events`, `games-core`, `player-stats`
+Touched by: `game-events`, `games`, `games-core`, `player-stats`, `roster`
 
 - `id` integer · not null
 - `game_id` character varying · not null
@@ -1216,7 +1216,7 @@ Touched by: `game-events`, `games-core`, `player-stats`
 - `created_at` timestamp without time zone
 
 ### `game_participations`
-Touched by: `game-events`
+Touched by: `game-events`, `games`
 
 - `id` uuid · not null
 - `game_id` character varying · not null
@@ -1229,7 +1229,7 @@ Touched by: `game-events`
 - `updated_at` timestamp with time zone · not null
 
 ### `games`
-Touched by: `ai-chat`, `coach-core`, `daily-training`, `game-events`, `games-core`, `player-stats`, `team-calendar`, `training-plan`, `trends`
+Touched by: `ai-chat`, `coach`, `coach-core`, `daily-training`, `game-events`, `games`, `games-core`, `player-stats`, `roster`, `team`, `team-calendar`, `training`, `training-plan`, `trends`
 
 - `id` integer · not null
 - `game_id` character varying · not null
@@ -1279,7 +1279,7 @@ Touched by: `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `ale
 - `updated_at` timestamp without time zone
 
 ### `invoices`
-Touched by: `stripe-webhook`
+Touched by: `data`, `data-export`, `stripe-webhook`
 
 - `id` uuid · not null
 - `subscription_id` uuid · not null
@@ -1292,7 +1292,7 @@ Touched by: `stripe-webhook`
 - `created_at` timestamp with time zone · not null
 
 ### `knowledge_base_entries`
-Touched by: `ai-chat`, `ai-telemetry`, `knowledge-governance`, `knowledge-search`
+Touched by: `ai-chat`, `ai-telemetry`, `knowledge`, `knowledge-governance`, `knowledge-search`
 
 - `id` uuid · not null
 - `entry_type` character varying · not null
@@ -1336,7 +1336,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `knowledge_review_audit`
-Touched by: `knowledge-governance`
+Touched by: `knowledge`, `knowledge-governance`
 
 - `id` bigint · not null
 - `entry_id` uuid · not null
@@ -1358,7 +1358,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp without time zone
 
 ### `learned_user_preferences`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `user_id` uuid · not null
 - `helpful_responses` integer · not null
@@ -1379,7 +1379,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `meal_templates`
-Touched by: `nutrition`
+Touched by: `nutrition`, `wellness`
 
 - `id` uuid · not null
 - `name` text · not null
@@ -1397,7 +1397,7 @@ Touched by: `nutrition`
 - `updated_at` timestamp with time zone · not null
 
 ### `mental_performance_logs`
-Touched by: `staff-psychology`
+Touched by: `staff`, `staff-psychology`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1418,7 +1418,7 @@ Touched by: `staff-psychology`
 - `created_at` timestamp with time zone · not null
 
 ### `mental_wellness_reports`
-Touched by: `staff-psychology`
+Touched by: `staff`, `staff-psychology`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1428,7 +1428,7 @@ Touched by: `staff-psychology`
 - `created_at` timestamp with time zone · not null
 
 ### `merlin_violation_log`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`, `daily-training`, `decisions`, `performance-data`, `training-complete`, `training-sessions`
 
 - `violation_id` uuid · not null
 - `violation_type` text · not null
@@ -1471,7 +1471,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `micro_session_analytics`
-Touched by: `micro-sessions`
+Touched by: `micro-sessions`, `programs`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1486,7 +1486,7 @@ Touched by: `micro-sessions`
 - `updated_at` timestamp with time zone
 
 ### `micro_sessions`
-Touched by: `coach-analytics`, `micro-sessions`, `team-templates`
+Touched by: `coach`, `coach-analytics`, `micro-sessions`, `programs`, `team`, `team-templates`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1530,7 +1530,7 @@ Touched by: `monitoring-report`
 - `updated_at` timestamp with time zone · not null
 
 ### `monitoring_providers`
-Touched by: `session-load-import`
+Touched by: `session-load-import`, `session-load-import-csv`
 
 - `id` uuid · not null
 - `key` text · not null
@@ -1539,7 +1539,7 @@ Touched by: `session-load-import`
 - `is_active` boolean · not null
 
 ### `movement_patterns`
-Touched by: `training-programs`
+Touched by: `training`, `training-programs`
 
 - `id` uuid · not null
 - `program_id` uuid
@@ -1549,7 +1549,7 @@ Touched by: `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `notifications`
-Touched by: `coach-core`, `staff-physiotherapist`, `stripe-webhook`, `supplements`, `training-complete`, `wellness-checkin`
+Touched by: `coach`, `coach-core`, `daily-protocol`, `physiotherapist-dashboard`, `player-settings`, `staff`, `staff-physiotherapist`, `stripe-webhook`, `supplements`, `team-join`, `training`, `training-complete`, `training-programs`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1586,7 +1586,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `nutrition_logs`
-Touched by: `wellness-checkin`
+Touched by: `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1603,7 +1603,7 @@ Touched by: `wellness-checkin`
 - `created_at` timestamp with time zone
 
 ### `nutrition_plans`
-Touched by: `ai-chat`, `nutrition`
+Touched by: `ai-chat`, `nutrition`, `wellness`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1623,7 +1623,7 @@ Touched by: `ai-chat`, `nutrition`
 - `updated_at` timestamp with time zone · not null
 
 ### `nutrition_reports`
-Touched by: `staff-nutritionist`
+Touched by: `staff`, `staff-nutritionist`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1675,7 +1675,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp without time zone
 
 ### `ownership_transitions`
-Touched by: `staff-physiotherapist`, `wellness-checkin`
+Touched by: `physiotherapist-dashboard`, `staff`, `staff-physiotherapist`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -1686,7 +1686,7 @@ Touched by: `staff-physiotherapist`, `wellness-checkin`
 - `created_at` timestamp with time zone
 
 ### `parent_guardian_links`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1703,7 +1703,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `parent_notifications`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `parent_id` uuid · not null
@@ -1718,7 +1718,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `parental_consent`
-Touched by: `parental-consent`, `privacy-settings`
+Touched by: `auth`, `parental-consent`, `privacy-settings`, `user-profile`
 
 - `id` uuid · not null
 - `minor_user_id` uuid · not null
@@ -1789,7 +1789,7 @@ Touched by: _(no endpoint references this table)_
 - `performance_day` date · not null
 
 ### `performance_tests`
-Touched by: `analytics-core`, `performance-data`, `performance-metrics`
+Touched by: `analytics`, `analytics-core`, `performance-data`, `performance-metrics`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1802,7 +1802,7 @@ Touched by: `analytics-core`, `performance-data`, `performance-metrics`
 - `created_at` timestamp with time zone · not null
 
 ### `physical_measurements`
-Touched by: `ai-chat`, `performance-data`, `staff-nutritionist`
+Touched by: `ai-chat`, `analytics`, `performance-data`, `staff`, `staff-nutritionist`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1875,7 +1875,7 @@ Touched by: `achievements`
 - `created_at` timestamp with time zone · not null
 
 ### `player_programs`
-Touched by: `daily-protocol`, `player-programs`, `smart-training-recommendations`, `training-plan`
+Touched by: `daily-protocol`, `player-programs`, `programs`, `smart-training-recommendations`, `training`, `training-plan`
 
 - `id` uuid · not null
 - `program_id` uuid
@@ -1899,7 +1899,7 @@ Touched by: `daily-protocol`, `player-programs`, `smart-training-recommendations
 - `modifications` jsonb
 
 ### `player_streaks`
-Touched by: `achievements`, `wellness-checkin`
+Touched by: `achievements`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1911,7 +1911,7 @@ Touched by: `achievements`, `wellness-checkin`
 - `updated_at` timestamp with time zone · not null
 
 ### `player_training_stats`
-Touched by: `achievements`
+Touched by: `achievements`, `daily-protocol`
 
 - `user_id` uuid · not null
 - `total_sessions` integer · not null
@@ -1956,7 +1956,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `post_bookmarks`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `post_id` uuid · not null
@@ -1964,7 +1964,7 @@ Touched by: `community`
 - `created_at` timestamp with time zone · not null
 
 ### `post_comments`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `post_id` uuid · not null
@@ -1975,7 +1975,7 @@ Touched by: `community`
 - `updated_at` timestamp with time zone · not null
 
 ### `post_likes`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `post_id` uuid · not null
@@ -1983,7 +1983,7 @@ Touched by: `community`
 - `created_at` timestamp with time zone · not null
 
 ### `posts`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2002,7 +2002,7 @@ Touched by: `community`
 - `updated_at` timestamp with time zone · not null
 
 ### `practice_plans`
-Touched by: `team-calendar`
+Touched by: `team`, `team-calendar`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2058,7 +2058,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `privacy_audit_log`
-Touched by: `cycle`, `parental-consent`, `privacy-settings`
+Touched by: `auth`, `cycle`, `parental-consent`, `privacy-settings`, `user-profile`
 
 - `id` uuid · not null
 - `user_id` uuid
@@ -2069,7 +2069,7 @@ Touched by: `cycle`, `parental-consent`, `privacy-settings`
 - `created_at` timestamp with time zone · not null
 
 ### `privacy_settings`
-Touched by: `ai-chat`, `privacy-settings`
+Touched by: `ai-chat`, `analytics-core`, `coach-core`, `load-management`, `performance-data`, `privacy-settings`, `staff-nutritionist`, `staff-psychology`, `user-profile`
 
 - `user_id` uuid · not null
 - `performance_sharing_default` boolean · not null
@@ -2080,7 +2080,7 @@ Touched by: `ai-chat`, `privacy-settings`
 - `updated_at` timestamp with time zone · not null
 
 ### `proactive_checkins`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2106,7 +2106,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `protocol_exercises`
-Touched by: `daily-protocol`, `exercise-progression`
+Touched by: `daily-protocol`, `exercise-progression`, `exercises`
 
 - `id` uuid · not null
 - `protocol_id` uuid · not null
@@ -2137,7 +2137,7 @@ Touched by: `daily-protocol`, `exercise-progression`
 - `rest_seconds` integer
 
 ### `protocol_generation_requests`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2150,7 +2150,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `psychological_assessments`
-Touched by: `staff-psychology`
+Touched by: `staff`, `staff-psychology`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2197,7 +2197,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `qb_throwing_sessions`
-Touched by: `qb-throwing`
+Touched by: `exercises`, `qb-throwing`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2223,7 +2223,7 @@ Touched by: `qb-throwing`
 - `updated_at` timestamp with time zone · not null
 
 ### `readiness_gates`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`
 
 - `id` uuid · not null
 - `context` text · not null
@@ -2237,7 +2237,7 @@ Touched by: _(no endpoint references this table)_
 - `is_active` boolean · not null
 
 ### `readiness_scores`
-Touched by: `calc-readiness`, `coach-core`, `daily-protocol`, `periodization-prescription`, `readiness-history`, `team-monitoring`
+Touched by: `calc-readiness`, `coach`, `coach-core`, `daily-protocol`, `performance-data`, `periodization-prescription`, `readiness`, `readiness-history`, `team-monitoring`, `wellness-checkin`, `wellness-logs`
 
 - `id` uuid · not null
 - `sleep_score` numeric
@@ -2280,7 +2280,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp without time zone
 
 ### `recovery_blocks`
-Touched by: `ai-chat`, `games-core`, `wellness-checkin`
+Touched by: `ai-chat`, `daily-protocol`, `games`, `games-core`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2304,7 +2304,7 @@ Touched by: `recovery-effectiveness`
 - `created_at` timestamp with time zone · not null
 
 ### `recovery_protocols`
-Touched by: `recovery-core`
+Touched by: `health`, `recovery-core`
 
 - `id` uuid · not null
 - `name` text · not null
@@ -2320,7 +2320,7 @@ Touched by: `recovery-core`
 - `updated_at` timestamp with time zone
 
 ### `recovery_sessions`
-Touched by: `recovery-core`
+Touched by: `daily-protocol`, `health`, `recovery-core`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2400,7 +2400,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp without time zone
 
 ### `return_to_play_protocols`
-Touched by: `monitoring-report`, `return-to-play`
+Touched by: `calc-readiness`, `daily-protocol`, `health`, `monitoring-report`, `return-to-play`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2504,7 +2504,7 @@ Touched by: `rtp-phase-progress`
 - `updated_at` timestamp with time zone
 
 ### `rtp_prescription_approvals`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`
 
 - `id` uuid · not null
 - `return_to_play_id` uuid
@@ -2596,7 +2596,7 @@ Touched by: _(no endpoint references this table)_
 - `error_message` text
 
 ### `session_exercises`
-Touched by: `training-programs`
+Touched by: `daily-protocol`, `training`, `training-programs`
 
 - `id` uuid · not null
 - `session_id` uuid
@@ -2624,7 +2624,7 @@ Touched by: `training-programs`
 - `intensity` text
 
 ### `session_load`
-Touched by: `monitoring-report`, `session-load-import`
+Touched by: `monitoring-report`, `session-load-import`, `session-load-import-csv`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2689,7 +2689,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 
 ### `shared_insights`
-Touched by: `wellness-checkin`
+Touched by: `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `shared_by` uuid · not null
@@ -2717,7 +2717,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp without time zone
 
 ### `sponsors`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`, `player-settings`, `team-join`, `training-programs`
 
 - `id` integer · not null
 - `name` character varying · not null
@@ -2771,7 +2771,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `subscriptions`
-Touched by: `billing-lapse-check`, `stripe-webhook`
+Touched by: `billing-lapse-check`, `daily-load`, `data`, `data-export`, `stripe-webhook`, `training-sessions`
 
 - `id` uuid · not null
 - `billing_customer_id` uuid · not null
@@ -2797,7 +2797,7 @@ Touched by: _(no endpoint references this table)_
 - `notes` text
 
 ### `supplement_logs`
-Touched by: `performance-data`, `staff-nutritionist`, `supplements`, `user-context`
+Touched by: `analytics`, `performance-data`, `staff`, `staff-nutritionist`, `supplements`, `user-context`, `user-profile`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2823,7 +2823,7 @@ Touched by: `periodization-prescription`
 - `version` text · not null
 
 ### `team_activities`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2840,7 +2840,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `team_events`
-Touched by: `attendance`, `coach-core`, `team-calendar`
+Touched by: `attendance`, `coach`, `coach-core`, `team`, `team-calendar`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2867,7 +2867,7 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone
 
 ### `team_invitations`
-Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
+Touched by: `accept-invitation`, `auth`, `team`, `team-invite`, `validate-invitation`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2883,7 +2883,7 @@ Touched by: `accept-invitation`, `team-invite`, `validate-invitation`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_member_roles`
-Touched by: `session-load-import`
+Touched by: `session-load-import`, `session-load-import-csv`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2892,7 +2892,7 @@ Touched by: `session-load-import`
 - `created_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-get-athlete`, `alert-resolve`, `analytics-core`, `attendance`, `calibration-logs`, `chat`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `daily-protocol`, `dashboard`, `decisions`, `game-events`, `games-core`, `import-open-data`, `load-management`, `monitoring-report`, `performance-data`, `physiotherapist-dashboard`, `privacy-settings`, `response-feedback`, `roster-core`, `smart-training-recommendations`, `staff-nutritionist`, `staff-physiotherapist`, `staff-psychology`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `team-acwr`, `team-invite`, `team-join`, `team-monitoring`, `team-templates`, `training-plan`, `user-context`, `weather`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `alert-get-athlete`, `alert-preferences`, `alert-resolve`, `analytics`, `analytics-core`, `attendance`, `auth`, `auth-login`, `auth-me`, `billing-lapse-check`, `calc-readiness`, `calibration-logs`, `chat`, `coach`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-load`, `daily-protocol`, `daily-training`, `dashboard`, `data`, `decisions`, `event-games`, `game-events`, `games`, `games-core`, `import-open-data`, `injury-analytics`, `knowledge-governance`, `load-management`, `monitoring-report`, `notifications`, `performance-data`, `periodization-prescription`, `physio-protocol`, `physiotherapist-dashboard`, `player-programs`, `player-settings`, `player-stats`, `privacy-settings`, `programs`, `readiness`, `readiness-history`, `recovery-effectiveness`, `recovery-recommendations`, `response-feedback`, `roster`, `roster-core`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-phase-progress`, `rtp-protocol-assignment`, `rtp-psychological-assessment`, `rtp-record-assessment`, `rtp-team-protocols`, `season-archive`, `smart-training-recommendations`, `social`, `staff`, `staff-nutritionist`, `staff-physiotherapist`, `staff-profile`, `staff-psychology`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `team`, `team-acwr`, `team-calendar`, `team-invite`, `team-join`, `team-monitoring`, `team-practice-plan`, `team-templates`, `training`, `training-metrics`, `training-plan`, `training-programs`, `training-sessions`, `user-context`, `user-profile`, `user-profile-core`, `validate-invitation`, `weather`, `wellness`, `wellness-checkin`, `wellness-logs`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2924,7 +2924,7 @@ Touched by: `daily-protocol`
 - `created_at` timestamp with time zone · not null
 
 ### `team_sharing_settings`
-Touched by: `privacy-settings`
+Touched by: `analytics-core`, `coach-core`, `load-management`, `performance-data`, `privacy-settings`, `staff-nutritionist`, `staff-psychology`, `user-profile`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2936,7 +2936,7 @@ Touched by: `privacy-settings`
 - `updated_at` timestamp with time zone · not null
 
 ### `team_templates`
-Touched by: `team-templates`
+Touched by: `team`, `team-templates`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -2952,7 +2952,7 @@ Touched by: `team-templates`
 - `updated_at` timestamp with time zone
 
 ### `teams`
-Touched by: `coach-inbox`, `team-invite`, `team-join`
+Touched by: `coach`, `coach-inbox`, `team`, `team-invite`, `team-join`
 
 - `id` uuid · not null
 - `name` character varying · not null
@@ -2977,7 +2977,7 @@ Touched by: `coach-inbox`, `team-invite`, `team-join`
 - `home_field` text
 
 ### `template_assignments`
-Touched by: `team-templates`
+Touched by: `team`, `team-templates`
 
 - `id` uuid · not null
 - `template_id` uuid · not null
@@ -3018,7 +3018,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `training_phases`
-Touched by: `daily-protocol`, `training-programs`
+Touched by: `daily-protocol`, `training`, `training-programs`
 
 - `id` uuid · not null
 - `program_id` uuid · not null
@@ -3032,7 +3032,7 @@ Touched by: `daily-protocol`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_programs`
-Touched by: `player-programs`, `training-programs`
+Touched by: `daily-protocol`, `player-programs`, `programs`, `training`, `training-programs`
 
 - `id` uuid · not null
 - `name` character varying · not null
@@ -3051,7 +3051,7 @@ Touched by: `player-programs`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_session_templates`
-Touched by: `training-programs`
+Touched by: `daily-protocol`, `training`, `training-programs`
 
 - `id` uuid · not null
 - `program_id` uuid · not null
@@ -3073,7 +3073,7 @@ Touched by: `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `training_sessions`
-Touched by: `ai-chat`, `calc-readiness`, `coach-core`, `compute-acwr`, `daily-load`, `daily-training`, `dashboard`, `import-open-data`, `load-management`, `performance-heatmap`, `performance-metrics`, `periodization-prescription`, `qb-throwing`, `recovery-recommendations`, `smart-training-recommendations`, `team-monitoring`, `training-complete`, `training-metrics`, `training-plan`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile-core`, `weekend-games`
+Touched by: `ai-chat`, `analytics`, `analytics-core`, `calc-readiness`, `coach`, `coach-core`, `compute-acwr`, `daily-load`, `daily-protocol`, `daily-training`, `dashboard`, `data`, `exercises`, `import-open-data`, `load-management`, `performance-data`, `performance-heatmap`, `performance-metrics`, `periodization-prescription`, `player-settings`, `qb-throwing`, `readiness`, `recovery-recommendations`, `smart-training-recommendations`, `staff-nutritionist`, `staff-psychology`, `team-join`, `team-monitoring`, `training`, `training-complete`, `training-metrics`, `training-plan`, `training-programs`, `training-sessions`, `training-stats-enhanced`, `training-suggestions`, `trends`, `user-context`, `user-profile`, `user-profile-core`, `weekend-games`, `wellness-checkin`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -3134,7 +3134,7 @@ Touched by: _(no endpoint references this table)_
 - `team_id` uuid
 
 ### `training_weeks`
-Touched by: `daily-protocol`, `training-programs`
+Touched by: `daily-protocol`, `training`, `training-programs`
 
 - `id` uuid · not null
 - `phase_id` uuid · not null
@@ -3148,7 +3148,7 @@ Touched by: `daily-protocol`, `training-programs`
 - `updated_at` timestamp with time zone
 
 ### `trending_topics`
-Touched by: `community`
+Touched by: `community`, `social`
 
 - `id` uuid · not null
 - `name` text · not null
@@ -3172,7 +3172,7 @@ Touched by: `ai-chat`
 - `updated_at` timestamp with time zone
 
 ### `user_ai_preferences`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -3187,7 +3187,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `user_notification_preferences`
-Touched by: _(no endpoint references this table)_
+Touched by: `daily-protocol`, `player-settings`, `team-join`, `training-programs`
 
 - `id` integer · not null
 - `user_id` character varying · not null
@@ -3253,7 +3253,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone
 
 ### `user_supplements`
-Touched by: `staff-nutritionist`, `supplements`
+Touched by: `staff`, `staff-nutritionist`, `supplements`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -3266,7 +3266,7 @@ Touched by: `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics-core`, `billing-lapse-check`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team-invite`, `team-join`, `user-context`, `user-profile-core`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics`, `analytics-core`, `auth`, `billing-lapse-check`, `calc-readiness`, `coach`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `roster`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team`, `team-invite`, `team-join`, `training`, `training-programs`, `user-context`, `user-profile`, `user-profile-core`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
@@ -3313,7 +3313,7 @@ Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analy
 - `emergency_contact_phone` character varying
 
 ### `warmup_protocols`
-Touched by: `training-programs`
+Touched by: `training`, `training-programs`
 
 - `id` uuid · not null
 - `program_id` uuid
@@ -3360,7 +3360,7 @@ Touched by: _(no endpoint references this table)_
 - `is_active` boolean · not null
 
 ### `youth_athlete_settings`
-Touched by: _(no endpoint references this table)_
+Touched by: `ai-chat`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
