@@ -190,12 +190,87 @@ export const featureRoutes: Routes = [
         title: "Nutrition Dashboard · FlagFit",
       },
       {
+        path: "physiotherapist-dashboard",
+        loadComponent: () =>
+          import("../../staff/physiotherapist-dashboard.component").then(
+            (m) => m.PhysiotherapistDashboardComponent,
+          ),
+        title: "Physiotherapist Dashboard · FlagFit",
+      },
+      // TIER 1: self-reported staff onboarding profiles (one per role — see
+      // netlify/functions/staff-profile.js for why each role has its own
+      // backend function too).
+      {
+        path: "profile/head-coach",
+        loadComponent: () =>
+          import("../../onboarding/head-coach-onboarding.component").then(
+            (m) => m.HeadCoachOnboardingComponent,
+          ),
+        title: "Head Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/coach",
+        loadComponent: () =>
+          import("../../onboarding/coach-onboarding.component").then(
+            (m) => m.CoachOnboardingComponent,
+          ),
+        title: "Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/physiotherapist",
+        loadComponent: () =>
+          import(
+            "../../onboarding/physiotherapist-onboarding.component"
+          ).then((m) => m.PhysiotherapistOnboardingComponent),
+        title: "Physiotherapist Profile · FlagFit",
+      },
+      {
+        path: "profile/nutritionist",
+        loadComponent: () =>
+          import("../../onboarding/nutritionist-onboarding.component").then(
+            (m) => m.NutritionistOnboardingComponent,
+          ),
+        title: "Nutritionist Profile · FlagFit",
+      },
+      {
+        path: "profile/psychologist",
+        loadComponent: () =>
+          import("../../onboarding/psychologist-onboarding.component").then(
+            (m) => m.PsychologistOnboardingComponent,
+          ),
+        title: "Psychologist Profile · FlagFit",
+      },
+      {
+        path: "profile/strength-coach",
+        loadComponent: () =>
+          import(
+            "../../onboarding/strength-coach-onboarding.component"
+          ).then((m) => m.StrengthCoachOnboardingComponent),
+        title: "Strength Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/manager",
+        loadComponent: () =>
+          import("../../onboarding/manager-onboarding.component").then(
+            (m) => m.ManagerOnboardingComponent,
+          ),
+        title: "Manager Profile · FlagFit",
+      },
+      {
         path: "admin",
         loadComponent: () =>
           import("../../return-to-play/administrator-dashboard.component").then(
             (m) => m.AdministratorDashboardComponent,
           ),
         title: "Administration · FlagFit",
+      },
+      {
+        path: "admin/credentials",
+        loadComponent: () =>
+          import("../../staff/credential-review.component").then(
+            (m) => m.CredentialReviewComponent,
+          ),
+        title: "Credential Review · FlagFit",
       },
       // Phase 3: Alert Engine routes
       {

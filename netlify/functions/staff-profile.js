@@ -11,6 +11,10 @@ import { createLogger } from "./utils/structured-logger.js";
 
 const logger = createLogger({ service: "netlify.staff-profile" });
 
+const DOCUMENT_BUCKET = "credential-documents";
+const ALLOWED_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024; // 10MB, matches the onboarding form's stated limit
+
 // Netlify Function: Staff Profile API
 // Self-reported onboarding profiles for the 7 non-athlete team roles (TIER 1).
 // GET returns the caller's own row verbatim (snake_case, as stored).
@@ -217,11 +221,60 @@ function mapBodyToRow(route, body, userId) {
 }
 
 /**
+ * Upload a self-reported credential document (base64, from the onboarding
+ * form's file picker) to the private credential-documents bucket. Returns
+ * the storage path (not a public URL — the bucket is private; admins get a
+ * signed URL on demand when reviewing) or null if no file was provided.
+ */
+async function uploadCredentialDocument(userId, body) {
+  const { documentFile, documentFileName, documentFileType } = body;
+  if (!documentFile || !documentFileName || !documentFileType) {
+    return null;
+  }
+
+  if (!ALLOWED_DOCUMENT_TYPES.includes(documentFileType)) {
+    logger.warn("credential_document_rejected_type", {
+      user_id: userId,
+      file_type: documentFileType,
+    });
+    return null;
+  }
+
+  const base64Data = String(documentFile).replace(/^data:[^;]+;base64,/, "");
+  const buffer = Buffer.from(base64Data, "base64");
+  if (buffer.length === 0 || buffer.length > MAX_DOCUMENT_BYTES) {
+    logger.warn("credential_document_rejected_size", {
+      user_id: userId,
+      size: buffer.length,
+    });
+    return null;
+  }
+
+  const sanitizedName = String(documentFileName).replace(
+    /[^a-zA-Z0-9.-]/g,
+    "_",
+  );
+  const path = `${userId}/${Date.now()}_${sanitizedName}`;
+
+  const { error } = await supabaseAdmin.storage
+    .from(DOCUMENT_BUCKET)
+    .upload(path, buffer, { contentType: documentFileType, upsert: false });
+
+  if (error) {
+    logger.warn("credential_document_upload_failed", { user_id: userId }, error);
+    return null;
+  }
+
+  return path;
+}
+
+/**
  * File a self-reported credential for admin review. Idempotent per
  * (user_id, credential_type, credential_name): skips if a row already
- * exists so re-saving the onboarding form doesn't spam duplicate entries.
+ * exists so re-saving the onboarding form doesn't spam duplicate entries
+ * (and doesn't re-upload a document for a credential already on file).
  */
-async function fileCredentialIfNew(userId, credential) {
+async function fileCredentialIfNew(userId, credential, body) {
   if (!credential) {
     return;
   }
@@ -243,11 +296,14 @@ async function fileCredentialIfNew(userId, credential) {
     return;
   }
 
+  const documentPath = await uploadCredentialDocument(userId, body);
+
   const { error: insertError } = await supabaseAdmin
     .from("credential_verifications")
     .insert({
       user_id: userId,
       status: "pending",
+      document_url: documentPath,
       ...credential,
     });
 
@@ -284,7 +340,7 @@ async function handlePost(route, userId, body) {
   }
 
   const credential = route.credential ? route.credential(body) : null;
-  await fileCredentialIfNew(userId, credential);
+  await fileCredentialIfNew(userId, credential, body);
 
   return createSuccessResponse(data);
 }

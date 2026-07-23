@@ -251,13 +251,6 @@
   status = 200
   force = true
 
-# API Routes for Athlete Profile (TIER 1 onboarding — self-service bio fields on users)
-[[redirects]]
-  from = "/api/athlete/profile"
-  to = "/.netlify/functions/athlete-profile"
-  status = 200
-  force = true
-
 # API Routes for External Load metrics (Catapult/GPS-style; monitoring feature)
 [[redirects]]
   from = "/api/external-load/*"
@@ -758,6 +751,15 @@
 [[redirects]]
   from = "/api/staff/physiotherapist/dashboard"
   to = "/.netlify/functions/physiotherapist-dashboard"
+  status = 200
+  force = true
+
+# API Routes for Admin Credential Review (TIER 1 — approve/reject self-reported
+# credentials). All actions take the credential id via query string/body, not a
+# path segment, so one exact-match redirect is sufficient.
+[[redirects]]
+  from = "/api/admin/credentials"
+  to = "/.netlify/functions/admin-credentials"
   status = 200
   force = true
 

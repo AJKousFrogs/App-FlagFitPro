@@ -32,6 +32,7 @@ const STORAGE_BUCKETS = new Set([
   "community-media",
   "avatars",
   "team-logos",
+  "credential-documents",
 ]);
 
 // ── LIVE schema snapshot (ground truth) ─────────────────────────────────────

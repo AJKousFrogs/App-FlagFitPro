@@ -40,10 +40,40 @@
         ><lucide-icon name="sliders-horizontal" /> Engine inspector</span
       ><lucide-icon name="chevron-right" class="faint" />
     </a>
+    @if (lane() === "physio") {
+      <a
+        class="lrow"
+        routerLink="/staff/physiotherapist-dashboard"
+        style="color: inherit"
+      >
+        <span class="inline"
+          ><lucide-icon name="clipboard-list" /> Injury &amp; RTP roster</span
+        ><lucide-icon name="chevron-right" class="faint" />
+      </a>
+    }
   </div>
+
+  @if (isAdmin()) {
+    <div class="section-h"><h2>Admin</h2></div>
+    <div class="card">
+      <a class="lrow" routerLink="/staff/admin/credentials" style="color: inherit">
+        <span class="inline"
+          ><lucide-icon name="badge-check" /> Credential review</span
+        ><lucide-icon name="chevron-right" class="faint" />
+      </a>
+    </div>
+  }
 
   <div class="section-h"><h2>You</h2></div>
   <div class="card">
+    @if (profileRoute(); as route) {
+      <a class="lrow" [routerLink]="route" style="color: inherit">
+        <span class="inline"
+          ><lucide-icon name="badge-check" /> Complete your professional
+          profile</span
+        ><lucide-icon name="chevron-right" class="faint" />
+      </a>
+    }
     <button
       class="lrow"
       type="button"

@@ -464,27 +464,65 @@ export class PhysiotherapistOnboardingComponent implements OnInit {
     });
   }
 
+  private static readonly ALLOWED_DOCUMENT_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+  ];
+
+  selectedFile = signal<File | null>(null);
+
   onFileSelected(event: any) {
     const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        this.error.set("File is too large (max 10MB)");
-        return;
-      }
-      this.logger.info(`Selected credential file: ${file.name}`);
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.error.set("File is too large (max 10MB)");
+      return;
     }
+    if (!PhysiotherapistOnboardingComponent.ALLOWED_DOCUMENT_TYPES.includes(file.type)) {
+      this.error.set("File must be a PDF, JPG, or PNG");
+      return;
+    }
+
+    this.error.set(null);
+    this.selectedFile.set(file);
+    this.logger.info(`Selected credential file: ${file.name}`);
   }
 
-  onSubmit() {
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async onSubmit() {
     if (!this.form.valid) return;
 
     this.submitting.set(true);
     this.error.set(null);
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...this.form.value,
       specializations: this.selectedSpecializations(),
     };
+
+    const file = this.selectedFile();
+    if (file) {
+      try {
+        payload["documentFile"] = await this.readFileAsBase64(file);
+        payload["documentFileName"] = file.name;
+        payload["documentFileType"] = file.type;
+      } catch (err) {
+        this.logger.error("Failed to read credential document", err);
+        this.error.set("Could not read the selected file. Please try again.");
+        this.submitting.set(false);
+        return;
+      }
+    }
 
     this.api.post("/api/staff/physiotherapist-profile", payload).subscribe({
       next: () => {

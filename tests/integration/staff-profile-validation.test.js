@@ -5,6 +5,8 @@ const state = vi.hoisted(() => ({
   profileRow: null,
   existingCredential: null,
   calls: [],
+  storageUploads: [],
+  storageUploadError: null,
 }));
 
 function createQuery(table) {
@@ -65,6 +67,18 @@ vi.mock("../../netlify/functions/utils/authorization-guard.js", () => ({
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
     from: (table) => createQuery(table),
+    storage: {
+      from: (bucket) => ({
+        upload: (path, buffer, opts) => {
+          state.storageUploads.push({ bucket, path, buffer, opts });
+          return Promise.resolve(
+            state.storageUploadError
+              ? { data: null, error: state.storageUploadError }
+              : { data: { path }, error: null },
+          );
+        },
+      }),
+    },
   },
 }));
 
@@ -75,6 +89,8 @@ describe("staff-profile role gating and CRUD mapping", () => {
     state.profileRow = null;
     state.existingCredential = null;
     state.calls = [];
+    state.storageUploads = [];
+    state.storageUploadError = null;
   });
 
   it("returns 403 when the caller's role doesn't match the profile route", async () => {
@@ -174,6 +190,91 @@ describe("staff-profile role gating and CRUD mapping", () => {
       (c) => c.table === "credential_verifications" && c.method === "insert",
     );
     expect(credentialInsert).toBeUndefined();
+  });
+
+  it("uploads a credential document and stores its path as document_url", async () => {
+    const { createProfileHandler } =
+      await import("../../netlify/functions/staff-profile.js");
+    const handler = createProfileHandler("physiotherapist-profile");
+    const base64Pdf = Buffer.from("fake pdf bytes").toString("base64");
+
+    await handler(
+      {
+        httpMethod: "POST",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+        body: JSON.stringify({
+          licenseNumber: "PT-123456",
+          documentFile: `data:application/pdf;base64,${base64Pdf}`,
+          documentFileName: "license.pdf",
+          documentFileType: "application/pdf",
+        }),
+      },
+      {},
+    );
+
+    expect(state.storageUploads).toHaveLength(1);
+    expect(state.storageUploads[0].bucket).toBe("credential-documents");
+    expect(state.storageUploads[0].path).toMatch(/^user-1\/\d+_license\.pdf$/);
+
+    const credentialInsert = state.calls.find(
+      (c) => c.table === "credential_verifications" && c.method === "insert",
+    );
+    expect(credentialInsert.payload.document_url).toBe(
+      state.storageUploads[0].path,
+    );
+  });
+
+  it("rejects a disallowed document mime type without uploading or failing the save", async () => {
+    const { createProfileHandler } =
+      await import("../../netlify/functions/staff-profile.js");
+    const handler = createProfileHandler("physiotherapist-profile");
+
+    const response = await handler(
+      {
+        httpMethod: "POST",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+        body: JSON.stringify({
+          licenseNumber: "PT-123456",
+          documentFile: "data:application/zip;base64,AAAA",
+          documentFileName: "malware.zip",
+          documentFileType: "application/zip",
+        }),
+      },
+      {},
+    );
+
+    expect(response.statusCode).toBe(200);
+    expect(state.storageUploads).toHaveLength(0);
+    const credentialInsert = state.calls.find(
+      (c) => c.table === "credential_verifications" && c.method === "insert",
+    );
+    expect(credentialInsert.payload.document_url).toBeNull();
+  });
+
+  it("does not re-upload a document for a credential that's already on file", async () => {
+    state.existingCredential = { id: "cred-1" };
+    const { createProfileHandler } =
+      await import("../../netlify/functions/staff-profile.js");
+    const handler = createProfileHandler("physiotherapist-profile");
+
+    await handler(
+      {
+        httpMethod: "POST",
+        headers: { authorization: "Bearer test-token" },
+        queryStringParameters: {},
+        body: JSON.stringify({
+          licenseNumber: "PT-123456",
+          documentFile: "data:application/pdf;base64,AAAA",
+          documentFileName: "license.pdf",
+          documentFileType: "application/pdf",
+        }),
+      },
+      {},
+    );
+
+    expect(state.storageUploads).toHaveLength(0);
   });
 
   it("head-coach-profile forces coach_specialty and writes to coach_profiles", async () => {

@@ -44,6 +44,36 @@ export function staffLaneFor(
   return null;
 }
 
+/**
+ * TIER 1: the self-reported professional-profile route for a team role, one
+ * per role (not per lane — staffLaneFor lumps head_coach/coach/manager/S&C
+ * into one "coach" lane, but each has its own credential form and backend
+ * table; see netlify/functions/staff-profile.js's ROLE_PROFILE_ROUTES).
+ */
+export function staffProfileRouteFor(role: TeamRole | null): string | null {
+  switch (role) {
+    case "physiotherapist":
+      return "/staff/profile/physiotherapist";
+    case "nutritionist":
+      return "/staff/profile/nutritionist";
+    case "psychologist":
+      return "/staff/profile/psychologist";
+    case "strength_conditioning_coach":
+      return "/staff/profile/strength-coach";
+    case "head_coach":
+      return "/staff/profile/head-coach";
+    case "manager":
+      return "/staff/profile/manager";
+    case "coach":
+    case "offense_coordinator":
+    case "defense_coordinator":
+    case "assistant_coach":
+      return "/staff/profile/coach";
+    default:
+      return null;
+  }
+}
+
 /** Gate the /staff routes: staff roles only; players bounce to the athlete app. */
 export const staffGuard: CanActivateFn = async () => {
   const membership = inject(TeamMembershipService);
