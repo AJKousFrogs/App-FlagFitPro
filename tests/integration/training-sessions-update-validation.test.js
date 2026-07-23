@@ -21,6 +21,12 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => {
       gte() {
         return this;
       },
+      in() {
+        return this;
+      },
+      maybeSingle() {
+        return Promise.resolve({ data: null, error: null });
+      },
       then(resolve, reject) {
         return Promise.resolve({ data: [], error: null }).then(resolve, reject);
       },

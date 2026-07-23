@@ -3,6 +3,7 @@ import { baseHandler } from "./utils/base-handler.js";
 import { successObjectResponse } from "./utils/response-helper.js";
 import { createErrorResponse } from "./utils/error-handler.js";
 import { computeSessionLoad } from "./utils/acwr.js";
+import { getEntitlement, historyCutoffISO } from "./utils/entitlements.js";
 import { createLogger } from "./utils/structured-logger.js";
 
 // Netlify Function: Daily Training Load
@@ -50,11 +51,26 @@ const handler = async (event, context) => {
     requireAuth: true,
     handler: async (_event, _context, { userId }) => {
       try {
+        const entitlement = await getEntitlement(userId, {
+          client: supabaseAdmin,
+        });
+        const entitlementCutoff = historyCutoffISO(entitlement);
+
         const end = new Date();
         const start = new Date(end);
         start.setDate(start.getDate() - (WINDOW_DAYS - 1));
-        const startKey = start.toISOString().slice(0, 10);
+        let startKey = start.toISOString().slice(0, 10);
         const endKey = end.toISOString().slice(0, 10);
+
+        // Free-tier history floor applies here too — a free user's daily-load
+        // heatmap only ever shows the last historyDays, not the full 35-day
+        // window, even though 35 > 30 (see utils/entitlements.js).
+        if (entitlementCutoff) {
+          const cutoffKey = entitlementCutoff.slice(0, 10);
+          if (cutoffKey > startKey) {
+            startKey = cutoffKey;
+          }
+        }
 
         const { data: sessions, error } = await supabaseAdmin
           .from("training_sessions")

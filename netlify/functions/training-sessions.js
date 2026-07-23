@@ -19,6 +19,7 @@ import { prepareStateTransition } from "./utils/session-state-helper.js";
 import { baseHandler } from "./utils/base-handler.js";
 import { hasAnyRole, TEAM_OPERATIONS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam, isActiveTeamMember } from "./utils/team-scope.js";
+import { getEntitlement, historyCutoffISO } from "./utils/entitlements.js";
 import { createLogger } from "./utils/structured-logger.js";
 const logger = createLogger({ service: "netlify.training-sessions" });
 
@@ -568,7 +569,12 @@ function extractSessionIdFromPath(path = "") {
  * - status (optional, filter by status)
  * - limit (optional, default: 50)
  */
-async function getTrainingSessions(userId, queryParams, supabase) {
+async function getTrainingSessions(
+  userId,
+  queryParams,
+  supabase,
+  { historyCutoffISO: entitlementCutoffISO } = {},
+) {
   const { limit = 50 } = queryParams || {};
   const parsedLimit =
     parseBoundedInt(limit, "limit", { min: 1, max: 200 }) || 50;
@@ -604,8 +610,21 @@ async function getTrainingSessions(userId, queryParams, supabase) {
       query = query.eq("status", status);
     }
 
-    if (startDate) {
-      query = query.gte("session_date", startDate);
+    // Free-tier history limit (entitlements.js) is a floor, not a default —
+    // it applies even if the caller explicitly requests an earlier
+    // startDate, otherwise a free user could just ask for 2020-01-01 and
+    // bypass it entirely. Whichever of the two bounds is MORE restrictive
+    // (later) wins.
+    const entitlementCutoffDate = entitlementCutoffISO
+      ? entitlementCutoffISO.split("T")[0]
+      : null;
+    const effectiveStartDate =
+      entitlementCutoffDate && (!startDate || startDate < entitlementCutoffDate)
+        ? entitlementCutoffDate
+        : startDate;
+
+    if (effectiveStartDate) {
+      query = query.gte("session_date", effectiveStartDate);
     }
 
     if (endDate) {
@@ -767,10 +786,12 @@ const handler = async (event, context) => {
       // Handle GET request - retrieve sessions
       if (event.httpMethod === "GET") {
         try {
+          const entitlement = await getEntitlement(userId, { client: supabase });
           const sessions = await getTrainingSessions(
             userId,
             event.queryStringParameters,
             supabase,
+            { historyCutoffISO: historyCutoffISO(entitlement) },
           );
           return createSuccessResponse(sessions);
         } catch (error) {
