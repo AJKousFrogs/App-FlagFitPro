@@ -153,7 +153,7 @@
 | `alert-acknowledge` | PATCH | /api/alerts/:alertId/acknowledge<br>/api/alerts/:alertId/acknowledge/* | generated_alerts, team_members, authorization_violations |
 | `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules, acwr_snapshots, generated_alerts, alert_delivery_logs, team_members |
 | `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts, team_members, athlete_injuries, acwr_snapshots, authorization_violations |
-| `billing-lapse-check` | POST | _(no /api redirect)_ | subscriptions, billing_customers, users, team_members |
+| `billing-lapse-check` | POST | /api/billing/lapse-check | subscriptions, billing_customers, users, team_members |
 | `payments` | OPTIONS | /api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️, team_members, authorization_violations |
 | `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, rtp_athlete_protocol_assignments, individual_profiles ⚠️, training_sessions, team_members, authorization_violations, account_pause_requests |
@@ -163,9 +163,9 @@
 | `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users, team_members, authorization_violations |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `session-load-import-csv` | POST | /api/session-load-import/csv | team_member_roles, monitoring_providers, device_pairings, session_load |
-| `stripe-checkout` | POST | _(no /api redirect)_ | billing_customers, team_members |
-| `stripe-portal` | POST | _(no /api redirect)_ | team_members, billing_customers |
-| `stripe-webhook` | POST | _(no /api redirect)_ | billing_customers, subscriptions, team_members, notifications, invoices |
+| `stripe-checkout` | POST | /api/billing/checkout | billing_customers, team_members |
+| `stripe-portal` | POST | /api/billing/portal | team_members, billing_customers |
+| `stripe-webhook` | POST | /api/billing/webhook | billing_customers, subscriptions, team_members, notifications, invoices |
 | `team-practice-plan` | POST | /api/team-practice-plan | team_members, exercises |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |
 | `wearable-health-ingest-apple-xml` | POST | /api/wearable-health-ingest/apple-health-xml | wearable_consent, wearable_health |

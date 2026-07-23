@@ -1759,6 +1759,31 @@
 
 
 
+# Billing API (Stripe subscriptions)
+[[redirects]]
+  from = "/api/billing/checkout"
+  to = "/.netlify/functions/stripe-checkout"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/webhook"
+  to = "/.netlify/functions/stripe-webhook"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/portal"
+  to = "/.netlify/functions/stripe-portal"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/lapse-check"
+  to = "/.netlify/functions/billing-lapse-check"
+  status = 200
+  force = true
+
 # Sponsors API
 [[redirects]]
   from = "/api/sponsors/*"
