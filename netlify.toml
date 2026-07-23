@@ -333,6 +333,25 @@
   status = 200
   force = true
 
+# API Routes for wearable OAuth (Garmin/Oura/WHOOP connect/callback/webhook)
+[[redirects]]
+  from = "/api/wearables/connect/*"
+  to = "/.netlify/functions/wearables-connect"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wearables/callback/*"
+  to = "/.netlify/functions/wearables-callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wearables/webhook/*"
+  to = "/.netlify/functions/wearables-webhook"
+  status = 200
+  force = true
+
 # API Routes for Athlete Events (athlete-entered personal/domestic/national schedule)
 [[redirects]]
   from = "/api/athlete-events/*"
