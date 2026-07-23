@@ -54,6 +54,13 @@ const handler = async (event, context) => {
         const entitlement = await getEntitlement(userId, {
           client: supabaseAdmin,
         });
+        if (entitlement.locked) {
+          return createErrorResponse(
+            "Your trial has ended — subscribe to keep using FlagFit Pro",
+            402,
+            "subscription_required",
+          );
+        }
         const entitlementCutoff = historyCutoffISO(entitlement);
 
         const end = new Date();
@@ -62,9 +69,10 @@ const handler = async (event, context) => {
         let startKey = start.toISOString().slice(0, 10);
         const endKey = end.toISOString().slice(0, 10);
 
-        // Free-tier history floor applies here too — a free user's daily-load
-        // heatmap only ever shows the last historyDays, not the full 35-day
-        // window, even though 35 > 30 (see utils/entitlements.js).
+        // The entitlement's history floor applies here too, for whichever
+        // tier caps historyDays below the 35-day window (see
+        // utils/entitlements.js) — an unlocked trial/paid user is unaffected
+        // (historyDays: null = unlimited).
         if (entitlementCutoff) {
           const cutoffKey = entitlementCutoff.slice(0, 10);
           if (cutoffKey > startKey) {

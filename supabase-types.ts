@@ -2999,33 +2999,45 @@ export type Database = {
       }
       device_pairings: {
         Row: {
+          access_token_encrypted: string | null
           device_identifier: string | null
           external_athlete_id: string | null
           id: string
           is_active: boolean
           paired_at: string
           provider_id: string
+          refresh_token_encrypted: string | null
+          scopes: string[] | null
           team_id: string | null
+          token_expires_at: string | null
           user_id: string
         }
         Insert: {
+          access_token_encrypted?: string | null
           device_identifier?: string | null
           external_athlete_id?: string | null
           id?: string
           is_active?: boolean
           paired_at?: string
           provider_id: string
+          refresh_token_encrypted?: string | null
+          scopes?: string[] | null
           team_id?: string | null
+          token_expires_at?: string | null
           user_id: string
         }
         Update: {
+          access_token_encrypted?: string | null
           device_identifier?: string | null
           external_athlete_id?: string | null
           id?: string
           is_active?: boolean
           paired_at?: string
           provider_id?: string
+          refresh_token_encrypted?: string | null
+          scopes?: string[] | null
           team_id?: string | null
+          token_expires_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -10526,6 +10538,7 @@ export type Database = {
           sport: string | null
           team: string | null
           throwing_arm: string | null
+          trial_started_at: string
           updated_at: string | null
           verification_token: string | null
           verification_token_expires_at: string | null
@@ -10571,6 +10584,7 @@ export type Database = {
           sport?: string | null
           team?: string | null
           throwing_arm?: string | null
+          trial_started_at?: string
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null
@@ -10616,6 +10630,7 @@ export type Database = {
           sport?: string | null
           team?: string | null
           throwing_arm?: string | null
+          trial_started_at?: string
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null

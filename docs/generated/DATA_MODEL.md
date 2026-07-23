@@ -441,7 +441,7 @@ Touched by: `admin`, `admin-credentials`, `ai-telemetry`, `alert-acknowledge`, `
 - `request_body` jsonb
 
 ### `billing_customers`
-Touched by: `billing-lapse-check`, `daily-load`, `data`, `data-export`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `training-sessions`
+Touched by: `billing-lapse-check`, `billing-status`, `daily-load`, `data`, `data-export`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `training-sessions`
 
 - `id` uuid · not null
 - `stripe_customer_id` text · not null
@@ -955,6 +955,10 @@ Touched by: `data`, `session-load-import`, `session-load-import-csv`, `wearables
 - `device_identifier` text
 - `is_active` boolean · not null
 - `paired_at` timestamp with time zone · not null
+- `access_token_encrypted` text
+- `refresh_token_encrypted` text
+- `token_expires_at` timestamp with time zone
+- `scopes` ARRAY
 
 ### `emergency_medical_records`
 Touched by: _(no endpoint references this table)_
@@ -2771,7 +2775,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `subscriptions`
-Touched by: `billing-lapse-check`, `daily-load`, `data`, `data-export`, `stripe-webhook`, `training-sessions`
+Touched by: `billing-lapse-check`, `billing-status`, `daily-load`, `data`, `data-export`, `stripe-webhook`, `training-sessions`
 
 - `id` uuid · not null
 - `billing_customer_id` uuid · not null
@@ -2892,7 +2896,7 @@ Touched by: `session-load-import`, `session-load-import-csv`
 - `created_at` timestamp with time zone · not null
 
 ### `team_members`
-Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `alert-get-athlete`, `alert-preferences`, `alert-resolve`, `analytics`, `analytics-core`, `attendance`, `auth`, `auth-login`, `auth-me`, `billing-lapse-check`, `calc-readiness`, `calibration-logs`, `chat`, `coach`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-load`, `daily-protocol`, `daily-training`, `dashboard`, `data`, `decisions`, `event-games`, `game-events`, `games`, `games-core`, `import-open-data`, `injury-analytics`, `knowledge-governance`, `load-management`, `monitoring-report`, `notifications`, `performance-data`, `periodization-prescription`, `physio-protocol`, `physiotherapist-dashboard`, `player-programs`, `player-settings`, `player-stats`, `privacy-settings`, `programs`, `readiness`, `readiness-history`, `recovery-effectiveness`, `recovery-recommendations`, `response-feedback`, `roster`, `roster-core`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-phase-progress`, `rtp-protocol-assignment`, `rtp-psychological-assessment`, `rtp-record-assessment`, `rtp-team-protocols`, `season-archive`, `smart-training-recommendations`, `social`, `staff`, `staff-nutritionist`, `staff-physiotherapist`, `staff-profile`, `staff-psychology`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `team`, `team-acwr`, `team-calendar`, `team-invite`, `team-join`, `team-monitoring`, `team-practice-plan`, `team-templates`, `training`, `training-metrics`, `training-plan`, `training-programs`, `training-sessions`, `user-context`, `user-profile`, `user-profile-core`, `validate-invitation`, `weather`, `wellness`, `wellness-checkin`, `wellness-logs`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `ai-telemetry`, `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `alert-get-athlete`, `alert-preferences`, `alert-resolve`, `analytics`, `analytics-core`, `attendance`, `auth`, `auth-login`, `auth-me`, `billing-lapse-check`, `billing-status`, `calc-readiness`, `calibration-logs`, `chat`, `coach`, `coach-activity`, `coach-analytics`, `coach-core`, `coach-inbox`, `community`, `compute-acwr`, `daily-load`, `daily-protocol`, `daily-training`, `dashboard`, `data`, `decisions`, `event-games`, `game-events`, `games`, `games-core`, `import-open-data`, `injury-analytics`, `knowledge-governance`, `load-management`, `monitoring-report`, `notifications`, `performance-data`, `periodization-prescription`, `physio-protocol`, `physiotherapist-dashboard`, `player-programs`, `player-settings`, `player-stats`, `privacy-settings`, `programs`, `readiness`, `readiness-history`, `recovery-effectiveness`, `recovery-recommendations`, `response-feedback`, `roster`, `roster-core`, `rtp-advance-phase`, `rtp-all-protocols`, `rtp-create-assignment`, `rtp-phase-progress`, `rtp-protocol-assignment`, `rtp-psychological-assessment`, `rtp-record-assessment`, `rtp-team-protocols`, `season-archive`, `smart-training-recommendations`, `social`, `staff`, `staff-nutritionist`, `staff-physiotherapist`, `staff-profile`, `staff-psychology`, `stripe-checkout`, `stripe-portal`, `stripe-webhook`, `team`, `team-acwr`, `team-calendar`, `team-invite`, `team-join`, `team-monitoring`, `team-practice-plan`, `team-templates`, `training`, `training-metrics`, `training-plan`, `training-programs`, `training-sessions`, `user-context`, `user-profile`, `user-profile-core`, `validate-invitation`, `weather`, `wellness`, `wellness-checkin`, `wellness-logs`
 
 - `id` uuid · not null
 - `team_id` uuid · not null
@@ -3266,7 +3270,7 @@ Touched by: `staff`, `staff-nutritionist`, `supplements`
 - `updated_at` timestamp with time zone · not null
 
 ### `users`
-Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics`, `analytics-core`, `auth`, `billing-lapse-check`, `calc-readiness`, `coach`, `coach-core`, `coach-inbox`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `roster`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `team`, `team-invite`, `team-join`, `training`, `training-programs`, `user-context`, `user-profile`, `user-profile-core`, `wellness`, `wellness-checkin`
+Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analytics`, `analytics-core`, `auth`, `billing-lapse-check`, `billing-status`, `calc-readiness`, `coach`, `coach-core`, `coach-inbox`, `daily-load`, `daily-protocol`, `daily-training`, `monitoring-report`, `nutrition`, `parental-consent`, `periodization-prescription`, `physiotherapist-dashboard`, `player-settings`, `privacy-settings`, `roster`, `rtp-all-protocols`, `rtp-team-protocols`, `sleep-data`, `stripe-checkout`, `team`, `team-invite`, `team-join`, `training`, `training-programs`, `training-sessions`, `user-context`, `user-profile`, `user-profile-core`, `wellness`, `wellness-checkin`
 
 - `id` uuid · not null
 - `email` character varying · not null
@@ -3311,6 +3315,7 @@ Touched by: `accept-invitation`, `admin`, `admin-credentials`, `ai-chat`, `analy
 - `medical_history` text
 - `emergency_contact_name` character varying
 - `emergency_contact_phone` character varying
+- `trial_started_at` timestamp with time zone · not null
 
 ### `warmup_protocols`
 Touched by: `training`, `training-programs`

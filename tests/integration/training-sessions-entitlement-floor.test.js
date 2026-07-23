@@ -123,7 +123,7 @@ describe("training-sessions GET — trial/paywall history floor", () => {
     expect(state.capturedGteValue).toBe("2020-01-01");
   });
 
-  it("clamps startDate hard once the trial has expired with no subscription", async () => {
+  it("hard-blocks the request (402) once the trial has expired with no subscription", async () => {
     state.users = [
       {
         id: "athlete-1",
@@ -133,14 +133,17 @@ describe("training-sessions GET — trial/paywall history floor", () => {
       },
     ];
 
-    await handler(makeGetEvent({ startDate: "2020-01-01" }), {});
+    const response = await handler(
+      makeGetEvent({ startDate: "2020-01-01" }),
+      {},
+    );
 
-    expect(state.capturedGteValue).not.toBe("2020-01-01");
-    const daysAgo =
-      (Date.now() - new Date(state.capturedGteValue).getTime()) /
-      (24 * 60 * 60 * 1000);
-    // LOCKED_LIMITS.historyDays is 0 -- the cutoff should be essentially "now".
-    expect(daysAgo).toBeLessThan(1);
+    // The query still runs (param validation must surface its own 422
+    // regardless of billing state — see training-sessions.js), but the
+    // response is rejected rather than handing back the result.
+    expect(response.statusCode).toBe(402);
+    const body = JSON.parse(response.body);
+    expect(body.error.code).toBe("subscription_required");
   });
 
   it("does not clamp history at all for an active Athlete Pro subscriber", async () => {

@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-23**
 
-**158 functions: 136 exercised, 22 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**159 functions: 136 exercised, 23 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -43,7 +43,7 @@
 | `community` | GET, POST, DELETE | _(router submodule)_ | posts, team_members, blocked_users, post_likes, post_bookmarks, post_comments, comment_likes, trending_topics, community_polls, community_poll_options, community_poll_votes, decrement_likes_count(), increment_likes_count(), increment_comments_count(), decrement_comment_likes_count(), increment_comment_likes_count(), increment_poll_votes() |
 | `compute-acwr` | POST | _(router submodule)_ | training_sessions, team_members, authorization_violations, account_pause_requests |
 | `cycle` | GET, PUT, POST, DELETE | /api/cycle/*<br>/api/cycle | cycle_tracking_profiles, cycle_logs, privacy_audit_log |
-| `daily-load` | GET | /api/daily-load | training_sessions, account_pause_requests, billing_customers, subscriptions, team_members |
+| `daily-load` | GET | /api/daily-load | training_sessions, account_pause_requests, billing_customers, subscriptions, team_members, users |
 | `daily-protocol` | GET, POST | /api/daily-protocol<br>/api/daily-protocol/* | athlete_training_config, users, age_recovery_modifiers, player_programs, training_phases, training_weeks, readiness_scores, daily_protocols, protocol_exercises, exercises, team_members, coach_inbox_items, team_season_phases, daily_wellness_checkin, training_sessions, notifications, user_notification_preferences, sponsors, training_session_templates, team_activities, training_programs, recovery_sessions, readiness_gates, recovery_blocks, return_to_play_protocols, rtp_prescription_approvals, athlete_injuries, session_exercises, protocol_generation_requests, player_training_stats, get_athlete_readiness(), generate_protocol_transactional(), update_player_streak(), award_achievement() |
 | `daily-training` | GET, POST | _(router submodule)_ | users, training_sessions, games, merlin_violation_log, team_members, authorization_violations, account_pause_requests, has_active_safety_override(), detect_pain_trigger(), detect_acwr_trigger() |
 | `dashboard` | GET | /api/dashboard/*<br>/api/dashboard | training_sessions, team_members |
@@ -130,7 +130,7 @@
 | `training-metrics` | GET | _(router submodule)_ | training_sessions, team_members, authorization_violations, account_pause_requests |
 | `training-plan` | GET | _(router submodule)_ | training_sessions, player_programs, team_members, games, account_pause_requests |
 | `training-programs` | GET | _(router submodule)_ | training_programs, training_weeks, training_session_templates, movement_patterns, warmup_protocols, training_phases, session_exercises, training_sessions, team_members, notifications, users, user_notification_preferences, sponsors |
-| `training-sessions` | GET, POST, PUT, DELETE | _(router submodule)_ | training_sessions, team_members, authorization_violations, merlin_violation_log, billing_customers, subscriptions |
+| `training-sessions` | GET, POST, PUT, DELETE | _(router submodule)_ | training_sessions, team_members, authorization_violations, merlin_violation_log, billing_customers, subscriptions, users |
 | `training-stats-enhanced` | GET | _(router submodule)_ | training_sessions, account_pause_requests |
 | `training-suggestions` | GET, POST | _(router submodule)_ | training_sessions |
 | `trends` | GET | /api/trends/*<br>/api/trends | training_sessions, games |
@@ -154,6 +154,7 @@
 | `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules, acwr_snapshots, generated_alerts, alert_delivery_logs, team_members |
 | `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts, team_members, athlete_injuries, acwr_snapshots, authorization_violations |
 | `billing-lapse-check` | POST | /api/billing/lapse-check | subscriptions, billing_customers, users, team_members |
+| `billing-status` | GET | /api/billing/status | billing_customers, subscriptions, team_members, users |
 | `payments` | OPTIONS | /api/sponsors/*<br>/api/sponsors<br>/api/sponsor-logo/* | — |
 | `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️, team_members, authorization_violations |
 | `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, rtp_athlete_protocol_assignments, individual_profiles ⚠️, training_sessions, team_members, authorization_violations, account_pause_requests |
@@ -163,7 +164,7 @@
 | `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users, team_members, authorization_violations |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
 | `session-load-import-csv` | POST | /api/session-load-import/csv | team_member_roles, monitoring_providers, device_pairings, session_load |
-| `stripe-checkout` | POST | /api/billing/checkout | billing_customers, team_members |
+| `stripe-checkout` | POST | /api/billing/checkout | billing_customers, users, team_members |
 | `stripe-portal` | POST | /api/billing/portal | team_members, billing_customers |
 | `stripe-webhook` | POST | /api/billing/webhook | billing_customers, subscriptions, team_members, notifications, invoices |
 | `team-practice-plan` | POST | /api/team-practice-plan | team_members, exercises |

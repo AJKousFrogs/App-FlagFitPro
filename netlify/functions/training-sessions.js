@@ -610,11 +610,11 @@ async function getTrainingSessions(
       query = query.eq("status", status);
     }
 
-    // Free-tier history limit (entitlements.js) is a floor, not a default —
-    // it applies even if the caller explicitly requests an earlier
-    // startDate, otherwise a free user could just ask for 2020-01-01 and
-    // bypass it entirely. Whichever of the two bounds is MORE restrictive
-    // (later) wins.
+    // The entitlement's history limit (entitlements.js) is a floor, not a
+    // default — it applies even if the caller explicitly requests an
+    // earlier startDate, otherwise a locked/limited-tier caller could just
+    // ask for 2020-01-01 and bypass it entirely. Whichever of the two
+    // bounds is MORE restrictive (later) wins.
     const entitlementCutoffDate = entitlementCutoffISO
       ? entitlementCutoffISO.split("T")[0]
       : null;
@@ -787,12 +787,23 @@ const handler = async (event, context) => {
       if (event.httpMethod === "GET") {
         try {
           const entitlement = await getEntitlement(userId, { client: supabase });
+          // Query-param validation (inside getTrainingSessions) surfaces its
+          // own 422 before the paywall gate -- a malformed request is a
+          // client mistake independent of billing state, not something the
+          // lock check should preempt.
           const sessions = await getTrainingSessions(
             userId,
             event.queryStringParameters,
             supabase,
             { historyCutoffISO: historyCutoffISO(entitlement) },
           );
+          if (entitlement.locked) {
+            return createErrorResponse(
+              "Your trial has ended — subscribe to keep using FlagFit Pro",
+              402,
+              "subscription_required",
+            );
+          }
           return createSuccessResponse(sessions);
         } catch (error) {
           if (error.message?.includes("must be an integer between")) {

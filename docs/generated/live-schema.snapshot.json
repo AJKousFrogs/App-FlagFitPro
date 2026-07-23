@@ -1,6 +1,6 @@
 {
   "generatedOn": "2026-07-23",
-  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-23: applied the billing_and_subscriptions migration (billing_customers, subscriptions, invoices, seat_sync_queue tables; team_members.is_billable_seat column) for Stripe subscription billing, then dropped the broken player_payments table (0 live rows, write path referenced columns that never existed on the table -- see docs/payments_billing_and_data_retention_proposal.md \u00a76). Table-level set now 204 base tables (was 201), 7 views (unchanged).",
+  "source": "live Supabase introspection (information_schema) via Supabase MCP. Refreshed 2026-07-23: added users.trial_started_at (7-day onboarding trial anchor -- see utils/entitlements.js and the trial_started_at migration). Table-level set unchanged (204 tables, 7 views) -- this was a column addition to an existing table, not a new table.",
   "tables": {
     "account_deletion_requests": [
       {
@@ -3650,6 +3650,26 @@
         "col": "paired_at",
         "nullable": false,
         "type": "timestamp with time zone"
+      },
+      {
+        "col": "access_token_encrypted",
+        "nullable": true,
+        "type": "text"
+      },
+      {
+        "col": "refresh_token_encrypted",
+        "nullable": true,
+        "type": "text"
+      },
+      {
+        "col": "token_expires_at",
+        "nullable": true,
+        "type": "timestamp with time zone"
+      },
+      {
+        "col": "scopes",
+        "nullable": true,
+        "type": "ARRAY"
       }
     ],
     "emergency_medical_records": [
@@ -12946,6 +12966,11 @@
         "col": "emergency_contact_phone",
         "nullable": true,
         "type": "character varying"
+      },
+      {
+        "col": "trial_started_at",
+        "nullable": false,
+        "type": "timestamp with time zone"
       }
     ],
     "warmup_protocols": [
