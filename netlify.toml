@@ -763,6 +763,32 @@
   status = 200
   force = true
 
+# API Routes for Injury Analytics Dashboard (staff) — function + Angular caller
+# already existed, but this redirect was missing, so the screen has never been
+# reachable in production despite being documented as LIVE. Found in an audit.
+[[redirects]]
+  from = "/api/injury-analytics"
+  to = "/.netlify/functions/injury-analytics"
+  status = 200
+  force = true
+
+# API Routes for Team ACWR Heatmap Dashboard (staff) — same missing-redirect
+# bug as injury-analytics above, found in the same audit.
+[[redirects]]
+  from = "/api/team-acwr"
+  to = "/.netlify/functions/team-acwr"
+  status = 200
+  force = true
+
+# API Routes for Recovery Modality Effectiveness Dashboard (staff) — same
+# missing-redirect bug; the component's POST call also targeted the wrong
+# path (/api/recovery-log), fixed separately in recovery-effectiveness.component.ts.
+[[redirects]]
+  from = "/api/recovery-effectiveness"
+  to = "/.netlify/functions/recovery-effectiveness"
+  status = 200
+  force = true
+
 # API Routes for Decision Ledger
 [[redirects]]
   from = "/api/decisions/*"
