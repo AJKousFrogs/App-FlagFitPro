@@ -150,6 +150,52 @@ export function computeAcwrAt(dailyLoads, targetDate, opts = {}) {
 }
 
 /**
+ * Resolve the effective ACWR evaluation date, accounting for a paused
+ * account with ACWR freezing enabled (`account_pause_requests.acwr_frozen`).
+ *
+ * Without this, a paused athlete's acute/chronic windows keep advancing
+ * against `computeAcwrAt`'s zero-fill-missing-days behavior — every day of
+ * the pause reads as a zero-load day, silently decaying their ACWR toward
+ * "detraining"/"building_base" even though nothing about their actual
+ * training history changed; they just paused the app. Freezing means the
+ * window stops advancing at the pause moment and keeps returning the last
+ * true reading until they resume — never a fabricated decay through a gap
+ * that isn't real detraining.
+ *
+ * Only ever moves evaluation EARLIER than requested (to the pause moment),
+ * never later — this can only make the result more conservative/accurate,
+ * never mask a real, current safety signal.
+ *
+ * The one I/O-touching export in this module; everything else above is pure
+ * math. Both callers (`calc-readiness.js`, `compute-acwr.js`) resolve this
+ * once and pass the result to `computeAcwrAt`/the series builder, so the
+ * freeze policy itself has exactly one implementation (CLAUDE.md §4).
+ */
+export async function resolveAcwrEvaluationDate(supabase, userId, requestedDate) {
+  const requested = new Date(requestedDate);
+  if (!userId || Number.isNaN(requested.getTime())) {
+    return requested;
+  }
+
+  const { data: pause } = await supabase
+    .from("account_pause_requests")
+    .select("paused_at")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .eq("acwr_frozen", true)
+    .order("paused_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!pause?.paused_at) {
+    return requested;
+  }
+
+  const pausedAt = new Date(pause.paused_at);
+  return pausedAt < requested ? pausedAt : requested;
+}
+
+/**
  * Canonical session load (session-RPE): the stored `workload` if real, else
  * `rpe × duration_minutes`, else 0 (load is never fabricated from defaults).
  * Was hand-written in compute-acwr / training-plan / daily-training /

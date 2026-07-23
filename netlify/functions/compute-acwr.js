@@ -14,13 +14,17 @@ import { hasAnyRole, LOAD_MANAGEMENT_ACCESS_ROLES } from "./utils/role-sets.js";
 import { sharesStaffedTeam } from "./utils/team-scope.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 import { createLogger, makeRequestLogger } from "./utils/structured-logger.js";
-import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  resolveAcwrEvaluationDate,
+} from "./utils/acwr.js";
 
 function formatDate(date) {
   return date.toISOString().slice(0, 10);
 }
 
-function calculateSeriesFromSessions(sessions, rangeDays = 42) {
+function calculateSeriesFromSessions(sessions, rangeDays = 42, asOfDate = null) {
   const dailyLoads = new Map();
   for (const session of sessions || []) {
     const date = session?.session_date;
@@ -31,10 +35,17 @@ function calculateSeriesFromSessions(sessions, rangeDays = 42) {
     dailyLoads.set(date, current + computeSessionLoad(session));
   }
 
-  const endDate =
+  const naturalEndDate =
     sessions && sessions.length > 0
       ? new Date(sessions[0].session_date)
       : new Date();
+  // A frozen (paused, ACWR-freezing-on) athlete's series must not advance
+  // past the pause moment, same reasoning as calc-readiness.js — never
+  // LATER than the natural end date, only ever capped earlier.
+  const endDate =
+    asOfDate && new Date(asOfDate) < naturalEndDate
+      ? new Date(asOfDate)
+      : naturalEndDate;
   const startDate = new Date(endDate);
   startDate.setDate(startDate.getDate() - (rangeDays - 1));
 
@@ -187,11 +198,21 @@ const handler = async (event, context) => {
         );
       }
 
+      const acwrEvalDate = await resolveAcwrEvaluationDate(
+        supabaseAdmin,
+        athleteId,
+        new Date(),
+      );
+
       // ACWR (current + series) comes from the canonical EWMA util so the summary
       // and the series are always consistent. The legacy `compute_acwr` Postgres
       // stored procedure used a coupled rolling average and is superseded; it
       // should be dropped in a migration (tracked as a data-layer decision).
-      const series = calculateSeriesFromSessions(sessionsResult.data || []);
+      const series = calculateSeriesFromSessions(
+        sessionsResult.data || [],
+        42,
+        acwrEvalDate,
+      );
       return createSuccessResponse(
         {
           data: series,

@@ -17,7 +17,11 @@ import {
   buildRequestLogContext,
   createLogger,
 } from "./utils/structured-logger.js";
-import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  resolveAcwrEvaluationDate,
+} from "./utils/acwr.js";
 import { resolveCohort } from "./utils/cohort.js";
 import {
   computePersonalCutoffs,
@@ -519,10 +523,20 @@ const handler = async (event, context) => {
         loadsByDay.set(key, Math.max(loadsByDay.get(key) || 0, gameLoad));
       }
 
+      // Freeze the ACWR window at the pause moment if the athlete has an
+      // active pause with ACWR freezing on — otherwise a paused athlete's
+      // window keeps zero-filling through the gap and decays toward
+      // "detraining"/"building_base" for no real training reason.
+      const acwrEvalDate = await resolveAcwrEvaluationDate(
+        supabaseAdmin,
+        athleteId,
+        targetDate,
+      );
+
       // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
       // EWMA is more sensitive than rolling averages (Williams 2017); the uncoupled
       // window avoids the spurious correlation of coupled ACWR (Lolli 2017).
-      const acwrResult = computeAcwrAt(loadsByDay, targetDate);
+      const acwrResult = computeAcwrAt(loadsByDay, acwrEvalDate);
       const acuteLoad = acwrResult.acuteLoad;
       const chronicLoad = acwrResult.chronicLoad;
       // Do NOT coerce a null ACWR to 0 (S3): a new athlete / insufficient chronic
