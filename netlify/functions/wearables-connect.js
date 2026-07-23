@@ -1,5 +1,8 @@
 import { supabaseAdmin } from "./supabase-client.js";
-import { createErrorResponse } from "./utils/error-handler.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "./utils/error-handler.js";
 import { baseHandler } from "./utils/base-handler.js";
 import {
   getWearableOAuthProvider,
@@ -12,7 +15,12 @@ import { createOAuthState } from "./utils/wearable-oauth-state.js";
  * Wearable OAuth Connect
  * GET /api/wearables/connect/:provider
  *
- * Redirects the athlete's browser to the vendor's OAuth consent screen.
+ * Returns the vendor's OAuth consent-screen URL for the frontend to navigate
+ * to. This can't be a raw 302 -- the caller is authenticated via a Bearer
+ * token attached by an HTTP interceptor, which a plain top-level browser
+ * navigation (<a href>) can't carry. Mirrors the stripe-checkout.js /
+ * stripe-portal.js pattern: authenticated XHR returns a URL, the frontend
+ * does `window.location.href = url` itself.
  * See docs/gps_wearable_csv_import_proposal.md §2.
  */
 
@@ -81,11 +89,7 @@ const handler = async (event, context) =>
         authorizeUrl.searchParams.set("scope", runtime.scopes.join(" "));
       }
 
-      return {
-        statusCode: 302,
-        headers: { Location: authorizeUrl.toString() },
-        body: "",
-      };
+      return createSuccessResponse({ authorizeUrl: authorizeUrl.toString() });
     },
   });
 

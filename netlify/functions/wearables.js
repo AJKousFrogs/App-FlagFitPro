@@ -31,6 +31,14 @@ const handler = async (event, context) =>
         (pairings ?? []).map((p) => [p.provider_id, p]),
       );
 
+      const { data: consentRows } = await supabaseAdmin
+        .from("wearable_consent")
+        .select("source, state")
+        .eq("user_id", userId);
+      const consentBySource = new Map(
+        (consentRows ?? []).map((c) => [c.source, c.state]),
+      );
+
       // Most recent reading per source — a bounded, ordered scan rather than
       // a GROUP BY (PostgREST has no aggregate select), capped to a window
       // large enough to find each connected provider's latest row without
@@ -56,6 +64,7 @@ const handler = async (event, context) =>
           connected: Boolean(pairing?.is_active),
           pairedAt: pairing?.paired_at ?? null,
           lastSync: lastSyncBySource.get(provider.key) ?? null,
+          consentState: consentBySource.get(provider.key) ?? null,
         };
       });
 

@@ -4,6 +4,7 @@ const state = vi.hoisted(() => ({
   providers: [],
   pairings: [],
   readings: [],
+  consent: [],
 }));
 
 function createFakeSupabase() {
@@ -44,6 +45,10 @@ function createFakeSupabase() {
             rows = state.readings
               .filter((r) => r.user_id === call.filters.user_id)
               .sort((a, b) => (a.recorded_at < b.recorded_at ? 1 : -1));
+          } else if (table === "wearable_consent") {
+            rows = state.consent.filter(
+              (c) => c.user_id === call.filters.user_id,
+            );
           }
           return Promise.resolve({ data: rows, error: null }).then(
             resolve,
@@ -85,6 +90,7 @@ describe("wearables status", () => {
     ];
     state.pairings = [];
     state.readings = [];
+    state.consent = [];
     const mod = await import("../../netlify/functions/wearables.js");
     handler = mod.handler;
   });
@@ -132,5 +138,26 @@ describe("wearables status", () => {
     const body = JSON.parse(response.body);
     const oura = body.data.devices.find((d) => d.id === "oura");
     expect(oura.connected).toBe(false);
+  });
+
+  it("reports null consentState when the athlete has never granted or revoked", async () => {
+    const response = await handler(makeEvent(), {});
+    const body = JSON.parse(response.body);
+    const garmin = body.data.devices.find((d) => d.id === "garmin");
+    expect(garmin.consentState).toBeNull();
+  });
+
+  it("surfaces the athlete's recorded consent state per source", async () => {
+    state.consent = [
+      { user_id: "athlete-1", source: "garmin", state: "granted" },
+      { user_id: "athlete-1", source: "oura", state: "revoked" },
+    ];
+
+    const response = await handler(makeEvent(), {});
+    const body = JSON.parse(response.body);
+    const garmin = body.data.devices.find((d) => d.id === "garmin");
+    const oura = body.data.devices.find((d) => d.id === "oura");
+    expect(garmin.consentState).toBe("granted");
+    expect(oura.consentState).toBe("revoked");
   });
 });

@@ -93,8 +93,9 @@ describe("wearables-connect", () => {
     process.env.GARMIN_CLIENT_SECRET = "secret-xyz";
 
     const response = await handler(makeEvent("garmin"), {});
-    expect(response.statusCode).toBe(302);
-    const location = new URL(response.headers.Location);
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.body);
+    const location = new URL(body.data.authorizeUrl);
     expect(location.origin).toBe("https://connect.garmin.example");
     expect(location.searchParams.get("client_id")).toBe("client-abc");
     expect(location.searchParams.get("redirect_uri")).toBe(
