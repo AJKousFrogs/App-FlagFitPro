@@ -273,8 +273,17 @@ export const featureRoutes: Routes = [
         title: "Credential Review · FlagFit",
       },
       // Phase 3: Alert Engine routes
+      // NOTE: this whole Alert Engine (alert-inbox/alert-dashboard/
+      // alert-preferences + their backend functions) has no live database
+      // tables yet — the migrations that create alert_rules/generated_alerts/
+      // alert_delivery_logs/alert_preferences/acwr_snapshots exist locally
+      // but were never applied. Every screen below will error until that's
+      // resolved (see docs/SOURCE_OF_TRUTH.md §6). Routing them correctly
+      // here is still worth doing on its own — this was previously an
+      // unreachable dead route (collided with "alerts" above, which always
+      // won by array order) regardless of the backend gap.
       {
-        path: "alerts",
+        path: "alert-inbox",
         loadComponent: () =>
           import("../../return-to-play/alert-inbox.component").then(
             (m) => m.AlertInboxComponent,
