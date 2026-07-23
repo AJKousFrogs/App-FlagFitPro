@@ -1115,6 +1115,43 @@
   .fab:active {
     transform: scale(0.94);
   }
+
+  /* ---- frozen banner: shown app-wide once a trial elapses / an account is
+     suspended with no active subscription. Reads instead of write ("all
+     functionalities frozen"), and re-flashes on every refused write — see
+     ShellComponent + FreezeSignalService. ---- */
+  .frozen-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-4);
+    background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+    border-bottom: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+    color: var(--text-strong);
+    font-size: var(--fs-sm);
+  }
+  .frozen-banner svg.lucide {
+    flex-shrink: 0;
+    color: var(--danger);
+  }
+  .frozen-banner span {
+    flex: 1;
+  }
+  .frozen-banner .btn {
+    flex-shrink: 0;
+  }
+  .frozen-banner.flash {
+    animation: ff-frozen-flash 0.7s ease-out;
+  }
+  @keyframes ff-frozen-flash {
+    0%,
+    100% {
+      background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+    }
+    30% {
+      background: color-mix(in srgb, var(--danger) 40%, var(--surface));
+    }
+  }
   .fab:focus-visible {
     outline: none;
     box-shadow: var(--focus), var(--e-3);
@@ -1145,6 +1182,12 @@
       display: grid;
       grid-template-columns: 248px minmax(0, 1fr);
       align-items: start;
+    }
+
+    /* Spans both grid columns as its own row, above sidebar + content --
+       otherwise grid auto-placement would drop it into the sidebar's column. */
+    .frozen-banner {
+      grid-column: 1 / -1;
     }
 
     .sidebar {

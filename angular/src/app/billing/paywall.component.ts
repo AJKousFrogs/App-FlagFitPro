@@ -4,11 +4,12 @@ import { LucideAngularModule } from "lucide-angular";
 import { BillingService } from "../core/services/billing.service";
 
 /**
- * Full-screen paywall — shown once billingGuard finds the caller locked
- * (trial elapsed with no subscription, or a payment suspended past the
- * 14-day grace period). Deliberately OUTSIDE the app Shell (no bottom nav):
- * a locked account shouldn't present the rest of the app as if it were
- * reachable.
+ * Dedicated "come subscribe" screen — reached from the Shell's persistent
+ * frozen banner or Settings, NOT force-navigated to (product decision,
+ * 2026-07-23: a locked account can still get in and browse; only writes are
+ * refused, each with its own flash prompt — see FreezeSignalService). Kept
+ * outside the app Shell (no bottom nav) purely so it reads as a distinct
+ * "make a decision" moment, not because the rest of the app is unreachable.
  */
 @Component({
   selector: "app-paywall",

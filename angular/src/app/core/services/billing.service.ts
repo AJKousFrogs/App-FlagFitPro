@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { FreezeSignalService } from "./freeze-signal.service";
 import { extractApiPayload } from "../utils/api-response-mapper";
 
 export type BillingTier =
@@ -44,6 +45,7 @@ export interface BillingStatus {
 export class BillingService {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
+  private readonly freeze = inject(FreezeSignalService);
 
   readonly status = signal<BillingStatus | null>(null);
   readonly loading = signal(false);
@@ -56,6 +58,11 @@ export class BillingService {
       );
       const data = extractApiPayload<BillingStatus>(res);
       this.status.set(data);
+      // The real, authoritative lock state -- reconciles FreezeSignalService
+      // after a subscribe/portal round-trip (unlocks) as well as on first
+      // load (locks, if the trial already elapsed before ever hitting a
+      // gated write).
+      this.freeze.setLocked(data?.locked ?? false);
       return data;
     } catch (err) {
       this.logger.error("billing_status_load_failed", err);

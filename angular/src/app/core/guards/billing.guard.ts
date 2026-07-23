@@ -1,36 +1,22 @@
 import { inject } from "@angular/core";
-import { CanActivateChildFn, Router } from "@angular/router";
+import { CanActivateChildFn } from "@angular/router";
 import { BillingService } from "../services/billing.service";
 
-// Paths a locked (trial-expired/suspended) caller must still be able to
-// reach — otherwise they could never get to the screens that let them
-// subscribe in the first place.
-const EXEMPT_PREFIXES = ["/settings", "/billing", "/paywall"];
-
 /**
- * canActivateChild on the app Shell — unlike canActivate on the Shell route
- * itself (which only fires once, on first entry), canActivateChild re-runs
- * for every child navigation within the already-loaded Shell, which is what
- * a paywall actually needs: blocking in-app navigation, not just the first
- * page load.
- *
- * Billing status is fetched once per session and reused (BillingService.
- * status is a plain signal, not re-checked on every navigation) — cheap,
- * and a full page reload (e.g. returning from Stripe Checkout) naturally
- * re-fetches fresh state anyway.
+ * canActivateChild on the app Shell -- NEVER blocks navigation (product
+ * decision, 2026-07-23: a locked account "can still get in", not get
+ * redirected out). Its only job is to make sure BillingService.status() is
+ * populated once per session so the Shell's persistent frozen banner and
+ * FreezeSignalService have real data as soon as the app loads, rather than
+ * only after the first refused write. Freezing itself happens per-action:
+ * every write the backend refuses (402 subscription_required) is caught by
+ * ApiService and reflected through FreezeSignalService -- see api.service.ts.
  */
-export const billingGuard: CanActivateChildFn = async (_childRoute, state) => {
-  if (EXEMPT_PREFIXES.some((p) => state.url.startsWith(p))) {
-    return true;
-  }
-
+export const billingGuard: CanActivateChildFn = async () => {
   const billing = inject(BillingService);
-  const router = inject(Router);
 
-  const status = billing.status() ?? (await billing.loadStatus());
-
-  if (status?.locked) {
-    return router.createUrlTree(["/paywall"]);
+  if (!billing.status()) {
+    await billing.loadStatus();
   }
 
   return true;
