@@ -1,7 +1,7 @@
 # Endpoint Reference (GENERATED — do not hand-edit)
 
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
-> **Last verified: 2026-07-22**
+> **Last verified: 2026-07-23**
 
 **149 functions: 132 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
@@ -14,6 +14,7 @@
 | `account-pause` | POST | _(router submodule)_ | pause_account(), resume_account() |
 | `achievements` | GET, POST | /api/achievements<br>/api/achievements/* | achievement_definitions, player_achievements, player_streaks, player_training_stats, update_player_streak(), award_achievement() |
 | `admin` | GET, POST | /api/admin/*<br>/api/admin | users, database-backups _(bucket)_ |
+| `admin-credentials` | GET | /api/admin/credentials | credential_verifications, users, team_members, credential-documents _(bucket)_ |
 | `ai-chat` | GET, POST | /api/ai/chat<br>/api/ai/chat/*<br>/api/ai-chat<br>/api/ai-chat/*<br>/api/ai/analyze-context<br>/api/ai/process-command<br>/api/ai/feedback<br>/api/ai/feedback/*<br>/api/ai-review/*<br>/api/ai-review | ai_chat_sessions, training_sessions, team_members, v_injuries_unified, daily_protocols, daily_wellness_checkin, games, nutrition_plans, recovery_blocks, users, physical_measurements, user_age_groups, knowledge_base_entries, privacy_settings |
 | `ai-telemetry` | GET | /api/ai/telemetry | team_members, ai_chat_sessions, ai_messages, ai_recommendations, knowledge_base_entries |
 | `alert-dashboard` | GET | /api/alert-dashboard<br>/api/alert-dashboard/* | team_members, generated_alerts ⚠️, alert_rules ⚠️ |
@@ -23,7 +24,6 @@
 | `api-docs` | GET | /api/api-docs | — |
 | `athlete-events` | GET, POST, PUT, PATCH, DELETE | /api/athlete-events/*<br>/api/athlete-events | athlete_events |
 | `athlete-injuries` | GET, POST | /api/athlete-injuries/*<br>/api/athlete-injuries | athlete_injuries |
-| `athlete-profile` | GET | /api/athlete/profile | users |
 | `attendance` | GET, POST, PUT, DELETE | _(router submodule)_ | team_members, team_events, attendance_records |
 | `auth` | OPTIONS | /api/auth/me<br>/api/auth-me<br>/api/auth/reset-password<br>/api/auth/login<br>/api/accept-invitation<br>/api/validate-invitation<br>/api/account/pause<br>/api/account/resume<br>/api/account/*<br>/api/parental-consent/*<br>/api/parental-consent | — |
 | `auth-login` | POST | _(router submodule)_ | — |
