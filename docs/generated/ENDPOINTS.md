@@ -3,7 +3,7 @@
 > Regenerate: `npm run docs:regen` (parses `netlify.toml` + `netlify/functions/*.js` + scans `angular/src`).
 > **Last verified: 2026-07-23**
 
-**149 functions: 132 exercised, 17 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
+**150 functions: 138 exercised, 12 orphaned.** A table name with ⚠️ is referenced in code but not a live table (possible drift/typo); _(bucket)_ = Storage bucket, not a DB table.
 
 ## Exercised
 
@@ -17,8 +17,9 @@
 | `admin-credentials` | GET | /api/admin/credentials | credential_verifications, users, team_members, credential-documents _(bucket)_ |
 | `ai-chat` | GET, POST | /api/ai/chat<br>/api/ai/chat/*<br>/api/ai-chat<br>/api/ai-chat/*<br>/api/ai/analyze-context<br>/api/ai/process-command<br>/api/ai/feedback<br>/api/ai/feedback/*<br>/api/ai-review/*<br>/api/ai-review | ai_chat_sessions, training_sessions, team_members, v_injuries_unified, daily_protocols, daily_wellness_checkin, games, nutrition_plans, recovery_blocks, users, physical_measurements, user_age_groups, knowledge_base_entries, privacy_settings |
 | `ai-telemetry` | GET | /api/ai/telemetry | team_members, ai_chat_sessions, ai_messages, ai_recommendations, knowledge_base_entries |
-| `alert-dashboard` | GET | /api/alert-dashboard<br>/api/alert-dashboard/* | team_members, generated_alerts ⚠️, alert_rules ⚠️ |
-| `alert-get-athlete` | GET | /api/alerts/athlete/* | generated_alerts ⚠️, alert_rules ⚠️, alert_delivery_logs ⚠️, team_members |
+| `alert-dashboard` | GET | /api/alert-dashboard<br>/api/alert-dashboard/* | team_members, generated_alerts, alert_rules |
+| `alert-get-athlete` | GET | /api/alerts/athlete/* | generated_alerts, alert_rules, alert_delivery_logs, team_members |
+| `alert-preferences` | GET, PATCH | /api/alert-preferences | alert_preferences |
 | `analytics` | OPTIONS | /api/analytics/*<br>/api/performance/metrics<br>/api/performance/metrics/*<br>/api/performance/heatmap<br>/api/performance/heatmap/*<br>/api/performance-data/measurements<br>/api/performance-data/performance-tests<br>/api/performance-data/wellness<br>/api/performance-data/supplements<br>/api/performance-data/injuries<br>/api/performance-data/injuries/*<br>/api/performance-data/trends<br>/api/performance-data/export<br>/api/performance/trends<br>/api/performance/trends/* | — |
 | `analytics-core` | GET | _(router submodule)_ | team_members, users, performance_tests |
 | `api-docs` | GET | /api/api-docs | — |
@@ -64,6 +65,7 @@
 | `hydration` | GET, POST | _(router submodule)_ | athlete_hydration_logs |
 | `import-open-data` | POST | _(router submodule)_ | team_members, training_sessions, log_training_session() |
 | `import-process` | POST | _(router submodule)_ | log_training_session() |
+| `injury-analytics` | GET | /api/injury-analytics | athlete_injuries |
 | `knowledge` | OPTIONS | /api/knowledge-search<br>/api/knowledge-search/*<br>/api/knowledge<br>/api/knowledge/search<br>/api/knowledge-governance<br>/api/knowledge-governance/* | — |
 | `knowledge-governance` | GET, POST, PATCH | _(router submodule)_ | knowledge_base_entries, knowledge_review_audit |
 | `knowledge-search` | GET, POST | _(router submodule)_ | knowledge_base_entries |
@@ -89,11 +91,14 @@
 | `readiness` | OPTIONS | /api/compute-acwr<br>/api/calc-readiness<br>/api/readiness-history<br>/api/load-management/*<br>/api/load-management | — |
 | `readiness-history` | GET | _(router submodule)_ | readiness_scores |
 | `recovery-core` | GET, POST, PUT | /api/recovery/* | recovery_sessions, recovery_protocols |
+| `recovery-effectiveness` | GET, POST | /api/recovery-effectiveness | recovery_logs |
 | `response-feedback` | GET, POST | /api/response-feedback/*<br>/api/response-feedback | ai_messages, ai_response_feedback, team_members, increment_preference_counter(), award_achievement() |
 | `return-to-play` | GET, POST | /api/return-to-play/*<br>/api/return-to-play | return_to_play_protocols |
 | `roster` | OPTIONS | /api/roster/*<br>/api/scouting/*<br>/api/scouting<br>/api/player-stats<br>/api/player-stats/*<br>/api/depth-chart/*<br>/api/depth-chart<br>/api/player-settings<br>/api/player-settings/* | — |
 | `roster-core` | GET | _(router submodule)_ | team_members |
 | `rtp-all-protocols` | GET | /api/rtp/protocols | rtp_athlete_protocol_assignments, users |
+| `rtp-phase-progress` | GET, POST | /api/rtp/phase-progress | rtp_phase_progress |
+| `rtp-psychological-assessment` | GET, POST | /api/rtp/psychological-assessment | rtp_psychological_assessments |
 | `rtp-record-assessment` | POST | /api/rtp/assessments | rtp_athlete_protocol_assignments, rtp_functional_criteria, rtp_criteria_assessments |
 | `schedule` | GET | /api/schedule/*<br>/api/schedule | v_athlete_schedule, athlete_events |
 | `season-archive` | POST | _(router submodule)_ | archive_season_data() |
@@ -116,6 +121,7 @@
 | `staff-strength-coach-profile` | — | /api/staff/strength-coach-profile | — |
 | `supplements` | GET, POST | /api/supplements<br>/api/supplements/* | supplement_logs, user_supplements, notifications |
 | `team` | OPTIONS | /api/team-calendar/*<br>/api/team-calendar<br>/api/team-invite<br>/api/attendance/*<br>/api/attendance<br>/api/season/*<br>/api/season<br>/api/season-archive/*<br>/api/season-archive<br>/api/team-templates/*<br>/api/team-templates | — |
+| `team-acwr` | GET | /api/team-acwr | team_members, daily_load_score ⚠️ |
 | `team-calendar` | GET, POST | _(router submodule)_ | attendance_records, games, practice_plans, team_events |
 | `team-invite` | POST | _(router submodule)_ | teams, team_members, team_invitations, users |
 | `team-join` | GET, POST | /api/team-join<br>/api/team-join/* | teams, team_members, users |
@@ -146,20 +152,15 @@
 
 | Function | Methods | /api path(s) | Tables / RPCs touched |
 |---|---|---|---|
-| `alert-acknowledge` | PATCH | /api/alerts/:alertId/acknowledge<br>/api/alerts/:alertId/acknowledge/* | generated_alerts ⚠️, team_members |
-| `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules ⚠️, acwr_snapshots ⚠️, generated_alerts ⚠️, alert_delivery_logs ⚠️, rtp_phase_progress ⚠️, athlete_injuries, psychological_readiness_assessments ⚠️, check_underload_condition() |
-| `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts ⚠️, team_members, athlete_injuries, acwr_snapshots ⚠️ |
-| `injury-analytics` | GET | _(no /api redirect)_ | athlete_injuries |
+| `alert-acknowledge` | PATCH | /api/alerts/:alertId/acknowledge<br>/api/alerts/:alertId/acknowledge/* | generated_alerts, team_members |
+| `alert-evaluate-rules` | POST | /api/alert-evaluate-rules<br>/api/alert-evaluate-rules/* | alert_rules, acwr_snapshots, generated_alerts, alert_delivery_logs |
+| `alert-resolve` | PATCH | /api/alerts/:alertId/resolve<br>/api/alerts/:alertId/resolve/* | generated_alerts, team_members, athlete_injuries, acwr_snapshots |
 | `physio-protocol` | GET, POST | _(no /api redirect)_ | return_to_play_phases ⚠️, rtp_exercise_compliance ⚠️, rtp_phase_milestones ⚠️ |
-| `recovery-effectiveness` | GET, POST | _(no /api redirect)_ | recovery_logs ⚠️ |
 | `recovery-recommendations` | GET | _(no /api redirect)_ | performance_metrics ⚠️, rtp_athlete_protocol_assignments, individual_profiles ⚠️, training_sessions |
 | `rtp-advance-phase` | PATCH | /api/rtp/athletes/:athleteId/:injuryId/phase | rtp_athlete_protocol_assignments, rtp_functional_criteria, rtp_criteria_assessments, rtp_protocol_definitions, rtp_protocol_phases |
 | `rtp-create-assignment` | POST | /api/rtp/assignments | athlete_injuries, rtp_protocol_definitions, rtp_athlete_protocol_assignments |
-| `rtp-phase-progress` | GET, POST | _(no /api redirect)_ | rtp_phase_progress ⚠️ |
 | `rtp-protocol-assignment` | GET | /api/rtp/protocols/:athleteId/:injuryId | rtp_athlete_protocol_assignments, rtp_protocol_phases, rtp_functional_criteria, rtp_criteria_assessments |
-| `rtp-psychological-assessment` | GET, POST | _(no /api redirect)_ | psychological_assessments |
 | `rtp-team-protocols` | GET | /api/rtp/team/:teamId/protocols | rtp_athlete_protocol_assignments, users |
 | `session-load-import` | POST | /api/session-load-import | team_member_roles, monitoring_providers, device_pairings, session_load |
-| `team-acwr` | GET | _(no /api redirect)_ | team_members, daily_load_score ⚠️ |
 | `team-practice-plan` | POST | /api/team-practice-plan | — |
 | `wearable-health-ingest` | POST, PUT | /api/wearable-health-ingest | wearable_consent, wearable_health |

@@ -148,6 +148,72 @@ export type Database = {
         }
         Relationships: []
       }
+      acwr_snapshots: {
+        Row: {
+          acute_load_au: number
+          acwr_ratio: number | null
+          acwr_status: string | null
+          biomarker_multiplier: number | null
+          chronic_load_au: number
+          chronotype_multiplier: number | null
+          confound_multiplier: number | null
+          created_at: string | null
+          cumulative_multiplier: number | null
+          genetic_multiplier: number | null
+          id: string
+          menstrual_cycle_multiplier: number | null
+          personalized_safe_zone_max: number | null
+          personalized_safe_zone_min: number | null
+          position_multiplier: number | null
+          safety_alert: boolean | null
+          snapshot_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          acute_load_au?: number
+          acwr_ratio?: number | null
+          acwr_status?: string | null
+          biomarker_multiplier?: number | null
+          chronic_load_au?: number
+          chronotype_multiplier?: number | null
+          confound_multiplier?: number | null
+          created_at?: string | null
+          cumulative_multiplier?: number | null
+          genetic_multiplier?: number | null
+          id?: string
+          menstrual_cycle_multiplier?: number | null
+          personalized_safe_zone_max?: number | null
+          personalized_safe_zone_min?: number | null
+          position_multiplier?: number | null
+          safety_alert?: boolean | null
+          snapshot_date: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          acute_load_au?: number
+          acwr_ratio?: number | null
+          acwr_status?: string | null
+          biomarker_multiplier?: number | null
+          chronic_load_au?: number
+          chronotype_multiplier?: number | null
+          confound_multiplier?: number | null
+          created_at?: string | null
+          cumulative_multiplier?: number | null
+          genetic_multiplier?: number | null
+          id?: string
+          menstrual_cycle_multiplier?: number | null
+          personalized_safe_zone_max?: number | null
+          personalized_safe_zone_min?: number | null
+          position_multiplier?: number | null
+          safety_alert?: boolean | null
+          snapshot_date?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       age_recovery_modifiers: {
         Row: {
           acwr_max_adjustment: number
@@ -482,6 +548,229 @@ export type Database = {
             columns: ["affected_session_id"]
             isOneToOne: false
             referencedRelation: "v_training_sessions_consent"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_delivery_logs: {
+        Row: {
+          channel: string
+          created_at: string | null
+          delivered_at: string | null
+          delivery_status: string | null
+          error_message: string | null
+          generated_alert_id: string
+          id: string
+          read_at: string | null
+          recipient_user_id: string
+          sent_at: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          generated_alert_id: string
+          id?: string
+          read_at?: string | null
+          recipient_user_id: string
+          sent_at?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          generated_alert_id?: string
+          id?: string
+          read_at?: string | null
+          recipient_user_id?: string
+          sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_delivery_logs_generated_alert_id_fkey"
+            columns: ["generated_alert_id"]
+            isOneToOne: false
+            referencedRelation: "generated_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_delivery_logs_recipient_user_id_fkey"
+            columns: ["recipient_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_preferences: {
+        Row: {
+          alert_type: string
+          channels: Json | null
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_routes: {
+        Row: {
+          alert_rule_id: string
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          organization_id: string | null
+          recipient_role: string
+          recipient_user_id: string | null
+        }
+        Insert: {
+          alert_rule_id: string
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          organization_id?: string | null
+          recipient_role: string
+          recipient_user_id?: string | null
+        }
+        Update: {
+          alert_rule_id?: string
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          organization_id?: string | null
+          recipient_role?: string
+          recipient_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_routes_alert_rule_id_fkey"
+            columns: ["alert_rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_rules: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          enabled: boolean | null
+          id: string
+          name: string
+          organization_id: string | null
+          trigger_condition: Json
+          updated_at: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: string
+          name: string
+          organization_id?: string | null
+          trigger_condition: Json
+          updated_at?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: string
+          name?: string
+          organization_id?: string | null
+          trigger_condition?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      alert_subscriptions: {
+        Row: {
+          alert_rule_id: string
+          channels: Json | null
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          subscriber_user_id: string
+          target_athlete_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          alert_rule_id: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          subscriber_user_id: string
+          target_athlete_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          alert_rule_id?: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          subscriber_user_id?: string
+          target_athlete_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_subscriptions_alert_rule_id_fkey"
+            columns: ["alert_rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_subscriptions_subscriber_user_id_fkey"
+            columns: ["subscriber_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -3788,6 +4077,118 @@ export type Database = {
           },
         ]
       }
+      generated_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          acknowledged_note: string | null
+          alert_date: string
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          related_athlete_id: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          related_injury_id: string | null
+          resolved_at: string | null
+          rule_id: string
+          status: string | null
+          title: string
+          trigger_data: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_note?: string | null
+          alert_date?: string
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_athlete_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          related_injury_id?: string | null
+          resolved_at?: string | null
+          rule_id: string
+          status?: string | null
+          title: string
+          trigger_data?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_note?: string | null
+          alert_date?: string
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_athlete_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          related_injury_id?: string | null
+          resolved_at?: string | null
+          rule_id?: string
+          status?: string | null
+          title?: string
+          trigger_data?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_athlete_id_fkey"
+            columns: ["related_athlete_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_injury_id_fkey"
+            columns: ["related_injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_injury_id_fkey"
+            columns: ["related_injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_base_entries: {
         Row: {
           answer: string
@@ -6944,6 +7345,33 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_logs: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          domain: string
+          effectiveness_score: number
+          id: string
+          modality_name: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          domain?: string
+          effectiveness_score: number
+          id?: string
+          modality_name: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          domain?: string
+          effectiveness_score?: number
+          id?: string
+          modality_name?: string
+        }
+        Relationships: []
+      }
       recovery_protocols: {
         Row: {
           category: string | null
@@ -7506,6 +7934,90 @@ export type Database = {
           },
         ]
       }
+      rtp_phase_progress: {
+        Row: {
+          acl_rsi_pct: number | null
+          acwr_compliance_pct: number | null
+          acwr_target_max: number | null
+          acwr_target_min: number | null
+          athlete_confidence_1_10: number | null
+          biomechanics_symmetrical: boolean | null
+          coach_confidence_1_10: number | null
+          coach_notes: string | null
+          created_at: string | null
+          current_rtp_phase: number
+          hop_test_battery_pct: number | null
+          id: string
+          injury_id: string
+          pain_level_0_10: number | null
+          ready_for_next_phase: boolean | null
+          strength_lsi_pct: number | null
+          tsk11_normalized: boolean | null
+          updated_at: string | null
+          user_id: string
+          week_ending: string
+        }
+        Insert: {
+          acl_rsi_pct?: number | null
+          acwr_compliance_pct?: number | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          athlete_confidence_1_10?: number | null
+          biomechanics_symmetrical?: boolean | null
+          coach_confidence_1_10?: number | null
+          coach_notes?: string | null
+          created_at?: string | null
+          current_rtp_phase?: number
+          hop_test_battery_pct?: number | null
+          id?: string
+          injury_id: string
+          pain_level_0_10?: number | null
+          ready_for_next_phase?: boolean | null
+          strength_lsi_pct?: number | null
+          tsk11_normalized?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          week_ending: string
+        }
+        Update: {
+          acl_rsi_pct?: number | null
+          acwr_compliance_pct?: number | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          athlete_confidence_1_10?: number | null
+          biomechanics_symmetrical?: boolean | null
+          coach_confidence_1_10?: number | null
+          coach_notes?: string | null
+          created_at?: string | null
+          current_rtp_phase?: number
+          hop_test_battery_pct?: number | null
+          id?: string
+          injury_id?: string
+          pain_level_0_10?: number | null
+          ready_for_next_phase?: boolean | null
+          strength_lsi_pct?: number | null
+          tsk11_normalized?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          week_ending?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_phase_progress_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_phase_progress_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rtp_prescription_approvals: {
         Row: {
           approved_by: string | null
@@ -7674,6 +8186,57 @@ export type Database = {
             columns: ["protocol_id"]
             isOneToOne: false
             referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_psychological_assessments: {
+        Row: {
+          acl_rsi_score: number | null
+          assessment_date: string
+          confidence_1_10: number | null
+          coping_strategies: string | null
+          created_at: string | null
+          id: string
+          injury_id: string | null
+          tsk11_score: number | null
+          user_id: string
+        }
+        Insert: {
+          acl_rsi_score?: number | null
+          assessment_date: string
+          confidence_1_10?: number | null
+          coping_strategies?: string | null
+          created_at?: string | null
+          id?: string
+          injury_id?: string | null
+          tsk11_score?: number | null
+          user_id: string
+        }
+        Update: {
+          acl_rsi_score?: number | null
+          assessment_date?: string
+          confidence_1_10?: number | null
+          coping_strategies?: string | null
+          created_at?: string | null
+          id?: string
+          injury_id?: string | null
+          tsk11_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_psychological_assessments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_psychological_assessments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
             referencedColumns: ["id"]
           },
         ]
@@ -10578,6 +11141,28 @@ export type Database = {
         Args: { p_actor_user_id: string; p_subject_user_id: string }
         Returns: boolean
       }
+      generate_acwr_alert: {
+        Args: {
+          p_acute_load: number
+          p_acwr: number
+          p_acwr_snapshot_id: string
+          p_alert_type: string
+          p_chronic_load: number
+          p_cumulative_multiplier: number
+          p_upper_bound: number
+          p_user_id: string
+        }
+        Returns: string
+      }
+      generate_phase_advancement_alert: {
+        Args: {
+          p_current_phase: number
+          p_injury_id: string
+          p_next_phase: number
+          p_user_id: string
+        }
+        Returns: string
+      }
       generate_protocol_transactional: {
         Args: {
           p_acwr_value: number
@@ -10588,6 +11173,15 @@ export type Database = {
           p_readiness_score: number
           p_total_load_target_au: number
           p_training_focus: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      generate_psych_readiness_alert: {
+        Args: {
+          p_acl_rsi_score: number
+          p_injury_id: string
+          p_tsk11_score: number
           p_user_id: string
         }
         Returns: string

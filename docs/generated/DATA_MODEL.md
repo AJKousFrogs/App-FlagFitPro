@@ -2,9 +2,9 @@
 
 > Regenerate: `npm run docs:regen` (reads `docs/generated/live-schema.snapshot.json`).
 > Refresh against live: re-run the Supabase introspection into that snapshot (Supabase MCP), then rerun.
-> **Schema snapshot (live): 2026-07-22** · doc regenerated: 2026-07-23
+> **Schema snapshot (live): 2026-07-23** · doc regenerated: 2026-07-23
 
-**191 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
+**201 base tables, 7 views.** Tables flagged `DRIFT` exist live but are not defined in any migration file.
 
 **DRIFT (live, no migration file):** `zz_video_backup_20260719`
 
@@ -54,6 +54,29 @@ Touched by: `achievements`
 - `display_order` integer · not null
 - `is_active` boolean · not null
 - `created_at` timestamp with time zone · not null
+
+### `acwr_snapshots`
+Touched by: `alert-evaluate-rules`, `alert-resolve`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `snapshot_date` date · not null
+- `acute_load_au` numeric · not null
+- `chronic_load_au` numeric · not null
+- `acwr_ratio` numeric
+- `personalized_safe_zone_min` numeric
+- `personalized_safe_zone_max` numeric
+- `acwr_status` character varying
+- `safety_alert` boolean
+- `biomarker_multiplier` numeric
+- `confound_multiplier` numeric
+- `menstrual_cycle_multiplier` numeric
+- `chronotype_multiplier` numeric
+- `position_multiplier` numeric
+- `genetic_multiplier` numeric
+- `cumulative_multiplier` numeric
+- `created_at` timestamp with time zone
+- `updated_at` timestamp with time zone
 
 ### `age_recovery_modifiers`
 Touched by: `daily-protocol`, `player-settings`
@@ -167,6 +190,70 @@ Touched by: _(no endpoint references this table)_
 - `created_at` timestamp with time zone · not null
 - `updated_at` timestamp with time zone · not null
 
+### `alert_delivery_logs`
+Touched by: `alert-evaluate-rules`, `alert-get-athlete`
+
+- `id` uuid · not null
+- `generated_alert_id` uuid · not null
+- `recipient_user_id` uuid · not null
+- `channel` character varying · not null
+- `sent_at` timestamp without time zone
+- `delivered_at` timestamp without time zone
+- `read_at` timestamp without time zone
+- `delivery_status` character varying
+- `error_message` text
+- `created_at` timestamp without time zone
+
+### `alert_preferences`
+Touched by: `alert-preferences`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `alert_type` character varying · not null
+- `enabled` boolean
+- `channels` jsonb
+- `quiet_hours_start` time without time zone
+- `quiet_hours_end` time without time zone
+- `timezone` character varying
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
+### `alert_routes`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `alert_rule_id` uuid · not null
+- `recipient_role` character varying · not null
+- `recipient_user_id` uuid
+- `organization_id` uuid
+- `enabled` boolean
+- `created_at` timestamp without time zone
+
+### `alert_rules`
+Touched by: `alert-dashboard`, `alert-evaluate-rules`, `alert-get-athlete`
+
+- `id` uuid · not null
+- `name` character varying · not null
+- `alert_type` character varying · not null
+- `description` text
+- `trigger_condition` jsonb · not null
+- `enabled` boolean
+- `organization_id` uuid
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
+### `alert_subscriptions`
+Touched by: _(no endpoint references this table)_
+
+- `id` uuid · not null
+- `subscriber_user_id` uuid · not null
+- `alert_rule_id` uuid · not null
+- `target_athlete_id` uuid
+- `channels` jsonb
+- `enabled` boolean
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
 ### `announcement_reads`
 Touched by: _(no endpoint references this table)_
 
@@ -238,7 +325,7 @@ Touched by: `hydration`, `staff-nutritionist`
 - `updated_at` timestamp with time zone · not null
 
 ### `athlete_injuries`
-Touched by: `alert-evaluate-rules`, `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach-core`, `injury-analytics`, `monitoring-report`, `rtp-create-assignment`, `staff-physiotherapist`, `user-profile-core`
+Touched by: `alert-resolve`, `athlete-injuries`, `calc-readiness`, `coach-core`, `injury-analytics`, `monitoring-report`, `rtp-create-assignment`, `staff-physiotherapist`, `user-profile-core`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -1158,6 +1245,30 @@ Touched by: `ai-chat`, `coach-core`, `daily-training`, `game-events`, `games-cor
 - `competition_event_id` uuid
 - `version` integer · not null
 
+### `generated_alerts`
+Touched by: `alert-acknowledge`, `alert-dashboard`, `alert-evaluate-rules`, `alert-get-athlete`, `alert-resolve`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `rule_id` uuid · not null
+- `alert_type` character varying · not null
+- `title` character varying · not null
+- `description` text
+- `trigger_data` jsonb
+- `related_athlete_id` uuid
+- `related_injury_id` uuid
+- `related_entity_type` character varying
+- `related_entity_id` uuid
+- `acknowledged` boolean
+- `acknowledged_by` uuid
+- `acknowledged_note` text
+- `acknowledged_at` timestamp without time zone
+- `status` character varying
+- `resolved_at` timestamp without time zone
+- `alert_date` date · not null
+- `created_at` timestamp without time zone
+- `updated_at` timestamp without time zone
+
 ### `knowledge_base_entries`
 Touched by: `ai-chat`, `ai-telemetry`, `knowledge-governance`, `knowledge-search`
 
@@ -2033,7 +2144,7 @@ Touched by: _(no endpoint references this table)_
 - `updated_at` timestamp with time zone · not null
 
 ### `psychological_assessments`
-Touched by: `rtp-psychological-assessment`, `staff-psychology`
+Touched by: `staff-psychology`
 
 - `id` uuid · not null
 - `user_id` uuid · not null
@@ -2175,6 +2286,16 @@ Touched by: `ai-chat`, `games-core`, `wellness-checkin`
 - `max_load_percent` integer
 - `focus` text
 - `restrictions` jsonb
+
+### `recovery_logs`
+Touched by: `recovery-effectiveness`
+
+- `id` uuid · not null
+- `athlete_id` uuid · not null
+- `modality_name` text · not null
+- `effectiveness_score` numeric · not null
+- `domain` text · not null
+- `created_at` timestamp with time zone · not null
 
 ### `recovery_protocols`
 Touched by: `recovery-core`
@@ -2352,6 +2473,30 @@ Touched by: `rtp-advance-phase`, `rtp-protocol-assignment`, `rtp-record-assessme
 - `phase_required` integer
 - `created_at` timestamp without time zone
 
+### `rtp_phase_progress`
+Touched by: `rtp-phase-progress`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `injury_id` uuid · not null
+- `week_ending` date · not null
+- `current_rtp_phase` integer · not null
+- `strength_lsi_pct` numeric
+- `hop_test_battery_pct` numeric
+- `acl_rsi_pct` numeric
+- `tsk11_normalized` boolean
+- `biomechanics_symmetrical` boolean
+- `athlete_confidence_1_10` integer
+- `coach_confidence_1_10` integer
+- `pain_level_0_10` integer
+- `acwr_target_min` numeric
+- `acwr_target_max` numeric
+- `acwr_compliance_pct` numeric
+- `ready_for_next_phase` boolean
+- `coach_notes` text
+- `created_at` timestamp with time zone
+- `updated_at` timestamp with time zone
+
 ### `rtp_prescription_approvals`
 Touched by: _(no endpoint references this table)_
 
@@ -2399,6 +2544,19 @@ Touched by: `rtp-advance-phase`, `rtp-protocol-assignment`
 - `pain_level_max` integer
 - `key_milestones` text
 - `created_at` timestamp without time zone
+
+### `rtp_psychological_assessments`
+Touched by: `rtp-psychological-assessment`
+
+- `id` uuid · not null
+- `user_id` uuid · not null
+- `assessment_date` date · not null
+- `injury_id` uuid
+- `acl_rsi_score` integer
+- `tsk11_score` integer
+- `confidence_1_10` integer
+- `coping_strategies` text
+- `created_at` timestamp with time zone
 
 ### `safety_override_log`
 Touched by: _(no endpoint references this table)_
@@ -3252,6 +3410,7 @@ Touched by: _(no endpoint references this table)_
 - `user_id` uuid
 - `hotel_name` text
 - `hotel_address` text
+- `surface` text
 
 ### `v_injuries_unified` (view)
 - `id` uuid
