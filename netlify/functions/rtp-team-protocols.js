@@ -78,9 +78,36 @@ async function getTeamProtocols(supabase, teamId, requestLogger) {
       });
     }
 
+    // rtp_athlete_protocol_assignments.athlete_id has no declared FK to
+    // public.users (it targets auth.users), so PostgREST can't embed the
+    // name via the select() above — batch-fetch it instead. Was previously
+    // omitted entirely, leaving RtpProtocolListComponent's athlete_name
+    // field always blank despite the component expecting it.
+    const athleteIds = [
+      ...new Set(assignments.map((a) => a.athlete_id).filter(Boolean)),
+    ];
+    const nameById = new Map();
+    if (athleteIds.length > 0) {
+      const { data: users, error: usersError } = await supabase
+        .from("users")
+        .select("id, full_name")
+        .in("id", athleteIds);
+
+      if (usersError) {
+        requestLogger.error("DB error fetching athlete names", {
+          code: usersError.code,
+        });
+      } else {
+        for (const u of users || []) {
+          nameById.set(u.id, u.full_name || "Unknown");
+        }
+      }
+    }
+
     const protocols = assignments.map((assignment) => ({
       id: assignment.id,
       athlete_id: assignment.athlete_id,
+      athlete_name: nameById.get(assignment.athlete_id) || "Unknown",
       injury_id: assignment.injury_id,
       injury_type: assignment.rtp_protocol_definitions?.[0]?.injury_type || "",
       display_name: assignment.rtp_protocol_definitions?.[0]?.display_name || "",
@@ -130,17 +157,20 @@ const handler = async (event, context) =>
     allowedMethods: ["GET"],
     rateLimitType: "READ",
     requireAuth: true,
-    handler: async (event, _context) => {
+    handler: async (event, _context, { userId }) => {
       const requestLogger = buildRequestLogContext(logger, event);
-      const userId = _context.user?.sub || _context.userId;
 
       const role = await getUserRole(userId);
       if (!hasAnyRole(role, LOAD_MANAGEMENT_ACCESS_ROLES)) {
         return createErrorResponse("Not authorized to view protocols", 403);
       }
 
+      // Path is /api/rtp/team/:teamId/protocols — teamId is second-to-last,
+      // not last (that's "protocols"). Was reading the last segment, which
+      // never resolves to a real team, so this endpoint always returned an
+      // empty protocol list regardless of live data.
       const pathParts = event.path.split("/");
-      const teamId = pathParts[pathParts.length - 1];
+      const teamId = pathParts[pathParts.length - 2];
 
       if (!teamId) {
         return createErrorResponse("Missing teamId in path", 400);
