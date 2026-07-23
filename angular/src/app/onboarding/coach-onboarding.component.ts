@@ -6,7 +6,13 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ApiService } from "../core/services/api.service";
@@ -16,7 +22,12 @@ import { LoggerService } from "../core/services/logger.service";
   selector: "app-coach-onboarding",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LucideAngularModule,
+  ],
   template: `
     <div class="onboarding-container">
       <div class="onboarding-card">
@@ -36,7 +47,9 @@ import { LoggerService } from "../core/services/logger.service";
               <legend>License Information</legend>
 
               <div class="form-group">
-                <label for="coachingLicenseNumber">Coaching License Number</label>
+                <label for="coachingLicenseNumber"
+                  >Coaching License Number</label
+                >
                 <input
                   id="coachingLicenseNumber"
                   type="text"
@@ -67,15 +80,21 @@ import { LoggerService } from "../core/services/logger.service";
                 <select formControlName="coachSpecialty" class="form-input">
                   <option value="">Select coaching role</option>
                   <option value="head_coach">Head Coach</option>
-                  <option value="offense_coordinator">Offense Coordinator</option>
-                  <option value="defense_coordinator">Defense Coordinator</option>
+                  <option value="offense_coordinator">
+                    Offense Coordinator
+                  </option>
+                  <option value="defense_coordinator">
+                    Defense Coordinator
+                  </option>
                   <option value="position_coach">Position Coach</option>
                   <option value="assistant_coach">Assistant Coach</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="positionSpecialization">Position Specialization</label>
+                <label for="positionSpecialization"
+                  >Position Specialization</label
+                >
                 <input
                   id="positionSpecialization"
                   type="text"
@@ -91,7 +110,9 @@ import { LoggerService } from "../core/services/logger.service";
               <legend>Experience</legend>
 
               <div class="form-group">
-                <label for="yearsOfCoachingExperience">Years of Coaching Experience</label>
+                <label for="yearsOfCoachingExperience"
+                  >Years of Coaching Experience</label
+                >
                 <input
                   id="yearsOfCoachingExperience"
                   type="number"
@@ -160,6 +181,30 @@ import { LoggerService } from "../core/services/logger.service";
                   class="form-textarea"
                   rows="4"
                 ></textarea>
+              </div>
+            </fieldset>
+
+            <!-- Credentials Upload -->
+            <fieldset class="form-section">
+              <legend>Credential Verification</legend>
+              <p class="help-text">
+                Your credentials will be verified by an admin
+              </p>
+
+              <div class="form-group">
+                <label for="credentialFile"
+                  >Upload License or Certification</label
+                >
+                <div class="file-upload">
+                  <input
+                    id="credentialFile"
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="onFileSelected($event)"
+                    class="file-input"
+                  />
+                  <span class="file-help">PDF, JPG, or PNG (max 10MB)</span>
+                </div>
               </div>
             </fieldset>
 
@@ -299,6 +344,27 @@ import { LoggerService } from "../core/services/logger.service";
         cursor: pointer;
       }
 
+      .file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 20px;
+        text-align: center;
+        transition: border-color 0.2s;
+      }
+
+      .file-upload:hover {
+        border-color: #667eea;
+      }
+
+      .file-input {
+        display: block;
+        margin: 0 auto 8px;
+      }
+
+      .file-help {
+        font-size: 12px;
+        color: #666;
+      }
       .form-actions {
         display: flex;
         gap: 12px;
@@ -365,6 +431,41 @@ export class CoachOnboardingComponent implements OnInit {
   error = signal<string | null>(null);
   submitting = signal(false);
 
+  private static readonly ALLOWED_DOCUMENT_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+  ];
+
+  selectedFile = signal<File | null>(null);
+
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.error.set("File is too large (max 10MB)");
+      return;
+    }
+    if (!CoachOnboardingComponent.ALLOWED_DOCUMENT_TYPES.includes(file.type)) {
+      this.error.set("File must be a PDF, JPG, or PNG");
+      return;
+    }
+
+    this.error.set(null);
+    this.selectedFile.set(file);
+    this.logger.info(`Selected credential file: ${file.name}`);
+  }
+
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   certifications = ["USA_Football", "Level_1", "Level_2", "AFC", "Other"];
 
   selectedCertifications = signal<string[]>([]);
@@ -393,7 +494,7 @@ export class CoachOnboardingComponent implements OnInit {
     this.selectedCertifications.set(
       current.includes(cert)
         ? current.filter((c) => c !== cert)
-        : [...current, cert]
+        : [...current, cert],
     );
   }
 
@@ -408,12 +509,15 @@ export class CoachOnboardingComponent implements OnInit {
             coachingLicenseIssuedBy: profile.coaching_license_issued_by || "",
             coachSpecialty: profile.coach_specialty || "",
             positionSpecialization: profile.position_specialization || "",
-            yearsOfCoachingExperience: profile.years_of_coaching_experience || 0,
+            yearsOfCoachingExperience:
+              profile.years_of_coaching_experience || 0,
             educationBackground: profile.education_background || "",
             coachingPhilosophy: profile.coaching_philosophy || "",
             bio: profile.bio || "",
           });
-          this.selectedCertifications.set(profile.coaching_certifications || []);
+          this.selectedCertifications.set(
+            profile.coaching_certifications || [],
+          );
         }
         this.loading.set(false);
       },
@@ -423,16 +527,30 @@ export class CoachOnboardingComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (!this.form.valid) return;
 
     this.submitting.set(true);
     this.error.set(null);
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...this.form.value,
       coaching_certifications: this.selectedCertifications(),
     };
+
+    const file = this.selectedFile();
+    if (file) {
+      try {
+        payload["documentFile"] = await this.readFileAsBase64(file);
+        payload["documentFileName"] = file.name;
+        payload["documentFileType"] = file.type;
+      } catch (err) {
+        this.logger.error("Failed to read credential document", err);
+        this.error.set("Could not read the selected file. Please try again.");
+        this.submitting.set(false);
+        return;
+      }
+    }
 
     this.api.post("/api/staff/coach-profile", payload).subscribe({
       next: () => {

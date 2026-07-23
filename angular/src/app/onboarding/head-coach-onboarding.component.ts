@@ -6,7 +6,13 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ApiService } from "../core/services/api.service";
@@ -16,7 +22,12 @@ import { LoggerService } from "../core/services/logger.service";
   selector: "app-head-coach-onboarding",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LucideAngularModule,
+  ],
   template: `
     <div class="onboarding-container">
       <div class="onboarding-card">
@@ -36,7 +47,9 @@ import { LoggerService } from "../core/services/logger.service";
               <legend>License Information</legend>
 
               <div class="form-group">
-                <label for="coachingLicenseNumber">Coaching License Number</label>
+                <label for="coachingLicenseNumber"
+                  >Coaching License Number</label
+                >
                 <input
                   id="coachingLicenseNumber"
                   type="text"
@@ -63,7 +76,9 @@ import { LoggerService } from "../core/services/logger.service";
               <legend>Head Coach Information</legend>
 
               <div class="form-group">
-                <label for="yearsOfCoachingExperience">Years of Coaching Experience</label>
+                <label for="yearsOfCoachingExperience"
+                  >Years of Coaching Experience</label
+                >
                 <input
                   id="yearsOfCoachingExperience"
                   type="number"
@@ -146,7 +161,9 @@ import { LoggerService } from "../core/services/logger.service";
               </div>
 
               <div class="form-group">
-                <label for="teamDevelopmentApproach">Team Development Approach</label>
+                <label for="teamDevelopmentApproach"
+                  >Team Development Approach</label
+                >
                 <textarea
                   id="teamDevelopmentApproach"
                   formControlName="teamDevelopmentApproach"
@@ -170,6 +187,30 @@ import { LoggerService } from "../core/services/logger.service";
                   class="form-textarea"
                   rows="4"
                 ></textarea>
+              </div>
+            </fieldset>
+
+            <!-- Credentials Upload -->
+            <fieldset class="form-section">
+              <legend>Credential Verification</legend>
+              <p class="help-text">
+                Your credentials will be verified by an admin
+              </p>
+
+              <div class="form-group">
+                <label for="credentialFile"
+                  >Upload License or Certification</label
+                >
+                <div class="file-upload">
+                  <input
+                    id="credentialFile"
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="onFileSelected($event)"
+                    class="file-input"
+                  />
+                  <span class="file-help">PDF, JPG, or PNG (max 10MB)</span>
+                </div>
               </div>
             </fieldset>
 
@@ -309,6 +350,27 @@ import { LoggerService } from "../core/services/logger.service";
         cursor: pointer;
       }
 
+      .file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 20px;
+        text-align: center;
+        transition: border-color 0.2s;
+      }
+
+      .file-upload:hover {
+        border-color: #667eea;
+      }
+
+      .file-input {
+        display: block;
+        margin: 0 auto 8px;
+      }
+
+      .file-help {
+        font-size: 12px;
+        color: #666;
+      }
       .form-actions {
         display: flex;
         gap: 12px;
@@ -375,7 +437,51 @@ export class HeadCoachOnboardingComponent implements OnInit {
   error = signal<string | null>(null);
   submitting = signal(false);
 
-  certifications = ["USA_Football", "Level_1", "Level_2", "AFC", "NFHS", "Other"];
+  private static readonly ALLOWED_DOCUMENT_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+  ];
+
+  selectedFile = signal<File | null>(null);
+
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.error.set("File is too large (max 10MB)");
+      return;
+    }
+    if (
+      !HeadCoachOnboardingComponent.ALLOWED_DOCUMENT_TYPES.includes(file.type)
+    ) {
+      this.error.set("File must be a PDF, JPG, or PNG");
+      return;
+    }
+
+    this.error.set(null);
+    this.selectedFile.set(file);
+    this.logger.info(`Selected credential file: ${file.name}`);
+  }
+
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  certifications = [
+    "USA_Football",
+    "Level_1",
+    "Level_2",
+    "AFC",
+    "NFHS",
+    "Other",
+  ];
 
   selectedCertifications = signal<string[]>([]);
 
@@ -404,7 +510,7 @@ export class HeadCoachOnboardingComponent implements OnInit {
     this.selectedCertifications.set(
       current.includes(cert)
         ? current.filter((c) => c !== cert)
-        : [...current, cert]
+        : [...current, cert],
     );
   }
 
@@ -417,7 +523,8 @@ export class HeadCoachOnboardingComponent implements OnInit {
           this.form.patchValue({
             coachingLicenseNumber: profile.coaching_license_number || "",
             coachingLicenseIssuedBy: profile.coaching_license_issued_by || "",
-            yearsOfCoachingExperience: profile.years_of_coaching_experience || 0,
+            yearsOfCoachingExperience:
+              profile.years_of_coaching_experience || 0,
             yearsAsHeadCoach: profile.years_as_head_coach || 0,
             educationBackground: profile.education_background || "",
             coachingBackground: profile.coaching_background || "",
@@ -425,7 +532,9 @@ export class HeadCoachOnboardingComponent implements OnInit {
             teamDevelopmentApproach: profile.team_development_approach || "",
             bio: profile.bio || "",
           });
-          this.selectedCertifications.set(profile.coaching_certifications || []);
+          this.selectedCertifications.set(
+            profile.coaching_certifications || [],
+          );
         }
         this.loading.set(false);
       },
@@ -435,17 +544,31 @@ export class HeadCoachOnboardingComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (!this.form.valid) return;
 
     this.submitting.set(true);
     this.error.set(null);
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...this.form.value,
       coach_specialty: "head_coach",
       coaching_certifications: this.selectedCertifications(),
     };
+
+    const file = this.selectedFile();
+    if (file) {
+      try {
+        payload["documentFile"] = await this.readFileAsBase64(file);
+        payload["documentFileName"] = file.name;
+        payload["documentFileType"] = file.type;
+      } catch (err) {
+        this.logger.error("Failed to read credential document", err);
+        this.error.set("Could not read the selected file. Please try again.");
+        this.submitting.set(false);
+        return;
+      }
+    }
 
     this.api.post("/api/staff/head-coach-profile", payload).subscribe({
       next: () => {

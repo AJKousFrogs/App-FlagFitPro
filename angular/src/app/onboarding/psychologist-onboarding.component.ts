@@ -6,7 +6,13 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ApiService } from "../core/services/api.service";
@@ -16,7 +22,12 @@ import { LoggerService } from "../core/services/logger.service";
   selector: "app-psychologist-onboarding",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LucideAngularModule,
+  ],
   template: `
     <div class="onboarding-container">
       <div class="onboarding-card">
@@ -159,6 +170,30 @@ import { LoggerService } from "../core/services/logger.service";
               </div>
             </fieldset>
 
+            <!-- Credentials Upload -->
+            <fieldset class="form-section">
+              <legend>Credential Verification</legend>
+              <p class="help-text">
+                Your credentials will be verified by an admin
+              </p>
+
+              <div class="form-group">
+                <label for="credentialFile"
+                  >Upload License or Certification</label
+                >
+                <div class="file-upload">
+                  <input
+                    id="credentialFile"
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="onFileSelected($event)"
+                    class="file-input"
+                  />
+                  <span class="file-help">PDF, JPG, or PNG (max 10MB)</span>
+                </div>
+              </div>
+            </fieldset>
+
             <div class="form-actions">
               <button
                 type="submit"
@@ -295,6 +330,27 @@ import { LoggerService } from "../core/services/logger.service";
         cursor: pointer;
       }
 
+      .file-upload {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 20px;
+        text-align: center;
+        transition: border-color 0.2s;
+      }
+
+      .file-upload:hover {
+        border-color: #667eea;
+      }
+
+      .file-input {
+        display: block;
+        margin: 0 auto 8px;
+      }
+
+      .file-help {
+        font-size: 12px;
+        color: #666;
+      }
       .form-actions {
         display: flex;
         gap: 12px;
@@ -361,6 +417,45 @@ export class PsychologistOnboardingComponent implements OnInit {
   error = signal<string | null>(null);
   submitting = signal(false);
 
+  private static readonly ALLOWED_DOCUMENT_TYPES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+  ];
+
+  selectedFile = signal<File | null>(null);
+
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.error.set("File is too large (max 10MB)");
+      return;
+    }
+    if (
+      !PsychologistOnboardingComponent.ALLOWED_DOCUMENT_TYPES.includes(
+        file.type,
+      )
+    ) {
+      this.error.set("File must be a PDF, JPG, or PNG");
+      return;
+    }
+
+    this.error.set(null);
+    this.selectedFile.set(file);
+    this.logger.info(`Selected credential file: ${file.name}`);
+  }
+
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   specializations = [
     "sport_psychology",
     "mental_health",
@@ -397,7 +492,7 @@ export class PsychologistOnboardingComponent implements OnInit {
     this.selectedSpecializations.set(
       current.includes(spec)
         ? current.filter((s) => s !== spec)
-        : [...current, spec]
+        : [...current, spec],
     );
   }
 
@@ -406,7 +501,7 @@ export class PsychologistOnboardingComponent implements OnInit {
     this.selectedCertifications.set(
       current.includes(cert)
         ? current.filter((c) => c !== cert)
-        : [...current, cert]
+        : [...current, cert],
     );
   }
 
@@ -436,17 +531,31 @@ export class PsychologistOnboardingComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (!this.form.valid) return;
 
     this.submitting.set(true);
     this.error.set(null);
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       ...this.form.value,
       specializations: this.selectedSpecializations(),
       certifications: this.selectedCertifications(),
     };
+
+    const file = this.selectedFile();
+    if (file) {
+      try {
+        payload["documentFile"] = await this.readFileAsBase64(file);
+        payload["documentFileName"] = file.name;
+        payload["documentFileType"] = file.type;
+      } catch (err) {
+        this.logger.error("Failed to read credential document", err);
+        this.error.set("Could not read the selected file. Please try again.");
+        this.submitting.set(false);
+        return;
+      }
+    }
 
     this.api.post("/api/staff/psychologist-profile", payload).subscribe({
       next: () => {
