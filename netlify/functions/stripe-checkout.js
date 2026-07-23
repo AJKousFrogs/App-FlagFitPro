@@ -11,6 +11,7 @@ import {
   PRICE_ENV_VARS,
   SEAT_BASED_TIERS,
 } from "./utils/stripe-client.js";
+import { ageFromDob } from "./utils/age.js";
 import {
   buildRequestLogContext,
   createLogger,
@@ -69,6 +70,22 @@ async function findOrCreateBillingCustomer(
     throw new Error(`Failed to record billing customer: ${error.message}`);
   }
   return created;
+}
+
+// Minors + individual paid tiers (product decision, 2026-07-23, default from
+// docs/payments_billing_and_data_retention_proposal.md §7 since never
+// overridden): a minor never puts their own card on an individual
+// subscription -- trial/free access only. Team billing is unaffected (the
+// team, never an individual roster member, is the Stripe Customer).
+async function isMinor(supabase, userId) {
+  const { data } = await supabase
+    .from("users")
+    .select("date_of_birth, birth_date")
+    .eq("id", userId)
+    .maybeSingle();
+  const dob = data?.date_of_birth ?? data?.birth_date;
+  const age = ageFromDob(dob);
+  return age !== null && age < 18;
 }
 
 async function verifyTeamBillingAuthority(supabase, userId, teamId) {
@@ -132,6 +149,12 @@ const handler = async (event, context) =>
             403
           );
         }
+      } else if (await isMinor(supabase, userId)) {
+        return createErrorResponse(
+          "Individual paid tiers aren't available for accounts under 18 — a team's Team Package subscription still covers a minor athlete's full account",
+          403,
+          "minor_account"
+        );
       }
 
       const priceId = resolvePriceId(tier, interval);

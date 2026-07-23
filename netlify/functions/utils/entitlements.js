@@ -15,27 +15,62 @@
  *    athlete on the roster, so it contributes both the coach-side and
  *    athlete-side limits regardless of which role the user holds on that team.
  *
- * Suspension (14 days past-due, per T&C §7.5) downgrades limits to Free —
- * it never touches a single row of athlete data. See account-pause.js /
- * account-deletion.js for the data lifecycle itself; this module only
- * decides what's visible/enabled, not what's stored.
+ * There is no permanent free tier (product decision, 2026-07-23): a user with
+ * no paid access at all gets a 7-day "glimpse" trial of the FULL product
+ * (TRIAL_LIMITS = every feature unlocked, same shape as the most permissive
+ * paid tier) anchored on users.trial_started_at — deliberately NOT
+ * users.created_at, since retroactively computing a trial window from
+ * historical signup dates would instantly lock out every existing user (see
+ * the trial_started_at migration). Once the trial elapses with no active
+ * subscription, the account is LOCKED (paywall) until they subscribe — no
+ * discounted "come back" offer, no partial free access (product decision).
+ * This is a distinct concept from Stripe's own `subscription.status ===
+ * "trialing"` (a vendor-side trial on a PAID plan, if one is ever
+ * configured) — don't confuse the two.
+ *
+ * Suspension (14 days past-due, per T&C §7.5) also LOCKS the account —
+ * it never touches a single row of athlete data, and the subscription itself
+ * keeps billing through any voluntary account pause (product decision,
+ * 2026-07-23: pausing account-pause.js's activity/ACWR-freeze is completely
+ * orthogonal to billing). See account-pause.js / account-deletion.js for the
+ * data lifecycle itself; this module only decides what's visible/enabled,
+ * never what's stored.
  */
 
 import { supabaseAdmin } from "../supabase-client.js";
 
 const PAST_DUE_GRACE_DAYS = 14;
+const TRIAL_DAYS = 7;
 
-const FREE_LIMITS = {
-  historyDays: 30,
-  maxTeams: 1,
+const UNLIMITED = null; // convention: null limit = unlimited
+
+// The trial is a full "glimpse" of the product, not a permanently-limited
+// freemium tier — unlocks everything, same shape as the most permissive paid
+// tier, so a new signup sees the real app for the week rather than a
+// crippled preview.
+const TRIAL_LIMITS = {
+  historyDays: UNLIMITED,
+  maxTeams: UNLIMITED,
+  exportEnabled: true,
+  wearableSyncEnabled: true,
+  rosterManagementEnabled: true,
+  maxAthletesPerRoster: UNLIMITED,
+  maxClients: UNLIMITED,
+};
+
+// Trial elapsed (or payment lapsed past grace) with no active paid access —
+// the paywall floor. historyDays: 0 alone would not fully lock a caller down
+// (see historyCutoffISO); callers MUST check the `locked` flag this module
+// returns, not infer lockout from the limits shape alone.
+const LOCKED_LIMITS = {
+  historyDays: 0,
+  maxTeams: 0,
   exportEnabled: false,
   wearableSyncEnabled: false,
   rosterManagementEnabled: false,
   maxAthletesPerRoster: 0,
   maxClients: 0,
 };
-
-const UNLIMITED = null; // convention: null limit = unlimited
 
 const TIER_LIMITS = {
   athlete_pro: {
@@ -127,14 +162,32 @@ function isPastDueSuspended(subscription) {
   return Date.now() >= graceDeadline;
 }
 
+/** Whole days left in the trial (>=1 while active today, 0 once elapsed). */
+function trialDaysRemaining(trialStartedAt) {
+  if (!trialStartedAt) {
+    return 0;
+  }
+  const trialEnd =
+    new Date(trialStartedAt).getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000;
+  const msLeft = trialEnd - Date.now();
+  return Math.max(0, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
+}
+
 /**
  * @param {string} userId
  * @param {{client?: object}} [opts]
- * @returns {Promise<{tier: string, status: string, limits: object, appliedTiers: string[]}>}
+ * @returns {Promise<{tier: string, status: string, limits: object, appliedTiers: string[], locked: boolean, trialDaysRemaining: number}>}
  */
 export async function getEntitlement(userId, { client = supabaseAdmin } = {}) {
   if (!userId) {
-    return { tier: "free", status: "free", limits: FREE_LIMITS, appliedTiers: [] };
+    return {
+      tier: "trial_expired",
+      status: "trial_expired",
+      limits: LOCKED_LIMITS,
+      appliedTiers: [],
+      locked: true,
+      trialDaysRemaining: 0,
+    };
   }
 
   // Two-step lookups (find the billing_customer row, then its subscription)
@@ -190,32 +243,83 @@ export async function getEntitlement(userId, { client = supabaseAdmin } = {}) {
     }
   }
 
-  let limits = FREE_LIMITS;
-  const appliedTiers = [];
-  let status = "free";
-  let tier = "free";
+  const hasActivePaidAccess =
+    (individualSub && !isPastDueSuspended(individualSub)) || Boolean(teamSub);
 
-  if (individualSub && !isPastDueSuspended(individualSub)) {
-    limits = mergeLimits(limits, TIER_LIMITS[individualSub.tier]);
-    appliedTiers.push(individualSub.tier);
-    tier = individualSub.tier;
-    status = individualSub.status;
-  } else if (individualSub && isPastDueSuspended(individualSub)) {
-    status = "suspended";
+  if (hasActivePaidAccess) {
+    let limits = LOCKED_LIMITS; // floor — paid tiers only ever merge upward
+    const appliedTiers = [];
+    let status = "locked";
+    let tier = "trial_expired";
+
+    if (individualSub && !isPastDueSuspended(individualSub)) {
+      limits = mergeLimits(limits, TIER_LIMITS[individualSub.tier]);
+      appliedTiers.push(individualSub.tier);
+      tier = individualSub.tier;
+      status = individualSub.status;
+    }
+
+    if (teamSub) {
+      limits = mergeLimits(limits, TIER_LIMITS[teamSub.tier]);
+      appliedTiers.push(teamSub.tier);
+      if (tier === "trial_expired") {
+        tier = teamSub.tier;
+      }
+      // Only fall back to the team's status if the individual side had
+      // nothing more informative to say (e.g. an individual sub in its own
+      // past_due grace period should stay visible even though team access
+      // covers them regardless).
+      if (status === "locked") {
+        status = teamSub.status;
+      }
+    }
+
+    return { tier, status, limits, appliedTiers, locked: false, trialDaysRemaining: 0 };
   }
 
-  if (teamSub) {
-    limits = mergeLimits(limits, TIER_LIMITS[teamSub.tier]);
-    appliedTiers.push(teamSub.tier);
-    if (tier === "free") {
-      tier = teamSub.tier;
-    }
-    if (status === "free" || status === "suspended") {
-      status = teamSub.status;
-    }
+  // No active paid access anywhere. A past-due individual subscription that
+  // blew through the 14-day grace window locks the account outright — a
+  // real subscription gone bad is a distinct, more serious state than
+  // "never subscribed" and must never fall back to a fresh trial.
+  if (individualSub && isPastDueSuspended(individualSub)) {
+    return {
+      tier: "suspended",
+      status: "suspended",
+      limits: LOCKED_LIMITS,
+      appliedTiers: [],
+      locked: true,
+      trialDaysRemaining: 0,
+    };
   }
 
-  return { tier, status, limits, appliedTiers };
+  // Otherwise: on the 7-day onboarding trial, or past it with nothing to
+  // fall back on (the paywall).
+  const { data: userRow } = await client
+    .from("users")
+    .select("trial_started_at")
+    .eq("id", userId)
+    .maybeSingle();
+  const daysLeft = trialDaysRemaining(userRow?.trial_started_at);
+
+  if (daysLeft > 0) {
+    return {
+      tier: "trial",
+      status: "trial",
+      limits: TRIAL_LIMITS,
+      appliedTiers: [],
+      locked: false,
+      trialDaysRemaining: daysLeft,
+    };
+  }
+
+  return {
+    tier: "trial_expired",
+    status: "trial_expired",
+    limits: LOCKED_LIMITS,
+    appliedTiers: [],
+    locked: true,
+    trialDaysRemaining: 0,
+  };
 }
 
 /**
@@ -232,4 +336,4 @@ export function historyCutoffISO(entitlement) {
   return cutoff.toISOString();
 }
 
-export { FREE_LIMITS, TIER_LIMITS, PAST_DUE_GRACE_DAYS };
+export { TRIAL_LIMITS, LOCKED_LIMITS, TIER_LIMITS, PAST_DUE_GRACE_DAYS, TRIAL_DAYS };

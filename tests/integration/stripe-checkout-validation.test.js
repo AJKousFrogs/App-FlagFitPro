@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   billingCustomers: [],
   teamMembers: [],
+  users: [],
   insertedBillingCustomers: [],
   stripeCustomersCreateResult: { id: "cus_test123" },
   stripeCheckoutSessionResult: { url: "https://checkout.stripe.com/session123" },
@@ -34,6 +35,12 @@ function createFakeSupabase() {
             (row) =>
               Object.entries(call.filters).every(([k, v]) => row[k] === v) &&
               (!roles || roles.includes(row.role))
+          );
+          return { data: match || null, error: null };
+        }
+        if (table === "users") {
+          const match = state.users.find((row) =>
+            Object.entries(call.filters).every(([k, v]) => row[k] === v)
           );
           return { data: match || null, error: null };
         }
@@ -113,6 +120,7 @@ describe("stripe-checkout", () => {
     vi.resetModules();
     state.billingCustomers = [];
     state.teamMembers = [];
+    state.users = [];
     state.priceEnv = {
       "athlete_pro:monthly": "price_athlete_pro_monthly",
       "team_domestic:monthly": "price_team_domestic_monthly",
@@ -199,6 +207,56 @@ describe("stripe-checkout", () => {
     ];
     const response = await handler(
       makeEvent({ tier: "team_domestic", interval: "monthly", teamId: "team-1" }),
+      {}
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("rejects an individual tier checkout for an account under 18", async () => {
+    const fifteenYearsAgo = new Date();
+    fifteenYearsAgo.setFullYear(fifteenYearsAgo.getFullYear() - 15);
+    state.users = [
+      {
+        id: "athlete-1",
+        date_of_birth: fifteenYearsAgo.toISOString().slice(0, 10),
+      },
+    ];
+
+    const response = await handler(
+      makeEvent({ tier: "athlete_pro", interval: "monthly" }),
+      {}
+    );
+    expect(response.statusCode).toBe(403);
+    const body = JSON.parse(response.body);
+    expect(body.error.code).toBe("minor_account");
+  });
+
+  it("allows a team tier for a minor caller (team billing never touches an individual's card)", async () => {
+    const fifteenYearsAgo = new Date();
+    fifteenYearsAgo.setFullYear(fifteenYearsAgo.getFullYear() - 15);
+    state.users = [
+      { id: "athlete-1", date_of_birth: fifteenYearsAgo.toISOString().slice(0, 10) },
+    ];
+    state.teamMembers = [
+      { team_id: "team-1", user_id: "athlete-1", role: "admin", status: "active" },
+    ];
+
+    const response = await handler(
+      makeEvent({ tier: "team_domestic", interval: "monthly", teamId: "team-1" }),
+      {}
+    );
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("allows an individual tier checkout for an adult account", async () => {
+    const thirtyYearsAgo = new Date();
+    thirtyYearsAgo.setFullYear(thirtyYearsAgo.getFullYear() - 30);
+    state.users = [
+      { id: "athlete-1", date_of_birth: thirtyYearsAgo.toISOString().slice(0, 10) },
+    ];
+
+    const response = await handler(
+      makeEvent({ tier: "athlete_pro", interval: "monthly" }),
       {}
     );
     expect(response.statusCode).toBe(200);

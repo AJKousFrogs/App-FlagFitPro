@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Regression coverage for the Free-tier 30-day history floor
-// (utils/entitlements.js) wired into the training-sessions GET path. The
-// floor must apply even when the caller explicitly requests an earlier
-// startDate -- otherwise a free user could just ask for 2020-01-01 and
-// bypass the limit entirely.
+// Regression coverage for the trial/paywall history floor (utils/
+// entitlements.js) wired into the training-sessions GET path. The floor
+// must apply even when the caller explicitly requests an earlier startDate
+// -- otherwise a locked-out user could just ask for 2020-01-01 and bypass
+// the paywall entirely.
 
 const state = vi.hoisted(() => ({
   billingCustomers: [],
   subscriptions: [],
   teamMembers: [],
+  users: [],
   capturedGteValue: null,
 }));
 
@@ -28,6 +29,9 @@ function createFakeSupabase() {
         }
         if (table === "subscriptions") {
           return { data: state.subscriptions.find(matches) || null, error: null };
+        }
+        if (table === "users") {
+          return { data: state.users.find(matches) || null, error: null };
         }
         return { data: null, error: null };
       };
@@ -96,7 +100,7 @@ function makeGetEvent(queryStringParameters) {
   };
 }
 
-describe("training-sessions GET — Free-tier history floor", () => {
+describe("training-sessions GET — trial/paywall history floor", () => {
   let handler;
 
   beforeEach(async () => {
@@ -104,29 +108,39 @@ describe("training-sessions GET — Free-tier history floor", () => {
     state.billingCustomers = [];
     state.subscriptions = [];
     state.teamMembers = [];
+    state.users = [];
     state.capturedGteValue = null;
     const mod = await import("../../netlify/functions/training-sessions.js");
     handler = mod.handler;
   });
 
-  it("clamps startDate to the 30-day floor for a free-tier user, even when an earlier startDate is requested", async () => {
+  it("does not clamp history during the active 7-day trial (full glimpse, no floor)", async () => {
+    state.users = [
+      { id: "athlete-1", trial_started_at: new Date().toISOString() },
+    ];
+
+    await handler(makeGetEvent({ startDate: "2020-01-01" }), {});
+    expect(state.capturedGteValue).toBe("2020-01-01");
+  });
+
+  it("clamps startDate hard once the trial has expired with no subscription", async () => {
+    state.users = [
+      {
+        id: "athlete-1",
+        trial_started_at: new Date(
+          Date.now() - 8 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      },
+    ];
+
     await handler(makeGetEvent({ startDate: "2020-01-01" }), {});
 
     expect(state.capturedGteValue).not.toBe("2020-01-01");
     const daysAgo =
       (Date.now() - new Date(state.capturedGteValue).getTime()) /
       (24 * 60 * 60 * 1000);
-    expect(daysAgo).toBeGreaterThan(29);
-    expect(daysAgo).toBeLessThan(31);
-  });
-
-  it("does not clamp a startDate that's already within the free-tier window", async () => {
-    const recentDate = new Date();
-    recentDate.setDate(recentDate.getDate() - 5);
-    const recentDateStr = recentDate.toISOString().split("T")[0];
-
-    await handler(makeGetEvent({ startDate: recentDateStr }), {});
-    expect(state.capturedGteValue).toBe(recentDateStr);
+    // LOCKED_LIMITS.historyDays is 0 -- the cutoff should be essentially "now".
+    expect(daysAgo).toBeLessThan(1);
   });
 
   it("does not clamp history at all for an active Athlete Pro subscriber", async () => {
