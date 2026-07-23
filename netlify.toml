@@ -333,6 +333,13 @@
   status = 200
   force = true
 
+# API Route for Apple Health manual-export ingest (POST raw export.xml text)
+[[redirects]]
+  from = "/api/wearable-health-ingest/apple-health-xml"
+  to = "/.netlify/functions/wearable-health-ingest-apple-xml"
+  status = 200
+  force = true
+
 # API Routes for wearable OAuth (Garmin/Oura/WHOOP connect/callback/webhook)
 [[redirects]]
   from = "/api/wearables/connect/*"
