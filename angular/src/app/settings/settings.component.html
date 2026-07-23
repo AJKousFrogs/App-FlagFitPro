@@ -49,7 +49,7 @@
         type="button"
         class="st-tab"
         [class.on]="tab() === t"
-        (click)="tab.set(t)"
+        (click)="selectTab(t)"
       >
         {{ t }}
       </button>
@@ -263,6 +263,64 @@
           </button>
         </div>
       </div>
+    }
+    @case ("Billing") {
+      <div class="section-h"><h2>Billing</h2></div>
+      @if (billingLoading() && !billingStatus()) {
+        <div class="card">Loading…</div>
+      } @else if (billingStatus(); as bs) {
+        <div class="card stack">
+          <div class="lrow">
+            <span>Plan</span>
+            <b>{{ bs.tier === "trial" ? "Free trial" : bs.tier }}</b>
+          </div>
+          @if (bs.tier === "trial" && !bs.locked) {
+            <p class="note">
+              {{ bs.trialDaysRemaining }}
+              {{ bs.trialDaysRemaining === 1 ? "day" : "days" }} left in your
+              trial.
+            </p>
+          }
+          @if (bs.locked) {
+            <p class="note" style="color: var(--danger)">
+              @if (bs.tier === "suspended") {
+                Your last payment didn't go through — update your payment
+                method to restore access.
+              } @else {
+                Your trial has ended — subscribe to keep using FlagFit Pro.
+              }
+            </p>
+          }
+          @if (bs.subscription; as sub) {
+            @if (sub.current_period_end) {
+              <div class="lrow">
+                <span>{{
+                  sub.cancel_at_period_end ? "Access ends" : "Renews"
+                }}</span>
+                <span class="muted">{{
+                  sub.current_period_end | date: "mediumDate"
+                }}</span>
+              </div>
+            }
+          }
+          <div class="row" style="gap: var(--s-2); flex-wrap: wrap">
+            <a class="btn ghost sm" routerLink="/billing">See all plans</a>
+            @if (bs.hasIndividualBillingCustomer) {
+              <button
+                class="btn primary sm"
+                type="button"
+                [attr.aria-disabled]="billingActionBusy()"
+                (click)="manageBilling()"
+              >
+                {{ billingActionBusy() ? "Opening…" : "Manage billing" }}
+              </button>
+            }
+          </div>
+          @if (billingMsg(); as m) {
+            <p class="note" role="status" aria-live="polite">{{ m }}</p>
+          }
+        </div>
+      }
     }
     @default {
       <div class="empty">More {{ tab() }} settings are coming soon.</div>

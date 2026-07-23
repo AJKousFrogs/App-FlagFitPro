@@ -407,6 +407,14 @@ export const featureRoutes: Routes = [
         title: "Settings · FlagFit",
       },
       {
+        path: "billing",
+        loadComponent: () =>
+          import("../../billing/pricing.component").then(
+            (m) => m.PricingComponent,
+          ),
+        title: "Plans & Pricing · FlagFit",
+      },
+      {
         path: "achievements",
         loadComponent: () =>
           import("../../achievements/achievements.component").then(

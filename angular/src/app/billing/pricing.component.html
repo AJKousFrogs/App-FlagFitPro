@@ -1,0 +1,106 @@
+<header class="topbar">
+  <div><h1>Plans &amp; Pricing</h1></div>
+</header>
+
+<main class="screen">
+  @if (status(); as s) {
+    @if (s.tier === "trial" && !s.locked) {
+      <div class="card trial-banner">
+        <lucide-icon name="sparkles" aria-hidden="true" />
+        <span
+          >You're on a free 7-day trial —
+          <b>{{ s.trialDaysRemaining }}</b>
+          {{ s.trialDaysRemaining === 1 ? "day" : "days" }} left. Subscribe
+          any time to keep full access after it ends.</span
+        >
+      </div>
+    }
+    @if (s.locked) {
+      <div class="card locked-banner">
+        <lucide-icon name="lock" aria-hidden="true" />
+        <span>
+          @if (s.tier === "suspended") {
+            Your last payment didn't go through. Update your payment method
+            below to restore access.
+          } @else {
+            Your trial has ended. Subscribe below to keep using FlagFit Pro.
+          }
+        </span>
+      </div>
+    }
+  }
+
+  <div class="interval-toggle" role="tablist" aria-label="Billing interval">
+    <button
+      type="button"
+      class="btn ghost sm"
+      [class.on]="interval() === 'monthly'"
+      role="tab"
+      [attr.aria-selected]="interval() === 'monthly'"
+      (click)="interval.set('monthly')"
+    >
+      Monthly
+    </button>
+    <button
+      type="button"
+      class="btn ghost sm"
+      [class.on]="interval() === 'annual'"
+      role="tab"
+      [attr.aria-selected]="interval() === 'annual'"
+      (click)="interval.set('annual')"
+    >
+      Annual <span class="muted">(save ~17%)</span>
+    </button>
+  </div>
+
+  @if (checkoutError(); as err) {
+    <p class="note error" role="alert">{{ err }}</p>
+  }
+
+  <div class="tier-grid">
+    @for (tier of tiers; track tier.key) {
+      <div class="card tier-card" [class.current]="isCurrentTier(tier)">
+        @if (isCurrentTier(tier)) {
+          <span class="chip current-chip">Your plan</span>
+        }
+        <h2>{{ tier.name }}</h2>
+        <p class="muted tagline">{{ tier.tagline }}</p>
+        <div class="price">
+          <span class="amount">€{{ priceFor(tier) }}</span>
+          <span class="muted period"
+            >/{{ interval() === "monthly" ? "mo" : "yr" }}</span
+          >
+        </div>
+        @if (tier.seatNote) {
+          <p class="note seat-note">{{ tier.seatNote }}</p>
+        }
+        <ul class="feature-list">
+          @for (f of tier.features; track f) {
+            <li>
+              <lucide-icon name="check" aria-hidden="true" />
+              {{ f }}
+            </li>
+          }
+        </ul>
+        @if (tier.isTeamTier && !canManageCurrentTeamBilling()) {
+          <p class="note">
+            Only your team's owner/admin can purchase a Team Package.
+          </p>
+        } @else if (isCurrentTier(tier)) {
+          <button class="btn ghost block" type="button" disabled>
+            Current plan
+          </button>
+        } @else {
+          <button
+            class="btn primary block"
+            type="button"
+            [attr.aria-disabled]="startingCheckout() === tier.key"
+            (click)="!startingCheckout() && subscribe(tier)"
+          >
+            {{ startingCheckout() === tier.key ? "Starting…" : "Subscribe" }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+</main>

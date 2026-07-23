@@ -6,6 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { DatePipe } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { firstValueFrom } from "rxjs";
 import { AvatarComponent } from "../shared/avatar.component";
@@ -16,6 +17,7 @@ import { LoggerService } from "../core/services/logger.service";
 import { PrivacySettingsService } from "../core/services/privacy-settings.service";
 import { PeriodizationService } from "../core/services/periodization.service";
 import { RecoveryService } from "../core/services/recovery.service";
+import { BillingService } from "../core/services/billing.service";
 import { RECOVERY_EQUIPMENT } from "../core/models/recovery-modalities";
 import {
   POSITION_VOLUME,
@@ -23,7 +25,7 @@ import {
 } from "../core/config/position-volume.config";
 import { extractApiPayload } from "../core/utils/api-response-mapper";
 
-type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
+type Tab = "Notifications" | "Privacy" | "Prefs" | "Billing" | "Security";
 
 /**
  * Settings — ported 1:1 from redesign/ground-zero/02-hifi/settings.html.
@@ -35,7 +37,7 @@ type Tab = "Notifications" | "Privacy" | "Prefs" | "Security";
  */
 @Component({
   selector: "app-settings",
-  imports: [AvatarComponent, RouterLink, LucideAngularModule],
+  imports: [AvatarComponent, RouterLink, DatePipe, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./settings.component.html",
   styles: [
@@ -87,6 +89,7 @@ export class SettingsComponent {
   private readonly privacy = inject(PrivacySettingsService);
   private readonly periodization = inject(PeriodizationService);
   private readonly recovery = inject(RecoveryService);
+  private readonly billing = inject(BillingService);
 
   // Recovery equipment (Prefs tab) — reuses athlete_training_config.available_equipment.
   readonly recoveryEquipment = RECOVERY_EQUIPMENT;
@@ -165,8 +168,40 @@ export class SettingsComponent {
     }
   }
 
-  readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Security"];
+  readonly tabs: Tab[] = ["Notifications", "Privacy", "Prefs", "Billing", "Security"];
   readonly tab = signal<Tab>("Notifications");
+
+  // Billing tab — lazy-loaded the first time it's opened, not on every
+  // Settings visit (most sessions never touch billing).
+  readonly billingStatus = this.billing.status;
+  readonly billingLoading = this.billing.loading;
+  readonly billingActionBusy = signal(false);
+  readonly billingMsg = signal<string | null>(null);
+  private billingStatusRequested = false;
+
+  selectTab(t: Tab): void {
+    this.tab.set(t);
+    if (t === "Billing" && !this.billingStatusRequested) {
+      this.billingStatusRequested = true;
+      void this.billing.loadStatus();
+    }
+  }
+
+  async manageBilling(): Promise<void> {
+    if (this.billingActionBusy()) return;
+    this.billingActionBusy.set(true);
+    this.billingMsg.set(null);
+    try {
+      const { url, error } = await this.billing.openPortal();
+      if (url) {
+        window.location.href = url;
+        return;
+      }
+      this.billingMsg.set(error ?? "Couldn't open billing portal — try again.");
+    } finally {
+      this.billingActionBusy.set(false);
+    }
+  }
 
   // Flag football team-practice days (Prefs tab). dow: 0=Sun…6=Sat.
   readonly weekdays = [
