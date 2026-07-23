@@ -77,10 +77,14 @@ nutrition/sleep tracking. The trial is a genuine "full glimpse," not a crippled 
 `docs/SOURCE_OF_TRUTH.md`'s entitlements section for the exact `TRIAL_LIMITS` shape.
 
 **After day 7 with no subscription:** the account is locked (`LOCKED_LIMITS` — zeroed/false
-across the board) and every screen redirects to a paywall until the athlete/coach/professional
-subscribes to one of the paid tiers below. There is no permanent free tier to fall back to, and no
-partial/read-only access after the trial — this was an explicit product decision (2026-07-23),
-not an oversight: "Free tier is only for a week, to get a glimpse of it."
+across the board), but the athlete/coach/professional is never redirected out of the app — they
+can still open it and see exactly the data they already entered (read-only). Every *write*
+(logging a session, saving a check-in, anything that changes data) is refused with a persistent
+"subscribe to continue" prompt until they subscribe to one of the paid tiers below. There is no
+permanent free tier to fall back to, and no NEW functionality until they subscribe — this was an
+explicit product decision (2026-07-23): "Free tier is only for a week, to get a glimpse of it,"
+refined the same day to "people can still get in, but all the functionalities are frozen. You can
+see only the data you put in and nothing else."
 
 **Unit Economics:**
 - Hosting cost per trial user: ~€0.02/week (bounded — trial isn't indefinite)

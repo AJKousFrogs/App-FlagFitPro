@@ -274,13 +274,14 @@ active ──(3 failed retries, 14 days)──► past_due_grace ──(still un
   locked limits **without touching any row of athlete data**. This is the answer to "do
   athletes start over": **no** — every training session, readiness score, injury record, RTP
   assessment stays exactly where it is, in the same tables, with the same history. What changes
-  is *what the UI/API will show and allow*. **As built, this is a stricter lock than originally
-  proposed here**: the "30-day rolling window, partial access" design below was superseded by the
-  7-day-trial/hard-paywall product decision (§5's note) — a suspended account gets the same full
-  `LOCKED_LIMITS` lock as a trial-expired account (`entitlement.locked === true`, HTTP 402 from
-  gated endpoints), not a degraded-but-partially-working view. This matches T&C §8.3's existing
-  "data is archived, player can access via personal account" line precisely — suspension IS the
-  archive-in-place mechanism, just made concrete, and stricter than first proposed.
+  is *what the UI/API will show and allow*. **As built, this is neither the original "30-day
+  rolling window" proposal below nor a hard redirect-out** — it landed on a third design after two
+  corrections the same day: a suspended account gets the same `LOCKED_LIMITS` lock as a
+  trial-expired account (`entitlement.locked === true`), enforced as a 402 `subscription_required`
+  on every WRITE (`utils/base-handler.js`'s freeze gate) — but reads are never gated, so the
+  account can still open the app and see everything it already entered; it just can't add to it.
+  This matches T&C §8.3's existing "data is archived, player can access via personal account" line
+  precisely — suspension IS the archive-in-place mechanism, just made concrete.
 - **Reactivation**: paying again (new card via the Stripe Billing Portal) flips `subscriptions.status`
   back to `active` and **everything reappears instantly** — there is no re-onboarding, no data
   migration, no "welcome back, let's rebuild your profile." Nothing was deleted, so lifting the
@@ -307,13 +308,17 @@ active ──(3 failed retries, 14 days)──► past_due_grace ──(still un
 
 > **Superseded 2026-07-23, before this was implemented.** The permanent Free tier described here
 > never shipped — it was replaced with a single 7-day full-access trial (`TRIAL_LIMITS`: no
-> history cap, everything unlocked) followed by a hard `locked: true` paywall (`LOCKED_LIMITS`:
-> zeroed/false across the board, endpoints return HTTP 402) once the trial elapses with no paid
-> subscription. There is no rolling 30-day filter in the shipped code — the design below is kept
-> for historical rationale (why data is never deleted for tier reasons, why the ACWR engine is
-> exempt from any tier-based filter) but the specific "add `.gte(..., 30 days)` per endpoint"
-> mechanism it describes does not exist in `netlify/functions/utils/entitlements.js`. See
-> `docs/SOURCE_OF_TRUTH.md` for the actual `getEntitlement()` contract.
+> history cap, everything unlocked) followed by a `locked: true` state (`LOCKED_LIMITS`:
+> zeroed/false across the board) once the trial elapses with no paid subscription. There is no
+> rolling 30-day filter in the shipped code — the design below is kept for historical rationale
+> (why data is never deleted for tier reasons, why the ACWR engine is exempt from any tier-based
+> filter) but the specific "add `.gte(..., 30 days)` per endpoint" mechanism it describes does not
+> exist in `netlify/functions/utils/entitlements.js`. **Further corrected same day:** `locked`
+> does NOT mean redirected-out/no-access — a locked account can still open the app and read
+> whatever it already entered; only writes (`POST`/`PUT`/`PATCH`/`DELETE`) are refused (HTTP 402
+> `subscription_required`), enforced once in `utils/base-handler.js` rather than per-endpoint. See
+> `docs/SOURCE_OF_TRUTH.md` for the actual `getEntitlement()` contract and the frozen-mode
+> mechanism.
 
 Business Plan §2.1 already states this as a Free-tier limit. The mechanism (as originally
 proposed — not what shipped):
