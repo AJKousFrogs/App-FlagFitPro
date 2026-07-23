@@ -106,6 +106,7 @@ const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
+    bypassEntitlementLock: true, // this IS how a locked account un-locks itself
     handler: async (event, _context, { userId, authUser }) => {
       const requestLogger = logger.child(buildRequestLogContext(event));
 

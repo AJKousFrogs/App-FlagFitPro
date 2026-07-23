@@ -26,6 +26,7 @@ const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
+    bypassEntitlementLock: true, // must work even when locked -- it's how you fix a bad card
     handler: async (event, _context, { userId }) => {
       const requestLogger = logger.child(buildRequestLogContext(event));
 

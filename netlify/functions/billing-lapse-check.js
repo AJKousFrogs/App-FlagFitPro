@@ -117,6 +117,7 @@ const handler = async (event, context) =>
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
+    bypassEntitlementLock: true, // billing lifecycle machinery, not a locked user's own feature
     handler: async (event) => {
       const requestLogger = logger.child(buildRequestLogContext(event));
 

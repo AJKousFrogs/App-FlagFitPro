@@ -569,6 +569,7 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
     rateLimitType: "CREATE", // Rate limit exports to prevent abuse
     requireAuth: true,
+    bypassEntitlementLock: true, // GDPR data-portability right, not a paywalled feature
     handler: handleRequest,
   });
 };
