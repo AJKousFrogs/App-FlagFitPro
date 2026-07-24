@@ -1,0 +1,126 @@
+<main class="tl">
+  <header class="tl-head">
+    <a class="back" routerLink="/more" aria-label="Back">
+      <lucide-icon name="chevron-right" style="transform: rotate(180deg)" />
+    </a>
+    <div class="eyebrow"><lucide-icon name="plane" [size]="15" /> Travel</div>
+    <h1>Your travel legs</h1>
+    <p class="sub">
+      Declare a trip and its arrival/departure times feed a travel-hours
+      suggestion on your wellness check-in, plus the heat/cold and
+      arrival-day training guards.
+    </p>
+  </header>
+
+  <section class="card">
+    <div class="card-head"><h2>Log a leg</h2></div>
+    <div class="card-body">
+      <div class="grid">
+        <label class="fld">
+          <span>Mode</span>
+          <select [value]="mode()" (change)="mode.set($any($event.target).value)">
+            @for (m of modes; track m.value) {
+              <option [value]="m.value">{{ m.label }}</option>
+            }
+          </select>
+        </label>
+        <label class="fld">
+          <span>Overnight stay</span>
+          <span class="check-row">
+            <input
+              type="checkbox"
+              [checked]="overnightStay()"
+              (change)="overnightStay.set($any($event.target).checked)"
+            />
+            <span class="muted">Staying over, not a same-day trip</span>
+          </span>
+        </label>
+        <label class="fld">
+          <span>Depart</span>
+          <input
+            type="datetime-local"
+            [value]="departAt()"
+            (input)="departAt.set($any($event.target).value)"
+          />
+        </label>
+        <label class="fld">
+          <span>Arrive</span>
+          <input
+            type="datetime-local"
+            [value]="arriveAt()"
+            (input)="arriveAt.set($any($event.target).value)"
+          />
+        </label>
+        <label class="fld fld--wide">
+          <span>Notes</span>
+          <input
+            type="text"
+            placeholder="optional — e.g. Adria Bowl, Zagreb"
+            [value]="notes()"
+            (input)="notes.set($any($event.target).value)"
+          />
+        </label>
+      </div>
+      <div class="actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          {{ saving() ? "Saving…" : "Add leg" }}
+        </button>
+        @if (formError(); as msg) {
+          <span class="hint err">{{ msg }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Declared legs</h2>
+      @if (loading()) {
+        <span class="meta">loading…</span>
+      }
+    </div>
+    <div class="card-body">
+      @if (!legs().length && !loading()) {
+        <p class="empty">
+          No travel declared yet — add a leg above so the app knows when
+          you're arriving somewhere new.
+        </p>
+      }
+      <ul class="legs">
+        @for (leg of legs(); track leg.id) {
+          <li class="leg">
+            <div class="leg-top">
+              <lucide-icon [name]="modeIcon(leg.mode)" [size]="16" />
+              <b>{{ modeLabel(leg.mode) }}</b>
+              @if (leg.overnightStay) {
+                <span class="band info">overnight</span>
+              }
+              <span class="hrs">{{ hours(leg) }}h</span>
+              <button
+                class="icon-btn"
+                type="button"
+                aria-label="Remove leg"
+                [disabled]="removingId() === leg.id"
+                (click)="remove(leg.id)"
+              >
+                <lucide-icon name="trash-2" [size]="15" />
+              </button>
+            </div>
+            <div class="leg-times muted">
+              {{ leg.departAt | date: "MMM d, HH:mm" }} →
+              {{ leg.arriveAt | date: "MMM d, HH:mm" }}
+            </div>
+            @if (leg.notes) {
+              <div class="leg-notes muted">{{ leg.notes }}</div>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+</main>

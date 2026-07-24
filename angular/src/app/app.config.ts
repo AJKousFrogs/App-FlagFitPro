@@ -78,6 +78,9 @@ import {
   BatteryLow,
   Repeat,
   SlidersHorizontal,
+  Bus,
+  Car,
+  TrainFront,
 } from "lucide-angular";
 import {
   provideClientHydration,
@@ -192,6 +195,9 @@ export const appConfig: ApplicationConfig = {
         BatteryLow,
         Repeat,
         SlidersHorizontal,
+        Bus,
+        Car,
+        TrainFront,
       }),
     ),
 

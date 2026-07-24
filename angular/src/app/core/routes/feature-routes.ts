@@ -496,6 +496,14 @@ export const featureRoutes: Routes = [
         title: "Device data · FlagFit",
       },
       {
+        path: "travel",
+        loadComponent: () =>
+          import("../../travel-log/travel-log.component").then(
+            (m) => m.TravelLogComponent,
+          ),
+        title: "Travel · FlagFit",
+      },
+      {
         path: "fuelling-check",
         loadComponent: () =>
           import("../../fuelling-check/fuelling-check.component").then(
