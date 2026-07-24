@@ -10,8 +10,21 @@ import { getAdapter, listProviders } from "./session-load-adapters.js";
 
 const isNil = (x) => x === null || x === undefined;
 
-// Which athletes may the caller import for: self, or as sc_coach/physio on
+// Roles (on the AUTHORITATIVE team_members — see fix note below) allowed to
+// import load data for a teammate, not just themselves.
+const LOAD_STAFF_ROLES = ["strength_conditioning_coach", "physiotherapist"];
+
+// Which athletes may the caller import for: self, or as S&C coach/physio on
 // the athlete's team. Enforced server-side (the upsert runs as service-role).
+//
+// FIXED 2026-07-25 (docs/SOURCE_OF_TRUTH.md §6): this used to query
+// `team_member_roles` — a table created 2026-07-07 explicitly as an unwired
+// primitive ("nothing is altered; nothing is wired to it yet") that nothing
+// has ever inserted into. Every non-self import was silently denied — the
+// exact same bug already found and fixed in monitoring-report.js on
+// 2026-07-09 for the same reason, just never applied here. Now reads the
+// same authoritative `team_members` table every other authorization check
+// in this codebase uses (team-scope.js's isStaffOfTeam/sharesStaffedTeam).
 async function callerWritableAthletes(callerId, athleteIds) {
   const ids = [...new Set(athleteIds.filter(Boolean))];
   const allowed = new Set(ids.filter((id) => id === callerId));
@@ -20,17 +33,18 @@ async function callerWritableAthletes(callerId, athleteIds) {
     return allowed;
   }
   const { data: staff } = await supabaseAdmin
-    .from("team_member_roles")
+    .from("team_members")
     .select("team_id")
     .eq("user_id", callerId)
-    .in("role", ["sc_coach", "physio"]);
+    .eq("status", "active")
+    .in("role", LOAD_STAFF_ROLES);
   const staffTeams = new Set((staff ?? []).map((r) => r.team_id));
   if (staffTeams.size) {
     const { data: ath } = await supabaseAdmin
-      .from("team_member_roles")
+      .from("team_members")
       .select("user_id,team_id")
       .in("user_id", remaining)
-      .eq("role", "athlete");
+      .eq("status", "active");
     for (const r of ath ?? []) {
       if (staffTeams.has(r.team_id)) {
         allowed.add(r.user_id);

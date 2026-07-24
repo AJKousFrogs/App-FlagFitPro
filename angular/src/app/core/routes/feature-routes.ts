@@ -160,6 +160,22 @@ export const featureRoutes: Routes = [
         title: "Team Load Status · FlagFit",
       },
       {
+        path: "practice-plan",
+        loadComponent: () =>
+          import("../../staff/practice-plan/practice-plan.component").then(
+            (m) => m.PracticePlanComponent,
+          ),
+        title: "Practice plan · FlagFit",
+      },
+      {
+        path: "session-load-import",
+        loadComponent: () =>
+          import(
+            "../../staff/session-load-import/session-load-import.component"
+          ).then((m) => m.SessionLoadImportComponent),
+        title: "Import session load · FlagFit",
+      },
+      {
         path: "injury-analytics",
         loadComponent: () =>
           import("../../return-to-play/injury-analytics.component").then(

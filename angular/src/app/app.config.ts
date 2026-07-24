@@ -81,6 +81,7 @@ import {
   Bus,
   Car,
   TrainFront,
+  Upload,
 } from "lucide-angular";
 import {
   provideClientHydration,
@@ -198,6 +199,7 @@ export const appConfig: ApplicationConfig = {
         Bus,
         Car,
         TrainFront,
+        Upload,
       }),
     ),
 
