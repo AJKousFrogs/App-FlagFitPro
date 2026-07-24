@@ -1,7 +1,6 @@
 -- Phase 3: Alert & Automation Engine for RTP and Load Management
 -- Defines alert rules, generated alerts, delivery logs, preferences, and subscriptions
--- Status: Built, not deployed
--- Depends on: Phase 2a (acwr_snapshots, rtp_phase_progress, psychological_assessments)
+-- Depends on: Phase 2a (acwr_snapshots, rtp_phase_progress, rtp_psychological_assessments)
 
 -- ============================================================================
 -- Alert Rules (system-managed rule definitions)
@@ -53,7 +52,7 @@ CREATE TABLE generated_alerts (
   trigger_data JSONB, -- {acwr: 1.42, upper_bound: 1.30, acute_load: 150, chronic_load: 106, ...}
   related_athlete_id UUID REFERENCES users(id), -- For staff alerts about other athletes
   related_injury_id UUID REFERENCES athlete_injuries(id),
-  related_entity_type VARCHAR(50), -- 'acwr_snapshot', 'rtp_phase_progress', 'psychological_assessment'
+  related_entity_type VARCHAR(50), -- 'acwr_snapshot', 'rtp_phase_progress', 'rtp_psychological_assessment'
   related_entity_id UUID,
   acknowledged BOOLEAN DEFAULT false,
   acknowledged_by UUID REFERENCES users(id),
@@ -61,12 +60,16 @@ CREATE TABLE generated_alerts (
   acknowledged_at TIMESTAMP,
   status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'resolved', 'dismissed')),
   resolved_at TIMESTAMP,
+  -- A plain column, not an expression, so it can back a normal UNIQUE
+  -- constraint / ON CONFLICT target (UNIQUE(..., DATE(created_at)) is not
+  -- valid Postgres syntax -- a table CONSTRAINT can only reference columns).
+  alert_date DATE NOT NULL DEFAULT CURRENT_DATE,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now(),
-  CONSTRAINT athlete_rule_date_unique UNIQUE (user_id, rule_id, DATE(created_at))
+  CONSTRAINT athlete_rule_date_unique UNIQUE (user_id, rule_id, alert_date)
 );
 
-COMMENT ON TABLE generated_alerts IS 'Alert events fired by rule engine. One row per triggered event. Deduped per (user_id, rule_id, DATE).';
+COMMENT ON TABLE generated_alerts IS 'Alert events fired by rule engine. One row per triggered event. Deduped per (user_id, rule_id, alert_date).';
 
 -- ============================================================================
 -- Alert Routing (who receives which alert types)
@@ -84,16 +87,12 @@ CREATE TABLE alert_routes (
 );
 
 INSERT INTO alert_routes (alert_rule_id, recipient_role, recipient_user_id, enabled, organization_id)
-SELECT r.id, t.role, NULL, true, NULL
+SELECT r.id, role_t.role, NULL, true, NULL
 FROM alert_rules r
-CROSS JOIN (
-  VALUES ('critical'), ('high'), ('medium'), ('low')
-) AS t(alert_type)
 CROSS JOIN (
   VALUES ('athlete'), ('coach'), ('physiotherapist'), ('strength_coach'), ('psychologist'), ('nutritionist')
 ) AS role_t(role)
-WHERE r.alert_type = t.alert_type
-  AND CASE
+WHERE CASE
     WHEN r.alert_type = 'critical' THEN role_t.role IN ('athlete', 'coach', 'physiotherapist', 'psychologist')
     WHEN r.alert_type = 'high' THEN role_t.role IN ('athlete', 'coach', 'physiotherapist', 'psychologist')
     WHEN r.alert_type = 'medium' THEN role_t.role IN ('coach', 'physiotherapist', 'nutritionist')
@@ -125,7 +124,11 @@ COMMENT ON TABLE alert_delivery_logs IS 'Audit trail for alert delivery. One row
 
 CREATE TABLE alert_preferences (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  -- NOT a standalone UNIQUE: a user has one row PER alert_type (critical/
+  -- high/medium/low), enforced below by one_pref_per_type. A column-level
+  -- UNIQUE here would have capped every user to a single preference row
+  -- total, making the composite constraint unreachable.
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN ('critical', 'high', 'medium', 'low')),
   enabled BOOLEAN DEFAULT true,
   channels JSONB DEFAULT '["in_app"]'::jsonb, -- ['in_app', 'push', 'email', 'sms']
@@ -344,7 +347,7 @@ BEGIN
     'active',
     now()
   )
-  ON CONFLICT (user_id, rule_id, DATE(created_at)) DO NOTHING
+  ON CONFLICT (user_id, rule_id, alert_date) DO NOTHING
   RETURNING id INTO v_alert_id;
 
   RETURN v_alert_id;
@@ -403,7 +406,7 @@ BEGIN
     'active',
     now()
   )
-  ON CONFLICT (user_id, rule_id, DATE(created_at)) DO NOTHING
+  ON CONFLICT (user_id, rule_id, alert_date) DO NOTHING
   RETURNING id INTO v_alert_id;
 
   RETURN v_alert_id;
@@ -462,11 +465,11 @@ BEGIN
       'tsk11_score', p_tsk11_score
     ),
     p_injury_id,
-    'psychological_assessment',
+    'rtp_psychological_assessment',
     'active',
     now()
   )
-  ON CONFLICT (user_id, rule_id, DATE(created_at)) DO NOTHING
+  ON CONFLICT (user_id, rule_id, alert_date) DO NOTHING
   RETURNING id INTO v_alert_id;
 
   RETURN v_alert_id;
@@ -476,30 +479,18 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 COMMENT ON FUNCTION generate_psych_readiness_alert IS 'Fire alert when ACL-RSI <56 or TSK-11 >=37 on assessment.';
 
 -- ============================================================================
--- Realtime Publication (add generated_alerts + alert_delivery_logs)
+-- Realtime Publication -- intentionally NOT touched by this migration.
 -- ============================================================================
-
--- Include generated_alerts and alert_delivery_logs in realtime publication
--- (assume supabase_realtime publication already exists)
-
-DROP PUBLICATION IF EXISTS supabase_realtime CASCADE;
-CREATE PUBLICATION supabase_realtime FOR TABLE
-  training_sessions,
-  daily_wellness_checkin,
-  readiness_scores,
-  chat_messages,
-  channels,
-  notifications,
-  team_members,
-  coach_activity_log,
-  games,
-  messages,
-  performance_metrics,
-  generated_alerts,
-  alert_delivery_logs,
-  acwr_snapshots,
-  rtp_phase_progress,
-  psychological_assessments;
+-- This migration originally dropped and recreated the entire supabase_realtime
+-- publication with a hardcoded table list. That was destructive (the live
+-- publication only contains tournament_day_plans -- this would have silently
+-- removed it and anything else already relying on realtime) and would have
+-- failed outright anyway (it listed `messages` and `performance_metrics`,
+-- neither of which exists). Nothing in the app currently subscribes to
+-- Supabase Realtime for alert data (alert-inbox polls over HTTP), so no
+-- publication change is needed for this feature to work. If realtime delivery
+-- is wanted later, add tables to the publication additively:
+--   ALTER PUBLICATION supabase_realtime ADD TABLE public.generated_alerts;
 
 -- ============================================================================
 -- Trigger: Wire ACWR snapshot status changes to alert generation
@@ -509,16 +500,17 @@ CREATE OR REPLACE FUNCTION trigger_acwr_alert()
 RETURNS TRIGGER AS $$
 BEGIN
   -- Fire alert if status changed to red_flag or yellow_flag
-  IF NEW.status IN ('red_flag', 'yellow_flag', 'safety_alert') THEN
+  -- (safety_alert is a boolean column, not an acwr_status value -- checked separately)
+  IF NEW.acwr_status IN ('red_flag', 'yellow_flag') OR NEW.safety_alert THEN
     PERFORM generate_acwr_alert(
       NEW.user_id,
       NEW.acwr_ratio,
-      CASE WHEN NEW.personalized_upper IS NOT NULL THEN NEW.personalized_upper
+      CASE WHEN NEW.personalized_safe_zone_max IS NOT NULL THEN NEW.personalized_safe_zone_max
            ELSE 1.3 END,
-      NEW.status,
+      CASE WHEN NEW.safety_alert THEN 'safety_alert' ELSE NEW.acwr_status END,
       NEW.id,
-      NEW.acute_load,
-      NEW.chronic_load,
+      NEW.acute_load_au,
+      NEW.chronic_load_au,
       NEW.cumulative_multiplier
     );
   END IF;
@@ -590,7 +582,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER psych_assessment_alert_trigger
-AFTER INSERT OR UPDATE ON psychological_assessments
+AFTER INSERT OR UPDATE ON rtp_psychological_assessments
 FOR EACH ROW
 EXECUTE FUNCTION trigger_psych_readiness_alert();
 
@@ -598,4 +590,4 @@ EXECUTE FUNCTION trigger_psych_readiness_alert();
 -- Audit Comment
 -- ============================================================================
 
-COMMENT ON SCHEMA public IS 'Phase 3 Alert & Automation adds generated_alerts + delivery infrastructure to Phase 2a (ACWR) + Phase 2b (RTP). Rules fire automatically on data mutations via triggers; delivery is handled by Netlify edge functions (send-alert-email.js, push.js, notifications.js).';
+COMMENT ON SCHEMA public IS 'Phase 3 Alert & Automation adds generated_alerts + delivery infrastructure to Phase 2a (ACWR) + Phase 2b (RTP). Rules fire automatically via DB triggers on acwr_snapshots/rtp_phase_progress/rtp_psychological_assessments writes, plus a periodic evaluator (alert-evaluate-rules.js) for multi-day conditions (Underload Alert). Delivery today is in_app only (alert_delivery_logs rows written alongside each alert) -- push/email/sms channel delivery is not yet built.';

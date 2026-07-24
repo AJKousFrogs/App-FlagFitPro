@@ -842,7 +842,7 @@ export class RecoveryEffectivenessComponent {
       effectiveness_1_10: this.effectiveness(),
     };
 
-    this.api.post("/api/recovery-log", payload).subscribe({
+    this.api.post("/api/recovery-effectiveness", payload).subscribe({
       next: () => {
         this.submitting.set(false);
         this.submitMessage.set("Recovery session logged!");

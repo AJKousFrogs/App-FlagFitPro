@@ -17,7 +17,12 @@ import {
   buildRequestLogContext,
   createLogger,
 } from "./utils/structured-logger.js";
-import { computeAcwrAt, computeSessionLoad } from "./utils/acwr.js";
+import {
+  computeAcwrAt,
+  computeSessionLoad,
+  resolveAcwrEvaluationDate,
+} from "./utils/acwr.js";
+import { estimateGameLoads, fetchPastGameLoads } from "./utils/game-load-estimator.js";
 import { resolveCohort } from "./utils/cohort.js";
 import {
   computePersonalCutoffs,
@@ -65,85 +70,6 @@ function travelReadinessPenalty(hours) {
   return 2;
 }
 
-// Per-game internal load (session-RPE AU) by GAME FORMAT. MIRROR of GAME_FORMATS
-// in angular/src/app/core/config/position-volume.config.ts (keep in sync). A
-// flag-football game is high-intensity intermittent; the heavier the format, the
-// higher the single-game load. Injected into the ACWR load map for PAST games so
-// a tournament's acute load (and ACWR) RISES instead of reading falsely safe.
-const GAME_LOAD_AU = {
-  domestic_2x12_stop: 300,
-  running_2x15: 350,
-  ifaf_2x20: 450,
-};
-
-/**
- * Resolve a game's internal load from its format, else its competition level,
- * else the heaviest format — an unknown game is never UNDER-counted (the safe
- * direction). Mirrors resolveGameFormat() in the client config.
- */
-function gameLoadAuFor(gameFormat, competitionLevel) {
-  if (gameFormat && GAME_LOAD_AU[gameFormat]) {
-    return GAME_LOAD_AU[gameFormat];
-  }
-  const lvl = String(competitionLevel || "").toLowerCase();
-  if (lvl === "international") {
-    return GAME_LOAD_AU.ifaf_2x20;
-  }
-  if (lvl === "national" || lvl === "club") {
-    return GAME_LOAD_AU.domestic_2x12_stop;
-  }
-  return GAME_LOAD_AU.ifaf_2x20; // unknown → heaviest (conservative)
-}
-
-/**
- * Build a daily estimated-load Map for PAST games in [startDate, endDate]. Pure
- * (no I/O) so it is unit-testable. Each game's load scales with its FORMAT/level;
- * a multi-day event's total game load is spread evenly across its calendar days
- * within the window. Only events carrying a positive expected_game_count count.
- * dateKey = 'YYYY-MM-DD'.
- */
-function estimateGameLoads(events, startDate, endDate) {
-  const out = new Map();
-  for (const ev of events || []) {
-    const games = Number(ev?.expected_game_count);
-    if (!Number.isFinite(games) || games <= 0 || !ev.starts_at) {
-      continue;
-    }
-    const perGame = gameLoadAuFor(ev.game_format, ev.competition_level);
-    const start = new Date(ev.starts_at);
-    const end = ev.ends_at ? new Date(ev.ends_at) : start;
-    if (Number.isNaN(start.getTime())) {
-      continue;
-    }
-    const days = [];
-    const cur = new Date(
-      Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
-    );
-    const last = Number.isNaN(end.getTime())
-      ? cur
-      : new Date(
-          Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()),
-        );
-    let guard = 0;
-    while (cur <= last && guard < 31) {
-      const key = cur.toISOString().slice(0, 10);
-      if (key >= startDate && key <= endDate) {
-        days.push(key);
-      }
-      cur.setUTCDate(cur.getUTCDate() + 1);
-      guard += 1;
-    }
-    if (days.length === 0) {
-      continue;
-    }
-    const perDay = (games * perGame) / days.length;
-    for (const key of days) {
-      out.set(key, (out.get(key) || 0) + perDay);
-    }
-  }
-  return out;
-}
-
 /**
  * Build the daily internal-load Map (session-RPE AU) from training sessions,
  * summed by `session_date`, via the CANONICAL `computeSessionLoad` (utils/acwr.js)
@@ -165,26 +91,6 @@ export function buildLoadsByDay(sessions) {
     );
   }
   return loadsByDay;
-}
-
-/** Read PAST games from the schedule spine and estimate their daily load. Fails
- * safe (empty map) if the spine view is unavailable. */
-async function fetchPastGameLoads(athleteId, startDate, endDate) {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("v_athlete_schedule")
-      .select("starts_at, ends_at, expected_game_count, competition_level")
-      .eq("user_id", athleteId)
-      .gte("starts_at", startDate)
-      .lte("starts_at", `${endDate}T23:59:59`)
-      .neq("status", "cancelled");
-    if (error || !Array.isArray(data)) {
-      return new Map();
-    }
-    return estimateGameLoads(data, startDate, endDate);
-  } catch {
-    return new Map();
-  }
 }
 
 /**
@@ -519,10 +425,20 @@ const handler = async (event, context) => {
         loadsByDay.set(key, Math.max(loadsByDay.get(key) || 0, gameLoad));
       }
 
+      // Freeze the ACWR window at the pause moment if the athlete has an
+      // active pause with ACWR freezing on — otherwise a paused athlete's
+      // window keeps zero-filling through the gap and decays toward
+      // "detraining"/"building_base" for no real training reason.
+      const acwrEvalDate = await resolveAcwrEvaluationDate(
+        supabaseAdmin,
+        athleteId,
+        targetDate,
+      );
+
       // Canonical EWMA + uncoupled ACWR (single source of truth in utils/acwr.js).
       // EWMA is more sensitive than rolling averages (Williams 2017); the uncoupled
       // window avoids the spurious correlation of coupled ACWR (Lolli 2017).
-      const acwrResult = computeAcwrAt(loadsByDay, targetDate);
+      const acwrResult = computeAcwrAt(loadsByDay, acwrEvalDate);
       const acuteLoad = acwrResult.acuteLoad;
       const chronicLoad = acwrResult.chronicLoad;
       // Do NOT coerce a null ACWR to 0 (S3): a new athlete / insufficient chronic

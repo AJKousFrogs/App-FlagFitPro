@@ -5,6 +5,7 @@ import {
 } from "./utils/error-handler.js";
 import { supabaseAdmin } from "./supabase-client.js";
 import { tryParseJsonObjectBody } from "./utils/input-validator.js";
+import { ingestWearableReadings } from "./utils/wearable-health-ingest-core.js";
 
 // Netlify Function: Wearable-health Ingest
 // Endpoint: /api/wearable-health-ingest
@@ -14,14 +15,15 @@ import { tryParseJsonObjectBody } from "./utils/input-validator.js";
 //   PUT  { source, state:'granted'|'revoked' }  -> record/withdraw opt-in consent
 //   POST { source, sourceDevice, readings[] }   -> ingest, GATED on granted consent
 //
+// The POST path delegates to utils/wearable-health-ingest-core.js, shared with
+// wearables-webhook.js's vendor-push path — same consent gate, same idempotent
+// upsert, so the two entry points can't drift (CLAUDE.md §4).
+//
 // - Ingestion is BLOCKED unless a 'granted' wearable_consent row exists; revoking
 //   consent stops further ingestion (proven).
 // - Every reading stores source + source_device; readings are NEVER merged across
 //   brands (HRV/sleep from different devices are not comparable).
 // - Idempotent on (user_id, source, metric, recorded_at).
-
-const isNil = (x) => x === null || x === undefined;
-const num = (v) => (isNil(v) || v === "" ? null : Number(v));
 
 const handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -72,21 +74,6 @@ const handler = async (event, context) => {
         }
 
         // ── ingest (POST) — GATED on recorded opt-in consent ──────────────
-        const { data: consent } = await supabaseAdmin
-          .from("wearable_consent")
-          .select("state")
-          .eq("user_id", userId)
-          .eq("source", source)
-          .maybeSingle();
-        if (!consent || consent.state !== "granted") {
-          // Blocked: no opt-in on record (or revoked). Ingestion does not proceed.
-          return createErrorResponse(
-            `Ingestion blocked: no granted consent for '${source}'`,
-            403,
-            "consent_required",
-          );
-        }
-
         const readings = Array.isArray(body.readings) ? body.readings : null;
         if (!readings) {
           return createErrorResponse(
@@ -99,57 +86,22 @@ const handler = async (event, context) => {
           ? String(body.sourceDevice).slice(0, 80)
           : null;
 
-        const failed = [];
-        const rows = [];
-        readings.forEach((r, index) => {
-          const metric = typeof r.metric === "string" ? r.metric : null;
-          const recordedAt = r.recordedAt ?? r.recorded_at;
-          if (!metric || isNil(recordedAt)) {
-            failed.push({
-              index,
-              reason: "metric and recordedAt are required",
-            });
-            return;
-          }
-          rows.push({
-            user_id: userId,
-            source, // brand kept per reading — never cross-brand merged
-            source_device: sourceDevice,
-            metric,
-            value: num(r.value),
-            unit: r.unit ? String(r.unit).slice(0, 20) : null,
-            recorded_at: recordedAt,
-            consent_state: "granted",
-          });
-        });
-
-        let ingested = 0;
-        if (rows.length) {
-          // Idempotent on (user_id, source, metric, recorded_at).
-          const { data, error } = await supabaseAdmin
-            .from("wearable_health")
-            .upsert(rows, { onConflict: "user_id,source,metric,recorded_at" })
-            .select("id");
-          if (error) {
-            throw error;
-          }
-          ingested = data?.length ?? rows.length;
+        const result = await ingestWearableReadings(
+          supabaseAdmin,
+          userId,
+          source,
+          readings,
+          sourceDevice,
+        );
+        if (!result.ok) {
+          const status = result.code === "consent_required" ? 403 : 500;
+          return createErrorResponse(result.message, status, result.code);
         }
 
-        const partial = failed.length > 0;
         return createSuccessResponse(
-          {
-            source,
-            sourceDevice,
-            received: readings.length,
-            ingested,
-            failedCount: failed.length,
-            failed,
-            partial,
-            idempotentKey: "user_id,source,metric,recorded_at",
-          },
+          result.data,
           200,
-          partial
+          result.data.partial
             ? "Ingest completed with surfaced failures"
             : "Ingest complete",
         );

@@ -112,6 +112,10 @@ test.describe("Visual Regression - Mobile Devices", () => {
             {
               animations: "disabled",
               threshold: 0.2,
+              // Font-hinting/sub-pixel rendering differs slightly across
+              // Chromium builds even on the same OS; tolerate a small
+              // pixel budget rather than require byte-exact rendering.
+              maxDiffPixelRatio: 0.02,
             },
           );
         }
@@ -140,6 +144,7 @@ test.describe("Component-Level Visual Testing", () => {
       await buttons.scrollIntoViewIfNeeded();
       await expect(buttons).toHaveScreenshot("button-component.png", {
         threshold: 0.1,
+        maxDiffPixelRatio: 0.02,
       });
     }
   });
@@ -155,6 +160,7 @@ test.describe("Component-Level Visual Testing", () => {
       await cards.scrollIntoViewIfNeeded();
       await expect(cards).toHaveScreenshot("card-component.png", {
         threshold: 0.1,
+        maxDiffPixelRatio: 0.02,
       });
     }
   });
@@ -178,6 +184,7 @@ test.describe("Dark Mode Visual Testing", () => {
       fullPage: true,
       animations: "disabled",
       threshold: 0.2,
+      maxDiffPixelRatio: 0.02,
     });
   });
 });

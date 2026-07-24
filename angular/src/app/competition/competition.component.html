@@ -153,6 +153,101 @@
         You were rostered for {{ pendingGamesExpected() }} games. How many did
         you play?
       </p>
+      @if (!perGameMode()) {
+        <button
+          class="btn ghost sm"
+          type="button"
+          style="margin-bottom: var(--s-2)"
+          (click)="enterPerGameMode()"
+        >
+          Prefer to log game-by-game instead?
+        </button>
+      }
+      @if (perGameMode()) {
+        <div class="card" style="margin: 0 0 var(--s-3)">
+          <div class="inline" style="justify-content: space-between">
+            <b>Log a specific game</b>
+            <button class="btn ghost sm" type="button" (click)="exitPerGameMode()">
+              Back to whole-event log
+            </button>
+          </div>
+          @if (gamesLoading()) {
+            <p class="muted" style="font-size: var(--fs-sm)">Loading games…</p>
+          } @else if (gamesError(); as msg) {
+            <p class="muted" style="font-size: var(--fs-sm)">{{ msg }}</p>
+          } @else if (!eventGames().length) {
+            <p class="muted" style="font-size: var(--fs-sm)">
+              No individual games are set up for this event yet — use the
+              whole-event log above instead.
+            </p>
+          } @else {
+            <div class="inline" style="flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0">
+              @for (g of eventGames(); track g.id) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="selectedGameId() === g.id"
+                  (click)="selectGame(g.id)"
+                >
+                  {{ gameLabel(g) }}
+                  @if (loggedGameIds().has(g.id)) {
+                    <lucide-icon name="check" [size]="12" />
+                  }
+                </button>
+              }
+            </div>
+            @if (selectedGame(); as g) {
+              <p class="muted" style="font-size: var(--fs-sm); margin: var(--s-2) 0">
+                {{ g.gameDate | date: "MMM d" }}{{ g.opponent ? " vs " + g.opponent : "" }} —
+                {{ g.expectedDurationMinutes }} min
+              </p>
+              <div class="inline" style="flex-wrap: wrap; gap: var(--s-2); margin: 0 0 var(--s-2)">
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="gameAttended()"
+                  (click)="gameAttended.set(true)"
+                >
+                  Played
+                </button>
+                <button
+                  type="button"
+                  class="chip"
+                  [class.sel]="!gameAttended()"
+                  (click)="gameAttended.set(false)"
+                >
+                  Did not play
+                </button>
+              </div>
+              @if (gameAttended()) {
+                <div class="slider">
+                  <label for="grpe">RPE</label>
+                  <input
+                    class="rng"
+                    id="grpe"
+                    type="range"
+                    min="1"
+                    max="10"
+                    [value]="gameRpe()"
+                    (input)="gameRpe.set(+$any($event.target).value)"
+                    aria-label="This game's RPE 1 to 10"
+                  />
+                  <span class="val">{{ gameRpe() }}</span>
+                </div>
+              }
+              <button
+                class="btn primary block"
+                type="button"
+                [disabled]="gameLogging()"
+                (click)="logGame()"
+              >
+                {{ gameLogging() ? "Logging…" : "Log this game" }}
+              </button>
+            }
+          }
+        </div>
+      }
+      @if (!perGameMode()) {
       <div style="margin: var(--s-2) 0">
         <p
           style="
@@ -300,6 +395,7 @@
         >
           {{ formTouched() ? "Log it" : "Set games & RPE to log" }}
         </button>
+      }
       }
     </div>
   }

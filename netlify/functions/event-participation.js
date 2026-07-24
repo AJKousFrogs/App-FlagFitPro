@@ -97,6 +97,48 @@ const handler = async (event, context) =>
         );
       }
 
+      // Optional: log actuals for one SPECIFIC game within a multi-game event
+      // instead of the whole-event aggregate (docs/SOURCE_OF_TRUTH.md §4a/§4b,
+      // 2026-07-24/25). Verified here (not just trusted to the RPC) that the
+      // game actually belongs to this event, so a caller can't attribute load
+      // to an unrelated game.
+      const gameId = body.gameId || body.game_id || null;
+      if (gameId !== null) {
+        if (!isValidId(gameId)) {
+          return createErrorResponse(
+            "gameId must be a valid id",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+        const { data: game, error: gameErr } = await supabaseAdmin
+          .from("event_games")
+          .select("id")
+          .eq("id", gameId)
+          .eq("competition_event_id", competitionEventId)
+          .maybeSingle();
+        if (gameErr) {
+          logger.error("event_participation_game_lookup_failed", gameErr, {
+            request_id: requestId,
+          });
+          return createErrorResponse(
+            "Failed to verify game",
+            500,
+            "database_error",
+            requestId,
+          );
+        }
+        if (!game) {
+          return createErrorResponse(
+            "gameId does not belong to competitionEventId",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+      }
+
       if (typeof body.attended !== "boolean") {
         return createErrorResponse(
           "attended (boolean) is required",
@@ -190,6 +232,7 @@ const handler = async (event, context) =>
           p_total_minutes: minutes.value,
           p_avg_rpe: avgRpe,
           p_notes: composedNotes,
+          p_game_id: gameId,
         },
       );
 

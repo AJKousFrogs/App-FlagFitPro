@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  signal,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import {
@@ -14,6 +16,8 @@ import {
 } from "@angular/router";
 import { filter, map, startWith } from "rxjs/operators";
 import { LucideAngularModule } from "lucide-angular";
+import { BillingService } from "../core/services/billing.service";
+import { FreezeSignalService } from "../core/services/freeze-signal.service";
 
 /**
  * App shell — the persistent chrome around every screen.
@@ -32,6 +36,22 @@ import { LucideAngularModule } from "lucide-angular";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="app-shell">
+      @if (freeze.locked()) {
+        <div class="frozen-banner" [class.flash]="justFlashed()" role="status">
+          <lucide-icon name="lock" aria-hidden="true" />
+          <span>
+            @if (billing.status()?.tier === "suspended") {
+              Your last payment didn't go through — everything's frozen until
+              it's fixed.
+            } @else {
+              Your 7-day trial has ended — everything you entered is safe,
+              but you're view-only until you subscribe.
+            }
+          </span>
+          <a class="btn primary sm" routerLink="/billing">Subscribe</a>
+        </div>
+      }
+
       <!-- desktop-only sidebar (hidden ≤1023px via CSS) -->
       <nav class="sidebar" aria-label="Primary">
         <a class="brand" routerLink="/today" aria-label="FlagFit Pro — Today">
@@ -136,6 +156,28 @@ import { LucideAngularModule } from "lucide-angular";
 })
 export class ShellComponent {
   private readonly router = inject(Router);
+  protected readonly billing = inject(BillingService);
+  protected readonly freeze = inject(FreezeSignalService);
+
+  /** True for ~700ms after every refused write, re-triggering the frozen
+   * banner's attention animation even if it was already showing. */
+  readonly justFlashed = signal(false);
+
+  constructor() {
+    // Populate billing status once so the frozen banner has real data from
+    // the first render, not only after the first refused write.
+    if (!this.billing.status()) {
+      void this.billing.loadStatus();
+    }
+
+    effect(() => {
+      if (this.freeze.flashTrigger() === 0) {
+        return;
+      }
+      this.justFlashed.set(true);
+      setTimeout(() => this.justFlashed.set(false), 700);
+    });
+  }
 
   /** Current URL as a signal, updated on every navigation. */
   private readonly url = toSignal(

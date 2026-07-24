@@ -32,6 +32,7 @@ const STORAGE_BUCKETS = new Set([
   "community-media",
   "avatars",
   "team-logos",
+  "credential-documents",
 ]);
 
 // ── LIVE schema snapshot (ground truth) ─────────────────────────────────────
@@ -93,6 +94,66 @@ function parseRedirects() {
   return fnPaths;
 }
 
+// Naive but effective for this codebase's actual comment style (full-line
+// // comments, /* */ blocks including JSDoc) — strips them before scanning
+// so an illustrative example inside a comment (e.g. a JSDoc usage sample)
+// doesn't get counted as a real .from()/.rpc() call. Scanning one hop into
+// imported utils/*.js files (below) widens which comments are in scanning
+// range at all, so this matters more than it used to.
+function stripComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+}
+
+function tablesAndRpcsInSource(src) {
+  const code = stripComments(src);
+  const tables = [...code.matchAll(/\.from\(\s*["'`]([A-Za-z0-9_-]+)["'`]/g)].map(
+    (m) => m[1],
+  );
+  const rpcs = [...code.matchAll(/\.rpc\(\s*["'`]([A-Za-z0-9_]+)["'`]/g)].map(
+    (m) => m[1],
+  );
+  return { tables, rpcs };
+}
+
+// Looks one level into the function file's OWN direct local imports (e.g. a
+// shared utils/*-core.js it delegates its actual DB access to), so
+// extracting shared logic out of a function file doesn't silently erase a
+// table's "Touched by" entry the way a plain single-file scan would.
+//
+// Deliberately NOT a full transitive BFS: every function imports common
+// low-level helpers (base-handler.js, error-handler.js, ...), and going more
+// than one hop pulls in unrelated tables from whatever those helpers'
+// *other* callers touch (false positives), plus matches inside comments in
+// files that were never in scope before. One hop covers the real case this
+// exists for — a function's own dedicated logic module — without that blast
+// radius.
+function collectTablesAndRpcs(entrySrc, dir) {
+  const tables = new Set();
+  const rpcs = new Set();
+  const found = tablesAndRpcsInSource(entrySrc);
+  found.tables.forEach((t) => tables.add(t));
+  found.rpcs.forEach((r) => rpcs.add(r));
+
+  for (const m of entrySrc.matchAll(/from\s+["'](\.\.?\/[^"']+)["']/g)) {
+    let rel = m[1];
+    if (!rel.endsWith(".js")) {
+      rel += ".js";
+    }
+    const abs = join(dir, rel);
+    let importedSrc;
+    try {
+      importedSrc = readFileSync(abs, "utf8");
+    } catch {
+      continue; // not a local .js file we can read (e.g. a package import)
+    }
+    const nested = tablesAndRpcsInSource(importedSrc);
+    nested.tables.forEach((t) => tables.add(t));
+    nested.rpcs.forEach((r) => rpcs.add(r));
+  }
+
+  return { tables, rpcs };
+}
+
 // ── Per-function: methods, tables, rpcs, paths, exercised ───────────────────
 function parseFunctions(fnPaths) {
   const dir = join(ROOT, "netlify", "functions");
@@ -127,17 +188,11 @@ function parseFunctions(fnPaths) {
       );
       methods = [...hm];
     }
-    // tables + rpcs
-    const tables = new Set(
-      [...src.matchAll(/\.from\(\s*["'`]([A-Za-z0-9_-]+)["'`]/g)].map(
-        (m) => m[1],
-      ),
-    );
-    const rpcs = new Set(
-      [...src.matchAll(/\.rpc\(\s*["'`]([A-Za-z0-9_]+)["'`]/g)].map(
-        (m) => m[1],
-      ),
-    );
+    // tables + rpcs — also follows local (./...) imports one or more levels
+    // deep (e.g. a shared utils/*-core.js a function delegates its actual
+    // DB access to), so extracting shared logic into utils/ doesn't silently
+    // erase a table's "Touched by" entry the way a plain per-file scan would.
+    const { tables, rpcs } = collectTablesAndRpcs(src, dir);
     // router submodule? imported by another function
     const importedBy = execSafe(
       `grep -rl 'from "\\./${name}\\.js"' netlify/functions/*.js | grep -v '${file}' | head -1`,

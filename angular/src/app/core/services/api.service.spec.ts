@@ -16,6 +16,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
+import { FreezeSignalService } from "./freeze-signal.service";
 
 // Mock LoggerService
 const mockLoggerService = {
@@ -409,6 +410,56 @@ describe("ApiService", () => {
       req.flush(
         { error: { error: "Custom error message" } },
         { status: 400, statusText: "Bad Request" },
+      );
+    });
+
+    it("should flash the freeze signal on a 402 subscription_required response", () => {
+      const freeze = TestBed.inject(FreezeSignalService);
+      expect(freeze.locked()).toBe(false);
+
+      service.post("/test-endpoint", {}).subscribe({
+        error: () => {
+          expect(freeze.locked()).toBe(true);
+          expect(freeze.flashTrigger()).toBe(1);
+        },
+      });
+
+      const req = httpMock.expectOne((request) =>
+        request.url.includes("/test-endpoint"),
+      );
+      req.flush(
+        {
+          success: false,
+          error: {
+            code: "subscription_required",
+            message: "Your trial has ended.",
+          },
+          errorType: "subscription_required",
+        },
+        { status: 402, statusText: "Payment Required" },
+      );
+    });
+
+    it("does not flash the freeze signal on an unrelated 402-adjacent error code", () => {
+      const freeze = TestBed.inject(FreezeSignalService);
+
+      service.post("/test-endpoint", {}).subscribe({
+        error: () => {
+          expect(freeze.locked()).toBe(false);
+          expect(freeze.flashTrigger()).toBe(0);
+        },
+      });
+
+      const req = httpMock.expectOne((request) =>
+        request.url.includes("/test-endpoint"),
+      );
+      req.flush(
+        {
+          success: false,
+          error: { code: "validation_error", message: "Bad request" },
+          errorType: "validation_error",
+        },
+        { status: 422, statusText: "Unprocessable Entity" },
       );
     });
 

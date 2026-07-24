@@ -138,7 +138,7 @@ async function logPsychologicalAssessment(supabase, payload, requestLogger) {
   };
 
   const { data, error } = await supabase
-    .from("psychological_assessments")
+    .from("rtp_psychological_assessments")
     .upsert(assessmentPayload, {
       onConflict: "user_id,assessment_date,injury_id",
     })
@@ -174,7 +174,7 @@ async function logPsychologicalAssessment(supabase, payload, requestLogger) {
 
 async function getPsychologicalHistory(supabase, athleteId, limit = 10) {
   const { data, error } = await supabase
-    .from("psychological_assessments")
+    .from("rtp_psychological_assessments")
     .select("*")
     .eq("user_id", athleteId)
     .order("assessment_date", { ascending: false })

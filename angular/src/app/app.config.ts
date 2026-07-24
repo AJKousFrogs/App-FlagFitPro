@@ -32,6 +32,7 @@ import {
   ShieldAlert,
   Ban,
   ClipboardList,
+  BadgeCheck,
   TestTube,
   AlertTriangle,
   CircleAlert,
@@ -77,6 +78,10 @@ import {
   BatteryLow,
   Repeat,
   SlidersHorizontal,
+  Bus,
+  Car,
+  TrainFront,
+  Upload,
 } from "lucide-angular";
 import {
   provideClientHydration,
@@ -145,6 +150,7 @@ export const appConfig: ApplicationConfig = {
         ShieldAlert,
         Ban,
         ClipboardList,
+        BadgeCheck,
         TestTube,
         AlertTriangle,
         CircleAlert,
@@ -190,6 +196,10 @@ export const appConfig: ApplicationConfig = {
         BatteryLow,
         Repeat,
         SlidersHorizontal,
+        Bus,
+        Car,
+        TrainFront,
+        Upload,
       }),
     ),
 

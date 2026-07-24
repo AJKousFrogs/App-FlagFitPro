@@ -15,9 +15,19 @@ const logger = createLogger({ service: "netlify.alert-evaluate-rules" });
  * Alert Rule Evaluation Engine
  * POST /api/alert-evaluate-rules (internal/service-role)
  *
- * Evaluates all active alert rules against current athlete data.
- * Generates alerts for matching conditions, logs delivery attempts.
- * Runs periodically (cron) or on-demand.
+ * Evaluates alert rules that have no DB-trigger equivalent and generates
+ * alerts for matching conditions. Runs periodically (cron) or on-demand.
+ *
+ * ACWR Red/Yellow Flag, Safety Alert, Phase Advancement Ready, and
+ * Psychological Readiness Failed are NOT re-implemented here -- they already
+ * fire atomically via DB triggers on the source table's insert/update
+ * (acwr_snapshot_alert_trigger, rtp_phase_alert_trigger,
+ * psych_assessment_alert_trigger; see
+ * supabase/migrations/20260721130000_phase_3_alerts_and_automation.sql).
+ * Re-implementing the same rule twice (trigger + polling job) is exactly the
+ * class of drift CLAUDE.md's single-source-of-truth rule exists to prevent --
+ * a periodic evaluator only makes sense here for conditions no single-row
+ * trigger can express (a multi-day lookback).
  */
 
 async function evaluateAllRules(supabase, requestLogger) {
@@ -96,362 +106,40 @@ async function evaluateAllRules(supabase, requestLogger) {
 }
 
 // Individual rule evaluation functions
+//
+// ACWR Red Flag, ACWR Yellow Flag, Safety Alert, Phase Advancement Ready, and
+// Psychological Readiness Failed are intentionally no-ops here -- they already
+// fire atomically via DB triggers on acwr_snapshots / rtp_phase_progress /
+// rtp_psychological_assessments insert-or-update (see the file header comment).
+// Readiness Gate Failed and CMJ Depression Trend have no queryable signal in
+// the current schema (no column marks "which specific criterion blocked
+// advancement"; no CMJ time-series table exists) -- both are documented
+// placeholders, same as the original code already had for CMJ.
 
 async function evaluateAcwrRedFlag(supabase, rule, requestLogger) {
-  try {
-    const threshold = rule.trigger_condition?.threshold_multiplier || 1.3;
-
-    const { data: snapshots, error } = await supabase
-      .from("acwr_snapshots")
-      .select(
-        "athlete_id, acwr_ratio, upper_bound_ratio, acute_load, chronic_load, cumulative_load_multiplier"
-      )
-      .gte("acwr_ratio", "upper_bound_ratio * :threshold")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      requestLogger.error("DB error fetching ACWR snapshots for red flag", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const snapshot of snapshots || []) {
-      if (snapshot.acwr_ratio > snapshot.upper_bound_ratio * threshold) {
-        const { data: alert } = await supabase
-          .from("generated_alerts")
-          .insert({
-            user_id: snapshot.athlete_id,
-            rule_id: rule.id,
-            alert_type: "critical",
-            title: `ACWR Red Flag: ${snapshot.acwr_ratio.toFixed(2)} (limit ${snapshot.upper_bound_ratio.toFixed(2)})`,
-            description: "Your training load exceeded your personalized safe zone.",
-            trigger_data: {
-              acwr: snapshot.acwr_ratio,
-              upper_bound: snapshot.upper_bound_ratio,
-              acute_load: snapshot.acute_load,
-              chronic_load: snapshot.chronic_load,
-              cumulative_multiplier: snapshot.cumulative_load_multiplier,
-            },
-            related_entity_type: "acwr_snapshot",
-            related_entity_id: snapshot.id,
-            status: "active",
-          })
-          .select("id");
-
-        if (alert && alert.length > 0) {
-          alertsFired++;
-          // Log delivery: create delivery logs for in-app inbox
-          await supabase.from("alert_delivery_logs").insert({
-            generated_alert_id: alert[0].id,
-            recipient_user_id: snapshot.athlete_id,
-            channel: "in_app",
-            delivery_status: "sent",
-          });
-        }
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating ACWR red flag", {
-      error: err.message,
-    });
-    return 0;
-  }
+  return 0; // handled by acwr_snapshot_alert_trigger
 }
 
 async function evaluateAcwrYellowFlag(supabase, rule, requestLogger) {
-  try {
-    const threshold = rule.trigger_condition?.threshold_multiplier || 1.0;
-
-    const { data: snapshots, error } = await supabase
-      .from("acwr_snapshots")
-      .select(
-        "athlete_id, acwr_ratio, upper_bound_ratio, acute_load, chronic_load, cumulative_load_multiplier"
-      )
-      .gte("acwr_ratio", "upper_bound_ratio * 1.0")
-      .lt("acwr_ratio", "upper_bound_ratio * 1.3")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      requestLogger.error("DB error fetching ACWR snapshots for yellow flag", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const snapshot of snapshots || []) {
-      const { data: alert } = await supabase
-        .from("generated_alerts")
-        .insert({
-          user_id: snapshot.athlete_id,
-          rule_id: rule.id,
-          alert_type: "high",
-          title: `ACWR Yellow Flag: ${snapshot.acwr_ratio.toFixed(2)} (limit ${snapshot.upper_bound_ratio.toFixed(2)})`,
-          description: "Your training load is approaching your personalized limit.",
-          trigger_data: {
-            acwr: snapshot.acwr_ratio,
-            upper_bound: snapshot.upper_bound_ratio,
-            acute_load: snapshot.acute_load,
-            chronic_load: snapshot.chronic_load,
-            cumulative_multiplier: snapshot.cumulative_load_multiplier,
-          },
-          related_entity_type: "acwr_snapshot",
-          related_entity_id: snapshot.id,
-          status: "active",
-        })
-        .select("id");
-
-      if (alert && alert.length > 0) {
-        alertsFired++;
-        await supabase.from("alert_delivery_logs").insert({
-          generated_alert_id: alert[0].id,
-          recipient_user_id: snapshot.athlete_id,
-          channel: "in_app",
-          delivery_status: "sent",
-        });
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating ACWR yellow flag", {
-      error: err.message,
-    });
-    return 0;
-  }
+  return 0; // handled by acwr_snapshot_alert_trigger
 }
 
 async function evaluateSafetyAlert(supabase, rule, requestLogger) {
-  try {
-    const { data: snapshots, error } = await supabase
-      .from("acwr_snapshots")
-      .select("athlete_id")
-      .eq("safety_alert", true);
-
-    if (error) {
-      requestLogger.error("DB error fetching safety alerts", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const snapshot of snapshots || []) {
-      const { data: alert } = await supabase
-        .from("generated_alerts")
-        .insert({
-          user_id: snapshot.athlete_id,
-          rule_id: rule.id,
-          alert_type: "critical",
-          title: "ACWR Safety Alert",
-          description: "Your training load triggered a safety flag.",
-          trigger_data: { safety_alert_triggered: true },
-          related_entity_type: "acwr_snapshot",
-          related_entity_id: snapshot.id,
-          status: "active",
-        })
-        .select("id");
-
-      if (alert && alert.length > 0) {
-        alertsFired++;
-        await supabase.from("alert_delivery_logs").insert({
-          generated_alert_id: alert[0].id,
-          recipient_user_id: snapshot.athlete_id,
-          channel: "in_app",
-          delivery_status: "sent",
-        });
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating safety alert", {
-      error: err.message,
-    });
-    return 0;
-  }
+  return 0; // handled by acwr_snapshot_alert_trigger
 }
 
 async function evaluatePhaseAdvancement(supabase, rule, requestLogger) {
-  try {
-    const { data: progressions, error } = await supabase
-      .from("rtp_phase_progress")
-      .select("athlete_id, injury_id, current_phase, next_phase")
-      .eq("phase_advancement_ready", true);
-
-    if (error) {
-      requestLogger.error("DB error fetching phase progressions", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const prog of progressions || []) {
-      const { data: injury } = await supabase
-        .from("athlete_injuries")
-        .select("injury_type")
-        .eq("id", prog.injury_id)
-        .single();
-
-      const { data: alert } = await supabase
-        .from("generated_alerts")
-        .insert({
-          user_id: prog.athlete_id,
-          rule_id: rule.id,
-          alert_type: "high",
-          title: `Phase Advancement Ready: ${injury?.injury_type || "Injury"} (${prog.current_phase}→${prog.next_phase})`,
-          description: "All functional criteria met. Review psychological readiness before advancing.",
-          trigger_data: {
-            injury_type: injury?.injury_type,
-            current_phase: prog.current_phase,
-            next_phase: prog.next_phase,
-          },
-          related_injury_id: prog.injury_id,
-          related_entity_type: "rtp_phase_progress",
-          related_entity_id: prog.id,
-          status: "active",
-        })
-        .select("id");
-
-      if (alert && alert.length > 0) {
-        alertsFired++;
-        await supabase.from("alert_delivery_logs").insert({
-          generated_alert_id: alert[0].id,
-          recipient_user_id: prog.athlete_id,
-          channel: "in_app",
-          delivery_status: "sent",
-        });
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating phase advancement", {
-      error: err.message,
-    });
-    return 0;
-  }
+  return 0; // handled by rtp_phase_alert_trigger
 }
 
 async function evaluateReadinessGateFailed(supabase, rule, requestLogger) {
-  try {
-    const { data: progressions, error } = await supabase
-      .from("rtp_phase_progress")
-      .select("athlete_id, injury_id, current_phase")
-      .eq("functional_criteria_blocked", true);
-
-    if (error) {
-      requestLogger.error("DB error fetching readiness gate failures", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const prog of progressions || []) {
-      const { data: alert } = await supabase
-        .from("generated_alerts")
-        .insert({
-          user_id: prog.athlete_id,
-          rule_id: rule.id,
-          alert_type: "critical",
-          title: "Readiness Gate Failed",
-          description: "One functional criterion blocks phase advancement.",
-          trigger_data: {
-            current_phase: prog.current_phase,
-            blocked_by_criterion: true,
-          },
-          related_injury_id: prog.injury_id,
-          related_entity_type: "rtp_phase_progress",
-          related_entity_id: prog.id,
-          status: "active",
-        })
-        .select("id");
-
-      if (alert && alert.length > 0) {
-        alertsFired++;
-        await supabase.from("alert_delivery_logs").insert({
-          generated_alert_id: alert[0].id,
-          recipient_user_id: prog.athlete_id,
-          channel: "in_app",
-          delivery_status: "sent",
-        });
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating readiness gate failure", {
-      error: err.message,
-    });
-    return 0;
-  }
+  // Placeholder: rtp_phase_progress has no column identifying which specific
+  // functional criterion blocked advancement -- would require new schema.
+  return 0;
 }
 
 async function evaluatePsychReadinessFailed(supabase, rule, requestLogger) {
-  try {
-    const { data: assessments, error } = await supabase
-      .from("psychological_readiness_assessments")
-      .select("athlete_id, acl_rsi_score, tsk11_score, injury_id")
-      .or("acl_rsi_score.lt.56,tsk11_score.gte.37");
-
-    if (error) {
-      requestLogger.error("DB error fetching psychological assessments", {
-        code: error.code,
-      });
-      return 0;
-    }
-
-    let alertsFired = 0;
-    for (const assess of assessments || []) {
-      const failReason =
-        assess.acl_rsi_score < 56
-          ? `ACL-RSI ${assess.acl_rsi_score} < 56`
-          : `TSK-11 ${assess.tsk11_score} >= 37`;
-
-      const { data: alert } = await supabase
-        .from("generated_alerts")
-        .insert({
-          user_id: assess.athlete_id,
-          rule_id: rule.id,
-          alert_type: "critical",
-          title: "Psychological Readiness Failed",
-          description: `Failed criterion: ${failReason}`,
-          trigger_data: {
-            acl_rsi_score: assess.acl_rsi_score,
-            tsk11_score: assess.tsk11_score,
-            fail_reason: failReason,
-          },
-          related_injury_id: assess.injury_id,
-          related_entity_type: "psychological_readiness_assessments",
-          related_entity_id: assess.id,
-          status: "active",
-        })
-        .select("id");
-
-      if (alert && alert.length > 0) {
-        alertsFired++;
-        await supabase.from("alert_delivery_logs").insert({
-          generated_alert_id: alert[0].id,
-          recipient_user_id: assess.athlete_id,
-          channel: "in_app",
-          delivery_status: "sent",
-        });
-      }
-    }
-
-    return alertsFired;
-  } catch (err) {
-    requestLogger.error("Error evaluating psychological readiness failure", {
-      error: err.message,
-    });
-    return 0;
-  }
+  return 0; // handled by psych_assessment_alert_trigger
 }
 
 async function evaluateCmjDepressionTrend(supabase, rule, requestLogger) {
@@ -465,28 +153,50 @@ async function evaluateUnderloadAlert(supabase, rule, requestLogger) {
     const consecutiveDays = rule.trigger_condition?.consecutive_days || 3;
 
     const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - consecutiveDays);
+    cutoffDate.setDate(cutoffDate.getDate() - (consecutiveDays - 1));
+    const cutoffDateStr = cutoffDate.toISOString().split("T")[0];
 
-    const { data: underloaded, error } = await supabase
-      .rpc("check_underload_condition", {
-        p_threshold: threshold,
-        p_days: consecutiveDays,
-        p_cutoff_date: cutoffDate.toISOString(),
-      });
+    // No single-row trigger can express "N consecutive days below threshold" --
+    // this is why Underload Alert is the one rule that genuinely needs a
+    // periodic batch scan rather than an insert/update trigger.
+    const { data: snapshots, error } = await supabase
+      .from("acwr_snapshots")
+      .select("user_id, snapshot_date, acwr_ratio")
+      .gte("snapshot_date", cutoffDateStr)
+      .not("acwr_ratio", "is", null)
+      .order("snapshot_date", { ascending: true });
 
     if (error) {
-      requestLogger.error("Error checking underload condition", {
+      requestLogger.error("DB error checking underload condition", {
         code: error.code,
       });
       return 0;
     }
 
+    const byUser = new Map();
+    for (const snap of snapshots || []) {
+      if (!byUser.has(snap.user_id)) {
+        byUser.set(snap.user_id, []);
+      }
+      byUser.get(snap.user_id).push(snap);
+    }
+
     let alertsFired = 0;
-    for (const athlete of underloaded || []) {
+    for (const [userId, userSnapshots] of byUser) {
+      const distinctDays = new Set(userSnapshots.map((s) => s.snapshot_date));
+      const allUnderloaded = userSnapshots.every(
+        (s) => s.acwr_ratio < threshold
+      );
+
+      if (distinctDays.size < consecutiveDays || !allUnderloaded) {
+        continue;
+      }
+
+      const latest = userSnapshots[userSnapshots.length - 1];
       const { data: alert } = await supabase
         .from("generated_alerts")
         .insert({
-          user_id: athlete.athlete_id,
+          user_id: userId,
           rule_id: rule.id,
           alert_type: "low",
           title: "Underload Alert",
@@ -494,8 +204,9 @@ async function evaluateUnderloadAlert(supabase, rule, requestLogger) {
           trigger_data: {
             threshold,
             consecutive_days: consecutiveDays,
-            current_acwr: athlete.acwr_ratio,
+            current_acwr: latest.acwr_ratio,
           },
+          related_entity_type: "acwr_snapshot",
           status: "active",
         })
         .select("id");
@@ -504,7 +215,7 @@ async function evaluateUnderloadAlert(supabase, rule, requestLogger) {
         alertsFired++;
         await supabase.from("alert_delivery_logs").insert({
           generated_alert_id: alert[0].id,
-          recipient_user_id: athlete.athlete_id,
+          recipient_user_id: userId,
           channel: "in_app",
           delivery_status: "sent",
         });
@@ -527,7 +238,7 @@ const handler = async (event, context) =>
     rateLimitType: "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
 
       // Only service-role can trigger evaluation
       if (event.headers["x-service-role"] !== "true") {

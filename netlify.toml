@@ -319,10 +319,43 @@
   status = 200
   force = true
 
+# API Route for session-load CSV import (POST; vendor/manual CSV -> same import core)
+[[redirects]]
+  from = "/api/session-load-import/csv"
+  to = "/.netlify/functions/session-load-import-csv"
+  status = 200
+  force = true
+
 # API Route for wearable-health ingest (POST ingest / PUT consent)
 [[redirects]]
   from = "/api/wearable-health-ingest"
   to = "/.netlify/functions/wearable-health-ingest"
+  status = 200
+  force = true
+
+# API Route for Apple Health manual-export ingest (POST raw export.xml text)
+[[redirects]]
+  from = "/api/wearable-health-ingest/apple-health-xml"
+  to = "/.netlify/functions/wearable-health-ingest-apple-xml"
+  status = 200
+  force = true
+
+# API Routes for wearable OAuth (Garmin/Oura/WHOOP connect/callback/webhook)
+[[redirects]]
+  from = "/api/wearables/connect/*"
+  to = "/.netlify/functions/wearables-connect"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wearables/callback/*"
+  to = "/.netlify/functions/wearables-callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/wearables/webhook/*"
+  to = "/.netlify/functions/wearables-webhook"
   status = 200
   force = true
 
@@ -698,6 +731,94 @@
 [[redirects]]
   from = "/api/staff-psychology"
   to = "/.netlify/functions/staff"
+  status = 200
+  force = true
+
+# API Routes for TIER 1 staff onboarding profiles (self-reported, verification-gated)
+# Each role gets its own function (not one shared "staff-profile" route) because a
+# non-wildcard redirect doesn't carry the original path through to event.path — see
+# the createProfileHandler() comment in staff-profile.js.
+[[redirects]]
+  from = "/api/staff/physiotherapist-profile"
+  to = "/.netlify/functions/staff-physiotherapist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/nutritionist-profile"
+  to = "/.netlify/functions/staff-nutritionist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/psychologist-profile"
+  to = "/.netlify/functions/staff-psychologist-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/strength-coach-profile"
+  to = "/.netlify/functions/staff-strength-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/coach-profile"
+  to = "/.netlify/functions/staff-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/head-coach-profile"
+  to = "/.netlify/functions/staff-head-coach-profile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/staff/manager-profile"
+  to = "/.netlify/functions/staff-manager-profile"
+  status = 200
+  force = true
+
+# API Routes for Physiotherapist Dashboard (TIER 1 — injury roster by RTP phase)
+[[redirects]]
+  from = "/api/staff/physiotherapist/dashboard"
+  to = "/.netlify/functions/physiotherapist-dashboard"
+  status = 200
+  force = true
+
+# API Routes for Admin Credential Review (TIER 1 — approve/reject self-reported
+# credentials). All actions take the credential id via query string/body, not a
+# path segment, so one exact-match redirect is sufficient.
+[[redirects]]
+  from = "/api/admin/credentials"
+  to = "/.netlify/functions/admin-credentials"
+  status = 200
+  force = true
+
+# API Routes for Injury Analytics Dashboard (staff) — function + Angular caller
+# already existed, but this redirect was missing, so the screen has never been
+# reachable in production despite being documented as LIVE. Found in an audit.
+[[redirects]]
+  from = "/api/injury-analytics"
+  to = "/.netlify/functions/injury-analytics"
+  status = 200
+  force = true
+
+# API Routes for Team ACWR Heatmap Dashboard (staff) — same missing-redirect
+# bug as injury-analytics above, found in the same audit.
+[[redirects]]
+  from = "/api/team-acwr"
+  to = "/.netlify/functions/team-acwr"
+  status = 200
+  force = true
+
+# API Routes for Recovery Modality Effectiveness Dashboard (staff) — same
+# missing-redirect bug; the component's POST call also targeted the wrong
+# path (/api/recovery-log), fixed separately in recovery-effectiveness.component.ts.
+[[redirects]]
+  from = "/api/recovery-effectiveness"
+  to = "/.netlify/functions/recovery-effectiveness"
   status = 200
   force = true
 
@@ -1638,16 +1759,34 @@
 
 
 
-# Payments API
+# Billing API (Stripe subscriptions)
 [[redirects]]
-  from = "/api/payments/*"
-  to = "/.netlify/functions/payments"
+  from = "/api/billing/checkout"
+  to = "/.netlify/functions/stripe-checkout"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/api/payments"
-  to = "/.netlify/functions/payments"
+  from = "/api/billing/webhook"
+  to = "/.netlify/functions/stripe-webhook"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/portal"
+  to = "/.netlify/functions/stripe-portal"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/lapse-check"
+  to = "/.netlify/functions/billing-lapse-check"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/status"
+  to = "/.netlify/functions/billing-status"
   status = 200
   force = true
 
@@ -1801,6 +1940,28 @@
 [[redirects]]
   from = "/api/alerts/:alertId/resolve/*"
   to = "/.netlify/functions/alert-resolve"
+  status = 200
+  force = true
+
+# Alert Preferences (self-service) -- function built, was never wired
+[[redirects]]
+  from = "/api/alert-preferences"
+  to = "/.netlify/functions/alert-preferences"
+  status = 200
+  force = true
+
+# RTP Phase Progress + Psychological Assessment -- both fully built, called by
+# rtp.service.ts, but had zero redirect (same class of gap as
+# injury-analytics/team-acwr/recovery-effectiveness, found in the same audit)
+[[redirects]]
+  from = "/api/rtp/phase-progress"
+  to = "/.netlify/functions/rtp-phase-progress"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/rtp/psychological-assessment"
+  to = "/.netlify/functions/rtp-psychological-assessment"
   status = 200
   force = true
 

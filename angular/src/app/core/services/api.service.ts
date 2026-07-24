@@ -4,6 +4,7 @@ import { Observable, throwError } from "rxjs";
 import { catchError, finalize, map, share } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { FreezeSignalService } from "./freeze-signal.service";
 import { extractApiErrorDetails } from "../../shared/utils/error.utils";
 import {
   type MinimalSchema,
@@ -41,6 +42,7 @@ export interface ApiHeadOptions {
 export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
+  private readonly freeze = inject(FreezeSignalService);
   private readonly baseUrl = this.getApiBaseUrl();
 
   /**
@@ -333,13 +335,23 @@ export class ApiService {
     const url = typeof errorLike?.url === "string" ? errorLike.url : undefined;
     const isExpectedApiFailure = Boolean(
       status &&
-      [400, 401, 403, 404].includes(status) &&
+      [400, 401, 402, 403, 404].includes(status) &&
       (url?.includes("/api/") ?? true),
     );
     const normalizedMessage =
       !message || message === "[object Object]"
         ? "Request failed with an unexpected error payload"
         : message;
+
+    // A locked (trial-elapsed/suspended) account gets 402 subscription_required
+    // from ANY write endpoint (netlify/functions/utils/base-handler.js's
+    // freeze gate) -- this is the one place the frontend reacts to that,
+    // rather than every component special-casing it. FreezeSignalService has
+    // no dependencies (not even BillingService) specifically so ApiService
+    // can react here without a circular DI cycle.
+    if (status === 402 && errorType === "subscription_required") {
+      this.freeze.flash();
+    }
 
     // Log with requestId if available
     const logContext = requestId ? `[${requestId}]` : "";
@@ -604,7 +616,6 @@ export const API_ENDPOINTS = {
     dateRange: "/api/player-stats/date-range",
   },
   // Generic endpoints used by feature pages
-  payments: "/api/payments",
   sleepData: "/api/sleep-data",
   qbThrowing: {
     base: "/api/qb-throwing",

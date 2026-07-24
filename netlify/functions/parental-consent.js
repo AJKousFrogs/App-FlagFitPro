@@ -563,6 +563,7 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST"],
     rateLimitType: "CREATE",
     requireAuth: true,
+    bypassEntitlementLock: true, // guardian consent is a legal flow, not a paid feature
     handler: handleAuthenticatedRequest,
   });
 };

@@ -9,7 +9,10 @@ import { LucideAngularModule } from "lucide-angular";
 
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { staffLaneFor } from "../../core/guards/staff.guard";
+import {
+  staffLaneFor,
+  staffProfileRouteFor,
+} from "../../core/guards/staff.guard";
 
 const LANE_LABEL: Record<string, string> = {
   coach: "Coach",
@@ -33,6 +36,13 @@ export class StaffMoreComponent {
   readonly teamName = this.membership.teamName;
   readonly lane = computed(() => staffLaneFor(this.membership.role()));
   readonly roleLabel = computed(() => LANE_LABEL[this.lane() ?? ""] ?? "Staff");
+  readonly profileRoute = computed(() =>
+    staffProfileRouteFor(this.membership.role()),
+  );
+  readonly isAdmin = computed(() => {
+    const role = this.membership.role();
+    return role === "owner" || role === "admin";
+  });
 
   goAthlete(): void {
     this.router.navigate(["/today"]);

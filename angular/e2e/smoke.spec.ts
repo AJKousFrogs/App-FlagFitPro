@@ -117,6 +117,10 @@ async function navigateToScrollableShellPage(page: Page): Promise<string> {
     await page.goto(`${BASE_URL}${path}`);
     await dismissCookieBanner(page);
     await page.waitForLoadState("networkidle");
+    // Signal-driven content (e.g. achievements/stats cards) can still be
+    // rendering a tick after networkidle resolves — give it a beat before
+    // measuring, matching visual-regression.test.js's settle wait.
+    await page.waitForTimeout(500);
 
     // The rebuilt shell scrolls the document (not an inner .app-main pane).
     const metrics = await page.evaluate(() => ({

@@ -13,6 +13,7 @@ import {
 import { authenticateRequest } from "./auth-helper.js";
 import { applyRateLimit, getRateLimitHeaders } from "./rate-limiter.js";
 import { createLogger, extractCorrelationId } from "./structured-logger.js";
+import { getEntitlement } from "./entitlements.js";
 
 /**
  * Base Handler Middleware for Netlify Functions
@@ -49,6 +50,16 @@ import { createLogger, extractCorrelationId } from "./structured-logger.js";
 ("use strict");
 
 const logger = createLogger({ service: "netlify.base-handler" });
+
+// Writes are frozen app-wide once an account is locked (trial elapsed /
+// suspended, no active subscription) -- CLAUDE.md §4: this is the ONE place
+// that enforcement lives, rather than threading an entitlement check into
+// every function file one at a time. Reads are deliberately NOT gated here
+// (a locked account can still see what it already entered); only mutation
+// is frozen. Endpoints that must keep working even while locked (billing
+// itself, auth, legally-required account/consent actions) opt out via
+// `bypassEntitlementLock: true`.
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 /**
  * Generate a unique request ID for tracking
@@ -99,6 +110,7 @@ async function baseHandler(event, context, options = {}) {
     rateLimitType = "READ",
     requireAuth = true,
     skipEnvCheck = false,
+    bypassEntitlementLock = false,
     handler,
     onAuth = null,
   } = options;
@@ -196,6 +208,32 @@ async function baseHandler(event, context, options = {}) {
       limitedResponse.headers["X-Request-Id"] = requestId;
       limitedResponse.headers["X-Correlation-Id"] = correlationId;
       return limitedResponse;
+    }
+
+    // Freeze all mutation once locked (trial elapsed / suspended, no active
+    // subscription) -- a locked caller can still read whatever they already
+    // entered, but every write is refused until they subscribe.
+    if (
+      requireAuth &&
+      userId &&
+      !bypassEntitlementLock &&
+      MUTATING_METHODS.has(event.httpMethod)
+    ) {
+      const entitlement = await getEntitlement(userId, { client: supabase });
+      if (entitlement.locked) {
+        const lockedResponse = withStandardHeaders(
+          createErrorResponse(
+            "Your trial has ended. Subscribe to keep using FlagFit Pro.",
+            402,
+            "subscription_required",
+            { requestId, correlationId },
+          ),
+          event,
+        );
+        lockedResponse.headers["X-Request-Id"] = requestId;
+        lockedResponse.headers["X-Correlation-Id"] = correlationId;
+        return lockedResponse;
+      }
     }
 
     const executeHandler = () =>

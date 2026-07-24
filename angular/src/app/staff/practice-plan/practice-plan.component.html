@@ -1,0 +1,147 @@
+<main class="pp">
+  <header class="pp-head">
+    <a class="back" routerLink="/staff/staff-more" aria-label="Back">
+      <lucide-icon name="chevron-right" style="transform: rotate(180deg)" />
+    </a>
+    <div class="eyebrow">
+      <lucide-icon name="clipboard-list" [size]="15" /> {{ teamName() || "Your team" }}
+    </div>
+    <h1>Team practice plan</h1>
+    <p class="sub">
+      Build the time-boxed block plan for a practice day — drills pulled
+      straight from the library, scaled to how close you are to competition.
+      You call the framing; the plan never re-derives your taper for you.
+    </p>
+  </header>
+
+  <section class="card">
+    <div class="card-head"><h2>Build a plan</h2></div>
+    <div class="card-body">
+      <div class="grid">
+        <label class="fld">
+          <span>Date</span>
+          <input
+            type="date"
+            [value]="date()"
+            (input)="date.set($any($event.target).value)"
+          />
+        </label>
+        <label class="fld">
+          <span>Framing</span>
+          <select
+            [value]="framing()"
+            (change)="framing.set($any($event.target).value)"
+          >
+            <option value="own">Own (build)</option>
+            <option value="sharp">Sharp (taper)</option>
+            <option value="recovery">Recovery (post-tournament)</option>
+          </select>
+        </label>
+        <label class="fld">
+          <span>Total minutes</span>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="10"
+            max="240"
+            [placeholder]="minutesPlaceholder()"
+            (input)="
+              minutes.set(
+                $any($event.target).value === ''
+                  ? null
+                  : $any($event.target).valueAsNumber
+              )
+            "
+          />
+        </label>
+        <label class="fld">
+          <span>Days to next competition</span>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="0"
+            placeholder="optional"
+            (input)="
+              daysOut.set(
+                $any($event.target).value === ''
+                  ? null
+                  : $any($event.target).valueAsNumber
+              )
+            "
+          />
+        </label>
+        <label class="fld fld--wide">
+          <span>Season phase (optional)</span>
+          <select
+            [value]="seasonPhase()"
+            (change)="seasonPhase.set($any($event.target).value)"
+          >
+            <option value="">Not specified</option>
+            <option value="accumulation">Accumulation</option>
+            <option value="transition">Transition</option>
+            <option value="taper">Taper</option>
+            <option value="competition">Competition</option>
+            <option value="off_season">Off-season</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="generating()"
+          (click)="generate()"
+        >
+          {{ generating() ? "Building…" : "Build plan" }}
+        </button>
+        @if (error(); as msg) {
+          <span class="hint err">{{ msg }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  @if (plan(); as p) {
+    <section class="card">
+      <div class="card-head">
+        <h2>{{ p.date }} — {{ p.totalMinutes }} min</h2>
+        <span class="meta">{{ p.planKey }}</span>
+      </div>
+      <div class="card-body">
+        <p class="notes">{{ p.notes }}</p>
+        <div class="summary">
+          <span>Drill: {{ p.drillMinutes }}m</span>
+          <span>Scrimmage: {{ p.scrimmageMinutes }}m</span>
+          <span>High-CNS: {{ p.highCnsMinutes }}m</span>
+        </div>
+
+        <ol class="blocks">
+          @for (block of p.blocks; track block.key) {
+            <li class="block">
+              <div class="block-top">
+                <b>{{ block.title }}</b>
+                <span class="role">{{ roleLabel(block.role) }}</span>
+                @if (block.highCns) {
+                  <span class="band warn">high-CNS</span>
+                }
+                <span class="mins">{{ block.minutes }}m</span>
+              </div>
+              @if (block.drills.length) {
+                <ul class="drills">
+                  @for (drill of block.drills; track drill.id) {
+                    <li>{{ drill.name }}</li>
+                  }
+                </ul>
+              } @else {
+                <p class="empty">No matching drills in the library.</p>
+              }
+              @if (block.waterBreakAfter) {
+                <p class="water">Water break after this block</p>
+              }
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+  }
+</main>

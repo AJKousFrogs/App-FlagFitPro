@@ -1,10 +1,14 @@
--- Phase 2a: ACWR Calculator Engine Schema
--- Implements the unified ACWR calculation engine with athlete-specific biomarker
--- and confound multipliers, injury RTP tracking, and recovery recommendation data.
+-- Phase 2a: ACWR Alerting Storage Schema
+-- Stores materialized daily ACWR snapshots, RTP phase progress tracking, and
+-- psychological readiness assessments that the Phase 3 Alert Engine fires on.
+-- The ACWR ratio itself is computed by the single canonical engine
+-- (netlify/functions/utils/acwr.js) and written here -- this migration does not
+-- define its own ACWR calculation (see the note below the table definitions).
 --
--- Design: docs/phase_2_schema_and_acwr_calculator.md
--- Stores materialized daily ACWR snapshots, RTP progress tracking, psychological
--- readiness assessments, and recovery modality effectiveness logs.
+-- Design: docs/phase_2_schema_and_acwr_calculator.md (aspirational; some of that
+-- doc's schema, e.g. a standalone calculate_acwr_for_athlete SQL function and
+-- recovery-modality logging, was superseded before this migration was applied
+-- -- see the note below).
 
 -- ===== ACWR Snapshots (Daily Materialized View) =====
 -- Stores the pre-computed daily ACWR ratio, personalized safe zones, and alert status
@@ -91,7 +95,13 @@ CREATE INDEX IF NOT EXISTS idx_rtp_progress_week
 -- ===== Psychological Readiness Assessments =====
 -- Stores ACL-RSI, TSK-11, and other psychological readiness measures
 -- that predict RTP success (ACL-RSI ≥56/100 correlates r=0.56 with successful RTS).
-CREATE TABLE IF NOT EXISTS public.psychological_assessments (
+--
+-- Named rtp_psychological_assessments (not psychological_assessments) because a
+-- table of that name already exists live, used by staff-psychology.js for a
+-- completely different, generic questionnaire concept (assessment_type/questions/
+-- responses/score/interpretation) -- different intent, different columns. Colliding
+-- names would have made this CREATE TABLE IF NOT EXISTS silently no-op against it.
+CREATE TABLE IF NOT EXISTS public.rtp_psychological_assessments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   assessment_date date NOT NULL,
@@ -112,228 +122,22 @@ CREATE TABLE IF NOT EXISTS public.psychological_assessments (
   UNIQUE(user_id, assessment_date, injury_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_psych_assessments_user
-  ON public.psychological_assessments(user_id, assessment_date DESC);
+CREATE INDEX IF NOT EXISTS idx_rtp_psych_assessments_user
+  ON public.rtp_psychological_assessments(user_id, assessment_date DESC);
 
--- ===== Athlete Recovery Logs =====
--- Records when an athlete uses a recovery modality and their perceived effectiveness.
--- Used to correlate recovery strategy effectiveness with objective markers (CMJ, HRV, etc.).
-CREATE TABLE IF NOT EXISTS public.athlete_recovery_logs (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  log_date date NOT NULL,
-
-  recovery_modality_id uuid NOT NULL REFERENCES public.recovery_modalities(id) ON DELETE RESTRICT,
-
-  -- Session details
-  duration_minutes integer,
-  perceived_effectiveness_1_10 integer,
-  notes text,
-
-  created_at timestamp with time zone DEFAULT now(),
-
-  UNIQUE(user_id, log_date, recovery_modality_id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_recovery_logs_user_date
-  ON public.athlete_recovery_logs(user_id, log_date DESC);
-CREATE INDEX IF NOT EXISTS idx_recovery_logs_modality
-  ON public.athlete_recovery_logs(recovery_modality_id);
-
--- ===== ACWR Calculation Stored Procedure =====
--- Computes the daily ACWR ratio for an athlete, applying cumulative multipliers
--- from biomarkers, confounds, menstrual cycle, chronotype, position, and genetic factors.
---
--- Returns: acwr_ratio, personalized_lower, personalized_upper, status, alert
---
--- Calculation flow:
--- 1. Fetch 7-day acute load and 21-day chronic load from training_sessions
--- 2. Fetch athlete biomarkers (ferritin, vitamin D, etc.) and confounds (alcohol, caffeine)
--- 3. Compute multipliers: biomarker × confound × menstrual × chronotype × position × genetic
--- 4. Apply multiplier to safe-zone boundaries (0.8–1.3 × cumulative)
--- 5. Classify status (safe, yellow, red, underload, building_base)
-CREATE OR REPLACE FUNCTION public.calculate_acwr_for_athlete(
-  p_user_id uuid,
-  p_date date DEFAULT CURRENT_DATE
-)
-RETURNS TABLE (
-  acwr_ratio numeric,
-  acwr_confidence varchar,  -- 'low', 'medium', 'high', 'building_base'
-  personalized_lower numeric,
-  personalized_upper numeric,
-  acwr_status varchar,
-  safety_alert boolean,
-  acute_load numeric,
-  chronic_load numeric,
-  cumulative_multiplier numeric
-)
-LANGUAGE plpgsql
-STABLE
-AS $$
-DECLARE
-  v_acute_load numeric := 0;
-  v_chronic_load numeric := 0;
-  v_acwr_ratio numeric := NULL;
-  v_acute_days integer := 0;
-  v_confidence varchar := 'building_base';
-
-  v_biomarker_mult numeric := 1.0;
-  v_confound_mult numeric := 1.0;
-  v_menstrual_mult numeric := 1.0;
-  v_chronotype_mult numeric := 1.0;
-  v_position_mult numeric := 1.0;
-  v_genetic_mult numeric := 1.0;
-  v_cumulative_mult numeric := 1.0;
-
-  v_personalized_lower numeric;
-  v_personalized_upper numeric;
-  v_status varchar;
-  v_alert boolean := false;
-
-  v_ferritin numeric;
-  v_vit_d numeric;
-  v_alcohol_units numeric;
-  v_caffeine_mg numeric;
-  v_chronotype varchar;
-  v_menstrual_phase varchar;
-  v_position varchar;
-BEGIN
-  -- Step 1: Calculate acute (7d) and chronic (21d) load from training_sessions
-  -- Acute window: p_date - 6 to p_date (7 days inclusive)
-  SELECT
-    COALESCE(SUM(COALESCE(workload, duration_minutes * rpe / 10.0)), 0)
-  INTO v_acute_load
-  FROM public.training_sessions
-  WHERE user_id = p_user_id
-    AND session_date >= (p_date - 6)
-    AND session_date <= p_date;
-
-  v_acute_days := (SELECT COUNT(DISTINCT session_date)
-    FROM public.training_sessions
-    WHERE user_id = p_user_id
-      AND session_date >= (p_date - 6)
-      AND session_date <= p_date);
-
-  -- Chronic window: p_date - 20 to p_date (21 days inclusive)
-  SELECT
-    COALESCE(SUM(COALESCE(workload, duration_minutes * rpe / 10.0)), 0)
-  INTO v_chronic_load
-  FROM public.training_sessions
-  WHERE user_id = p_user_id
-    AND session_date >= (p_date - 20)
-    AND session_date <= p_date;
-
-  -- Step 2: Compute ACWR ratio (only if chronic load > 0)
-  IF v_chronic_load > 0 THEN
-    v_acwr_ratio := v_acute_load / v_chronic_load;
-
-    -- Confidence grading: based on acute-window training days
-    -- < 8 days of data in the 28-day span = low confidence
-    IF v_acute_days >= 14 THEN
-      v_confidence := 'high';
-    ELSIF v_acute_days >= 10 THEN
-      v_confidence := 'medium';
-    ELSIF v_acute_days >= 8 THEN
-      v_confidence := 'low';
-    ELSE
-      v_confidence := 'building_base';
-      v_acwr_ratio := NULL;  -- Discard the ratio if insufficient data
-    END IF;
-  END IF;
-
-  -- Step 3: Fetch biomarkers and compute multipliers
-  -- Biomarker multiplier: iron status, vitamin D deficiency
-  SELECT ferritin_ugL, vitamin_d_status
-  INTO v_ferritin, v_vit_d
-  FROM public.individual_profiles
-  WHERE user_id = p_user_id;
-
-  IF v_ferritin IS NOT NULL AND v_ferritin < 20 THEN
-    v_biomarker_mult := 0.8;  -- Low iron reduces ACWR tolerance
-  ELSIF v_vit_d IS NOT NULL AND v_vit_d < 20 THEN
-    v_biomarker_mult := 0.9;  -- Vitamin D deficiency
-  END IF;
-
-  -- Confound multiplier: alcohol, caffeine
-  SELECT alcohol_units_per_week, caffeine_mg_per_day
-  INTO v_alcohol_units, v_caffeine_mg
-  FROM public.individual_profiles
-  WHERE user_id = p_user_id;
-
-  IF v_alcohol_units IS NOT NULL AND v_alcohol_units > 14 THEN
-    v_confound_mult := 0.75;  -- Heavy alcohol impairs recovery
-  ELSIF v_caffeine_mg IS NOT NULL AND v_caffeine_mg > 6 * 80 THEN
-    -- Assume avg body weight ~80kg; >6 mg/kg = > 480 mg
-    v_confound_mult := 0.95;
-  END IF;
-
-  -- Menstrual cycle multiplier (if tracking enabled)
-  SELECT menstrual_phase INTO v_menstrual_phase
-  FROM public.individual_profiles
-  WHERE user_id = p_user_id;
-
-  IF v_menstrual_phase = 'menstrual' THEN
-    v_menstrual_mult := 0.95;  -- Slight reduction during menstrual phase
-  END IF;
-
-  -- Chronotype multiplier (morning lark vs evening owl)
-  SELECT chronotype INTO v_chronotype
-  FROM public.athletes
-  WHERE user_id = p_user_id;
-
-  -- Placeholder: implement based on time-of-day logic
-  -- For now, neutral multiplier
-  v_chronotype_mult := 1.0;
-
-  -- Position multiplier (midfield = higher load demand)
-  SELECT position INTO v_position
-  FROM public.athletes
-  WHERE user_id = p_user_id;
-
-  -- Placeholder: implement from position_demands_json
-  -- For now, neutral multiplier
-  v_position_mult := 1.0;
-
-  -- Genetic multiplier (from genetic_profiles if available)
-  -- Placeholder: implement from genotypes (ACE I/D, ACTN3, etc.)
-  v_genetic_mult := 1.0;
-
-  -- Step 4: Compute cumulative multiplier (product of all)
-  v_cumulative_mult := v_biomarker_mult * v_confound_mult * v_menstrual_mult
-                      * v_chronotype_mult * v_position_mult * v_genetic_mult;
-
-  -- Step 5: Apply multiplier to safe-zone boundaries
-  -- Base adult ACWR safe zone: 0.8–1.3
-  v_personalized_lower := 0.8 * v_cumulative_mult;
-  v_personalized_upper := 1.3 * v_cumulative_mult;
-
-  -- Step 6: Classify ACWR status
-  IF v_acwr_ratio IS NULL THEN
-    v_status := 'building_base';
-  ELSIF v_acwr_ratio > v_personalized_upper + 0.3 THEN
-    v_status := 'red_flag';
-    v_alert := true;
-  ELSIF v_acwr_ratio > v_personalized_upper THEN
-    v_status := 'yellow_flag';
-  ELSIF v_acwr_ratio >= v_personalized_lower THEN
-    v_status := 'safe';
-  ELSIF v_acwr_ratio < v_personalized_lower THEN
-    v_status := 'underload';
-  END IF;
-
-  RETURN QUERY
-  SELECT
-    v_acwr_ratio,
-    v_confidence,
-    v_personalized_lower,
-    v_personalized_upper,
-    v_status,
-    v_alert,
-    v_acute_load,
-    v_chronic_load,
-    v_cumulative_mult;
-END;
-$$;
+-- Note: this migration originally also defined a `calculate_acwr_for_athlete`
+-- stored procedure and an `athlete_recovery_logs` table. Both were removed
+-- before this migration was ever applied live:
+--  - calculate_acwr_for_athlete re-implemented ACWR entirely in SQL, a second,
+--    independent calculation of a safety-critical metric that duplicates the
+--    canonical utils/acwr.js engine (CLAUDE.md's single-source-of-truth rule).
+--    It was also dead code (nothing ever called it) and referenced two tables
+--    that don't exist live (public.athletes, public.individual_profiles), so it
+--    would have errored on every call anyway.
+--  - athlete_recovery_logs had a FK to public.recovery_modalities, a table that
+--    was never created by any migration -- CREATE TABLE would have failed
+--    outright. It was also dead code (nothing referenced it) and duplicated the
+--    concept the already-live recovery_sessions/recovery_protocols tables cover.
 
 -- ===== RLS Policy: acwr_snapshots =====
 -- Athletes see their own ACWR; staff (coach/physio) see their team's athletes
@@ -380,14 +184,14 @@ CREATE POLICY "rtp_progress_staff_read" ON public.rtp_phase_progress
     )
   );
 
--- ===== RLS Policy: psychological_assessments =====
-ALTER TABLE public.psychological_assessments ENABLE ROW LEVEL SECURITY;
+-- ===== RLS Policy: rtp_psychological_assessments =====
+ALTER TABLE public.rtp_psychological_assessments ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "psych_assessments_athlete_read" ON public.psychological_assessments
+CREATE POLICY "rtp_psych_assessments_athlete_read" ON public.rtp_psychological_assessments
   FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "psych_assessments_staff_read" ON public.psychological_assessments
+CREATE POLICY "rtp_psych_assessments_staff_read" ON public.rtp_psychological_assessments
   FOR SELECT
   USING (
     EXISTS (
@@ -395,31 +199,8 @@ CREATE POLICY "psych_assessments_staff_read" ON public.psychological_assessments
       INNER JOIN public.team_members athlete_tm
         ON tm.team_id = athlete_tm.team_id
       WHERE tm.user_id = auth.uid()
-        AND athlete_tm.user_id = psychological_assessments.user_id
+        AND athlete_tm.user_id = rtp_psychological_assessments.user_id
         AND tm.role IN ('owner', 'admin', 'head_coach', 'coach', 'assistant_coach', 'psychologist')
-        AND tm.status = 'active'
-        AND athlete_tm.status = 'active'
-    )
-  );
-
--- ===== RLS Policy: athlete_recovery_logs =====
-ALTER TABLE public.athlete_recovery_logs ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "recovery_logs_athlete_read_write" ON public.athlete_recovery_logs
-  FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "recovery_logs_staff_read" ON public.athlete_recovery_logs
-  FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.team_members tm
-      INNER JOIN public.team_members athlete_tm
-        ON tm.team_id = athlete_tm.team_id
-      WHERE tm.user_id = auth.uid()
-        AND athlete_tm.user_id = athlete_recovery_logs.user_id
-        AND tm.role IN ('owner', 'admin', 'head_coach', 'coach', 'assistant_coach', 'physiotherapist')
         AND tm.status = 'active'
         AND athlete_tm.status = 'active'
     )

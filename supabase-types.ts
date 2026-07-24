@@ -148,6 +148,72 @@ export type Database = {
         }
         Relationships: []
       }
+      acwr_snapshots: {
+        Row: {
+          acute_load_au: number
+          acwr_ratio: number | null
+          acwr_status: string | null
+          biomarker_multiplier: number | null
+          chronic_load_au: number
+          chronotype_multiplier: number | null
+          confound_multiplier: number | null
+          created_at: string | null
+          cumulative_multiplier: number | null
+          genetic_multiplier: number | null
+          id: string
+          menstrual_cycle_multiplier: number | null
+          personalized_safe_zone_max: number | null
+          personalized_safe_zone_min: number | null
+          position_multiplier: number | null
+          safety_alert: boolean | null
+          snapshot_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          acute_load_au?: number
+          acwr_ratio?: number | null
+          acwr_status?: string | null
+          biomarker_multiplier?: number | null
+          chronic_load_au?: number
+          chronotype_multiplier?: number | null
+          confound_multiplier?: number | null
+          created_at?: string | null
+          cumulative_multiplier?: number | null
+          genetic_multiplier?: number | null
+          id?: string
+          menstrual_cycle_multiplier?: number | null
+          personalized_safe_zone_max?: number | null
+          personalized_safe_zone_min?: number | null
+          position_multiplier?: number | null
+          safety_alert?: boolean | null
+          snapshot_date: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          acute_load_au?: number
+          acwr_ratio?: number | null
+          acwr_status?: string | null
+          biomarker_multiplier?: number | null
+          chronic_load_au?: number
+          chronotype_multiplier?: number | null
+          confound_multiplier?: number | null
+          created_at?: string | null
+          cumulative_multiplier?: number | null
+          genetic_multiplier?: number | null
+          id?: string
+          menstrual_cycle_multiplier?: number | null
+          personalized_safe_zone_max?: number | null
+          personalized_safe_zone_min?: number | null
+          position_multiplier?: number | null
+          safety_alert?: boolean | null
+          snapshot_date?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       age_recovery_modifiers: {
         Row: {
           acwr_max_adjustment: number
@@ -482,6 +548,229 @@ export type Database = {
             columns: ["affected_session_id"]
             isOneToOne: false
             referencedRelation: "v_training_sessions_consent"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_delivery_logs: {
+        Row: {
+          channel: string
+          created_at: string | null
+          delivered_at: string | null
+          delivery_status: string | null
+          error_message: string | null
+          generated_alert_id: string
+          id: string
+          read_at: string | null
+          recipient_user_id: string
+          sent_at: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          generated_alert_id: string
+          id?: string
+          read_at?: string | null
+          recipient_user_id: string
+          sent_at?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          generated_alert_id?: string
+          id?: string
+          read_at?: string | null
+          recipient_user_id?: string
+          sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_delivery_logs_generated_alert_id_fkey"
+            columns: ["generated_alert_id"]
+            isOneToOne: false
+            referencedRelation: "generated_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_delivery_logs_recipient_user_id_fkey"
+            columns: ["recipient_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_preferences: {
+        Row: {
+          alert_type: string
+          channels: Json | null
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_routes: {
+        Row: {
+          alert_rule_id: string
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          organization_id: string | null
+          recipient_role: string
+          recipient_user_id: string | null
+        }
+        Insert: {
+          alert_rule_id: string
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          organization_id?: string | null
+          recipient_role: string
+          recipient_user_id?: string | null
+        }
+        Update: {
+          alert_rule_id?: string
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          organization_id?: string | null
+          recipient_role?: string
+          recipient_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_routes_alert_rule_id_fkey"
+            columns: ["alert_rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alert_rules: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          enabled: boolean | null
+          id: string
+          name: string
+          organization_id: string | null
+          trigger_condition: Json
+          updated_at: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: string
+          name: string
+          organization_id?: string | null
+          trigger_condition: Json
+          updated_at?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          id?: string
+          name?: string
+          organization_id?: string | null
+          trigger_condition?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      alert_subscriptions: {
+        Row: {
+          alert_rule_id: string
+          channels: Json | null
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          subscriber_user_id: string
+          target_athlete_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          alert_rule_id: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          subscriber_user_id: string
+          target_athlete_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          alert_rule_id?: string
+          channels?: Json | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          subscriber_user_id?: string
+          target_athlete_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_subscriptions_alert_rule_id_fkey"
+            columns: ["alert_rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_subscriptions_subscriber_user_id_fkey"
+            columns: ["subscriber_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -1055,6 +1344,38 @@ export type Database = {
           violation_id?: string
         }
         Relationships: []
+      }
+      billing_customers: {
+        Row: {
+          created_at: string
+          id: string
+          owner_team_id: string | null
+          owner_user_id: string | null
+          stripe_customer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_team_id?: string | null
+          owner_user_id?: string | null
+          stripe_customer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_team_id?: string | null
+          owner_user_id?: string | null
+          stripe_customer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_customers_owner_team_id_fkey"
+            columns: ["owner_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blocked_users: {
         Row: {
@@ -1804,6 +2125,69 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_profiles: {
+        Row: {
+          bio: string | null
+          coach_specialty: string | null
+          coaching_background: string | null
+          coaching_certifications: string[] | null
+          coaching_license_issued_by: string | null
+          coaching_license_number: string | null
+          coaching_philosophy: string | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          position_specialization: string | null
+          team_development_approach: string | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_as_head_coach: number | null
+          years_of_coaching_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          coach_specialty?: string | null
+          coaching_background?: string | null
+          coaching_certifications?: string[] | null
+          coaching_license_issued_by?: string | null
+          coaching_license_number?: string | null
+          coaching_philosophy?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          position_specialization?: string | null
+          team_development_approach?: string | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_as_head_coach?: number | null
+          years_of_coaching_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          coach_specialty?: string | null
+          coaching_background?: string | null
+          coaching_certifications?: string[] | null
+          coaching_license_issued_by?: string | null
+          coaching_license_number?: string | null
+          coaching_philosophy?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          position_specialization?: string | null
+          team_development_approach?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_as_head_coach?: number | null
+          years_of_coaching_experience?: number | null
+        }
+        Relationships: []
+      }
       comment_likes: {
         Row: {
           comment_id: string
@@ -2186,6 +2570,63 @@ export type Database = {
         }
         Relationships: []
       }
+      credential_verifications: {
+        Row: {
+          created_at: string
+          credential_name: string
+          credential_number: string | null
+          credential_type: string
+          document_url: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuing_body: string | null
+          rejected_reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          credential_name: string
+          credential_number?: string | null
+          credential_type: string
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          rejected_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          credential_name?: string
+          credential_number?: string | null
+          credential_type?: string
+          document_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_body?: string | null
+          rejected_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       cycle_logs: {
         Row: {
           created_at: string
@@ -2558,33 +2999,45 @@ export type Database = {
       }
       device_pairings: {
         Row: {
+          access_token_encrypted: string | null
           device_identifier: string | null
           external_athlete_id: string | null
           id: string
           is_active: boolean
           paired_at: string
           provider_id: string
+          refresh_token_encrypted: string | null
+          scopes: string[] | null
           team_id: string | null
+          token_expires_at: string | null
           user_id: string
         }
         Insert: {
+          access_token_encrypted?: string | null
           device_identifier?: string | null
           external_athlete_id?: string | null
           id?: string
           is_active?: boolean
           paired_at?: string
           provider_id: string
+          refresh_token_encrypted?: string | null
+          scopes?: string[] | null
           team_id?: string | null
+          token_expires_at?: string | null
           user_id: string
         }
         Update: {
+          access_token_encrypted?: string | null
           device_identifier?: string | null
           external_athlete_id?: string | null
           id?: string
           is_active?: boolean
           paired_at?: string
           provider_id?: string
+          refresh_token_encrypted?: string | null
+          scopes?: string[] | null
           team_id?: string | null
+          token_expires_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -3668,6 +4121,162 @@ export type Database = {
           },
         ]
       }
+      generated_alerts: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          acknowledged_note: string | null
+          alert_date: string
+          alert_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          related_athlete_id: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          related_injury_id: string | null
+          resolved_at: string | null
+          rule_id: string
+          status: string | null
+          title: string
+          trigger_data: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_note?: string | null
+          alert_date?: string
+          alert_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_athlete_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          related_injury_id?: string | null
+          resolved_at?: string | null
+          rule_id: string
+          status?: string | null
+          title: string
+          trigger_data?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_note?: string | null
+          alert_date?: string
+          alert_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          related_athlete_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          related_injury_id?: string | null
+          resolved_at?: string | null
+          rule_id?: string
+          status?: string | null
+          title?: string
+          trigger_data?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_athlete_id_fkey"
+            columns: ["related_athlete_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_injury_id_fkey"
+            columns: ["related_injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_related_injury_id_fkey"
+            columns: ["related_injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "alert_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount_due_cents: number
+          created_at: string
+          currency: string
+          hosted_invoice_url: string | null
+          id: string
+          paid_at: string | null
+          status: string
+          stripe_invoice_id: string
+          subscription_id: string
+        }
+        Insert: {
+          amount_due_cents: number
+          created_at?: string
+          currency: string
+          hosted_invoice_url?: string | null
+          id?: string
+          paid_at?: string | null
+          status: string
+          stripe_invoice_id: string
+          subscription_id: string
+        }
+        Update: {
+          amount_due_cents?: number
+          created_at?: string
+          currency?: string
+          hosted_invoice_url?: string | null
+          id?: string
+          paid_at?: string | null
+          status?: string
+          stripe_invoice_id?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_base_entries: {
         Row: {
           answer: string
@@ -3893,6 +4502,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      manager_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          education_background: string | null
+          id: string
+          management_specialization: string | null
+          updated_at: string
+          user_id: string
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          education_background?: string | null
+          id?: string
+          management_specialization?: string | null
+          updated_at?: string
+          user_id: string
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          education_background?: string | null
+          id?: string
+          management_specialization?: string | null
+          updated_at?: string
+          user_id?: string
+          years_of_experience?: number | null
+        }
+        Relationships: []
       }
       meal_templates: {
         Row: {
@@ -4659,6 +5301,57 @@ export type Database = {
           },
         ]
       }
+      nutritionist_profiles: {
+        Row: {
+          bio: string | null
+          certifications: string[] | null
+          created_at: string
+          credential_issuing_body: string | null
+          credential_number: string | null
+          credential_type: string | null
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credential_issuing_body?: string | null
+          credential_number?: string | null
+          credential_type?: string | null
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credential_issuing_body?: string | null
+          credential_number?: string | null
+          credential_type?: string | null
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       opponent_analysis: {
         Row: {
           avg_points_per_game: number | null
@@ -5236,6 +5929,60 @@ export type Database = {
           },
         ]
       }
+      physiotherapist_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          insurance_expiry_date: string | null
+          insurance_policy_number: string | null
+          insurance_provider: string | null
+          license_issued_by: string | null
+          license_number: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          insurance_expiry_date?: string | null
+          insurance_policy_number?: string | null
+          insurance_provider?: string | null
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       player_achievements: {
         Row: {
           achievement_id: string
@@ -5274,59 +6021,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      player_payments: {
-        Row: {
-          amount: number
-          created_at: string | null
-          id: string
-          notes: string | null
-          payment_date: string
-          payment_method: string | null
-          status: string | null
-          team_id: string
-          tournament_id: string
-          transaction_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          payment_date: string
-          payment_method?: string | null
-          status?: string | null
-          team_id: string
-          tournament_id: string
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          payment_date?: string
-          payment_method?: string | null
-          status?: string | null
-          team_id?: string
-          tournament_id?: string
-          transaction_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_payments_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -6299,6 +6993,60 @@ export type Database = {
         }
         Relationships: []
       }
+      psychologist_profiles: {
+        Row: {
+          bio: string | null
+          certifications: string[] | null
+          created_at: string
+          credentials_verified: boolean | null
+          degree_field: string | null
+          degree_type: string | null
+          education_background: string | null
+          id: string
+          license_issued_by: string | null
+          license_number: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          degree_field?: string | null
+          degree_type?: string | null
+          education_background?: string | null
+          id?: string
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          degree_field?: string | null
+          degree_type?: string | null
+          education_background?: string | null
+          id?: string
+          license_issued_by?: string | null
+          license_number?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth_key: string
@@ -6629,6 +7377,33 @@ export type Database = {
           reason?: string | null
           restrictions?: Json | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      recovery_logs: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          domain: string
+          effectiveness_score: number
+          id: string
+          modality_name: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          domain?: string
+          effectiveness_score: number
+          id?: string
+          modality_name: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          domain?: string
+          effectiveness_score?: number
+          id?: string
+          modality_name?: string
         }
         Relationships: []
       }
@@ -7035,6 +7810,249 @@ export type Database = {
           },
         ]
       }
+      rtp_athlete_protocol_assignments: {
+        Row: {
+          athlete_id: string
+          biological_maturity_gate_passed: boolean | null
+          created_at: string | null
+          current_phase: number | null
+          estimated_return_date: string | null
+          id: string
+          individual_modifiers: Json | null
+          injury_id: string
+          phase_start_date: string
+          protocol_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          athlete_id: string
+          biological_maturity_gate_passed?: boolean | null
+          created_at?: string | null
+          current_phase?: number | null
+          estimated_return_date?: string | null
+          id?: string
+          individual_modifiers?: Json | null
+          injury_id: string
+          phase_start_date?: string
+          protocol_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          athlete_id?: string
+          biological_maturity_gate_passed?: boolean | null
+          created_at?: string | null
+          current_phase?: number | null
+          estimated_return_date?: string | null
+          id?: string
+          individual_modifiers?: Json | null
+          injury_id?: string
+          phase_start_date?: string
+          protocol_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_athlete_protocol_assignments_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_criteria_assessments: {
+        Row: {
+          assessed_by_staff_id: string | null
+          assessed_date: string
+          assessed_value: string | null
+          assignment_id: string
+          created_at: string | null
+          criteria_id: string
+          id: string
+          notes: string | null
+          pass_fail: boolean | null
+        }
+        Insert: {
+          assessed_by_staff_id?: string | null
+          assessed_date?: string
+          assessed_value?: string | null
+          assignment_id: string
+          created_at?: string | null
+          criteria_id: string
+          id?: string
+          notes?: string | null
+          pass_fail?: boolean | null
+        }
+        Update: {
+          assessed_by_staff_id?: string | null
+          assessed_date?: string
+          assessed_value?: string | null
+          assignment_id?: string
+          created_at?: string | null
+          criteria_id?: string
+          id?: string
+          notes?: string | null
+          pass_fail?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_criteria_assessments_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_athlete_protocol_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_criteria_assessments_criteria_id_fkey"
+            columns: ["criteria_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_functional_criteria"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_functional_criteria: {
+        Row: {
+          created_at: string | null
+          criteria_name: string | null
+          criteria_type: string | null
+          id: string
+          measurement_method: string | null
+          pass_threshold: string | null
+          phase_required: number | null
+          protocol_id: string
+          target_value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          criteria_name?: string | null
+          criteria_type?: string | null
+          id?: string
+          measurement_method?: string | null
+          pass_threshold?: string | null
+          phase_required?: number | null
+          protocol_id: string
+          target_value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          criteria_name?: string | null
+          criteria_type?: string | null
+          id?: string
+          measurement_method?: string | null
+          pass_threshold?: string | null
+          phase_required?: number | null
+          protocol_id?: string
+          target_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_functional_criteria_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_phase_progress: {
+        Row: {
+          acl_rsi_pct: number | null
+          acwr_compliance_pct: number | null
+          acwr_target_max: number | null
+          acwr_target_min: number | null
+          athlete_confidence_1_10: number | null
+          biomechanics_symmetrical: boolean | null
+          coach_confidence_1_10: number | null
+          coach_notes: string | null
+          created_at: string | null
+          current_rtp_phase: number
+          hop_test_battery_pct: number | null
+          id: string
+          injury_id: string
+          pain_level_0_10: number | null
+          ready_for_next_phase: boolean | null
+          strength_lsi_pct: number | null
+          tsk11_normalized: boolean | null
+          updated_at: string | null
+          user_id: string
+          week_ending: string
+        }
+        Insert: {
+          acl_rsi_pct?: number | null
+          acwr_compliance_pct?: number | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          athlete_confidence_1_10?: number | null
+          biomechanics_symmetrical?: boolean | null
+          coach_confidence_1_10?: number | null
+          coach_notes?: string | null
+          created_at?: string | null
+          current_rtp_phase?: number
+          hop_test_battery_pct?: number | null
+          id?: string
+          injury_id: string
+          pain_level_0_10?: number | null
+          ready_for_next_phase?: boolean | null
+          strength_lsi_pct?: number | null
+          tsk11_normalized?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          week_ending: string
+        }
+        Update: {
+          acl_rsi_pct?: number | null
+          acwr_compliance_pct?: number | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          athlete_confidence_1_10?: number | null
+          biomechanics_symmetrical?: boolean | null
+          coach_confidence_1_10?: number | null
+          coach_notes?: string | null
+          created_at?: string | null
+          current_rtp_phase?: number
+          hop_test_battery_pct?: number | null
+          id?: string
+          injury_id?: string
+          pain_level_0_10?: number | null
+          ready_for_next_phase?: boolean | null
+          strength_lsi_pct?: number | null
+          tsk11_normalized?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          week_ending?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_phase_progress_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_phase_progress_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rtp_prescription_approvals: {
         Row: {
           approved_by: string | null
@@ -7106,6 +8124,158 @@ export type Database = {
           },
         ]
       }
+      rtp_protocol_definitions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_name: string
+          evidence_grade: string | null
+          id: string
+          injury_type: string
+          key_studies: Json | null
+          rts_rate_percent: number | null
+          typical_rtp_timeline_days_max: number | null
+          typical_rtp_timeline_days_min: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          evidence_grade?: string | null
+          id?: string
+          injury_type: string
+          key_studies?: Json | null
+          rts_rate_percent?: number | null
+          typical_rtp_timeline_days_max?: number | null
+          typical_rtp_timeline_days_min?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          evidence_grade?: string | null
+          id?: string
+          injury_type?: string
+          key_studies?: Json | null
+          rts_rate_percent?: number | null
+          typical_rtp_timeline_days_max?: number | null
+          typical_rtp_timeline_days_min?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rtp_protocol_phases: {
+        Row: {
+          activities: string[] | null
+          acwr_target_max: number | null
+          acwr_target_min: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          key_milestones: string | null
+          pain_level_max: number | null
+          phase_name: string | null
+          phase_number: number
+          protocol_id: string
+          restrictions: string[] | null
+          week_end: number | null
+          week_start: number | null
+        }
+        Insert: {
+          activities?: string[] | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key_milestones?: string | null
+          pain_level_max?: number | null
+          phase_name?: string | null
+          phase_number: number
+          protocol_id: string
+          restrictions?: string[] | null
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Update: {
+          activities?: string[] | null
+          acwr_target_max?: number | null
+          acwr_target_min?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key_milestones?: string | null
+          pain_level_max?: number | null
+          phase_name?: string | null
+          phase_number?: number
+          protocol_id?: string
+          restrictions?: string[] | null
+          week_end?: number | null
+          week_start?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_protocol_phases_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "rtp_protocol_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rtp_psychological_assessments: {
+        Row: {
+          acl_rsi_score: number | null
+          assessment_date: string
+          confidence_1_10: number | null
+          coping_strategies: string | null
+          created_at: string | null
+          id: string
+          injury_id: string | null
+          tsk11_score: number | null
+          user_id: string
+        }
+        Insert: {
+          acl_rsi_score?: number | null
+          assessment_date: string
+          confidence_1_10?: number | null
+          coping_strategies?: string | null
+          created_at?: string | null
+          id?: string
+          injury_id?: string | null
+          tsk11_score?: number | null
+          user_id: string
+        }
+        Update: {
+          acl_rsi_score?: number | null
+          assessment_date?: string
+          confidence_1_10?: number | null
+          coping_strategies?: string | null
+          created_at?: string | null
+          id?: string
+          injury_id?: string | null
+          tsk11_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rtp_psychological_assessments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "athlete_injuries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rtp_psychological_assessments_injury_id_fkey"
+            columns: ["injury_id"]
+            isOneToOne: false
+            referencedRelation: "v_injuries_unified"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       safety_override_log: {
         Row: {
           athlete_notified: boolean | null
@@ -7165,6 +8335,38 @@ export type Database = {
           season_id?: string
         }
         Relationships: []
+      }
+      seat_sync_queue: {
+        Row: {
+          error_message: string | null
+          id: string
+          processed_at: string | null
+          requested_at: string
+          team_id: string
+        }
+        Insert: {
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          requested_at?: string
+          team_id: string
+        }
+        Update: {
+          error_message?: string | null
+          id?: string
+          processed_at?: string | null
+          requested_at?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seat_sync_queue_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_exercises: {
         Row: {
@@ -7690,6 +8892,107 @@ export type Database = {
           },
         ]
       }
+      strength_coach_profiles: {
+        Row: {
+          bio: string | null
+          certification_issued_by: string | null
+          certifications: string[] | null
+          created_at: string
+          credentials_verified: boolean | null
+          education_background: string | null
+          id: string
+          primary_certification: string | null
+          specializations: string[] | null
+          updated_at: string
+          user_id: string
+          verification_completed_at: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          certification_issued_by?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          primary_certification?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          certification_issued_by?: string | null
+          certifications?: string[] | null
+          created_at?: string
+          credentials_verified?: boolean | null
+          education_background?: string | null
+          id?: string
+          primary_certification?: string | null
+          specializations?: string[] | null
+          updated_at?: string
+          user_id?: string
+          verification_completed_at?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          billing_customer_id: string
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          past_due_since: string | null
+          seat_quantity: number | null
+          status: string
+          stripe_subscription_id: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          billing_customer_id: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          past_due_since?: string | null
+          seat_quantity?: number | null
+          status: string
+          stripe_subscription_id: string
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          billing_customer_id?: string
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          past_due_since?: string | null
+          seat_quantity?: number | null
+          status?: string
+          stripe_subscription_id?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_billing_customer_id_fkey"
+            columns: ["billing_customer_id"]
+            isOneToOne: false
+            referencedRelation: "billing_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       superadmins: {
         Row: {
           granted_at: string | null
@@ -8025,6 +9328,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_billable_seat: boolean
           jersey_number: number | null
           joined_at: string
           position: string | null
@@ -8042,6 +9346,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_billable_seat?: boolean
           jersey_number?: number | null
           joined_at?: string
           position?: string | null
@@ -8059,6 +9364,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_billable_seat?: boolean
           jersey_number?: number | null
           joined_at?: string
           position?: string | null
@@ -9203,6 +10509,8 @@ export type Database = {
           date_of_birth: string | null
           email: string
           email_verified: boolean | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           experience_level: string | null
           first_name: string
           full_name: string | null
@@ -9215,6 +10523,7 @@ export type Database = {
           jersey_number: number | null
           last_login: string | null
           last_name: string
+          medical_history: string | null
           name: string | null
           notification_last_opened_at: string | null
           onboarding_completed: boolean
@@ -9226,12 +10535,15 @@ export type Database = {
           profile_photo_url: string | null
           profile_picture: string | null
           secondary_position: string | null
+          sport: string | null
           team: string | null
           throwing_arm: string | null
+          trial_started_at: string
           updated_at: string | null
           verification_token: string | null
           verification_token_expires_at: string | null
           weight_kg: number | null
+          years_experience: number | null
         }
         Insert: {
           account_status?: string | null
@@ -9243,6 +10555,8 @@ export type Database = {
           date_of_birth?: string | null
           email: string
           email_verified?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           experience_level?: string | null
           first_name: string
           full_name?: string | null
@@ -9255,6 +10569,7 @@ export type Database = {
           jersey_number?: number | null
           last_login?: string | null
           last_name: string
+          medical_history?: string | null
           name?: string | null
           notification_last_opened_at?: string | null
           onboarding_completed?: boolean
@@ -9266,12 +10581,15 @@ export type Database = {
           profile_photo_url?: string | null
           profile_picture?: string | null
           secondary_position?: string | null
+          sport?: string | null
           team?: string | null
           throwing_arm?: string | null
+          trial_started_at?: string
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null
           weight_kg?: number | null
+          years_experience?: number | null
         }
         Update: {
           account_status?: string | null
@@ -9283,6 +10601,8 @@ export type Database = {
           date_of_birth?: string | null
           email?: string
           email_verified?: boolean | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           experience_level?: string | null
           first_name?: string
           full_name?: string | null
@@ -9295,6 +10615,7 @@ export type Database = {
           jersey_number?: number | null
           last_login?: string | null
           last_name?: string
+          medical_history?: string | null
           name?: string | null
           notification_last_opened_at?: string | null
           onboarding_completed?: boolean
@@ -9306,12 +10627,15 @@ export type Database = {
           profile_photo_url?: string | null
           profile_picture?: string | null
           secondary_position?: string | null
+          sport?: string | null
           team?: string | null
           throwing_arm?: string | null
+          trial_started_at?: string
           updated_at?: string | null
           verification_token?: string | null
           verification_token_expires_at?: string | null
           weight_kg?: number | null
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -9506,6 +10830,33 @@ export type Database = {
           sport_experience_years?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      zz_video_backup_20260719: {
+        Row: {
+          backed_up_at: string | null
+          id: string | null
+          src_table: string | null
+          thumbnail_url: string | null
+          video_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          backed_up_at?: string | null
+          id?: string | null
+          src_table?: string | null
+          thumbnail_url?: string | null
+          video_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          backed_up_at?: string | null
+          id?: string | null
+          src_table?: string | null
+          thumbnail_url?: string | null
+          video_id?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -9769,6 +11120,10 @@ export type Database = {
       }
       app_schema_columns: { Args: never; Returns: Json }
       archive_season_data: { Args: { p_season_id: string }; Returns: boolean }
+      athlete_phase_criteria_met: {
+        Args: { p_assignment_id: string; p_phase: number }
+        Returns: boolean
+      }
       auth_user_team_ids: { Args: never; Returns: string[] }
       award_achievement: {
         Args: {
@@ -9776,6 +11131,10 @@ export type Database = {
           p_context?: Json
           p_user_id: string
         }
+        Returns: string
+      }
+      calculate_estimated_rtp_date: {
+        Args: { p_current_phase: number; p_protocol_id: string }
         Returns: string
       }
       calculate_player_tournament_cost: {
@@ -9908,6 +11267,28 @@ export type Database = {
         Args: { p_actor_user_id: string; p_subject_user_id: string }
         Returns: boolean
       }
+      generate_acwr_alert: {
+        Args: {
+          p_acute_load: number
+          p_acwr: number
+          p_acwr_snapshot_id: string
+          p_alert_type: string
+          p_chronic_load: number
+          p_cumulative_multiplier: number
+          p_upper_bound: number
+          p_user_id: string
+        }
+        Returns: string
+      }
+      generate_phase_advancement_alert: {
+        Args: {
+          p_current_phase: number
+          p_injury_id: string
+          p_next_phase: number
+          p_user_id: string
+        }
+        Returns: string
+      }
       generate_protocol_transactional: {
         Args: {
           p_acwr_value: number
@@ -9918,6 +11299,15 @@ export type Database = {
           p_readiness_score: number
           p_total_load_target_au: number
           p_training_focus: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      generate_psych_readiness_alert: {
+        Args: {
+          p_acl_rsi_score: number
+          p_injury_id: string
+          p_tsk11_score: number
           p_user_id: string
         }
         Returns: string

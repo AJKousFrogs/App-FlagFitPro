@@ -138,10 +138,10 @@ async function logRecoverySession(
   requestLogger
 ) {
   try {
-    const { modality_name, effectiveness_score, domain, logDate } = payload;
+    const { modality_name, effectiveness_1_10, domain, log_date } = payload;
 
-    if (!modality_name || effectiveness_score === undefined) {
-      return handleValidationError("modality_name and effectiveness_score required");
+    if (!modality_name || effectiveness_1_10 === undefined) {
+      return handleValidationError("modality_name and effectiveness_1_10 required");
     }
 
     const { error: insertError } = await supabase
@@ -150,9 +150,9 @@ async function logRecoverySession(
         {
           athlete_id: athleteId,
           modality_name,
-          effectiveness_score,
+          effectiveness_score: effectiveness_1_10,
           domain: domain || "general",
-          created_at: logDate || new Date().toISOString(),
+          created_at: log_date || new Date().toISOString(),
         },
       ]);
 
@@ -182,7 +182,7 @@ const handler = async (event, context) =>
     rateLimitType: event.httpMethod === "GET" ? "READ" : "CREATE",
     requireAuth: true,
     handler: async (event, _context, { userId }) => {
-      const requestLogger = buildRequestLogContext(logger, event);
+      const requestLogger = logger.child(buildRequestLogContext(event));
       const supabase = getSupabaseClient();
 
       if (event.httpMethod === "GET") {
@@ -199,11 +199,16 @@ const handler = async (event, context) =>
       }
 
       if (event.httpMethod === "POST") {
-        const payload = tryParseJsonObjectBody(event.body);
-        if (!payload) {
-          return createErrorResponse("Invalid JSON body", 400);
+        const parsedBody = tryParseJsonObjectBody(event.body);
+        if (!parsedBody.ok) {
+          return parsedBody.error;
         }
-        return logRecoverySession(supabase, userId, payload, requestLogger);
+        return logRecoverySession(
+          supabase,
+          userId,
+          parsedBody.data,
+          requestLogger
+        );
       }
 
       return createErrorResponse("Method not allowed", 405);

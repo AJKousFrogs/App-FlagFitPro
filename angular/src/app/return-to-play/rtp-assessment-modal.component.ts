@@ -37,10 +37,16 @@ interface AssessmentPayload {
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+    <div
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto"
+      >
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div
+          class="px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+        >
           <h2 class="text-xl font-semibold text-gray-900">
             Record Assessment: {{ criterion().criteria_name }}
           </h2>
@@ -59,19 +65,33 @@ interface AssessmentPayload {
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <p class="text-xs font-medium text-gray-500 uppercase">Type</p>
-                <p class="text-sm font-semibold text-gray-900">{{ criterion().criteria_type }}</p>
+                <p class="text-sm font-semibold text-gray-900">
+                  {{ criterion().criteria_type }}
+                </p>
               </div>
               <div>
-                <p class="text-xs font-medium text-gray-500 uppercase">Target</p>
-                <p class="text-sm font-semibold text-gray-900">{{ criterion().target_value }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase">
+                  Target
+                </p>
+                <p class="text-sm font-semibold text-gray-900">
+                  {{ criterion().target_value }}
+                </p>
               </div>
               <div class="col-span-2">
-                <p class="text-xs font-medium text-gray-500 uppercase">Measurement Method</p>
-                <p class="text-sm text-gray-700">{{ criterion().measurement_method }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase">
+                  Measurement Method
+                </p>
+                <p class="text-sm text-gray-700">
+                  {{ criterion().measurement_method }}
+                </p>
               </div>
               <div class="col-span-2">
-                <p class="text-xs font-medium text-gray-500 uppercase">Pass Threshold</p>
-                <p class="text-sm text-gray-700">{{ criterion().pass_threshold }}</p>
+                <p class="text-xs font-medium text-gray-500 uppercase">
+                  Pass Threshold
+                </p>
+                <p class="text-sm text-gray-700">
+                  {{ criterion().pass_threshold }}
+                </p>
               </div>
             </div>
           </div>
@@ -80,7 +100,10 @@ interface AssessmentPayload {
           <div class="space-y-4">
             <!-- Assessed Value -->
             <div>
-              <label for="assessedValue" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="assessedValue"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Assessed Value *
               </label>
               <input
@@ -110,7 +133,9 @@ interface AssessmentPayload {
                     class="mr-2"
                   />
                   <span class="text-sm text-gray-700">
-                    <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                    <span
+                      class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"
+                    ></span>
                     Pass
                   </span>
                 </label>
@@ -123,7 +148,9 @@ interface AssessmentPayload {
                     class="mr-2"
                   />
                   <span class="text-sm text-gray-700">
-                    <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                    <span
+                      class="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"
+                    ></span>
                     Fail
                   </span>
                 </label>
@@ -132,7 +159,10 @@ interface AssessmentPayload {
 
             <!-- Notes -->
             <div>
-              <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                for="notes"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Notes
               </label>
               <textarea
@@ -147,7 +177,9 @@ interface AssessmentPayload {
         </div>
 
         <!-- Footer -->
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+        <div
+          class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50"
+        >
           <button
             (click)="onCancel()"
             class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -168,7 +200,9 @@ interface AssessmentPayload {
 
         <!-- Error Alert -->
         @if (error()) {
-          <div class="px-6 py-3 bg-red-50 border-t border-red-200 text-red-700 text-sm">
+          <div
+            class="px-6 py-3 bg-red-50 border-t border-red-200 text-red-700 text-sm"
+          >
             {{ error() }}
           </div>
         }
@@ -225,31 +259,35 @@ export class RtpAssessmentModalComponent implements OnInit {
       notes: this.notes().trim(),
     };
 
-    this.rtpService.recordAssessment(payload).subscribe({
-      next: (response: AssessmentResponse) => {
-        this.logger.info("Assessment recorded successfully", {
-          criteriaId: this.criterion().id,
-          assessedValue: payload.assessedValue,
-          passFail: payload.pass_fail,
-        });
+    this.rtpService
+      .recordAssessment(payload as unknown as Record<string, unknown>)
+      .subscribe({
+        next: (response: AssessmentResponse) => {
+          this.logger.info("Assessment recorded successfully", {
+            criteriaId: this.criterion().id,
+            assessedValue: payload.assessedValue,
+            passFail: payload.pass_fail,
+          });
 
-        this.assessmentSubmitted.emit({
-          criteriaId: this.criterion().id,
-          assessedValue: payload.assessedValue,
-          pass_fail: payload.pass_fail,
-          phaseAdvancementEligible: response?.phaseAdvancementEligible || false,
-        });
+          this.assessmentSubmitted.emit({
+            criteriaId: this.criterion().id,
+            assessedValue: payload.assessedValue,
+            pass_fail: payload.pass_fail,
+            phaseAdvancementEligible:
+              response?.phaseAdvancementEligible || false,
+          });
 
-        this.loading.set(false);
-      },
-      error: (err: { error?: { message?: string } }) => {
-        this.logger.error("Failed to record assessment", err);
-        this.error.set(
-          err?.error?.message || "Failed to record assessment. Please try again."
-        );
-        this.loading.set(false);
-      },
-    });
+          this.loading.set(false);
+        },
+        error: (err: { error?: { message?: string } }) => {
+          this.logger.error("Failed to record assessment", err);
+          this.error.set(
+            err?.error?.message ||
+              "Failed to record assessment. Please try again.",
+          );
+          this.loading.set(false);
+        },
+      });
   }
 
   onCancel() {

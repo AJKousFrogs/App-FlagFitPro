@@ -934,18 +934,24 @@ class ConsentDataReader {
     accessorUserId,
     targetUserIds,
     resourceType,
-    teamId,
+    // `teamId` is accepted for caller-compat but not stored: `consent_access_log`
+    // has no team_id column (verified against docs/generated/live-schema.snapshot.json).
+    teamId: _teamId,
     context,
   }) {
     try {
+      // Real live columns (2026-07-25 fix — the previous insert used
+      // accessor_user_id/target_user_id/resource_type/access_granted/consent_type/
+      // team_id/access_reason, none of which exist on this table except by
+      // coincidence of meaning; every call silently no-opped since this shipped.
+      // See docs/SOURCE_OF_TRUTH.md §6, 2026-07-24.
       const logEntries = targetUserIds.map((targetUserId) => ({
-        accessor_user_id: accessorUserId,
-        target_user_id: targetUserId,
-        resource_type: resourceType,
-        access_granted: true,
-        consent_type: "performance",
-        team_id: teamId,
-        access_reason: context,
+        user_id: targetUserId,
+        accessed_by: accessorUserId,
+        access_type: "read",
+        data_category: resourceType,
+        reason: context,
+        consent_given: true,
       }));
 
       // Batch insert audit logs

@@ -13,7 +13,11 @@ import { switchMap, tap, catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs";
 
 import { LoggerService } from "../core/services/logger.service";
-import { RtpService, ProtocolAssignmentResponse, AdvancePhaseResponse } from "./services/rtp.service";
+import {
+  RtpService,
+  ProtocolAssignmentResponse,
+  AdvancePhaseResponse,
+} from "./services/rtp.service";
 import { RtpAssessmentModalComponent } from "./rtp-assessment-modal.component";
 
 interface FunctionalCriterion {
@@ -66,8 +70,8 @@ interface ProtocolAssignment {
   protocol_id: string;
   current_phase: number;
   phase_start_date: string;
-  estimated_return_date: string;
-  individual_modifiers: Record<string, string | number | boolean>;
+  estimated_return_date: string | null;
+  individual_modifiers: Record<string, unknown> | null;
   biological_maturity_gate_passed: boolean;
   created_at: string;
   updated_at: string;
@@ -120,25 +124,38 @@ interface ProtocolAssignment {
             <div class="overview-grid">
               <div class="card">
                 <div class="card-label">Injury</div>
-                <div class="card-value">{{ assignment()!.rtp_protocol_definitions.display_name }}</div>
-                <div class="card-detail">Grade: {{ assignment()!.rtp_protocol_definitions.evidence_grade }}</div>
+                <div class="card-value">
+                  {{ assignment()!.rtp_protocol_definitions.display_name }}
+                </div>
+                <div class="card-detail">
+                  Grade:
+                  {{ assignment()!.rtp_protocol_definitions.evidence_grade }}
+                </div>
               </div>
 
               <div class="card">
                 <div class="card-label">Current Phase</div>
-                <div class="card-value">{{ assignment()!.current_phase }}/5</div>
-                <div class="card-detail">{{ assignment()!.currentPhase?.phase_name || "Loading..." }}</div>
+                <div class="card-value">
+                  {{ assignment()!.current_phase }}/5
+                </div>
+                <div class="card-detail">
+                  {{ assignment()!.currentPhase?.phase_name || "Loading..." }}
+                </div>
               </div>
 
               <div class="card">
                 <div class="card-label">Estimated Return</div>
                 <div class="card-value">{{ daysToReturn() }}d</div>
-                <div class="card-detail">{{ assignment()!.estimated_return_date | date: "MMM dd" }}</div>
+                <div class="card-detail">
+                  {{ assignment()!.estimated_return_date | date: "MMM dd" }}
+                </div>
               </div>
 
               <div class="card">
                 <div class="card-label">RTS Rate</div>
-                <div class="card-value">{{ assignment()!.rtp_protocol_definitions.rts_rate_percent }}%</div>
+                <div class="card-value">
+                  {{ assignment()!.rtp_protocol_definitions.rts_rate_percent }}%
+                </div>
                 <div class="card-detail">Successful return probability</div>
               </div>
             </div>
@@ -148,7 +165,9 @@ interface ProtocolAssignment {
           @if (assignment()!.currentPhase) {
             <section class="phase-section">
               <h2>{{ assignment()!.currentPhase!.phase_name }}</h2>
-              <p class="phase-description">{{ assignment()!.currentPhase!.description }}</p>
+              <p class="phase-description">
+                {{ assignment()!.currentPhase!.description }}
+              </p>
 
               <div class="phase-grid">
                 <div class="phase-card">
@@ -163,7 +182,10 @@ interface ProtocolAssignment {
                 <div class="phase-card">
                   <h3>Recommended Activities</h3>
                   <ul class="activity-list">
-                    @for (activity of assignment()!.currentPhase!.activities; track $index) {
+                    @for (
+                      activity of assignment()!.currentPhase!.activities;
+                      track $index
+                    ) {
                       <li>{{ activity }}</li>
                     }
                   </ul>
@@ -172,7 +194,10 @@ interface ProtocolAssignment {
                 <div class="phase-card">
                   <h3>Contraindications</h3>
                   <ul class="restriction-list">
-                    @for (restriction of assignment()!.currentPhase!.restrictions; track $index) {
+                    @for (
+                      restriction of assignment()!.currentPhase!.restrictions;
+                      track $index
+                    ) {
                       <li>{{ restriction }}</li>
                     }
                   </ul>
@@ -190,7 +215,8 @@ interface ProtocolAssignment {
           <section class="criteria-section">
             <h2>Functional Criteria Assessment</h2>
             <p class="criteria-intro">
-              Complete criteria for phase advancement. All required criteria must pass before advancing.
+              Complete criteria for phase advancement. All required criteria
+              must pass before advancing.
             </p>
 
             <div class="criteria-list">
@@ -198,13 +224,20 @@ interface ProtocolAssignment {
                 <div class="criteria-card">
                   <div class="criteria-header">
                     <h3>{{ criterion.criteria_name }}</h3>
-                    <span class="type-badge">{{ criterion.criteria_type }}</span>
+                    <span class="type-badge">{{
+                      criterion.criteria_type
+                    }}</span>
                   </div>
 
                   <div class="criteria-details">
                     <p><strong>Target:</strong> {{ criterion.target_value }}</p>
-                    <p><strong>Method:</strong> {{ criterion.measurement_method }}</p>
-                    <p><strong>Threshold:</strong> {{ criterion.pass_threshold }}</p>
+                    <p>
+                      <strong>Method:</strong>
+                      {{ criterion.measurement_method }}
+                    </p>
+                    <p>
+                      <strong>Threshold:</strong> {{ criterion.pass_threshold }}
+                    </p>
                   </div>
 
                   <div class="assessment-status">
@@ -212,13 +245,26 @@ interface ProtocolAssignment {
                       <div class="assessed">
                         <span
                           class="status-badge"
-                          [ngClass]="criterion.latestAssessment.pass_fail ? 'pass' : 'fail'"
+                          [ngClass]="
+                            criterion.latestAssessment.pass_fail
+                              ? 'pass'
+                              : 'fail'
+                          "
                         >
-                          {{ criterion.latestAssessment.pass_fail ? "✓ Passed" : "✗ Failed" }}
+                          {{
+                            criterion.latestAssessment.pass_fail
+                              ? "✓ Passed"
+                              : "✗ Failed"
+                          }}
                         </span>
                         <div class="assessment-value">
                           {{ criterion.latestAssessment.assessed_value }}
-                          <span class="date">({{ criterion.latestAssessment.assessed_date | date: "MMM dd" }})</span>
+                          <span class="date"
+                            >({{
+                              criterion.latestAssessment.assessed_date
+                                | date: "MMM dd"
+                            }})</span
+                          >
                         </div>
                       </div>
                     } @else {
@@ -228,7 +274,10 @@ interface ProtocolAssignment {
                     }
                   </div>
 
-                  <button class="record-btn" (click)="onRecordAssessment(criterion)">
+                  <button
+                    class="record-btn"
+                    (click)="onRecordAssessment(criterion)"
+                  >
                     Record Assessment
                   </button>
                 </div>
@@ -254,7 +303,10 @@ interface ProtocolAssignment {
           } @else {
             <div class="completion-banner">
               <h2>✓ Return to Sport Complete</h2>
-              <p>Athlete has cleared all protocol phases and is approved for full participation.</p>
+              <p>
+                Athlete has cleared all protocol phases and is approved for full
+                participation.
+              </p>
             </div>
           }
         </div>
@@ -287,7 +339,8 @@ interface ProtocolAssignment {
         margin: 0;
       }
 
-      .loading, .error-state {
+      .loading,
+      .error-state {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -306,7 +359,9 @@ interface ProtocolAssignment {
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .content {
@@ -395,12 +450,14 @@ interface ProtocolAssignment {
         margin-bottom: 5px;
       }
 
-      .activity-list, .restriction-list {
+      .activity-list,
+      .restriction-list {
         margin: 0;
         padding-left: 20px;
       }
 
-      .activity-list li, .restriction-list li {
+      .activity-list li,
+      .restriction-list li {
         margin-bottom: 8px;
         font-size: 13px;
         color: #555;
@@ -464,7 +521,8 @@ interface ProtocolAssignment {
         margin: 12px 0;
       }
 
-      .assessed, .pending {
+      .assessed,
+      .pending {
         display: flex;
         align-items: center;
         gap: 12px;
@@ -598,13 +656,17 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     if (!a?.estimated_return_date) return 0;
     const returnDate = new Date(a.estimated_return_date);
     const today = new Date();
-    return Math.ceil((returnDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.ceil(
+      (returnDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
   });
 
   advancement = computed(() => {
     const a = this.assignment();
     if (!a) return "";
-    const criteria = a.criteria.filter((c) => c.phase_required <= a.current_phase);
+    const criteria = a.criteria.filter(
+      (c) => c.phase_required <= a.current_phase,
+    );
     const passed = criteria.filter((c) => c.latestAssessment?.pass_fail).length;
     return `${passed}/${criteria.length} criteria passed for phase ${a.current_phase}`;
   });
@@ -613,7 +675,9 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     const a = this.assignment();
     if (!a || a.current_phase >= 5) return false;
     const nextPhase = a.current_phase + 1;
-    const nextCriteria = a.criteria.filter((c) => c.phase_required === nextPhase);
+    const nextCriteria = a.criteria.filter(
+      (c) => c.phase_required === nextPhase,
+    );
     if (!nextCriteria.length) return true;
     return nextCriteria.every((c) => c.latestAssessment?.pass_fail);
   });
@@ -623,7 +687,7 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     this.route.params
       .pipe(
         switchMap(({ athleteId, injuryId }) =>
-          this.rtpService.getProtocolAssignment(athleteId, injuryId)
+          this.rtpService.getProtocolAssignment(athleteId, injuryId),
         ),
         tap((res: ProtocolAssignmentResponse) => {
           if (res?.assignment) {
@@ -637,7 +701,7 @@ export class PhysioProtocolDashboardComponent implements OnInit {
           this.error.set("Failed to load protocol");
           return of(null);
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe();
   }
@@ -697,21 +761,19 @@ export class PhysioProtocolDashboardComponent implements OnInit {
     if (!a) return;
 
     this.loading.set(true);
-    this.rtpService
-      .advancePhase(a.athlete_id, a.injury_id)
-      .subscribe({
-        next: (res: AdvancePhaseResponse) => {
-          if (res?.success && res?.assignment) {
-            this.assignment.set(res.assignment);
-            this.logger.info("Phase advanced successfully");
-          }
-          this.loading.set(false);
-        },
-        error: () => {
-          this.logger.error("Failed to advance phase");
-          this.error.set("Failed to advance phase");
-          this.loading.set(false);
-        },
-      });
+    this.rtpService.advancePhase(a.athlete_id, a.injury_id).subscribe({
+      next: (res: AdvancePhaseResponse) => {
+        if (res?.success && res?.assignment) {
+          this.assignment.set(res.assignment);
+          this.logger.info("Phase advanced successfully");
+        }
+        this.loading.set(false);
+      },
+      error: () => {
+        this.logger.error("Failed to advance phase");
+        this.error.set("Failed to advance phase");
+        this.loading.set(false);
+      },
+    });
   }
 }

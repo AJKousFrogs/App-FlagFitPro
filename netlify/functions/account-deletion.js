@@ -24,6 +24,7 @@ const handler = async (event, context) => {
     allowedMethods: ["GET", "POST", "DELETE"],
     rateLimitType: "CREATE",
     requireAuth: true, // P0-006: Explicitly require authentication for account deletion
+    bypassEntitlementLock: true, // GDPR erasure/cancellation rights aren't a paywalled feature
     handler: async (event, context, { userId, requestId }) => {
       // Service-role client: was the anon client, which RLS denies on
       // account_deletion_requests (0 anon policies) → the deletion-request

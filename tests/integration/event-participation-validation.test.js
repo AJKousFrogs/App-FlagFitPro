@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   rpcResult: { data: "part-1", error: null },
   rpcArgs: null,
+  // Games that "exist" for the event_games lookup, keyed by id.
+  games: { "game-1": { competition_event_id: "ev-1" } },
 }));
 
 vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
@@ -15,15 +17,28 @@ vi.mock("../../netlify/functions/utils/base-handler.js", () => ({
 
 vi.mock("../../netlify/functions/supabase-client.js", () => ({
   supabaseAdmin: {
-    from() {
+    from(table) {
+      const call = { filters: {} };
       const q = {
         select: () => q,
-        eq: () => q,
+        eq(field, value) {
+          call.filters[field] = value;
+          return q;
+        },
         order: () =>
           Promise.resolve({
             data: [{ competition_event_id: "ev-1" }],
             error: null,
           }),
+        maybeSingle: () => {
+          if (table === "event_games") {
+            const game = state.games[call.filters.id];
+            const matches =
+              game && game.competition_event_id === call.filters.competition_event_id;
+            return Promise.resolve({ data: matches ? { id: call.filters.id } : null, error: null });
+          }
+          return Promise.resolve({ data: null, error: null });
+        },
       };
       return q;
     },
@@ -125,6 +140,56 @@ describe("event-participation validation", () => {
       p_games_played: 5,
       p_avg_rpe: 8,
     });
+  });
+
+  it("passes p_game_id: null when gameId is omitted (event-level aggregate)", async () => {
+    await handler(
+      POST({ competitionEventId: "ev-1", attended: true, gamesPlayed: 5 }),
+      {},
+    );
+    expect(state.rpcArgs.p_game_id).toBeNull();
+  });
+
+  it("passes a verified gameId through as p_game_id", async () => {
+    const res = await handler(
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 1,
+        gameId: "game-1",
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(201);
+    expect(state.rpcArgs.p_game_id).toBe("game-1");
+  });
+
+  it("rejects a gameId that doesn't belong to competitionEventId", async () => {
+    const res = await handler(
+      POST({
+        competitionEventId: "ev-2",
+        attended: true,
+        gamesPlayed: 1,
+        gameId: "game-1",
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(422);
+    expect(state.rpcArgs).toBeNull();
+  });
+
+  it("rejects a gameId that doesn't exist at all", async () => {
+    const res = await handler(
+      POST({
+        competitionEventId: "ev-1",
+        attended: true,
+        gamesPlayed: 1,
+        gameId: "nonexistent",
+      }),
+      {},
+    );
+    expect(res.statusCode).toBe(422);
+    expect(state.rpcArgs).toBeNull();
   });
 
   it("forces games_played to 0 when not attended", async () => {

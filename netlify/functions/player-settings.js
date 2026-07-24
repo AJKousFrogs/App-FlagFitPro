@@ -443,6 +443,13 @@ async function saveSettings(supabase, userId, payload, log = logger) {
   const availableEquipment = payload.availableEquipment ?? payload.equipment;
   const seasonCalendar = payload.seasonCalendar ?? payload.season_calendar;
   const { jerseyNumber, heightCm, weightKg, teamTrainingDays } = payload;
+  const {
+    sport,
+    yearsExperience,
+    medicalHistory,
+    emergencyContactName,
+    emergencyContactPhone,
+  } = payload;
 
   const flagPracticeSchedule = availabilitySchedule || [];
 
@@ -614,6 +621,25 @@ async function saveSettings(supabase, userId, payload, log = logger) {
     !Number.isNaN(Number(weightKg))
   ) {
     userUpdate.weight_kg = Number(weightKg);
+  }
+  if (sport !== undefined) {
+    userUpdate.sport = sport || null;
+  }
+  if (
+    yearsExperience !== undefined &&
+    yearsExperience !== null &&
+    !Number.isNaN(Number(yearsExperience))
+  ) {
+    userUpdate.years_experience = Number(yearsExperience);
+  }
+  if (medicalHistory !== undefined) {
+    userUpdate.medical_history = medicalHistory || null;
+  }
+  if (emergencyContactName !== undefined) {
+    userUpdate.emergency_contact_name = emergencyContactName || null;
+  }
+  if (emergencyContactPhone !== undefined) {
+    userUpdate.emergency_contact_phone = emergencyContactPhone || null;
   }
 
   try {

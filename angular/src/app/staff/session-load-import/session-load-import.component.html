@@ -1,0 +1,104 @@
+<main class="sli">
+  <header class="sli-head">
+    <a class="back" routerLink="/staff/staff-more" aria-label="Back">
+      <lucide-icon name="chevron-right" style="transform: rotate(180deg)" />
+    </a>
+    <div class="eyebrow">
+      <lucide-icon name="upload" [size]="15" /> Load data
+    </div>
+    <h1>Import session load</h1>
+    <p class="sub">
+      Upload a vendor export (Catapult, STATSports) or your own tracked
+      spreadsheet, and it feeds straight into each athlete's training load —
+      matched to them via their device pairing. Every row that can't be
+      matched is listed below, never silently dropped.
+    </p>
+  </header>
+
+  <section class="card">
+    <div class="card-head"><h2>Upload a file</h2></div>
+    <div class="card-body">
+      <div class="grid">
+        <label class="fld">
+          <span>Source</span>
+          <select
+            [value]="provider()"
+            (change)="provider.set($any($event.target).value)"
+          >
+            <option value="manual">Manual spreadsheet (FlagFit columns)</option>
+            <option value="catapult">Catapult</option>
+            <option value="statsports">STATSports</option>
+          </select>
+        </label>
+        <label class="fld">
+          <span>CSV file</span>
+          <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)" />
+        </label>
+      </div>
+
+      @if (provider() === "manual") {
+        <p class="hint">
+          Expected columns:
+          <code>athlete_id</code>, <code>session_id</code>,
+          <code>date</code>, <code>total_distance_m</code>,
+          <code>player_load</code>, <code>sprint_count</code>,
+          <code>max_velocity_kmh</code> — extra columns are ignored, and a
+          few common aliases (e.g. <code>distance</code>, <code>load</code>)
+          are accepted too.
+        </p>
+      }
+
+      @if (fileName(); as name) {
+        <p class="picked">
+          <lucide-icon name="file-text" [size]="14" /> {{ name }}
+        </p>
+      }
+
+      <div class="actions">
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="!csvText() || importing()"
+          (click)="import()"
+        >
+          {{ importing() ? "Importing…" : "Import" }}
+        </button>
+        @if (fileName()) {
+          <button class="btn btn--ghost" type="button" (click)="reset()">
+            Clear
+          </button>
+        }
+        @if (error(); as msg) {
+          <span class="hint err">{{ msg }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  @if (result(); as r) {
+    <section class="card">
+      <div class="card-head">
+        <h2>Import result</h2>
+        <span class="meta">{{ r.provider }}</span>
+      </div>
+      <div class="card-body">
+        <div class="summary">
+          <span>Received: {{ r.received }}</span>
+          <span class="ok">Imported: {{ r.imported }}</span>
+          @if (r.failedCount) {
+            <span class="warn">Failed: {{ r.failedCount }}</span>
+          }
+        </div>
+        @if (r.failed.length) {
+          <ul class="failures">
+            @for (f of r.failed; track $index) {
+              <li>{{ failureLabel(f) }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="empty">Every row imported cleanly.</p>
+        }
+      </div>
+    </section>
+  }
+</main>

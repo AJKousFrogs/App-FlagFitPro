@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { ShellComponent } from "../../shell/shell.component";
 import { staffGuard, homeRedirectGuard } from "../guards/staff.guard";
 import { authGuard } from "../guards/auth.guard";
+import { billingGuard } from "../guards/billing.guard";
 
 /**
  * Feature routes — rebuilt incrementally in Phase E from the approved static
@@ -17,6 +18,15 @@ export const featureRoutes: Routes = [
     loadComponent: () =>
       import("../../landing/landing.component").then((m) => m.LandingComponent),
     title: "FlagFit Pro",
+  },
+  {
+    path: "paywall",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("../../billing/paywall.component").then(
+        (m) => m.PaywallComponent,
+      ),
+    title: "Subscribe · FlagFit",
   },
   {
     path: "login",
@@ -150,6 +160,22 @@ export const featureRoutes: Routes = [
         title: "Team Load Status · FlagFit",
       },
       {
+        path: "practice-plan",
+        loadComponent: () =>
+          import("../../staff/practice-plan/practice-plan.component").then(
+            (m) => m.PracticePlanComponent,
+          ),
+        title: "Practice plan · FlagFit",
+      },
+      {
+        path: "session-load-import",
+        loadComponent: () =>
+          import(
+            "../../staff/session-load-import/session-load-import.component"
+          ).then((m) => m.SessionLoadImportComponent),
+        title: "Import session load · FlagFit",
+      },
+      {
         path: "injury-analytics",
         loadComponent: () =>
           import("../../return-to-play/injury-analytics.component").then(
@@ -190,6 +216,73 @@ export const featureRoutes: Routes = [
         title: "Nutrition Dashboard · FlagFit",
       },
       {
+        path: "physiotherapist-dashboard",
+        loadComponent: () =>
+          import("../../staff/physiotherapist-dashboard.component").then(
+            (m) => m.PhysiotherapistDashboardComponent,
+          ),
+        title: "Physiotherapist Dashboard · FlagFit",
+      },
+      // TIER 1: self-reported staff onboarding profiles (one per role — see
+      // netlify/functions/staff-profile.js for why each role has its own
+      // backend function too).
+      {
+        path: "profile/head-coach",
+        loadComponent: () =>
+          import("../../onboarding/head-coach-onboarding.component").then(
+            (m) => m.HeadCoachOnboardingComponent,
+          ),
+        title: "Head Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/coach",
+        loadComponent: () =>
+          import("../../onboarding/coach-onboarding.component").then(
+            (m) => m.CoachOnboardingComponent,
+          ),
+        title: "Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/physiotherapist",
+        loadComponent: () =>
+          import(
+            "../../onboarding/physiotherapist-onboarding.component"
+          ).then((m) => m.PhysiotherapistOnboardingComponent),
+        title: "Physiotherapist Profile · FlagFit",
+      },
+      {
+        path: "profile/nutritionist",
+        loadComponent: () =>
+          import("../../onboarding/nutritionist-onboarding.component").then(
+            (m) => m.NutritionistOnboardingComponent,
+          ),
+        title: "Nutritionist Profile · FlagFit",
+      },
+      {
+        path: "profile/psychologist",
+        loadComponent: () =>
+          import("../../onboarding/psychologist-onboarding.component").then(
+            (m) => m.PsychologistOnboardingComponent,
+          ),
+        title: "Psychologist Profile · FlagFit",
+      },
+      {
+        path: "profile/strength-coach",
+        loadComponent: () =>
+          import(
+            "../../onboarding/strength-coach-onboarding.component"
+          ).then((m) => m.StrengthCoachOnboardingComponent),
+        title: "Strength Coach Profile · FlagFit",
+      },
+      {
+        path: "profile/manager",
+        loadComponent: () =>
+          import("../../onboarding/manager-onboarding.component").then(
+            (m) => m.ManagerOnboardingComponent,
+          ),
+        title: "Manager Profile · FlagFit",
+      },
+      {
         path: "admin",
         loadComponent: () =>
           import("../../return-to-play/administrator-dashboard.component").then(
@@ -197,9 +290,26 @@ export const featureRoutes: Routes = [
           ),
         title: "Administration · FlagFit",
       },
-      // Phase 3: Alert Engine routes
       {
-        path: "alerts",
+        path: "admin/credentials",
+        loadComponent: () =>
+          import("../../staff/credential-review.component").then(
+            (m) => m.CredentialReviewComponent,
+          ),
+        title: "Credential Review · FlagFit",
+      },
+      // Phase 3: Alert Engine routes
+      // NOTE: this whole Alert Engine (alert-inbox/alert-dashboard/
+      // alert-preferences + their backend functions) has no live database
+      // tables yet — the migrations that create alert_rules/generated_alerts/
+      // alert_delivery_logs/alert_preferences/acwr_snapshots exist locally
+      // but were never applied. Every screen below will error until that's
+      // resolved (see docs/SOURCE_OF_TRUTH.md §6). Routing them correctly
+      // here is still worth doing on its own — this was previously an
+      // unreachable dead route (collided with "alerts" above, which always
+      // won by array order) regardless of the backend gap.
+      {
+        path: "alert-inbox",
         loadComponent: () =>
           import("../../return-to-play/alert-inbox.component").then(
             (m) => m.AlertInboxComponent,
@@ -246,6 +356,7 @@ export const featureRoutes: Routes = [
     path: "",
     component: ShellComponent,
     canActivate: [authGuard],
+    canActivateChild: [billingGuard],
     children: [
       { path: "", pathMatch: "full", redirectTo: "today" },
       {
@@ -323,6 +434,14 @@ export const featureRoutes: Routes = [
         title: "Settings · FlagFit",
       },
       {
+        path: "billing",
+        loadComponent: () =>
+          import("../../billing/pricing.component").then(
+            (m) => m.PricingComponent,
+          ),
+        title: "Plans & Pricing · FlagFit",
+      },
+      {
         path: "achievements",
         loadComponent: () =>
           import("../../achievements/achievements.component").then(
@@ -391,6 +510,14 @@ export const featureRoutes: Routes = [
             (m) => m.DeviceDataComponent,
           ),
         title: "Device data · FlagFit",
+      },
+      {
+        path: "travel",
+        loadComponent: () =>
+          import("../../travel-log/travel-log.component").then(
+            (m) => m.TravelLogComponent,
+          ),
+        title: "Travel · FlagFit",
       },
       {
         path: "fuelling-check",

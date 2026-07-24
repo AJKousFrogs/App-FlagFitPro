@@ -118,9 +118,18 @@
   background: var(--accent);
   color: var(--on-accent);
 }
-.btn--primary:disabled {
+.btn--ghost {
+  background: transparent;
+  border-color: var(--border-soft);
+  color: var(--text-strong);
+}
+.btn:disabled {
   opacity: var(--op-5);
   cursor: default;
+}
+.btn.sm {
+  padding: var(--s-1) var(--s-2);
+  font-size: var(--fs-xs);
 }
 .ok {
   display: inline-flex;
@@ -208,6 +217,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--s-2);
   font-size: var(--fs-sm);
   color: var(--text-strong);
   padding: var(--s-2) 0;
@@ -216,12 +226,20 @@
 .dev:last-child {
   border-bottom: none;
 }
+.dev-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
 .dev-state {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-faint);
+}
+.dev-actions {
+  flex-shrink: 0;
 }
 
 .muted {

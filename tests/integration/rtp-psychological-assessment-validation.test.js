@@ -28,10 +28,10 @@ function createFakeSupabase() {
         },
         single() { return this; },
         then(cb) {
-          if (this.table === "psychological_assessments" && this.upsertPayload) {
+          if (this.table === "rtp_psychological_assessments" && this.upsertPayload) {
             return cb({ data: { id: "test-id", ...this.upsertPayload }, error: null });
           }
-          if (this.table === "psychological_assessments" && this.eqField) {
+          if (this.table === "rtp_psychological_assessments" && this.eqField) {
             return cb({
               data: [
                 { id: "hist-1", assessment_date: "2026-01-15", acl_rsi_score: 60, tsk11_score: 35 },
