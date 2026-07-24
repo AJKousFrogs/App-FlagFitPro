@@ -1,5 +1,48 @@
 # FlagFit Pro — Source of Truth
 
+## 0. Why this exists
+
+- **Users:** athletes, plus the coach/support staff of one flag football team (`teams`/`team_members` support multiple teams in schema; the one real deployed team is Ljubljana Frogs — §6, 2026-07-10).
+- **Winning:** athletes log real, honest data (CLAUDE.md §4 — bad inputs break ACWR/periodization, not a hypothetical) often enough that staff can act on real numbers instead of guesses.
+- **Metrics that matter:** daily check-in rate, sessions logged/week, readiness freshness (SQL below — verified column names, no invented numbers).
+- **Not queryable today:** "readiness viewed by coach" — no working read-audit exists. `consent-data-reader.js`'s `_logAccess()` inserts columns that don't exist on the live `consent_access_log` table, so every access has silently gone unlogged since it shipped (found while writing this section — see §6, 2026-07-24).
+- Run the SQL yourself before trusting any of these numbers — none are asserted here.
+
+```sql
+-- Daily check-in rate: % of (active-athlete × day) slots filled in the trailing 7 days.
+-- daily_wellness_checkin is upsert-keyed one row per (user_id, checkin_date).
+select round(
+  100.0 * count(distinct (c.user_id, c.checkin_date))
+  / nullif((select count(*) from team_members m where m.role = 'player' and m.status = 'active') * 7, 0),
+  1
+) as pct_days_checked_in_last_7d
+from daily_wellness_checkin c
+where c.checkin_date between current_date - interval '6 days' and current_date
+  and c.user_id in (select user_id from team_members where role = 'player' and status = 'active');
+
+-- Sessions logged per active athlete, trailing 7 days.
+select round(
+  count(*)::numeric
+  / nullif((select count(*) from team_members m where m.role = 'player' and m.status = 'active'), 0),
+  2
+) as sessions_per_athlete_last_7d
+from training_sessions s
+where s.session_date between current_date - interval '6 days' and current_date
+  and s.user_id in (select user_id from team_members where role = 'player' and status = 'active');
+
+-- Readiness freshness: % of active athletes with a readiness_scores row in the trailing 7 days.
+select round(
+  100.0 * count(distinct r.user_id)
+  / nullif((select count(*) from team_members m where m.role = 'player' and m.status = 'active'), 0),
+  1
+) as pct_athletes_with_recent_readiness
+from readiness_scores r
+where r.day between current_date - interval '6 days' and current_date
+  and r.user_id in (select user_id from team_members where role = 'player' and status = 'active');
+```
+
+---
+
 **The single authoritative doc.** It replaces the prior ~33 hand-written docs (which drifted; see git history). Rule: where this file or the generated files conflict with old prose, **ground truth wins**. Ground truth, in priority order: live Supabase schema → actual routes/handlers → service code → applied migrations. Prose is not ground truth.
 
 - **Data Model** (generated, exact live names): [`docs/generated/DATA_MODEL.md`](generated/DATA_MODEL.md)
@@ -100,6 +143,31 @@ Status: **LIVE** (wired end-to-end, tables exist) · **BUILT, NOT DEPLOYED** (co
 
 > The ~40 ghost-table `.from()`/`.rpc()` references that errored at runtime have been retired — `docs/generated/ENDPOINTS.md` (regenerated 2026-06-23) now shows **no** unknown-table refs. The PLANNED lanes above are routed-but-unbuilt and return guarded 404s where wired.
 
+### 4a. Wiring debt — built but unreachable by a human
+
+Verified 2026-07-24 directly against current `.ts`/`.html`/`.js`/`netlify.toml` (not inferred from this doc's own older prose about them, which in one case — daily-load — was itself re-confirmed rather than assumed correct).
+
+| Backend | What's missing | Size |
+| --- | --- | --- |
+| `event-travel.js` + `event-travel.service.ts` (service already has full `create()`/`remove()`) | A UI form. `create`/`remove` are called only from `event-travel.service.spec.ts` — never a real component. `wellness.component.ts` only reads `.load()`/`.todayTravelHours()` (read-only, for a travel-hours suggestion). | S–M — service layer already does the work |
+| `team-practice-plan.js` | Zero Angular caller — no service, no component, no route reference anywhere in `angular/src`. Coach-facing periodized practice-plan generator, fully orphaned. | L — needs a coach UI + state, not just wiring |
+| `session-load-import.js` + `session-load-import-csv.js` | Zero Angular caller. Distinct from `external-load.js` (wired, `/device-data`) and `wearable-health-ingest-apple-xml.js` (wired, same screen) — this is the vendor-CSV/manual-spreadsheet import path, backend-only. | L — file upload + provider selection + per-row failure surfacing |
+| `wearable-health-ingest.js` (`POST`, readings) | The `PUT` half (consent) IS wired (`wearable.service.ts` → device-data toggles). The `POST` half (direct reading upload) has no UI caller — readings only arrive via `wearables-webhook.js` (server-to-server) or the Apple-XML variant. | S if consent-only is the intended scope / M for a generic uploader |
+| `event_participation.game_id` | No writer sets it anywhere. `event-participation.js`'s `record_event_participation` RPC column list never includes `game_id` — per-game (vs. per-event) actuals logging doesn't exist. | L — needs a per-game selector UI + RPC change |
+| Daily-load calendar (`daily-load.js` + `load-calendar.component`) | Sums `training_sessions` only — no past-game estimated load folded in, unlike `calc-readiness.js`'s `fetchPastGameLoads`, which already does this for ACWR. The calendar and the ACWR the same athlete sees can silently disagree about the same week. | M |
+
+### 4b. Roadmap
+
+| Lane | Item | Why |
+| --- | --- | --- |
+| Now | Fold past-game load into the daily-load calendar (mirror `calc-readiness.js`'s `fetchPastGameLoads`) | Smallest §4a item with a real user-facing inconsistency today |
+| Now | Athlete travel-leg entry form | Backend + service fully built (§4a) — this is a wiring job, not new logic |
+| Now | Fix `consent-data-reader.js`'s `_logAccess()` column names (§6, 2026-07-24) | One insert, currently silently a no-op every call; makes §0's "readiness viewed by coach" queryable for the first time |
+| Next | TODO(owner) | TODO(owner) |
+| Next | TODO(owner) | TODO(owner) |
+| Later | TODO(owner) | TODO(owner) |
+| Later | TODO(owner) | TODO(owner) |
+
 ---
 
 ## 5. Spec Laws (durable product rules)
@@ -144,6 +212,7 @@ Reference implementations: the wellness check-in prefill `effect()` and `profile
 
 Unfixed:
 
+- **2026-07-24 — FOUND (flagged, not fixed — this was a docs-only pass, see §8): `consent-data-reader.js`'s `_logAccess()` writes columns that don't exist on the live `consent_access_log` table.** Code inserts `accessor_user_id`/`target_user_id`/`resource_type`/`access_granted`/`consent_type`/`team_id`/`access_reason`; the real live columns (verified against `docs/generated/live-schema.snapshot.json`) are `user_id`/`accessed_by`/`access_type`/`data_category`/`reason`/`consent_given` — no overlap at all except `id`. The insert is wrapped in try/catch and only `logger.warn`s on failure, so every staff read of consent-gated athlete data has silently gone unlogged since this shipped. Found while writing §0 (this doc) — it's the reason "readiness viewed by coach" isn't a queryable metric today. Fix is a one-line column rename in the insert; seeded as a §4b "Now" item.
 - **2026-07-24 — ADDED: honest-input messaging at every athlete self-report surface, in-app and on the marketing landing page (user request — bad data → wrong ACWR/periodization → real injury and selection risk, not a hypothetical).** No calculation changed; this is copy only, placed where the athlete is actually about to type a number. **In-app** (all reuse existing conventions, no new components): `wellness.component.html` — a `.card.info` block above the submit button stating ACWR/readiness/plan are computed directly from these numbers with no hidden correction; `training.component.html` — a `.note` line in the session hero ("log your actual RPE and duration... not the target above it"); `onboarding.component.html` — a `.note` under the physicals step (height/weight/DOB feed nutrition + training bands from day one). **Landing page wireframe** (`scratchpad/wireframes/landing.html`, still pre-CSS-approval): a bordered `.honesty-box` callout in the Problem section, plus a new FAQ entry ("Does it matter if I'm not 100% precise in my check-ins?") tying inaccurate logging directly to injury risk and lost selection windows. Angular typecheck/lint clean, full suite green (852 tests) — template-only diff, no `.ts` logic touched.
 - **2026-07-24 — FIXED: Today's check-in coverage grid mis-keyed every cell by one day for positive-UTC-offset athletes (reported by a Ljubljana user: "I logged more than 15 times but the grid/reliability only shows 15").** `today.component.ts`'s `coverage` computed built the 28-day grid from local-time `Date` arithmetic (`setHours(0,0,0,0)`, `getDay()`) but keyed each cell with `cur.toISOString().slice(0,10)` — `toISOString()` always converts to UTC, and local midnight in any UTC+N timezone (e.g. Ljubljana, UTC+2 in summer) is still 22:00 UTC the PREVIOUS day, so every cell's day-key silently shifted back by one. A same-day check-in could show as a "miss" in the grid because it was looked up under yesterday's key instead of today's. **This bug was cosmetic, not a data-loss bug:** the separate "ACWR reliability N/21" figure (`daysLogged = readinessSvc.history().length`, `today.component.ts`) comes straight from the server's `/api/readiness-history` count and was never affected — so a user's true logged-day count was always accurate; only the visual grid's done/missed labeling could misrepresent which specific calendar day. Fixed by keying cells with the existing local-day helper (`getDateKey`, `shared/utils/date.utils.ts` — already used correctly elsewhere, e.g. `unlogged-practice.ts`) instead of `toISOString()`. Extracted the whole cell-building computation into a new pure, unit-tested module (`today/check-in-coverage.ts` + `check-in-coverage.spec.ts`, 7 tests, run once under `TZ=Europe/Ljubljana` to prove the fix) since the component had zero test coverage for this logic before. Backend/Angular full suites green (852 Angular tests), lint/typecheck clean. **Not fixed in this pass (flagged, not silently accepted):** `wellness.component.ts`/`today.component.ts` both call `readinessSvc.calculateToday()` after a check-in with `.subscribe({error: () => undefined})` — a transient `calc-readiness` failure (network blip, cold start) silently drops that day's `readiness_scores` row with zero user-facing feedback, which is a second, independent way a real check-in could fail to convert into a "counted" reliability day. Worth a follow-up (surface the failure, e.g. a retry or a toast) but out of scope for this fix, which only addressed the confirmed, reproducible date-keying bug.
 - **2026-07-23 — SHIPPED: Phase 3 Alert Engine applied live, after fixing 11 real bugs found across two migrations and three Netlify functions.** User decision on the flagged Alert Engine question below: apply it. What followed was substantially more than applying two files as-written — nearly every piece had a real bug, several severe enough that the migration would have failed outright or silently done the wrong thing forever.
@@ -479,11 +548,20 @@ Canonical: health = `/api/health`; env vars = `SUPABASE_SERVICE_KEY` (primary) *
 
 **Auth hardening.** Native HIBP leaked-password check is a GoTrue setting (Dashboard → Auth → Providers → Email, or Management API `PATCH /v1/projects/<ref>/config/auth {"password_hibp_enabled":true}`) — NOT toggleable via SQL; the app-level edge fn does not clear the advisor. **Fixed 2026-07-07/08:** the ~10 SECURITY DEFINER RLS-helper fns (`ff_is_active_team_member`, `ff_is_team_staff`, `has_role`, `is_active_superadmin`, `auth_user_team_ids`, `can_view_player_performance`, …) were `anon`-executable via a leftover `PUBLIC` grant — `REVOKE ... FROM public, anon` was applied to all of them (`authenticated`/`service_role` keep direct grants, which RLS calls rely on). Verified live: `anon`-executable SECURITY DEFINER count = **0**. Any NEW definer fn → `REVOKE FROM public, anon; GRANT authenticated, service_role` from the start — do not rely on a bare PUBLIC default.
 
+### Monitoring & recovery gaps (2026-07-24 addendum)
+
+- **Nobody watches `/api/health`.** Verified: no scheduled Netlify function, no GitHub Actions workflow (`ci.yml`, `e2e-tests.yml`, `mobile-responsive.yml`, `release.yml`, `scheduled.yml` — none reference `/health`; `scheduled.yml` only runs a daily `npm audit` and a weekly dependency check), no pg_cron job, nothing in `netlify.toml`. **Cheapest fix:** a free external ping (UptimeRobot / healthchecks.io / a GitHub Actions `schedule:` cron doing `curl -f https://<site>/api/health`) — no new code, minutes to set up, and currently the only thing standing between an outage and someone noticing.
+- **PITR:** unverified this session — Supabase MCP requires interactive auth, unavailable here. This doc already states PITR is Supabase-Pro-only as a general fact (above); whether *this* project's plan has it enabled needs a Dashboard or `get_project`/`get_organization` check, not asserted here.
+- **Storage buckets, verified via migrations (corrects the doc-header's stale "1 private bucket" count — flagged, not edited there, since this addendum is the requested fix location):** two live buckets exist — `credential-documents` (private, `20260722c_create_credential_documents_storage_bucket.sql`, 10MB, PDF/JPG/PNG, RLS own-folder + admin-read-any) and `community-media` (public, `20260630125234_storage_community_media_rls.sql`, no drop migration found). **Neither is backed up** — Supabase Storage sits outside Postgres PITR/backup entirely; a bucket-level deletion or corruption has no restore path today.
+- **Migrations are forward-only** (stated above) — there is no `down` migration mechanism. A bad migration's only recovery is a pre-migration `pg_dump`/`supabase db dump` restore or a hand-written reversing migration; both are manual, and only the first is documented above as a runbook step.
+
 ---
 
 ## 8. Contributing — the Ledger is the contract
 
 **Any PR that adds or changes a table, endpoint, or feature MUST update §4 (Feature Status Ledger) in the same commit.** This is how we stop rebuilding what exists.
+
+**Changelog hygiene:** new §6 entries from this point on are **≤3 lines** + a PR or commit link. Existing §6 entries are exempt from a retroactive rewrite — several run long because they document real, hard-won multi-file bug hunts, and shortening them would lose the trail. The cap applies going forward, not backward.
 
 **Regenerating the generated sections** (after a schema or route change):
 
@@ -492,3 +570,26 @@ Canonical: health = `/api/health`; env vars = `SUPABASE_SERVICE_KEY` (primary) *
 3. Commit the regenerated files with your change.
 
 If a generated file shows new ⚠️ ghost-table refs or DRIFT, fix the cause or log it in §6 — do not hand-edit the generated files (they are overwritten).
+
+---
+
+## 9. Getting started
+
+**Prereqs.** Node `>=22.22.3` (`.nvmrc`; matches `engines` in both root and `angular/package.json`). **Verified this session:** the sandbox's Node 22.22.2 is one patch below the floor, and the Angular CLI refuses to run on it (`ng lint`/`ng` commands hard-error: "Angular CLI requires a minimum Node.js version of v22.22.3") — match `.nvmrc` exactly, don't assume "close enough" works.
+
+**Env vars actually read (verified in code):**
+- Backend (`netlify/functions/utils/supabase-client.js`): `SUPABASE_URL` + (`SUPABASE_SERVICE_KEY` or `SUPABASE_SERVICE_ROLE_KEY`) + (`SUPABASE_ANON_KEY` or `VITE_SUPABASE_ANON_KEY`) — required, or the admin/anon clients refuse to initialize.
+- Frontend (`angular/src/environments/environment.ts` + `supabase.defaults.ts`): ships real working defaults (project `grfjmnjpzvknmsxrwesx`, public anon key), so the Angular UI runs against the live shared project with **zero local `.env` setup**. Override at runtime via `window._env`, not a rebuild.
+- Everything else in `.env.example` (email providers, `OPENAI_API_KEY`, Sentry, Stripe, USDA) is optional — verified each feature degrades or 503s honestly without it (e.g. `stripe-*.js` return 503 `"Billing is not yet available"` with no keys set, per §4's Billing row).
+
+**Clone → run:**
+1. `npm ci && cd angular && npm ci && cd ..`
+2. `npm run dev` (= `netlify dev`) — Angular + Netlify Functions together on `:8888`. `/api/*` calls need the backend env vars above; the Angular UI itself loads regardless (frontend defaults above). Angular-only, no functions: `npm run dev:angular-only` (`ng serve --port 4200`).
+3. Once running: `curl -s http://localhost:8888/api/health | jq` → expect `{"status":"healthy"}` (`netlify/functions/health.js` → `health-core.js`).
+
+**Tests — run in this session, 2026-07-24, results below are real, not assumed:**
+- Backend unit — `npx vitest run tests/unit/` → **683 passed**.
+- Backend integration — `npm run test:backend` (`vitest run tests/integration/netlify-api.test.js`) → **skips cleanly** without live Supabase creds (`describe.skipIf(!hasSupabaseEnv)`); not a failure, just inert without all three Supabase env vars.
+- Angular unit — `npm run test` (`cd angular && npx vitest run`) → **852 passed, 2 skipped, 20 todo**.
+- Lint/typecheck — `npm run lint:tooling` (functions/scripts), `npm run typecheck:functions`, `cd angular && npx eslint "src/app/**/*.{ts,html}"` → all clean. Root `npm run lint` / `ng lint` needs the exact Node floor above — fails on this sandbox's 22.22.2.
+- E2E / visual — `npm run test:e2e`, `npm run test:e2e:smoke`, `tests/e2e/mobile-responsiveness.spec.ts` (CLAUDE.md's required CI gate): commands verified to exist and match `playwright.config.js`'s self-managed `webServer` (`node scripts/start-playwright-servers.js`) — **not executed end-to-end in this session** (needs live Supabase test data and several minutes of runtime). Unverified — confirm green yourself before relying on this line.
