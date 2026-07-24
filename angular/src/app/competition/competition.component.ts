@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { NgOptimizedImage } from "@angular/common";
+import { NgOptimizedImage, DatePipe } from "@angular/common";
 import { TopbarComponent } from "../shared/topbar.component";
 import { SkeletonComponent } from "../shared/skeleton.component";
 
@@ -15,12 +15,22 @@ import { ScheduleService } from "../core/services/schedule.service";
 import { ApiService } from "../core/services/api.service";
 import { LoggerService } from "../core/services/logger.service";
 import { CompetitionEvent } from "../core/models/schedule.models";
+import { extractApiPayload } from "../core/utils/api-response-mapper";
 import {
   competitionLoadFactor,
   effectiveGameMinutes,
   type PlayingSurface,
   type PlayingWay,
 } from "./competition-load.util";
+
+interface EventGame {
+  id: string;
+  gameNumber: number;
+  gameDate: string;
+  opponent: string | null;
+  expectedDurationMinutes: number;
+  status: string;
+}
 
 interface PendingEvent {
   competition_event_id?: string;
@@ -41,6 +51,7 @@ interface PendingEvent {
   selector: "app-competition",
   imports: [
     NgOptimizedImage,
+    DatePipe,
     TopbarComponent,
     SkeletonComponent,
     RouterLink,
@@ -217,5 +228,96 @@ export class CompetitionComponent {
   pendingGamesExpected(): number {
     const p = this.pending()[0];
     return p?.games_expected ?? p?.gamesExpected ?? 8;
+  }
+
+  // ── Per-game actuals (docs/SOURCE_OF_TRUTH.md §4a/§4b, 2026-07-24/25) ──────
+  // Additive alternative to the aggregate "how it went" card above: log one
+  // SPECIFIC game's attendance/minutes/RPE instead of a whole-event total.
+  // Presented as either/or for a given event — logging some games individually
+  // and also submitting the aggregate for the same event can have the two
+  // overwrite each other's training-load day (both are idempotent-by-day), so
+  // the UI doesn't offer them side by side as if they stack.
+  readonly perGameMode = signal(false);
+  readonly eventGames = signal<EventGame[]>([]);
+  readonly gamesLoading = signal(false);
+  readonly gamesError = signal<string | null>(null);
+  readonly selectedGameId = signal<string | null>(null);
+  readonly gameAttended = signal(true);
+  readonly gameRpe = signal(7);
+  readonly gameLogging = signal(false);
+  readonly loggedGameIds = signal<ReadonlySet<string>>(new Set());
+
+  readonly selectedGame = computed(() =>
+    this.eventGames().find((g) => g.id === this.selectedGameId()) ?? null,
+  );
+
+  enterPerGameMode(): void {
+    this.perGameMode.set(true);
+    if (this.eventGames().length || this.gamesLoading()) return;
+    const p = this.pending()[0];
+    const id = p?.competition_event_id ?? p?.competitionEventId;
+    if (!id) return;
+    this.gamesLoading.set(true);
+    this.gamesError.set(null);
+    this.api
+      .get<EventGame[]>(`/api/event-games?competitionEventId=${id}`)
+      .subscribe({
+        next: (res) => {
+          const games = extractApiPayload<EventGame[]>(res) ?? [];
+          this.eventGames.set(games);
+          this.gamesLoading.set(false);
+        },
+        error: (e) => {
+          this.logger.error("event_games_load_failed", e);
+          this.gamesError.set("Could not load this event's games.");
+          this.gamesLoading.set(false);
+        },
+      });
+  }
+
+  exitPerGameMode(): void {
+    this.perGameMode.set(false);
+    this.selectedGameId.set(null);
+  }
+
+  selectGame(gameId: string): void {
+    this.selectedGameId.set(gameId);
+    this.gameAttended.set(true);
+    this.gameRpe.set(7);
+  }
+
+  logGame(): void {
+    if (this.gameLogging()) return;
+    const p = this.pending()[0];
+    const competitionEventId = p?.competition_event_id ?? p?.competitionEventId;
+    const gameId = this.selectedGameId();
+    const game = this.selectedGame();
+    if (!competitionEventId || !gameId || !game) return;
+
+    this.gameLogging.set(true);
+    this.api
+      .post("/api/event-participation", {
+        competitionEventId,
+        gameId,
+        attended: this.gameAttended(),
+        gamesPlayed: this.gameAttended() ? 1 : 0,
+        avgRpe: this.gameAttended() ? this.gameRpe() : undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.loggedGameIds.update((s) => new Set(s).add(gameId));
+          this.gameLogging.set(false);
+          this.selectedGameId.set(null);
+        },
+        error: (e) => {
+          this.logger.error("game_participation_failed", e);
+          this.gamesError.set("Could not log this game — try again.");
+          this.gameLogging.set(false);
+        },
+      });
+  }
+
+  gameLabel(g: EventGame): string {
+    return `Game ${g.gameNumber}` + (g.opponent ? ` vs ${g.opponent}` : "");
   }
 }
