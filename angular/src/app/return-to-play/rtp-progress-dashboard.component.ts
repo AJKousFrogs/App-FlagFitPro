@@ -55,7 +55,7 @@ const PHASES: PhaseInfo[] = [
           <i-lucide name="alert-triangle"></i-lucide>
           <p>{{ error() }}</p>
         </div>
-      } @else if (latestProgress()) {
+      } @else if (latestProgress(); as latest) {
         <div class="content">
           <!-- Injury Summary Card -->
           <section class="injury-summary">
@@ -203,12 +203,12 @@ const PHASES: PhaseInfo[] = [
                 </div>
               </div>
 
-              @if (latestProgress().biomechanics_symmetrical !== null) {
+              @if (latest.biomechanics_symmetrical !== null) {
                 <div class="criterion">
                   <div class="criterion-header">
                     <span class="name">Biomechanics Symmetry</span>
                     <span class="value">
-                      @if (latestProgress().biomechanics_symmetrical) {
+                      @if (latest.biomechanics_symmetrical) {
                         <span class="badge good">✓ Symmetrical</span>
                       } @else {
                         <span class="badge warn">✗ Asymmetrical</span>
@@ -328,28 +328,16 @@ const PHASES: PhaseInfo[] = [
                   <thead>
                     <tr>
                       <th>Week</th>
-                      <th>Strength LSI</th>
-                      <th>Hop Tests</th>
                       <th>ACL-RSI</th>
                       <th>TSK-11</th>
-                      <th>Ready?</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (assessment of assessmentHistory(); track assessment.id) {
                       <tr>
                         <td>{{ formatDate(assessment.assessment_date) }}</td>
-                        <td>{{ assessment.strength_lsi_pct }}%</td>
-                        <td>{{ assessment.hop_test_battery_pct }}%</td>
                         <td>{{ assessment.acl_rsi_score }}/100</td>
                         <td>{{ assessment.tsk11_score }}/55</td>
-                        <td>
-                          @if (assessment.ready_for_next_phase) {
-                            <span class="badge good">✓</span>
-                          } @else {
-                            <span class="badge warn">⧖</span>
-                          }
-                        </td>
                       </tr>
                     }
                   </tbody>

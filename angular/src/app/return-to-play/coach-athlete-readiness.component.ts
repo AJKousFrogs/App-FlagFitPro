@@ -7,6 +7,7 @@ import {
   inject,
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { DatePipe, UpperCasePipe } from "@angular/common";
 import { Observable, of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { RtpService } from "./services/rtp.service";
@@ -49,7 +50,7 @@ interface AthleteReadinessSnapshot {
 @Component({
   selector: "app-coach-athlete-readiness",
   standalone: true,
-  imports: [],
+  imports: [DatePipe, UpperCasePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="coach-readiness-container">

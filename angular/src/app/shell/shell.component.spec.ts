@@ -32,7 +32,8 @@ function billingStatus(over: Partial<BillingStatus> = {}): BillingStatus {
 }
 
 function mount(opts: { status?: BillingStatus | null; locked?: boolean }) {
-  const initialStatus = "status" in opts ? opts.status : billingStatus();
+  const initialStatus =
+    "status" in opts ? (opts.status ?? null) : billingStatus();
   const statusSignal = signal<BillingStatus | null>(initialStatus);
   const loadStatus = vi.fn(async () => statusSignal());
   const freeze = new FreezeSignalService();

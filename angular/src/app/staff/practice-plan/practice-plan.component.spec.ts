@@ -52,7 +52,7 @@ function mount(opts: {
   postResult?: unknown;
   postError?: unknown;
 }) {
-  const post = vi.fn(() => {
+  const post = vi.fn((_url: string, _body?: unknown) => {
     if (opts.postError) return throwError(() => opts.postError);
     return of({ success: true, data: opts.postResult ?? samplePlan() });
   });

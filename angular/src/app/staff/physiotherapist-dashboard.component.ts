@@ -54,35 +54,35 @@ type FilterStatus = "all" | "acute" | "rehab" | "rtp";
       </div>
 
       <!-- Stats Grid -->
-      @if (!loading()) {
+      @if (!loading() && dashboardData(); as data) {
         <div class="stats-grid">
           <div class="stat-card total">
-            <div class="stat-value">{{ dashboardData()?.stats.total_active || 0 }}</div>
+            <div class="stat-value">{{ data.stats.total_active || 0 }}</div>
             <div class="stat-label">Active Cases</div>
           </div>
 
           <div class="stat-card phase-1">
-            <div class="stat-value">{{ dashboardData()?.stats.in_phase_1 || 0 }}</div>
+            <div class="stat-value">{{ data.stats.in_phase_1 || 0 }}</div>
             <div class="stat-label">Phase 1</div>
           </div>
 
           <div class="stat-card phase-2">
-            <div class="stat-value">{{ dashboardData()?.stats.in_phase_2 || 0 }}</div>
+            <div class="stat-value">{{ data.stats.in_phase_2 || 0 }}</div>
             <div class="stat-label">Phase 2</div>
           </div>
 
           <div class="stat-card phase-3">
-            <div class="stat-value">{{ dashboardData()?.stats.in_phase_3 || 0 }}</div>
+            <div class="stat-value">{{ data.stats.in_phase_3 || 0 }}</div>
             <div class="stat-label">Phase 3</div>
           </div>
 
           <div class="stat-card phase-4">
-            <div class="stat-value">{{ dashboardData()?.stats.in_phase_4 || 0 }}</div>
+            <div class="stat-value">{{ data.stats.in_phase_4 || 0 }}</div>
             <div class="stat-label">Phase 4</div>
           </div>
 
           <div class="stat-card phase-5">
-            <div class="stat-value">{{ dashboardData()?.stats.in_phase_5 || 0 }}</div>
+            <div class="stat-value">{{ data.stats.in_phase_5 || 0 }}</div>
             <div class="stat-label">Phase 5</div>
           </div>
         </div>

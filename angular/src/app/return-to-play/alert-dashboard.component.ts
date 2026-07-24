@@ -51,35 +51,35 @@ interface AlertDashboardData {
         <app-error [message]="error()"></app-error>
       }
 
-      @if (!isLoading() && !error() && dashboardData()) {
+      @if (!isLoading() && !error() && dashboardData(); as data) {
       <div class="dashboard">
         <!-- Summary Cards -->
         <div class="summary-cards">
           <div class="card total">
             <span class="label">Total Alerts</span>
-            <span class="value">{{ dashboardData()?.summary.total || 0 }}</span>
+            <span class="value">{{ data.summary.total || 0 }}</span>
           </div>
           <div class="card critical">
             <span class="label">Critical</span>
-            <span class="value">{{ dashboardData()?.summary.critical || 0 }}</span>
+            <span class="value">{{ data.summary.critical || 0 }}</span>
           </div>
           <div class="card high">
             <span class="label">High</span>
-            <span class="value">{{ dashboardData()?.summary.high || 0 }}</span>
+            <span class="value">{{ data.summary.high || 0 }}</span>
           </div>
           <div class="card medium">
             <span class="label">Medium</span>
-            <span class="value">{{ dashboardData()?.summary.medium || 0 }}</span>
+            <span class="value">{{ data.summary.medium || 0 }}</span>
           </div>
           <div class="card low">
             <span class="label">Low</span>
-            <span class="value">{{ dashboardData()?.summary.low || 0 }}</span>
+            <span class="value">{{ data.summary.low || 0 }}</span>
           </div>
           <div class="card acknowledged">
             <span class="label">Acknowledged</span>
             <span class="value">
-              {{ dashboardData()?.summary.acknowledged || 0 }} /
-              {{ dashboardData()?.summary.unacknowledged || 0 }}
+              {{ data.summary.acknowledged || 0 }} /
+              {{ data.summary.unacknowledged || 0 }}
             </span>
           </div>
         </div>
@@ -90,7 +90,7 @@ interface AlertDashboardData {
           <div class="heatmap">
             <div class="heatmap-header">
               <div class="day-label">Date</div>
-              @for (entry of dashboardData()?.history; track entry.date) {
+              @for (entry of data.history; track entry.date) {
               <div class="day-column">
                 <span class="day-name">{{ entry.date }}</span>
               </div>
@@ -99,7 +99,7 @@ interface AlertDashboardData {
 
             <div class="heatmap-row critical-row">
               <span class="row-label">Critical</span>
-              @for (entry of dashboardData()?.history; track entry.date) {
+              @for (entry of data.history; track entry.date) {
               <div
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.critical)"
@@ -112,7 +112,7 @@ interface AlertDashboardData {
 
             <div class="heatmap-row high-row">
               <span class="row-label">High</span>
-              @for (entry of dashboardData()?.history; track entry.date) {
+              @for (entry of data.history; track entry.date) {
               <div
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.high)"
@@ -125,7 +125,7 @@ interface AlertDashboardData {
 
             <div class="heatmap-row medium-row">
               <span class="row-label">Medium</span>
-              @for (entry of dashboardData()?.history; track entry.date) {
+              @for (entry of data.history; track entry.date) {
               <div
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.medium)"
@@ -138,7 +138,7 @@ interface AlertDashboardData {
 
             <div class="heatmap-row low-row">
               <span class="row-label">Low</span>
-              @for (entry of dashboardData()?.history; track entry.date) {
+              @for (entry of data.history; track entry.date) {
               <div
                 class="heatmap-cell"
                 [style.opacity]="getHeatmapOpacity(entry.low)"
@@ -163,7 +163,7 @@ interface AlertDashboardData {
               </tr>
             </thead>
             <tbody>
-              @for (rule of dashboardData()?.topRules; track rule.ruleName) {
+              @for (rule of data.topRules; track rule.ruleName) {
               <tr>
                 <td>{{ rule.ruleName }}</td>
                 <td>
